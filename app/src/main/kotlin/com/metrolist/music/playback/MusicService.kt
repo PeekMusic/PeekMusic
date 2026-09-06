@@ -197,6 +197,9 @@ import com.metrolist.music.ui.utils.resize
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlin.coroutines.coroutineContext
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -4372,8 +4375,11 @@ class MusicService :
             scope.launch {
                 val speed = fadingPlayer?.playbackParameters?.speed?.coerceAtLeast(0.01f) ?: 1f
                 val duration = (crossfadeDuration / speed).toLong()
-                val steps = 20
-                val stepTime = duration / steps
+                // Equal-power crossfade (like Apple Music): sin/cos keeps the combined
+                // loudness constant, avoiding the audible dip a linear/ease curve has
+                // mid-fade.
+                val stepTimeMs = 50L
+                val steps = (duration / stepTimeMs).coerceAtLeast(1)
                 val startVolume =
                     try {
                         fadingPlayer?.volume ?: 1f
@@ -4388,8 +4394,8 @@ class MusicService :
                     }
 
                     val progress = i / steps.toFloat()
-                    val fadeIn = 1.0f - (1.0f - progress) * (1.0f - progress)
-                    val fadeOut = (1.0f - progress) * (1.0f - progress)
+                    val fadeIn = sin(progress * (PI / 2).toFloat())
+                    val fadeOut = cos(progress * (PI / 2).toFloat())
 
                     try {
                         player.volume = startVolume * fadeIn
@@ -4398,7 +4404,7 @@ class MusicService :
                         break
                     }
 
-                    delay(stepTime)
+                    delay(stepTimeMs)
                 }
 
                 try {
