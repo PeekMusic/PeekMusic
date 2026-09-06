@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -53,6 +54,7 @@ import com.metrolist.music.R
 import com.metrolist.music.constants.EnableSongCacheKey
 import com.metrolist.music.constants.MaxImageCacheSizeKey
 import com.metrolist.music.constants.MaxSongCacheSizeKey
+import com.metrolist.music.constants.PreloadQueueCountKey
 import com.metrolist.music.extensions.tryOrNull
 import com.metrolist.music.ui.component.ActionPromptDialog
 import com.metrolist.music.ui.component.IconButton
@@ -69,6 +71,13 @@ import kotlinx.coroutines.launch
 import okio.ByteString.Companion.encodeUtf8
 import java.io.File
 import kotlin.math.roundToInt
+
+// Formatter.formatShortFileSize renders our MiB values as GiB (4096 MB -> "4.3 GB");
+// for the predefined round limits, show the round number instead.
+private fun formatCacheLimit(
+    context: android.content.Context,
+    mb: Int,
+): String = if (mb >= 1024) "${mb / 1024} GB" else Formatter.formatShortFileSize(context, mb * 1024 * 1024L)
 
 @OptIn(ExperimentalCoilApi::class, ExperimentalMaterial3Api::class, DelicateCoilApi::class)
 @Composable
@@ -95,6 +104,10 @@ fun StorageSettings(
     val (enableSongCache, onEnableSongCacheChange) = rememberPreference(
         key = EnableSongCacheKey,
         defaultValue = true
+    )
+    val (preloadQueueCount, onPreloadQueueCountChange) = rememberPreference(
+        key = PreloadQueueCountKey,
+        defaultValue = 1
     )
 
     var clearDownloads by remember { mutableStateOf(false) }
@@ -353,7 +366,7 @@ fun StorageSettings(
                                 text = when (maxSongCacheSize) {
                                     0 -> stringResource(R.string.disable)
                                     -1 -> stringResource(R.string.unlimited)
-                                    else -> Formatter.formatShortFileSize(context, maxSongCacheSize * 1024 * 1024L)
+                                    else -> formatCacheLimit(context, maxSongCacheSize)
                                 }
                             )
                             Slider(
@@ -391,15 +404,44 @@ fun StorageSettings(
                                             Formatter.formatShortFileSize(context, playerCacheSize)
                                         } else {
                                             "${Formatter.formatShortFileSize(context, playerCacheSize)} / ${
-                                                Formatter.formatShortFileSize(context, 
-                                                    maxSongCacheSize * 1024 * 1024L,
-                                                )
+                                                formatCacheLimit(context, maxSongCacheSize)
                                             }"
                                         },
                                     style = MaterialTheme.typography.bodyMedium,
                                 )
                             }
                         },
+                    ),
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.download),
+                        title = { Text(stringResource(R.string.preload_queue_songs)) },
+                        description = {
+                            Column {
+                                Text(
+                                    text = if (preloadQueueCount == 0) {
+                                        stringResource(R.string.disable)
+                                    } else {
+                                        pluralStringResource(
+                                            R.plurals.preload_queue_songs_count,
+                                            preloadQueueCount,
+                                            preloadQueueCount,
+                                        )
+                                    },
+                                )
+                                Slider(
+                                    value = preloadQueueCount.toFloat(),
+                                    enabled = enableSongCache,
+                                    onValueChange = { onPreloadQueueCountChange(it.roundToInt()) },
+                                    steps = 6,
+                                    valueRange = 0f..8f,
+                                )
+                                Text(
+                                    text = stringResource(R.string.preload_queue_songs_desc),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                            }
+                        },
+                        enabled = enableSongCache,
                     ),
                     Material3SettingsItem(
                         icon = painterResource(R.drawable.clear_all),
@@ -426,7 +468,7 @@ fun StorageSettings(
                                     text =
                                         when (maxImageCacheSize) {
                                             0 -> stringResource(R.string.disable)
-                                            else -> Formatter.formatShortFileSize(context, maxImageCacheSize * 1024 * 1024L)
+                                            else -> formatCacheLimit(context, maxImageCacheSize)
                                         },
                                 )
                                 Slider(
@@ -455,9 +497,7 @@ fun StorageSettings(
                                 Spacer(modifier = Modifier.padding(2.dp))
                                 Text(
                                     text = "${Formatter.formatShortFileSize(context, imageCacheSize)} / ${
-                                        Formatter.formatShortFileSize(context, 
-                                            maxImageCacheSize * 1024 * 1024L,
-                                        )
+                                        formatCacheLimit(context, maxImageCacheSize)
                                     }",
                                     style = MaterialTheme.typography.bodyMedium,
                                 )

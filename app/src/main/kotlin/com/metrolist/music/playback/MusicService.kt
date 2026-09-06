@@ -115,6 +115,7 @@ import com.metrolist.music.constants.CrossfadeEnabledKey
 import com.metrolist.music.constants.CrossfadeGaplessKey
 import com.metrolist.music.constants.DisableLoadMoreWhenRepeatAllKey
 import com.metrolist.music.constants.EnableSongCacheKey
+import com.metrolist.music.constants.PreloadQueueCountKey
 import com.metrolist.music.constants.HideExplicitKey
 import com.metrolist.music.constants.HideVideoSongsKey
 import com.metrolist.music.constants.HistoryDuration
@@ -447,6 +448,14 @@ class MusicService :
     private var cachedShufflePlaylistFirst = false
     @Volatile
     private var cachedAutoLoadMore = true
+    @Volatile
+    private var cachedPreloadCount = 1
+
+    // ponytail: the preload API is duration-based, so the song count is converted with an
+    // assumed average of 4 min/song. Ceiling: songs far from the average skew how many
+    // items actually get preloaded. Upgrade path: sum the real durations of the next N
+    // queue items whenever the queue or the setting changes.
+    private fun preloadConfig() = ExoPlayer.PreloadConfiguration(cachedPreloadCount * 240_000_000L)
 
     // URL cache for stream URLs - class-level so it can be invalidated on errors
     private val songUrlCache = StreamUrlCache()
@@ -943,6 +952,13 @@ class MusicService :
         scope.launch {
             dataStore.data.map { it[AutoLoadMoreKey] ?: true }.distinctUntilChanged().collect { cachedAutoLoadMore = it }
         }
+        scope.launch {
+            dataStore.data.map { it[PreloadQueueCountKey] ?: 1 }.distinctUntilChanged().collect {
+                cachedPreloadCount = it
+                if (::player.isInitialized) player.setPreloadConfiguration(preloadConfig())
+                secondaryPlayer?.setPreloadConfiguration(preloadConfig())
+            }
+        }
         if (startupPrefs!![PersistentQueueKey] ?: true) {
             val queueFile = filesDir.resolve(PERSISTENT_QUEUE_FILE)
             if (queueFile.exists()) {
@@ -1099,6 +1115,7 @@ class MusicService :
                 .setSeekForwardIncrementMs(5000)
                 .setDeviceVolumeControlEnabled(true)
                 .build()
+                .also { it.setPreloadConfiguration(preloadConfig()) }
 
         playerNormalizationProcessors[player] = normalizationProcessor
         playerSilenceProcessors[player] = silenceProcessor

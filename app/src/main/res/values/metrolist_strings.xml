@@ -680,6 +680,12 @@
     <string name="ai_error_translation_failed">Translation failed</string>
     <string name="ai_error_rate_limited">Too many translations in a short time. Please try again later.</string>
     <string name="ai_error_rate_limited_retry">Too many translations in a short time. Please try again in %1$d seconds.</string>
+    <string name="preload_queue_songs">Preload queue</string>
+    <plurals name="preload_queue_songs_count">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
+    <string name="preload_queue_songs_desc">How many upcoming queue songs are cached to storage while the current song plays</string>
 
     <!-- Crash Handler -->
     <string name="crash_title">App crashed</string>
