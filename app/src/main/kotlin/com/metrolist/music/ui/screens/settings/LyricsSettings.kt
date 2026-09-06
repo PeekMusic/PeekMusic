@@ -50,7 +50,7 @@ import com.metrolist.music.constants.EnableKugouKey
 import com.metrolist.music.constants.EnableLrcLibKey
 import com.metrolist.music.constants.EnableLyricsPlus
 import com.metrolist.music.constants.EnablePaxsenixKey
-import com.metrolist.music.constants.EnableZemerKey
+import com.metrolist.music.constants.EnableMusixmatchKey
 import com.metrolist.music.constants.ExperimentalLyricsKey
 import com.metrolist.music.constants.HideStatusBarOnFullscreenKey
 import com.metrolist.music.constants.LyricsAnimationStyle
@@ -110,12 +110,12 @@ fun LyricsSettings(
     val (lyricsTextSize, onLyricsTextSizeChange) = rememberPreference(LyricsTextSizeKey, defaultValue = 24f)
     val (lyricsLineSpacing, onLyricsLineSpacingChange) = rememberPreference(LyricsLineSpacingKey, defaultValue = 1.2f)
 
-    val (enableZemer, onEnableZemerChange) = rememberPreference(key = EnableZemerKey, defaultValue = true)
     val (enableKugou, onEnableKugouChange) = rememberPreference(key = EnableKugouKey, defaultValue = true)
     val (enableLrclib, onEnableLrclibChange) = rememberPreference(key = EnableLrcLibKey, defaultValue = true)
     val (enableBetterLyrics, onEnableBetterLyricsChange) = rememberPreference(key = EnableBetterLyricsKey, defaultValue = true)
     val (enablePaxsenix, onEnablePaxsenixChange) = rememberPreference(key = EnablePaxsenixKey, defaultValue = true)
     val (enableLyricsPlus, onEnableLyricsPlusChange) = rememberPreference(key = EnableLyricsPlus, defaultValue = true)
+    val (enableMusixmatch, onEnableMusixmatchChange) = rememberPreference(key = EnableMusixmatchKey, defaultValue = true)
     val (lyricsProviderOrder, onLyricsProviderOrderChange) = rememberPreference(
         key = LyricsProviderOrderKey,
         defaultValue = LyricsProviderRegistry.serializeProviderOrder(LyricsProviderRegistry.getDefaultProviderOrder())
@@ -128,8 +128,7 @@ fun LyricsSettings(
             "LrcLib" to "LrcLib",
             "KuGou" to "KuGou",
             "LyricsPlus" to "LyricsPlus",
-            "Zemer" to "Zemer",
-            "YouTubeSubtitle" to "YouTube Subtitles",
+            "Musixmatch" to "Musixmatch",
             "YouTube" to "YouTube",
         )
 
@@ -483,20 +482,20 @@ fun LyricsSettings(
                         Column(
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(stringResource(R.string.enable_zemer))
+                            Text(stringResource(R.string.enable_musixmatch))
                             Text(
-                                text = stringResource(R.string.enable_zemer_desc),
+                                text = stringResource(R.string.enable_musixmatch_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Switch(
-                            checked = enableZemer,
-                            onCheckedChange = onEnableZemerChange,
+                            checked = enableMusixmatch,
+                            onCheckedChange = onEnableMusixmatchChange,
                             thumbContent = {
                                 Icon(
                                     painter = painterResource(
-                                        id = if (enableZemer) R.drawable.check else R.drawable.close
+                                        id = if (enableMusixmatch) R.drawable.check else R.drawable.close
                                     ),
                                     contentDescription = null,
                                     modifier = Modifier.size(SwitchDefaults.IconSize)
@@ -535,12 +534,12 @@ fun LyricsSettings(
             "BetterLyrics".takeIf { enableBetterLyrics },
             "Paxsenix".takeIf { enablePaxsenix },
             "LyricsPlus".takeIf { enableLyricsPlus },
-            "Zemer".takeIf { enableZemer },
+            "Musixmatch".takeIf { enableMusixmatch },
         ).filterNotNull().toSet()
         val lyricsIcon = painterResource(R.drawable.lyrics)
         val draggableItems = remember { mutableStateListOf<DraggableLyricsProviderItem>() }
 
-        LaunchedEffect(normalizedOrder, enableLrclib, enableKugou, enableBetterLyrics, enablePaxsenix, enableLyricsPlus, enableZemer) {
+        LaunchedEffect(normalizedOrder, enableLrclib, enableKugou, enableBetterLyrics, enablePaxsenix, enableLyricsPlus, enableMusixmatch) {
             val orderedEnabledProviders = normalizedOrder.filter { it in enabledProviders }
             draggableItems.clear()
             draggableItems.addAll(

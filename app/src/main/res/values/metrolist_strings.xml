@@ -133,10 +133,10 @@
     <string name="enable_lrclib_desc">Community-driven synchronized lyrics database</string>
     <string name="enable_kugou_desc">Pulls lyrics from KuGou, a popular Chinese music platform</string>
     <string name="youtube_music_lyrics_note">NOTE: YouTube Music lyrics will be shown automatically when no other source is available. They are usually not synchronized</string>
-    <string name="enable_zemer">Enable Zemer</string>
-    <string name="enable_zemer_desc">Lyrics for Jewish music</string>
     <string name="enable_better_lyrics">Enable Better Lyrics</string>
     <string name="enable_better_lyrics_desc">Syllable-synced lyrics for any song, perfect for karaoke</string>
+    <string name="enable_musixmatch">Enable Musixmatch</string>
+    <string name="enable_musixmatch_desc">Large catalog of synced lyrics, including word-by-word timings</string>
     <string name="enable_paxsenix">Enable Paxsenix</string>
     <string name="enable_paxsenix_desc">High-quality synchronized lyrics from Paxsenix API</string>
     <string name="enable_lyricsplus">Enable LyricsPlus</string>
