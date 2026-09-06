@@ -266,10 +266,29 @@ object LyricsTranslationHelper {
                                 return@onFailure
                             }
 
-                            val errorMessage = error.message ?: context.getString(com.metrolist.music.R.string.ai_error_unknown)
+                            val httpError = error as? GoogleTranslateService.TranslationHttpException
+                            val errorMessage = when {
+                                httpError?.code == 429 && httpError.retryAfterSeconds != null ->
+                                    context.getString(
+                                        com.metrolist.music.R.string.ai_error_rate_limited_retry,
+                                        httpError.retryAfterSeconds,
+                                    )
 
-                            // Show error in UI
+                                httpError?.code == 429 ->
+                                    context.getString(com.metrolist.music.R.string.ai_error_rate_limited)
+
+                                else -> error.message
+                                    ?: context.getString(com.metrolist.music.R.string.ai_error_unknown)
+                            }
+
+                            // Show error in UI, auto-hide after a few seconds
                             _status.value = TranslationStatus.Error(errorMessage)
+                            delay(5000)
+                            if ((_status.value as? TranslationStatus.Error)?.message == errorMessage &&
+                                isCompositionActive
+                            ) {
+                                _status.value = TranslationStatus.Idle
+                            }
                         }
                 } catch (e: Exception) {
                     // Ignore cancellation exceptions or if composition is no longer active

@@ -678,6 +678,8 @@
     <string name="ai_error_language_required">A target language is required</string>
     <string name="ai_error_unknown">An unknown error occurred</string>
     <string name="ai_error_translation_failed">Translation failed</string>
+    <string name="ai_error_rate_limited">Too many translations in a short time. Please try again later.</string>
+    <string name="ai_error_rate_limited_retry">Too many translations in a short time. Please try again in %1$d seconds.</string>
 
     <!-- Crash Handler -->
     <string name="crash_title">App crashed</string>

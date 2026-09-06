@@ -21,10 +21,28 @@ import java.util.concurrent.TimeUnit
  * swap [translate] for another backend — callers only depend on this signature.
  */
 object GoogleTranslateService {
+    /**
+     * Thrown on non-2xx responses so callers can distinguish rate limiting
+     * from other failures. [retryAfterSeconds] is Google's Retry-After hint
+     * when present (gtx usually omits it).
+     */
+    class TranslationHttpException(
+        val code: Int,
+        val retryAfterSeconds: Int? = null,
+    ) : Exception("Translation request failed with HTTP $code")
+
+    private const val DEFAULT_COOLDOWN_SECONDS = 30
+
     private val client = OkHttpClient.Builder()
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
+
+    // ponytail: naive global cooldown after a 429 — one timestamp for the whole
+    // app process; fine because the limit is per IP anyway. Upgrade path: backoff
+    // with jitter if users hit longer blocks.
+    @Volatile
+    private var blockedUntilMs = 0L
 
     /**
      * Translates [text] into [targetLanguage] (ISO code, e.g. "de"), returning one
@@ -38,6 +56,15 @@ object GoogleTranslateService {
         runCatching {
             if (text.isBlank()) return@runCatching emptyList()
 
+            val now = System.currentTimeMillis()
+            val blockedUntil = blockedUntilMs
+            if (now < blockedUntil) {
+                throw TranslationHttpException(
+                    code = 429,
+                    retryAfterSeconds = ((blockedUntil - now) / 1000).toInt().coerceAtLeast(1),
+                )
+            }
+
             val url = "https://translate.googleapis.com/translate_a/single" +
                 "?client=gtx&sl=auto&tl=${URLEncoder.encode(targetLanguage, "UTF-8")}&dt=t" +
                 "&q=${URLEncoder.encode(text, "UTF-8")}"
@@ -49,7 +76,12 @@ object GoogleTranslateService {
 
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
-                    error("Translation request failed with HTTP ${response.code}")
+                    val retryAfter = response.header("Retry-After")?.toIntOrNull()
+                    if (response.code == 429) {
+                        blockedUntilMs = System.currentTimeMillis() +
+                            (retryAfter ?: DEFAULT_COOLDOWN_SECONDS) * 1000L
+                    }
+                    throw TranslationHttpException(response.code, retryAfter)
                 }
                 val body = response.body?.string() ?: error("Empty translation response")
                 val root = JSONArray(body)
