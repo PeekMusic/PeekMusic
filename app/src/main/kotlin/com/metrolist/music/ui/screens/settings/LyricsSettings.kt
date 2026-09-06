@@ -51,6 +51,7 @@ import com.metrolist.music.constants.EnableLrcLibKey
 import com.metrolist.music.constants.EnableLyricsPlus
 import com.metrolist.music.constants.EnablePaxsenixKey
 import com.metrolist.music.constants.EnableMusixmatchKey
+import com.metrolist.music.constants.EnableSimpMusicKey
 import com.metrolist.music.constants.ExperimentalLyricsKey
 import com.metrolist.music.constants.HideStatusBarOnFullscreenKey
 import com.metrolist.music.constants.LyricsAnimationStyle
@@ -116,6 +117,7 @@ fun LyricsSettings(
     val (enablePaxsenix, onEnablePaxsenixChange) = rememberPreference(key = EnablePaxsenixKey, defaultValue = true)
     val (enableLyricsPlus, onEnableLyricsPlusChange) = rememberPreference(key = EnableLyricsPlus, defaultValue = true)
     val (enableMusixmatch, onEnableMusixmatchChange) = rememberPreference(key = EnableMusixmatchKey, defaultValue = true)
+    val (enableSimpMusic, onEnableSimpMusicChange) = rememberPreference(key = EnableSimpMusicKey, defaultValue = true)
     val (lyricsProviderOrder, onLyricsProviderOrderChange) = rememberPreference(
         key = LyricsProviderOrderKey,
         defaultValue = LyricsProviderRegistry.serializeProviderOrder(LyricsProviderRegistry.getDefaultProviderOrder())
@@ -129,6 +131,7 @@ fun LyricsSettings(
             "KuGou" to "KuGou",
             "LyricsPlus" to "LyricsPlus",
             "Musixmatch" to "Musixmatch",
+            "SimpMusic" to "SimpMusic",
             "YouTube" to "YouTube",
         )
 
@@ -503,6 +506,35 @@ fun LyricsSettings(
                             }
                         )
                     }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(stringResource(R.string.enable_simp_music))
+                            Text(
+                                text = stringResource(R.string.enable_simp_music_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = enableSimpMusic,
+                            onCheckedChange = onEnableSimpMusicChange,
+                            thumbContent = {
+                                Icon(
+                                    painter = painterResource(
+                                        id = if (enableSimpMusic) R.drawable.check else R.drawable.close
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                                )
+                            }
+                        )
+                    }
                     Column(modifier = Modifier.padding(2.dp)) {
                         Text(
                             text = stringResource(R.string.youtube_music_lyrics_note),
@@ -535,11 +567,12 @@ fun LyricsSettings(
             "Paxsenix".takeIf { enablePaxsenix },
             "LyricsPlus".takeIf { enableLyricsPlus },
             "Musixmatch".takeIf { enableMusixmatch },
+            "SimpMusic".takeIf { enableSimpMusic },
         ).filterNotNull().toSet()
         val lyricsIcon = painterResource(R.drawable.lyrics)
         val draggableItems = remember { mutableStateListOf<DraggableLyricsProviderItem>() }
 
-        LaunchedEffect(normalizedOrder, enableLrclib, enableKugou, enableBetterLyrics, enablePaxsenix, enableLyricsPlus, enableMusixmatch) {
+        LaunchedEffect(normalizedOrder, enableLrclib, enableKugou, enableBetterLyrics, enablePaxsenix, enableLyricsPlus, enableMusixmatch, enableSimpMusic) {
             val orderedEnabledProviders = normalizedOrder.filter { it in enabledProviders }
             draggableItems.clear()
             draggableItems.addAll(

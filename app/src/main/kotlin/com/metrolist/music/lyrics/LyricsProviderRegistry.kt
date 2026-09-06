@@ -9,6 +9,7 @@ object LyricsProviderRegistry {
     private val providerMap = mapOf(
         "BetterLyrics" to BetterLyricsProvider,
         "Musixmatch" to MusixmatchLyricsProvider,
+        "SimpMusic" to SimpMusicLyricsProvider,
         "Paxsenix" to PaxsenixLyricsProvider,
         "LrcLib" to LrcLibLyricsProvider,
         "KuGou" to KuGouLyricsProvider,
@@ -38,6 +39,7 @@ object LyricsProviderRegistry {
     fun getDefaultProviderOrder(): List<String> = listOf(
         "BetterLyrics",
         "Musixmatch",
+        "SimpMusic",
         "LrcLib",
         "KuGou",
         "Paxsenix",
