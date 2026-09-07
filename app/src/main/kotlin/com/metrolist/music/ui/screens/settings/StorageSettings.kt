@@ -51,6 +51,7 @@ import com.metrolist.music.LocalDatabase
 import com.metrolist.music.LocalPlayerAwareWindowInsets
 import com.metrolist.music.LocalPlayerConnection
 import com.metrolist.music.R
+import com.metrolist.music.lyrics.LyricsTranslationHelper
 import com.metrolist.music.constants.EnableSongCacheKey
 import com.metrolist.music.constants.MaxImageCacheSizeKey
 import com.metrolist.music.constants.MaxSongCacheSizeKey
@@ -113,6 +114,8 @@ fun StorageSettings(
     var clearDownloads by remember { mutableStateOf(false) }
     var clearCacheDialog by remember { mutableStateOf(false) }
     var clearImageCacheDialog by remember { mutableStateOf(false) }
+    var clearTranslationCacheDialog by remember { mutableStateOf(false) }
+    var clearLyricsCacheDialog by remember { mutableStateOf(false) }
 
     // State for the confirmation dialog
     var showCacheWarningDialog by remember { mutableStateOf(false) }
@@ -216,6 +219,40 @@ fun StorageSettings(
             onCancel = { clearCacheDialog = false },
             content = {
                 Text(text = stringResource(R.string.clear_song_cache_dialog))
+            },
+        )
+    }
+    if (clearLyricsCacheDialog) {
+        ActionPromptDialog(
+            title = stringResource(R.string.clear_lyrics_cache),
+            onDismiss = { clearLyricsCacheDialog = false },
+            onConfirm = {
+                coroutineScope.launch(Dispatchers.IO) {
+                    database.query {
+                        clearAllLyrics()
+                    }
+                }
+                clearLyricsCacheDialog = false
+            },
+            onCancel = { clearLyricsCacheDialog = false },
+            content = {
+                Text(text = stringResource(R.string.clear_lyrics_cache_confirm))
+            },
+        )
+    }
+    if (clearTranslationCacheDialog) {
+        ActionPromptDialog(
+            title = stringResource(R.string.clear_translation_cache),
+            onDismiss = { clearTranslationCacheDialog = false },
+            onConfirm = {
+                coroutineScope.launch(Dispatchers.IO) {
+                    LyricsTranslationHelper.clearTranslationCache(database)
+                }
+                clearTranslationCacheDialog = false
+            },
+            onCancel = { clearTranslationCacheDialog = false },
+            content = {
+                Text(text = stringResource(R.string.clear_translation_cache_confirm))
             },
         )
     }
@@ -448,6 +485,22 @@ fun StorageSettings(
                         title = { Text(stringResource(R.string.clear_song_cache)) },
                         onClick = {
                             clearCacheDialog = true
+                        },
+                    ),
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.translate),
+                        title = { Text(stringResource(R.string.clear_translation_cache)) },
+                        description = { Text(stringResource(R.string.clear_translation_cache_desc)) },
+                        onClick = {
+                            clearTranslationCacheDialog = true
+                        },
+                    ),
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.lyrics),
+                        title = { Text(stringResource(R.string.clear_lyrics_cache)) },
+                        description = { Text(stringResource(R.string.clear_lyrics_cache_desc)) },
+                        onClick = {
+                            clearLyricsCacheDialog = true
                         },
                     ),
                 ),

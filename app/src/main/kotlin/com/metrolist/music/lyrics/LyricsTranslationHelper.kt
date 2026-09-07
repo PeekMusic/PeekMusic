@@ -66,6 +66,18 @@ object LyricsTranslationHelper {
         )
     }
 
+    /**
+     * Clears the whole translation cache: the in-memory map and all persisted
+     * translations in the database (per-song lyrics entities are kept).
+     */
+    suspend fun clearTranslationCache(database: MusicDatabase) {
+        translationCache.clear()
+        _hasActiveTranslations.value = false
+        database.query {
+            clearAllLyricsTranslations()
+        }
+    }
+
     fun cancelTranslation() {
         translationJob?.cancel()
         if (_status.value is TranslationStatus.Translating) {

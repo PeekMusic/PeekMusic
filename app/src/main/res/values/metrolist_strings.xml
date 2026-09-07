@@ -674,6 +674,13 @@
 
     <!-- AI Lyrics Translation -->
     <string name="ai_lyrics_translation">Translation</string>
+    <string name="clear_translation_cache">Clear translation cache</string>
+    <string name="clear_translation_cache_desc">Removes all lyric translations saved on this device</string>
+    <string name="clear_translation_cache_confirm">All saved lyric translations will be removed. They can be re-translated at any time. Continue?</string>
+    <string name="clear_lyrics_cache">Clear lyrics cache</string>
+    <string name="clear_lyrics_cache_desc">Removes all lyrics saved on this device so they are fetched fresh from the providers</string>
+    <string name="clear_lyrics_cache_confirm">All saved lyrics will be removed. They will be downloaded again when you open a song. Continue?</string>
+    <string name="clear_all">Clear all</string>
     <string name="ai_translating_lyrics">Translating lyrics…</string>
     <string name="ai_lyrics_translated">Lyrics translated</string>
     <string name="ai_target_language">Target language</string>

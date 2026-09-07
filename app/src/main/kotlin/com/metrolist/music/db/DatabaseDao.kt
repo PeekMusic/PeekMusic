@@ -1947,6 +1947,12 @@ interface DatabaseDao {
     @Upsert
     fun upsert(lyrics: LyricsEntity)
 
+    @Query("UPDATE lyrics SET translatedLyrics = '', translationLanguage = '', translationMode = ''")
+    fun clearAllLyricsTranslations()
+
+    @Query("DELETE FROM lyrics")
+    fun clearAllLyrics()
+
     @Upsert
     fun upsert(format: FormatEntity)
 
