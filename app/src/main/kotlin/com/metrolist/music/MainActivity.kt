@@ -505,7 +505,12 @@ class MainActivity : FragmentActivity() {
                     val preferences = dataStore.data.first()
                     val notificationsEnabled = preferences[UpdateNotificationsEnabledKey] ?: true
                     val (releaseInfo, hasUpdate) = Updater.checkForUpdate().getOrNull() ?: (null to false)
-                    releaseInfo?.let { onLatestVersionNameChange(it.versionName) }
+                    // Only surface the version when it's actually newer, and use the tag —
+                    // the release NAME ("DripMusic 0.5.0") never equals BASE_VERSION_NAME,
+                    // so an unguarded/unstripped comparison would badge permanently.
+                    if (hasUpdate) {
+                        releaseInfo?.let { onLatestVersionNameChange(it.tagName.removePrefix("v")) }
+                    }
 
                     val standaloneUpdate =
                         releaseInfo
