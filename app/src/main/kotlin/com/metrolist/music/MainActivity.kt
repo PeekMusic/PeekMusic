@@ -1379,6 +1379,7 @@ class MainActivity : FragmentActivity() {
                                         navController = navController,
                                         scrollBehavior = topAppBarScrollBehavior,
                                         latestVersionName = latestVersionName,
+                                        onLatestVersionNameChange = onLatestVersionNameChange,
                                         activity = this@MainActivity,
                                         snackbarHostState = snackbarHostState,
                                     )

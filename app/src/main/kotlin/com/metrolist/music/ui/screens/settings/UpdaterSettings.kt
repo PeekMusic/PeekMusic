@@ -24,6 +24,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,7 +56,8 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdaterScreen(
-    navController: NavController
+    navController: NavController,
+    onLatestVersionNameChange: (String) -> Unit = {},
 ) {
     val (checkForUpdates, onCheckForUpdatesChange) = rememberPreference(CheckForUpdatesKey, true)
     val (updateNotifications, onUpdateNotificationsChange) = rememberPreference(UpdateNotificationsEnabledKey, true)
@@ -87,6 +89,8 @@ fun UpdaterScreen(
                             latestVersion = info.versionName
                             updateAvailable = hasUpdate
                             changelogContent = info.description
+                            // Light up the update badges (profile picture, settings entries) immediately
+                            if (hasUpdate) onLatestVersionNameChange(info.versionName)
                         }
                     }.onFailure {
                         checkError = String.format(failedToCheckUpdatesTemplate, it.message ?: "Unknown error")
@@ -94,6 +98,11 @@ fun UpdaterScreen(
             }
             isChecking = false
         }
+    }
+
+    // Check for updates automatically once when the screen is opened
+    LaunchedEffect(Unit) {
+        performManualCheck()
     }
 
     Column(

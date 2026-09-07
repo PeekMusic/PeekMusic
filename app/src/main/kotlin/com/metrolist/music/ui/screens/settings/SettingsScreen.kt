@@ -234,6 +234,7 @@ fun SettingsScreen(
                         Material3SettingsItem(
                             icon = painterResource(R.drawable.update),
                             title = { Text(stringResource(R.string.updater)) },
+                            showBadge = Updater.isUpdateAvailable(BuildConfig.BASE_VERSION_NAME, latestVersionName),
                             onClick = { navController.navigate("settings/updater") }
                         )
                     )

@@ -75,6 +75,7 @@ fun NavGraphBuilder.navigationBuilder(
     navController: NavHostController,
     scrollBehavior: TopAppBarScrollBehavior,
     latestVersionName: String,
+    onLatestVersionNameChange: (String) -> Unit,
     activity: Activity,
     snackbarHostState: SnackbarHostState,
 ) {
@@ -426,7 +427,7 @@ fun NavGraphBuilder.navigationBuilder(
     }
 
     composable("settings/updater") {
-        UpdaterScreen(navController)
+        UpdaterScreen(navController, onLatestVersionNameChange)
     }
 
     composable("settings/about") {
