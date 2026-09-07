@@ -75,6 +75,7 @@ import com.metrolist.music.LocalPlayerConnection
 import com.metrolist.music.R
 import com.metrolist.music.constants.CropAlbumArtKey
 import com.metrolist.music.constants.HidePlayerThumbnailKey
+import com.metrolist.music.constants.ShowPlayerLyricsPeekKey
 import com.metrolist.music.constants.PlayerBackgroundStyle
 import com.metrolist.music.constants.PlayerBackgroundStyleKey
 import com.metrolist.music.constants.PlayerHorizontalPadding
@@ -507,6 +508,7 @@ private fun ThumbnailItem(
     val incrementalSeekSkipEnabled by rememberPreference(SeekExtraSeconds, defaultValue = false)
     var skipMultiplier by remember { mutableIntStateOf(1) }
     var lastTapTime by remember { mutableLongStateOf(0L) }
+    val showLyricsPeek by rememberPreference(ShowPlayerLyricsPeekKey, true)
 
     Box(
         modifier = modifier
@@ -520,6 +522,7 @@ private fun ThumbnailItem(
                 }
             )
             .padding(horizontal = PlayerHorizontalPadding)
+            .then(if (isLandscape || !showLyricsPeek) Modifier else Modifier.padding(top = 64.dp))
             .graphicsLayer {
                 // Render entire thumbnail item on separate hardware layer for smooth animations
                 compositingStrategy = CompositingStrategy.Offscreen
@@ -555,7 +558,12 @@ private fun ThumbnailItem(
                     }
                 )
             },
-        contentAlignment = Alignment.Center
+        contentAlignment =
+            when {
+                isLandscape -> Alignment.Center
+                showLyricsPeek -> Alignment.TopCenter
+                else -> Alignment.Center
+            }
     ) {
         Box(
             modifier = Modifier

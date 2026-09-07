@@ -54,6 +54,7 @@ import com.metrolist.music.constants.AutoPickBestLyricsKey
 import com.metrolist.music.constants.EnableMusixmatchKey
 import com.metrolist.music.constants.EnableSimpMusicKey
 import com.metrolist.music.constants.ExperimentalLyricsKey
+import com.metrolist.music.constants.ShowPlayerLyricsPeekKey
 import com.metrolist.music.constants.HideStatusBarOnFullscreenKey
 import com.metrolist.music.constants.LyricsAnimationStyle
 import com.metrolist.music.constants.LyricsAnimationStyleKey
@@ -102,6 +103,7 @@ fun LyricsSettings(
         )
     val (respectAgentPositioning, onRespectAgentPositioningChange) = rememberPreference(RespectAgentPositioningKey, defaultValue = true)
     val (experimentalLyrics, onExperimentalLyricsChange) = rememberPreference(ExperimentalLyricsKey, defaultValue = true)
+    val (playerLyricsPeek, onPlayerLyricsPeekChange) = rememberPreference(ShowPlayerLyricsPeekKey, defaultValue = true)
 
     val (lyricsGlowEffect, onLyricsGlowEffectChange) = rememberPreference(LyricsGlowEffectKey, defaultValue = false)
     val (lyricsAnimationStyle, onLyricsAnimationStyleChange) =
@@ -674,6 +676,31 @@ fun LyricsSettings(
                                     onExperimentalLyricsChange(false)
                                 }
                             },
+                        ),
+                    )
+
+                    add(
+                        Material3SettingsItem(
+                            icon = painterResource(R.drawable.lyrics),
+                            title = { Text(stringResource(R.string.player_lyrics_peek)) },
+                            description = { Text(stringResource(R.string.player_lyrics_peek_desc)) },
+                            trailingContent = {
+                                Switch(
+                                    checked = playerLyricsPeek,
+                                    onCheckedChange = onPlayerLyricsPeekChange,
+                                    thumbContent = {
+                                        Icon(
+                                            painter =
+                                                painterResource(
+                                                    id = if (playerLyricsPeek) R.drawable.check else R.drawable.close,
+                                                ),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    },
+                                )
+                            },
+                            onClick = { onPlayerLyricsPeekChange(!playerLyricsPeek) },
                         ),
                     )
 

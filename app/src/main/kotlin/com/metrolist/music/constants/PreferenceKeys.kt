@@ -463,6 +463,7 @@ val LyricsLineSpacingKey = floatPreferencesKey("lyricsLineSpacing")
 val RespectAgentPositioningKey = booleanPreferencesKey("respectAgentPositioning")
 val ShowIntervalIndicatorKey = booleanPreferencesKey("showIntervalIndicator")
 val ExperimentalLyricsKey = booleanPreferencesKey("experimentalLyrics")
+val ShowPlayerLyricsPeekKey = booleanPreferencesKey("showPlayerLyricsPeek")
 
 val PlayerVolumeKey = floatPreferencesKey("playerVolume")
 val SleepTimerDefaultKey = floatPreferencesKey("sleepTimerDefault")

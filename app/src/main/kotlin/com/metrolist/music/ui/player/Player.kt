@@ -15,6 +15,8 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
@@ -24,6 +26,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -79,6 +83,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
@@ -141,14 +146,21 @@ import com.metrolist.music.LocalPlayerConnection
 import com.metrolist.music.R
 import com.metrolist.music.constants.CropAlbumArtKey
 import com.metrolist.music.constants.DarkModeKey
+import com.metrolist.music.constants.ExperimentalLyricsKey
 import com.metrolist.music.constants.HidePlayerThumbnailKey
 import com.metrolist.music.constants.HideStatusBarOnFullscreenKey
 import com.metrolist.music.constants.KeepScreenOn
+import com.metrolist.music.constants.LyricsRomanizeCyrillicByLineKey
+import com.metrolist.music.constants.LyricsRomanizeList
+import com.metrolist.music.constants.LyricsAnimationStyle
+import com.metrolist.music.constants.LyricsAnimationStyleKey
 import com.metrolist.music.constants.PlayerBackgroundStyle
 import com.metrolist.music.constants.PlayerBackgroundStyleKey
 import com.metrolist.music.constants.PlayerButtonsStyle
 import com.metrolist.music.constants.PlayerButtonsStyleKey
 import com.metrolist.music.constants.PlayerHorizontalPadding
+import com.metrolist.music.constants.ShowPlayerLyricsPeekKey
+import com.metrolist.music.constants.ShowIntervalIndicatorKey
 import com.metrolist.music.constants.QueuePeekHeight
 import com.metrolist.music.constants.SleepTimerDefaultKey
 import com.metrolist.music.constants.SleepTimerFadeOutKey
@@ -163,9 +175,11 @@ import com.metrolist.music.extensions.metadata
 import com.metrolist.music.extensions.togglePlayPause
 import com.metrolist.music.extensions.toggleRepeatMode
 import com.metrolist.music.listentogether.RoomRole
+import com.metrolist.music.lyrics.LyricsUtils
 import com.metrolist.music.models.MediaMetadata
 import com.metrolist.music.ui.component.BottomSheet
 import com.metrolist.music.ui.component.BottomSheetState
+import com.metrolist.music.ui.component.IntervalIndicator
 import com.metrolist.music.ui.component.LocalBottomSheetPageState
 import com.metrolist.music.ui.component.LocalMenuState
 import com.metrolist.music.ui.component.Lyrics
@@ -176,6 +190,7 @@ import com.metrolist.music.ui.component.WavySlider
 import com.metrolist.music.ui.component.rememberBottomSheetState
 import com.metrolist.music.ui.menu.PlayerMenu
 import com.metrolist.music.ui.screens.settings.DarkMode
+import com.metrolist.music.ui.screens.settings.defaultList
 import com.metrolist.music.ui.theme.PlayerColorExtractor
 import com.metrolist.music.ui.theme.PlayerSliderColors
 import com.metrolist.music.ui.utils.ShowMediaInfo
@@ -526,6 +541,13 @@ fun BottomSheetPlayer(
                     }
                 }
             }
+        }
+
+    // Matches the lyrics page accent (OriginalLyrics): primary by default, white on blur/gradient
+    val lyricsAccentColor =
+        when (playerBackground) {
+            PlayerBackgroundStyle.BLUR, PlayerBackgroundStyle.GRADIENT -> Color.White
+            PlayerBackgroundStyle.DEFAULT -> MaterialTheme.colorScheme.primary
         }
 
     // Separate colors for Previous/Next buttons in PRIMARY/TERTIARY modes
@@ -1948,6 +1970,18 @@ fun BottomSheetPlayer(
                                 )
                             }
                         }
+
+                        if (!showInlineLyrics) {
+                            PlayerLyricsLine(
+                                positionProvider = { effectivePosition },
+                                contentColor = lyricsAccentColor,
+                                onShowLyrics = { showInlineLyrics = true },
+                                modifier =
+                                    Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 60.dp),
+                            )
+                        }
                     }
 
                     mediaMetadata?.let {
@@ -1988,7 +2022,328 @@ fun BottomSheetPlayer(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+/**
+ * Single-line lyrics peek, placed inside the player's thumbnail column (portrait only).
+ * The surrounding spacers center it between the cover and the player controls.
+ * Shows the currently active synced line (plus romanization when enabled) and opens
+ * the full lyrics pane on click. Styled after the lyrics page, including word-by-word
+ * karaoke when the experimental lyrics view is enabled and word timings exist.
+ */
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+internal fun PlayerLyricsLine(
+    positionProvider: () -> Long,
+    contentColor: Color,
+    onShowLyrics: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val (peekEnabled) = rememberPreference(ShowPlayerLyricsPeekKey, true)
+    if (!peekEnabled) return
+
+    val playerConnection = LocalPlayerConnection.current ?: return
+    val context = LocalContext.current
+    val database = LocalDatabase.current
+
+    val currentLyrics by playerConnection.currentLyrics.collectAsStateWithLifecycle(initialValue = null)
+    val currentSong by playerConnection.currentSong.collectAsStateWithLifecycle(initialValue = null)
+    val mediaMetadata by playerConnection.mediaMetadata.collectAsStateWithLifecycle()
+
+    val romanizeLyricsList = rememberPreference(LyricsRomanizeList, "")
+    val romanizeCyrillicByLine by rememberPreference(LyricsRomanizeCyrillicByLineKey, false)
+
+    // Fetch lyrics even when the full lyrics pane was never opened (same helper as InlineLyricsView)
+    LaunchedEffect(mediaMetadata?.id, currentLyrics) {
+        val metadata = mediaMetadata
+        val id = metadata?.id
+        if (id != null && currentLyrics == null) {
+            delay(500)
+            withContext(Dispatchers.IO) {
+                try {
+                    if (database.lyrics(id).first() != null) return@withContext
+                    val entryPoint =
+                        EntryPointAccessors.fromApplication(
+                            context.applicationContext,
+                            com.metrolist.music.di.LyricsHelperEntryPoint::class.java,
+                        )
+                    val fetched = entryPoint.lyricsHelper().getLyrics(metadata)
+                    database.query {
+                        upsert(LyricsEntity(id, fetched.lyrics, fetched.provider))
+                    }
+                } catch (_: Exception) {
+                    // Mark as not-found so the peek doesn't spin forever
+                    database.query {
+                        upsert(LyricsEntity(id, LyricsEntity.LYRICS_NOT_FOUND))
+                    }
+                }
+            }
+        }
+    }
+
+    val lyricsText = remember(currentLyrics) { currentLyrics?.lyrics?.trim() }
+    if (lyricsText == LyricsEntity.LYRICS_NOT_FOUND) return
+    if (lyricsText.isNullOrEmpty()) {
+        // Still searching — same indicator as the full lyrics view
+        ContainedLoadingIndicator(modifier = modifier)
+        return
+    }
+
+    val entries = remember(lyricsText) { LyricsUtils.parseLyrics(lyricsText) }
+    // Only meaningful for synced lyrics; unsynced entries all sit at time 0
+    val syncedEntries = entries.filter { !it.isBackground && it.time > 0 && it.text.isNotBlank() }
+
+    // Drive line changes and the interval ring with a position ticker — without it the
+    // current line would be evaluated once per composition and never update as playback advances
+    var position by remember { mutableLongStateOf(positionProvider()) }
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            position = positionProvider()
+            delay(250)
+        }
+    }
+
+    val activeLine = syncedEntries.lastOrNull { it.time <= position }
+    val showIntervalIndicator by rememberPreference(ShowIntervalIndicatorKey, true)
+
+    // Gap ring: shown before the first line (intro) and during long instrumental gaps —
+    // same 4s threshold as the full lyrics view (LyricsViewModel)
+    val gapRange =
+        if (showIntervalIndicator) {
+            val nextEntry =
+                if (activeLine == null) {
+                    syncedEntries.firstOrNull()
+                } else {
+                    syncedEntries.getOrNull(syncedEntries.indexOf(activeLine) + 1)
+                }
+            val gapStart =
+                when {
+                    activeLine == null -> 0L
+                    else ->
+                        activeLine.words?.lastOrNull()?.let { (it.endTime * 1000).toLong() }
+                            ?: if (activeLine.text.isBlank()) activeLine.time else null
+                }
+            if (nextEntry != null && gapStart != null && nextEntry.time - gapStart > 4000L) {
+                gapStart to nextEntry.time
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+
+    if (gapRange != null) {
+        Column(
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = PlayerHorizontalPadding)
+                    .clickable(onClick = onShowLyrics),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            IntervalIndicator(
+                gapStartMs = gapRange.first,
+                gapEndMs = gapRange.second - 650L,
+                currentPositionMs = position,
+                visible = position >= gapRange.first && position < gapRange.second - 650L,
+                color = contentColor,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        return
+    }
+
+    val currentLine = activeLine ?: return
+
+    val decodedList =
+        if (romanizeLyricsList.value.isEmpty()) {
+            defaultList
+        } else {
+            romanizeLyricsList.value.split(",").map { entry ->
+                val (lang, checked) = entry.split(":")
+                lang to checked.toBoolean()
+            }
+        }
+    val enabledLanguages = decodedList.filter { (_, checked) -> checked }.map { (lang, _) -> lang }
+
+    val romanizedLine by produceState<String?>(
+        initialValue = null,
+        currentLine.text,
+        lyricsText,
+        enabledLanguages,
+        romanizeCyrillicByLine,
+        currentSong?.romanizeLyrics,
+    ) {
+        value =
+            if (currentSong?.romanizeLyrics == true && enabledLanguages.isNotEmpty()) {
+                LyricsUtils.romanize(
+                    text = lyricsText,
+                    line = currentLine.text,
+                    enabledLanguages = enabledLanguages,
+                    romanizeCyrillicByLine = romanizeCyrillicByLine,
+                )
+            } else {
+                null
+            }
+    }
+
+    val lyricsAnimationStyle by rememberEnumPreference(LyricsAnimationStyleKey, LyricsAnimationStyle.APPLE)
+    val experimentalLyrics by rememberPreference(ExperimentalLyricsKey, true)
+
+    // Word-by-word karaoke, matching the experimental lyrics view (only when it is enabled
+    // and the current line actually has word timings)
+    val wordSyncActive = experimentalLyrics && currentLine.words?.isNotEmpty() == true
+    var wordPosition by remember { mutableLongStateOf(0L) }
+    LaunchedEffect(wordSyncActive, currentLine.text) {
+        if (!wordSyncActive) return@LaunchedEffect
+        while (isActive) {
+            wordPosition = positionProvider()
+            delay(50)
+        }
+    }
+
+    // Keep the block height stable per song: when romanization is enabled, the sub-line is
+    // always rendered (empty when there is nothing to show) so the main line never shifts.
+    val romanizationActive = currentSong?.romanizeLyrics == true && enabledLanguages.isNotEmpty()
+    val romanizedSub =
+        if (romanizationActive) {
+            romanizedLine
+                ?.takeIf { it.isNotBlank() && !it.trim().equals(currentLine.text.trim(), ignoreCase = true) }
+                .orEmpty()
+        } else {
+            ""
+        }
+
+    val mainLineStyle =
+        MaterialTheme.typography.titleMedium.copy(
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.5).sp,
+        )
+
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = PlayerHorizontalPadding)
+                .clickable(onClick = onShowLyrics),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        AnimatedContent(
+            targetState = currentLine.text to romanizedSub,
+            transitionSpec = {
+                when (lyricsAnimationStyle) {
+                    LyricsAnimationStyle.NONE ->
+                        EnterTransition.None togetherWith ExitTransition.None
+
+                    LyricsAnimationStyle.FADE ->
+                        fadeIn(tween(durationMillis = 200)) togetherWith fadeOut(tween(durationMillis = 200))
+
+                    LyricsAnimationStyle.SLIDE ->
+                        (
+                            slideInVertically(tween(durationMillis = 200)) { it / 3 } +
+                                fadeIn(tween(durationMillis = 200))
+                        ) togetherWith (
+                            slideOutVertically(tween(durationMillis = 200)) { -it / 3 } +
+                                fadeOut(tween(durationMillis = 200))
+                        )
+
+                    else ->
+                        (
+                            fadeIn(tween(durationMillis = 200)) +
+                                scaleIn(initialScale = 0.92f, animationSpec = tween(durationMillis = 200))
+                        ) togetherWith (
+                            fadeOut(tween(durationMillis = 150)) +
+                                scaleOut(targetScale = 0.95f, animationSpec = tween(durationMillis = 150))
+                        )
+                }
+            },
+            label = "playerLyricsLine",
+        ) { target ->
+            val line = target.first
+            val romanized = target.second
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                if (wordSyncActive) {
+                    val styledText =
+                        buildAnnotatedString {
+                            val words = currentLine.words.orEmpty()
+                            words.forEachIndexed { index, word ->
+                                val wordStartMs = (word.startTime * 1000).toLong()
+                                val wordEndMs = (word.endTime * 1000).toLong()
+                                val wordDuration = wordEndMs - wordStartMs
+                                val isWordActive = wordPosition >= wordStartMs && wordPosition < wordEndMs
+                                val hasWordPassed = wordPosition >= wordEndMs
+                                val progress =
+                                    if (isWordActive && wordDuration > 0) {
+                                        (wordPosition - wordStartMs).toFloat() / wordDuration
+                                    } else if (hasWordPassed) {
+                                        1f
+                                    } else {
+                                        0f
+                                    }.coerceIn(0f, 1f)
+                                val smoothProgress = progress * progress * (3f - 2f * progress)
+                                val wordAlpha =
+                                    when {
+                                        hasWordPassed -> 1f
+                                        isWordActive -> 0.55f + 0.45f * smoothProgress
+                                        else -> 0.4f
+                                    }
+                                val wordWeight =
+                                    when {
+                                        hasWordPassed -> FontWeight.Bold
+                                        isWordActive -> FontWeight.ExtraBold
+                                        else -> FontWeight.Normal
+                                    }
+                                withStyle(
+                                    SpanStyle(
+                                        color = contentColor.copy(alpha = wordAlpha),
+                                        fontWeight = wordWeight,
+                                    ),
+                                ) {
+                                    append(word.text)
+                                    // Always separate words with a space so wrapping only
+                                    // happens at word boundaries (some providers omit them)
+                                    if (index < words.size - 1) append(" ")
+                                }
+                            }
+                        }
+                    Text(
+                        text = styledText,
+                        style = mainLineStyle,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                } else {
+                    Text(
+                        text = line,
+                        style = mainLineStyle,
+                        color = contentColor,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                if (romanizationActive) {
+                    Text(
+                        text = romanized,
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
+                        color = contentColor.copy(alpha = 0.6f),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun InlineLyricsView(
     mediaMetadata: MediaMetadata?,
