@@ -25,12 +25,19 @@ screen, lyrics, the player — gets extra polish.
 - Home screen and player animations reworked (rendering off the main thread, fewer database observers, draw-phase animation progress)
 - Configurable queue pre-caching: buffer up to 8 upcoming songs while you listen, so skips are instant.
 - Crossfade follows an equal-power curve — no more audible volume dips between songs.
+- Search stays out of your way: at most 4 autocomplete suggestions, then straight to music results.
 
 **Lyrics, taken seriously**
 - More providers: SimpMusic and Musixmatch joined the existing ones (BetterLyrics, Paxsenix, LrcLib, KuGou, LyricsPlus, YouTube).
 - Auto-pick best provider: the app finds the best synced lyrics per song on its own, preferring word-by-word (karaoke-style) results. Prefer a specific provider? Reorder or search manually — results are grouped by source.
 - Free, keyless lyric translation — no API keys, no accounts. (Rate Limits may apply). Mixed-language songs translate completely, identical lines are never shown twice. 
 - Full cache control: clear translation or lyrics caches any time in Settings → Storage.
+- **Lyrics peek**: the active line lives right in the player, between the cover and the title — with karaoke highlighting, romanization and a ring that fills during instrumental passages. One tap opens the full lyrics view; disable it in Settings → Songtexte if you prefer a clean player.
+
+**A home feed that stays configured**
+- Sections are matched against fixed categories, so hiding one (e.g. "Similar to") really hides all of them — no surprises when more content loads.
+- No endless scrolling: the feed stays exactly as you arranged it.
+- Section options are only available while logged in (they only affect the YouTube feed anyway).
 
 **A settings menu that makes sense**
 - Options grouped into focused pages instead of endless scrolling (Player design, Audio, Queue, Sleep & Alarm, Lyrics, Home screen, …).

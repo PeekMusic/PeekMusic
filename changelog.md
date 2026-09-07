@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.4.0
+
+- Lyrics peek in the player: the currently active line now lives right between
+  the cover and the title — no more flipping to the lyrics page just to see
+  what's being sung. It follows your lyrics animation style, does word-by-word
+  karaoke when timings are available, shows romanization underneath, and a tap
+  opens the full lyrics view. While the search runs you get the same loading
+  spinner as the lyrics page, and during long instrumental passages (or before
+  the first line) a ring fills up until the lyrics return. Can be turned off in
+  Settings → Songtexte
+- Home screen: YouTube sections are now matched against a fixed list of known
+  categories, so hidden sections stay hidden; endless scrolling is disabled to
+  keep the feed exactly what you configured
+- Search: autocomplete shows at most 4 suggestions before jumping straight to
+  music results
+- Settings: home screen section options are only available while logged in
+  (they only affect the YouTube feed anyway) and say so when disabled
+- Fixes: word-by-word lyrics from richsync providers no longer lose their
+  spaces between words
+
 ## v0.2.0
 
 - Free lyrics translation: replaced the AI translation (OpenRouter/DeepL API

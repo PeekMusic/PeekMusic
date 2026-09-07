@@ -19,7 +19,7 @@ fun keystoreSecret(propertyKey: String, envKey: String): String? =
         ?: System.getenv(envKey)?.takeIf { it.isNotBlank() }
 
 val baseApplicationId = "com.dripmusic.app"
-val dripVersionName = "0.3.0"
+val dripVersionName = "0.4.0"
 val applicationIdOverride = System.getenv("METROLIST_APPLICATION_ID")?.takeIf { it.isNotBlank() }
 val appNameOverride = System.getenv("METROLIST_APP_NAME")?.takeIf { it.isNotBlank() }
 val buildCommit =
@@ -52,7 +52,7 @@ android {
         applicationId = applicationIdOverride ?: baseApplicationId
         minSdk = 26
         targetSdk = 36
-        versionCode = 155
+        versionCode = 156
         versionName = dripVersionName
         val baseVersionName = requireNotNull(versionName)
         buildConfigField("String", "BASE_VERSION_NAME", "\"$baseVersionName\"")
