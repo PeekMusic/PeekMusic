@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5.1
+
+- Fix: the update badge (red dot on the profile picture) no longer shows on the
+  latest release — the version check now compares against the release tag
+  instead of the release title
+
 ## v0.5.0
 
 - Lyrics peek everywhere: in landscape (folded and unfolded) the peek line and
