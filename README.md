@@ -4,26 +4,52 @@
 
 # DripMusic
 
-### Material 3 YouTube Music client for Android — a performance-focused fork of [Metrolist](https://github.com/MetrolistGroup/Metrolist)
+### A YouTube Music client for Android that only keeps what you actually use — a fork of [Metrolist](https://github.com/MetrolistGroup/Metrolist)
 
 </div>
 
 DripMusic is a personal fork of [Metrolist](https://github.com/MetrolistGroup/Metrolist),
-a third-party YouTube Music client. It keeps everything that makes Metrolist great and
-puts extra work into the things that matter day-to-day: smooth scrolling, fast loading
-and a home screen you can actually shape to your taste.
+a third-party YouTube Music client. The idea is simple: **less noise, more convenience.**
+Everything that gets in the way — features nobody asked for, clutter in the settings,
+janky animations — gets removed or reworked. Everything you touch every day — the home
+screen, lyrics, the player — gets extra polish.
 
-## What's different from Metrolist
+## What's different (and why it's better)
 
-- **Performance fixes** — home screen jank fixes: widget rendering moved off the main
-  thread, one Room flow per home section instead of one per item, player expand
-  animation reads its progress in the draw phase, thumbnail loading resized.
-- **Configurable home screen** — toggles for every home section, including a
-  dedicated **speed dial** grid, plus a master toggle that hides all YouTube
-  recommendation sections (home rows, mixes, similar-to, moods & genres) including
-  their network requests.
-- **Easy release builds** — release APKs are signed directly by Gradle when keystore
-  environment variables are set (see below), no manual signing step.
+**A home screen you actually control**
+- Reorder *all* sections — including the YouTube-generated ones — with drag & drop, and hide any section you don't want to see. Hiding a category (like "Similar to") hides all of its instances.
+- Optional shuffle ordering for a fresh layout on every start.
+- App-generated sections (quick picks, forgotten favorites, …) are separate from YouTube's content: off by default when you're logged in, on when you're not.
+- A calmer loading experience with shimmer placeholders instead of sections popping in one by one.
+
+**Smoother where it matters**
+- Home screen and player animations reworked (rendering off the main thread, fewer database observers, draw-phase animation progress) — scrolling stays smooth even with many sections loaded.
+- Configurable queue pre-caching: buffer up to 8 upcoming songs while you listen, so skips are instant.
+- Crossfade follows an equal-power curve — no more audible volume dips between songs.
+
+**Lyrics, taken seriously**
+- More providers: SimpMusic and Musixmatch joined the existing ones (BetterLyrics, Paxsenix, LrcLib, KuGou, LyricsPlus, YouTube).
+- Auto-pick best provider: the app finds the best synced lyrics per song on its own, preferring word-by-word (karaoke-style) results. Prefer a specific provider? Reorder or search manually — results are grouped by source.
+- Free, keyless lyric translation — no API keys, no accounts. Mixed-language songs translate completely (a mostly-English track with Korean lines gets *every* line translated, in both directions), identical lines are never shown twice, and rate limits produce a friendly message instead of an error code.
+- Full cache control: clear translation or lyrics caches any time in Settings → Storage.
+
+**A settings menu that makes sense**
+- Options grouped into focused pages instead of endless scrolling (Player design, Audio, Queue, Sleep & Alarm, Lyrics, Home screen, …).
+- Android Auto: choose whether recommendations come from your YouTube home feed or local suggestions.
+
+**Updates without the hunt**
+- The in-app updater checks this fork's GitHub releases directly.
+- The update badge shows on your profile picture, the settings entry and the Updater page — and opening Updater checks automatically.
+
+## What's been removed
+
+Things this fork deliberately doesn't carry:
+
+- **Discord and Last.fm integrations** — and their settings pages.
+- **YouTube channel switching** — one account at a time; sign out and back in to change. (Also fixes the half-broken "switch account" flow.)
+- **AI lyric translation behind API keys** — replaced by the free keyless translation above.
+- **Zemer and YouTube Subtitle lyrics providers** — replaced by SimpMusic and Musixmatch.
+- **Social buttons and contributor lists** in About — the about page is lean: app, version, maintainer, GitHub link.
 
 ## Build
 
