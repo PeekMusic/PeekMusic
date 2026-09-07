@@ -7,6 +7,7 @@ package com.metrolist.music.lyrics
 
 import android.content.Context
 import android.util.LruCache
+import com.metrolist.music.constants.AutoPickBestLyricsKey
 import com.metrolist.music.constants.LyricsProviderOrderKey
 import com.metrolist.music.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
 import com.metrolist.music.models.MediaMetadata
@@ -70,11 +71,21 @@ constructor(
         val result = withTimeoutOrNull(MAX_LYRICS_FETCH_MS) {
             val cleanedTitle = LyricsUtils.cleanTitleForSearch(mediaMetadata.title)
             val enabledProviders = orderedProviders.filter { it.isEnabled(context) }
+            val autoPick = context.dataStore.data.first()[AutoPickBestLyricsKey] ?: true
+            val providersToTry =
+                if (autoPick) {
+                    LyricsProviderRegistry.autoPickOrder
+                        .mapNotNull { LyricsProviderRegistry.getProviderByName(it) }
+                        .filter { it.isEnabled(context) }
+                } else {
+                    enabledProviders
+                }
 
             Timber.tag("LyricsHelper").d("Starting sequential fetch for: $cleanedTitle by ${mediaMetadata.artists.joinToString { it.name }}")
-            Timber.tag("LyricsHelper").d("Enabled providers in order: ${enabledProviders.joinToString { it.name }}")
+            Timber.tag("LyricsHelper").d("Enabled providers in order: ${providersToTry.joinToString { it.name }}")
 
-            for (provider in enabledProviders) {
+            var firstAvailable: LyricsWithProvider? = null
+            for (provider in providersToTry) {
                 Timber.tag("LyricsHelper").d("Trying provider: ${provider.name}")
                 val providerResult = try {
                     withTimeoutOrNull(PER_PROVIDER_TIMEOUT_MS) {
@@ -97,11 +108,21 @@ constructor(
                 if (providerResult != null && providerResult.isSuccess) {
                     Timber.tag("LyricsHelper").i("Got lyrics from ${provider.name}")
                     val filtered = LyricsUtils.filterLyricsCreditLines(providerResult.getOrNull()!!)
-                    return@withTimeoutOrNull LyricsWithProvider(filtered, provider.name)
+                    if (!autoPick || LyricsUtils.isWordSynced(filtered)) {
+                        return@withTimeoutOrNull LyricsWithProvider(filtered, provider.name)
+                    }
+                    if (firstAvailable == null) {
+                        firstAvailable = LyricsWithProvider(filtered, provider.name)
+                    }
                 } else {
                     val errorMsg = providerResult?.exceptionOrNull()?.message ?: "timeout or exception"
                     Timber.tag("LyricsHelper").w("${provider.name} failed: $errorMsg")
                 }
+            }
+
+            if (firstAvailable != null) {
+                Timber.tag("LyricsHelper").i("No word-synced lyrics, using first available from ${firstAvailable.provider}")
+                return@withTimeoutOrNull firstAvailable
             }
 
             Timber.tag("LyricsHelper").w("No lyrics found after checking all providers")

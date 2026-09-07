@@ -139,6 +139,9 @@
     <string name="enable_musixmatch_desc">Large catalog of synced lyrics, including word-by-word timings</string>
     <string name="enable_simp_music">Enable SimpMusic</string>
     <string name="enable_simp_music_desc">Community lyrics database, matched by YouTube video, often with word-by-word timings</string>
+    <string name="auto_pick_best_lyrics">Auto-pick best lyrics</string>
+    <string name="auto_pick_best_lyrics_desc">Prefers word-by-word synced lyrics from any provider before falling back to the first available result. Provider order is fixed while this is on.</string>
+    <string name="lyrics_word_synced">Word-by-word</string>
     <string name="enable_paxsenix">Enable Paxsenix</string>
     <string name="enable_paxsenix_desc">High-quality synchronized lyrics from Paxsenix API</string>
     <string name="enable_lyricsplus">Enable LyricsPlus</string>

@@ -36,6 +36,22 @@ object LyricsProviderRegistry {
         return providers.filter { it in providerNames }.joinToString(",")
     }
 
+    /**
+     * Fixed order used when "auto-pick best lyrics" is enabled: word-by-word
+     * capable sources first, then the plain synced fallbacks. YouTube always
+     * remains the automatic last resort.
+     */
+    val autoPickOrder: List<String> = listOf(
+        "BetterLyrics",
+        "Paxsenix",
+        "Musixmatch",
+        "LyricsPlus",
+        "SimpMusic",
+        "LrcLib",
+        "KuGou",
+        "YouTube",
+    )
+
     fun getDefaultProviderOrder(): List<String> = listOf(
         "BetterLyrics",
         "Musixmatch",

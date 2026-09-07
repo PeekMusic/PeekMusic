@@ -242,77 +242,143 @@ fun LyricsMenu(
         val results by viewModel.results.collectAsStateWithLifecycle()
         val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
-        var expandedItemIndex by rememberSaveable {
-            mutableIntStateOf(-1)
+        var expandedText by rememberSaveable {
+            mutableStateOf<String?>(null)
         }
+        var expandedProviders by rememberSaveable {
+            mutableStateOf(listOf<String>())
+        }
+        // Expand the first provider's results by default once they arrive
+        LaunchedEffect(results) {
+            if (expandedProviders.isEmpty() && results.isNotEmpty()) {
+                expandedProviders = listOf(results.first().providerName)
+            }
+        }
+
+        // Grouped by provider (insertion order preserved) so providers that
+        // return multiple texts (e.g. KuGou) don't blow up the list
+        val groupedResults = results.groupBy { it.providerName }
 
         ListDialog(
             onDismiss = { showSearchResultDialog = false },
         ) {
-            itemsIndexed(results) { index, result ->
-                Row(
-                    modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            onDismiss()
-                            viewModel.cancelSearch()
-                            database.query {
-                                upsert(
-                                    LyricsEntity(
-                                        id = searchMediaMetadata.id,
-                                        lyrics = result.lyrics,
-                                        provider = result.providerName,
-                                    ),
-                                )
+            groupedResults.forEach { (providerName, providerResults) ->
+                val expanded = providerName in expandedProviders
+                item(key = "header_$providerName") {
+                    Row(
+                        modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                expandedProviders =
+                                    if (expanded) expandedProviders - providerName
+                                    else expandedProviders + providerName
                             }
-                        }
-                        .padding(12.dp)
-                        .animateContentSize(),
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = result.lyrics,
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = if (index == expandedItemIndex) Int.MAX_VALUE else 2,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(bottom = 4.dp),
+                            text = providerName,
+                            style = MaterialTheme.typography.titleSmall,
+                            modifier = Modifier.weight(1f),
                         )
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                text = result.providerName,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.secondary,
-                                maxLines = 1,
+                        if (providerResults.any { it.lyrics.startsWith("[") }) {
+                            Icon(
+                                painter = painterResource(R.drawable.sync),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary,
+                                modifier =
+                                Modifier
+                                    .padding(end = 8.dp)
+                                    .size(18.dp),
                             )
-                            if (result.lyrics.startsWith("[")) {
+                        }
+                        Text(
+                            text = providerResults.size.toString(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(end = 8.dp),
+                        )
+                        Icon(
+                            painter = painterResource(if (expanded) R.drawable.expand_less else R.drawable.expand_more),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+
+                if (expanded) {
+                    itemsIndexed(
+                        providerResults,
+                        key = { index, result -> "${providerName}_${index}_${result.lyrics.hashCode()}" },
+                    ) { _, result ->
+                        Row(
+                            modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onDismiss()
+                                    viewModel.cancelSearch()
+                                    database.query {
+                                        upsert(
+                                            LyricsEntity(
+                                                id = searchMediaMetadata.id,
+                                                lyrics = result.lyrics,
+                                                provider = result.providerName,
+                                            ),
+                                        )
+                                    }
+                                }
+                                .padding(horizontal = 12.dp)
+                                .padding(start = 16.dp)
+                                .animateContentSize(),
+                        ) {
+                            Column(
+                                modifier = Modifier.weight(1f),
+                            ) {
+                                Text(
+                                    text = result.lyrics,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    maxLines = if (expandedText == result.lyrics) Int.MAX_VALUE else 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.padding(bottom = 4.dp),
+                                )
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    if (result.lyrics.startsWith("[")) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.sync),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.secondary,
+                                            modifier =
+                                            Modifier
+                                                .padding(end = 4.dp)
+                                                .size(18.dp),
+                                        )
+                                    }
+                                    if (LyricsUtils.isWordSynced(result.lyrics)) {
+                                        Text(
+                                            text = stringResource(R.string.lyrics_word_synced),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = MaterialTheme.colorScheme.tertiary,
+                                        )
+                                    }
+                                }
+                            }
+
+                            IconButton(
+                                onClick = {
+                                    expandedText = if (expandedText == result.lyrics) null else result.lyrics
+                                },
+                            ) {
                                 Icon(
-                                    painter = painterResource(R.drawable.sync),
+                                    painter = painterResource(if (expandedText == result.lyrics) R.drawable.expand_less else R.drawable.expand_more),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.secondary,
-                                    modifier =
-                                    Modifier
-                                        .padding(start = 4.dp)
-                                        .size(18.dp),
                                 )
                             }
                         }
-                    }
-
-                    IconButton(
-                        onClick = {
-                            expandedItemIndex = if (expandedItemIndex == index) -1 else index
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(if (index == expandedItemIndex) R.drawable.expand_less else R.drawable.expand_more),
-                            contentDescription = null,
-                        )
                     }
                 }
             }

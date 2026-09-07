@@ -50,6 +50,7 @@ import com.metrolist.music.constants.EnableKugouKey
 import com.metrolist.music.constants.EnableLrcLibKey
 import com.metrolist.music.constants.EnableLyricsPlus
 import com.metrolist.music.constants.EnablePaxsenixKey
+import com.metrolist.music.constants.AutoPickBestLyricsKey
 import com.metrolist.music.constants.EnableMusixmatchKey
 import com.metrolist.music.constants.EnableSimpMusicKey
 import com.metrolist.music.constants.ExperimentalLyricsKey
@@ -118,6 +119,7 @@ fun LyricsSettings(
     val (enableLyricsPlus, onEnableLyricsPlusChange) = rememberPreference(key = EnableLyricsPlus, defaultValue = true)
     val (enableMusixmatch, onEnableMusixmatchChange) = rememberPreference(key = EnableMusixmatchKey, defaultValue = true)
     val (enableSimpMusic, onEnableSimpMusicChange) = rememberPreference(key = EnableSimpMusicKey, defaultValue = true)
+    val (autoPickBestLyrics, onAutoPickBestLyricsChange) = rememberPreference(key = AutoPickBestLyricsKey, defaultValue = true)
     val (lyricsProviderOrder, onLyricsProviderOrderChange) = rememberPreference(
         key = LyricsProviderOrderKey,
         defaultValue = LyricsProviderRegistry.serializeProviderOrder(LyricsProviderRegistry.getDefaultProviderOrder())
@@ -863,8 +865,30 @@ fun LyricsSettings(
                 ),
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.lyrics),
+                    title = { Text(stringResource(R.string.auto_pick_best_lyrics)) },
+                    description = { Text(stringResource(R.string.auto_pick_best_lyrics_desc)) },
+                    onClick = { onAutoPickBestLyricsChange(!autoPickBestLyrics) },
+                    trailingContent = {
+                        Switch(
+                            checked = autoPickBestLyrics,
+                            onCheckedChange = onAutoPickBestLyricsChange,
+                            thumbContent = {
+                                Icon(
+                                    painter = painterResource(
+                                        id = if (autoPickBestLyrics) R.drawable.check else R.drawable.close
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                                )
+                            }
+                        )
+                    }
+                ),
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.lyrics),
                     title = { Text(stringResource(R.string.lyrics_provider_priority)) },
                     description = { Text(stringResource(R.string.lyrics_provider_priority_desc)) },
+                    enabled = !autoPickBestLyrics,
                     onClick = { showProviderPriorityDialog = true }
                 ),
                 Material3SettingsItem(
