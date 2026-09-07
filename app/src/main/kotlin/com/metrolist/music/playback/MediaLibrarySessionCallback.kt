@@ -827,6 +827,35 @@ constructor(
         }
     }
 
+    /**
+     * Build a start position backed by a YouTube radio queue seeded from [song]. Adopts the
+     * queue in the service so it keeps loading more songs near the end. Returns null when the
+     * radio could not be started (callers fall back to a plain queue).
+     */
+    private suspend fun buildRadioStartPosition(song: Song): MediaItemsWithStartPosition? {
+        val radioQueue = YouTubeQueue.radio(song.toMediaMetadata())
+        val radioStatus = runCatching {
+            withContext(Dispatchers.IO) {
+                radioQueue
+                    .getInitialStatus()
+                    .filterExplicit(context.dataStore.get(HideExplicitKey, false))
+                    .filterVideoSongs(context.dataStore.get(HideVideoSongsKey, false))
+            }
+        }.getOrNull()
+
+        if (radioStatus == null || radioStatus.items.isEmpty()) {
+            return null
+        }
+        withContext(Dispatchers.Main) {
+            service.adoptQueue(radioQueue, radioStatus.title, radioStatus.items.size) //Used to make the radio queue load more songs when near the end
+        }
+        return MediaItemsWithStartPosition(
+            radioStatus.items,
+            radioStatus.items.indexOfFirst { it.mediaId == song.id }.coerceAtLeast(0),
+            C.TIME_UNSET,
+        )
+    }
+
     override fun onSetMediaItems(
         mediaSession: MediaSession,
         controller: MediaSession.ControllerInfo,
@@ -847,6 +876,15 @@ constructor(
             when (path.firstOrNull()) {
                 MusicService.SONG -> {
                     val songId = path.getOrNull(1) ?: return@future defaultResult
+
+                    // Start a mix seeded from the selected song, falling back to the flat
+                    // song list when the radio is disabled or fails to load
+                    if (context.dataStore.get(AutoRadioQueueKey, true)) {
+                        database.song(songId).first()?.let { selectedSong ->
+                            buildRadioStartPosition(selectedSong)?.let { return@future it }
+                        }
+                    }
+
                     val allSongs = database.songsByCreateDateAsc().first()
                     MediaItemsWithStartPosition(
                         allSongs.map { it.toMediaItem() },
@@ -1090,27 +1128,9 @@ constructor(
                             searchResults.firstOrNull { it.id == songId }
                         }
 
-                    if(context.dataStore.get(AutoRadioQueueKey, true)) {
-                        val radioQueue = YouTubeQueue.radio(selectedSong?.toMediaMetadata() ?: return@future defaultResult)
-                        val radioStatus = runCatching {
-                            withContext(Dispatchers.IO) {
-                                radioQueue
-                                    .getInitialStatus()
-                                    .filterExplicit(context.dataStore.get(HideExplicitKey, false))
-                                    .filterVideoSongs(context.dataStore.get(HideVideoSongsKey, false))
-                            }
-                        }.getOrNull()
-
-                        if (radioStatus != null && radioStatus.items.isNotEmpty()) {
-                            withContext(Dispatchers.Main) {
-                                service.adoptQueue(radioQueue, radioStatus.title, radioStatus.items.size) //Used to make the radio queue load more songs when near the end
-                            }
-                            return@future MediaItemsWithStartPosition(
-                                radioStatus.items,
-                                radioStatus.items.indexOfFirst { it.mediaId == selectedSong.id }.coerceAtLeast(0),
-                                C.TIME_UNSET,
-                            )
-                        }
+                    if (context.dataStore.get(AutoRadioQueueKey, true)) {
+                        buildRadioStartPosition(selectedSong ?: return@future defaultResult)
+                            ?.let { return@future it }
                     }
 
                     val items = listOf(selectedSong?.toMediaItem() ?: return@future defaultResult)
