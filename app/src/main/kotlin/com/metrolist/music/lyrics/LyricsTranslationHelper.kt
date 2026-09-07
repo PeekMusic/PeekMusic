@@ -43,7 +43,7 @@ object LyricsTranslationHelper {
     private var isCompositionActive = true
 
     // Cache translations in memory to avoid redundant API calls during a session
-    private val translationCache = ConcurrentHashMap<String, List<String>>()
+    private val translationCache = ConcurrentHashMap<String, List<String?>>()
 
     fun setCompositionActive(active: Boolean) {
         isCompositionActive = active
@@ -87,6 +87,52 @@ object LyricsTranslationHelper {
 
     private fun getCacheKey(text: String, mode: String, targetLanguage: String): String {
         return "${text.hashCode()}_${mode}_${targetLanguage}"
+    }
+
+    /**
+     * Second pass for mixed-language songs: with sl=auto Google picks the dominant
+     * language of the whole blob (e.g. English for a mostly-English song — or Korean
+     * for a mostly-Korean one), so lines in the other language come back untranslated
+     * while the status still reports success. Re-translate the unchanged lines,
+     * grouped by script, so each request's dominant language matches the lines in it.
+     * ponytail: best-effort — if a group comes back with a different line count, the
+     * first-pass result is kept for that group. Songs already in the target language
+     * cost one redundant request per script group that returns identical text (which
+     * the UI filters out anyway).
+     */
+    private suspend fun backfillUntranslatedLines(
+        originalLines: List<String>,
+        translations: List<String?>,
+        targetLanguage: String,
+    ): List<String?> {
+        val unchangedIndices = originalLines.mapIndexedNotNull { idx, original ->
+            val unchanged = translations.getOrNull(idx)?.trim()
+                ?.equals(original.trim(), ignoreCase = true) != false
+            if (unchanged) idx else null
+        }
+        if (unchangedIndices.isEmpty()) return translations
+
+        val backfillByIndex = mutableMapOf<Int, String>()
+        val groups = unchangedIndices.groupBy { idx -> scriptOf(originalLines[idx]) }
+        for ((script, indices) in groups) {
+            val result = GoogleTranslateService.translate(
+                text = indices.joinToString("\n") { originalLines[it] },
+                targetLanguage = targetLanguage,
+            ).onFailure {
+                Timber.d("[TRANSLATE] backfill request failed for $script: ${it.message}")
+            }.getOrNull() ?: continue
+            Timber.d("[TRANSLATE] backfill: ${indices.size} unchanged $script lines, got ${result.size}")
+            if (result.size != indices.size) continue
+            indices.zip(result).forEach { (i, translated) -> backfillByIndex[i] = translated }
+        }
+
+        return translations.mapIndexed { idx, line -> backfillByIndex[idx] ?: line }
+    }
+
+    /** Script of the first letter in the line; punctuation-only lines map to COMMON. */
+    private fun scriptOf(line: String): Character.UnicodeScript {
+        val ch = line.firstOrNull { Character.isLetter(it) } ?: return Character.UnicodeScript.COMMON
+        return Character.UnicodeScript.of(ch.code)
     }
 
     fun loadTranslationsFromDatabase(
@@ -174,9 +220,18 @@ object LyricsTranslationHelper {
                     val cacheKey = getCacheKey(fullText, mode, targetLanguage)
                     val cachedTranslations = translationCache[cacheKey]
                     if (cachedTranslations != null && cachedTranslations.size >= nonEmptyEntries.size) {
+                        val alignedCache = List(nonEmptyEntries.size) { idx -> cachedTranslations.getOrNull(idx) }
+                        val finalCache = backfillUntranslatedLines(
+                            nonEmptyEntries.map { it.second.text },
+                            alignedCache,
+                            targetLanguage,
+                        )
+                        if (finalCache != alignedCache) {
+                            translationCache[cacheKey] = finalCache
+                        }
                         nonEmptyEntries.forEachIndexed { idx, (originalIndex, _) ->
-                            if (idx < cachedTranslations.size) {
-                                lyrics[originalIndex].translatedTextFlow.value = cachedTranslations[idx]
+                            finalCache.getOrNull(idx)?.let {
+                                lyrics[originalIndex].translatedTextFlow.value = it
                             }
                         }
                         _hasActiveTranslations.value = true
@@ -191,7 +246,7 @@ object LyricsTranslationHelper {
                                     database.query {
                                         upsert(
                                             currentLyrics.copy(
-                                                translatedLyrics = cachedTranslations.joinToString("\n"),
+                                                translatedLyrics = finalCache.joinToString("\n") { it.orEmpty() },
                                                 translationLanguage = targetLanguage,
                                                 translationMode = mode,
                                             ),
@@ -219,8 +274,20 @@ object LyricsTranslationHelper {
                                 return@onSuccess
                             }
 
+                            // Map translations back to original non-empty entries (null when
+                            // Google returned fewer lines than sent)
+                            val expectedCount = nonEmptyEntries.size
+                            Timber.d("[TRANSLATE] first request: expected $expectedCount lines, got ${translatedLines.size}")
+                            val aligned: List<String?> =
+                                List(expectedCount) { idx -> translatedLines.getOrNull(idx) }
+                            val finalTranslations = backfillUntranslatedLines(
+                                nonEmptyEntries.map { it.second.text },
+                                aligned,
+                                targetLanguage,
+                            )
+
                             // Cache the translations
-                            translationCache[cacheKey] = translatedLines
+                            translationCache[cacheKey] = finalTranslations
 
                             // Save to database if songId is provided
                             if (songId.isNotBlank() && database != null) {
@@ -230,7 +297,7 @@ object LyricsTranslationHelper {
                                         database.query {
                                             upsert(
                                                 currentLyrics.copy(
-                                                    translatedLyrics = translatedLines.joinToString("\n"),
+                                                    translatedLyrics = finalTranslations.joinToString("\n") { it.orEmpty() },
                                                     translationLanguage = targetLanguage,
                                                     translationMode = mode,
                                                 ),
@@ -242,30 +309,13 @@ object LyricsTranslationHelper {
                                 }
                             }
 
-                            // Map translations back to original non-empty entries only
-                            val expectedCount = nonEmptyEntries.size
-
-                            when {
-                                translatedLines.size >= expectedCount -> {
-                                    nonEmptyEntries.forEachIndexed { idx, (originalIndex, _) ->
-                                        lyrics[originalIndex].translatedTextFlow.value = translatedLines[idx]
-                                    }
-                                    _hasActiveTranslations.value = true
-                                    _status.value = TranslationStatus.Success
-                                }
-
-                                translatedLines.size < expectedCount -> {
-                                    // Fewer translations than expected - map what we have
-                                    translatedLines.forEachIndexed { idx, translation ->
-                                        if (idx < nonEmptyEntries.size) {
-                                            val originalIndex = nonEmptyEntries[idx].first
-                                            lyrics[originalIndex].translatedTextFlow.value = translation
-                                        }
-                                    }
-                                    _hasActiveTranslations.value = true
-                                    _status.value = TranslationStatus.Success
+                            nonEmptyEntries.forEachIndexed { idx, (originalIndex, _) ->
+                                finalTranslations.getOrNull(idx)?.let {
+                                    lyrics[originalIndex].translatedTextFlow.value = it
                                 }
                             }
+                            _hasActiveTranslations.value = true
+                            _status.value = TranslationStatus.Success
 
                             // Auto-hide success message after 3 seconds
                             delay(3000)
