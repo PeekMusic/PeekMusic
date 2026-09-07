@@ -204,6 +204,7 @@ fun Thumbnail(
     isPlayerExpanded: () -> Boolean = { true },
     isLandscape: Boolean = false,
     isListenTogetherGuest: Boolean = false,
+    peekOverlay: Boolean = true,
 ) {
     val playerConnection = LocalPlayerConnection.current ?: return
     val context = LocalContext.current
@@ -404,6 +405,7 @@ fun Thumbnail(
                                 context = context,
                                 isLandscape = isLandscape,
                                 isListenTogetherGuest = isListenTogetherGuest,
+                                peekOverlay = peekOverlay,
                                 currentMediaId = mediaMetadata?.id,
                                 currentMediaThumbnail = mediaMetadata?.thumbnailUrl
                             )
@@ -503,12 +505,15 @@ private fun ThumbnailItem(
     isListenTogetherGuest: Boolean = false,
     currentMediaId: String? = null,
     currentMediaThumbnail: String? = null,
+    // Wide-portrait split layout centers the cover and drops the peek top padding
+    peekOverlay: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val incrementalSeekSkipEnabled by rememberPreference(SeekExtraSeconds, defaultValue = false)
     var skipMultiplier by remember { mutableIntStateOf(1) }
     var lastTapTime by remember { mutableLongStateOf(0L) }
-    val showLyricsPeek by rememberPreference(ShowPlayerLyricsPeekKey, true)
+    val peekPref by rememberPreference(ShowPlayerLyricsPeekKey, true)
+    val showLyricsPeek = peekOverlay && peekPref
 
     Box(
         modifier = modifier

@@ -42,6 +42,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -53,6 +54,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -1869,63 +1871,79 @@ fun BottomSheetPlayer(
                 val verticalPaddingDp = with(density) { verticalPadding.toDp() }
                 val verticalWindowInsets = WindowInsets(left = 0.dp, top = verticalPaddingDp, right = 0.dp, bottom = verticalPaddingDp)
 
-                Row(
+                // Center the controls together with the lyrics peek as one unit, matching
+                // the vertically centered cover in the other half of the Row
+                BoxWithConstraints(
                     modifier =
                         Modifier
                             .windowInsetsPadding(
                                 WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).add(verticalWindowInsets),
-                            ).padding(bottom = 24.dp)
-                            .fillMaxSize(),
+                            ).padding(bottom = 24.dp),
                 ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .nestedScroll(state.preUpPostDownNestedScrollConnection),
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
                     ) {
-                        // Remember lambdas to prevent unnecessary recomposition
-                        val currentSliderPosition by rememberUpdatedState(sliderPosition)
-                        val sliderPositionProvider = remember { { currentSliderPosition } }
-                        val isExpandedProvider = remember(state) { { state.isExpanded } }
-                        AnimatedContent(
-                            targetState = showInlineLyrics,
-                            label = "Lyrics",
-                            transitionSpec = { fadeIn() togetherWith fadeOut() },
-                        ) { showLyrics ->
-                            if (showLyrics) {
-                                InlineLyricsView(
-                                    mediaMetadata = mediaMetadata,
-                                    showLyrics = showLyrics,
-                                    positionProvider = { effectivePosition },
-                                )
-                            } else {
-                                Thumbnail(
-                                    sliderPositionProvider = sliderPositionProvider,
-                                    modifier = Modifier.animateContentSize(),
-                                    isPlayerExpanded = isExpandedProvider,
-                                    isLandscape = true,
-                                    isListenTogetherGuest = isListenTogetherGuest,
-                                )
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .nestedScroll(state.preUpPostDownNestedScrollConnection),
+                        ) {
+                            // Remember lambdas to prevent unnecessary recomposition
+                            val currentSliderPosition by rememberUpdatedState(sliderPosition)
+                            val sliderPositionProvider = remember { { currentSliderPosition } }
+                            val isExpandedProvider = remember(state) { { state.isExpanded } }
+                            AnimatedContent(
+                                targetState = showInlineLyrics,
+                                label = "Lyrics",
+                                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                            ) { showLyrics ->
+                                if (showLyrics) {
+                                    InlineLyricsView(
+                                        mediaMetadata = mediaMetadata,
+                                        showLyrics = showLyrics,
+                                        positionProvider = { effectivePosition },
+                                    )
+                                } else {
+                                    Thumbnail(
+                                        sliderPositionProvider = sliderPositionProvider,
+                                        modifier = Modifier.animateContentSize(),
+                                        isPlayerExpanded = isExpandedProvider,
+                                        isLandscape = true,
+                                        isListenTogetherGuest = isListenTogetherGuest,
+                                    )
+                                }
                             }
                         }
-                    }
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier =
-                            Modifier
-                                .weight(if (showInlineLyrics) 0.65f else 1f, false)
-                                .animateContentSize()
-                                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top)),
-                    ) {
-                        Spacer(Modifier.weight(1f))
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier =
+                                Modifier
+                                    .weight(if (showInlineLyrics) 0.65f else 1f, false)
+                                    .height(this@BoxWithConstraints.maxHeight),
+                        ) {
+                            if (!showInlineLyrics) {
+                                PlayerLyricsLine(
+                                    positionProvider = { effectivePosition },
+                                    contentColor = lyricsAccentColor,
+                                    onShowLyrics = { showInlineLyrics = true },
+                                    // Cap the height: the lyrics block fills whatever it is offered,
+                                    // which would break the centered layout
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .heightIn(max = 140.dp),
+                                )
+                                Spacer(Modifier.height(24.dp))
+                            }
 
-                        mediaMetadata?.let {
-                            controlsContent(it)
+                            mediaMetadata?.let {
+                                controlsContent(it)
+                            }
                         }
-
-                        Spacer(Modifier.weight(1f))
                     }
                 }
             }
@@ -1951,6 +1969,11 @@ fun BottomSheetPlayer(
                         val currentSliderPosition by rememberUpdatedState(sliderPosition)
                         val sliderPositionProvider = remember { { currentSliderPosition } }
                         val isExpandedProvider = remember(state) { { state.isExpanded } }
+                        val configuration = LocalConfiguration.current
+                        val isWidePortrait =
+                            configuration.orientation != Configuration.ORIENTATION_LANDSCAPE &&
+                                configuration.screenWidthDp >= 600
+                        val peekEnabled by rememberPreference(ShowPlayerLyricsPeekKey, true)
                         AnimatedContent(
                             targetState = showInlineLyrics,
                             label = "Lyrics",
@@ -1962,6 +1985,11 @@ fun BottomSheetPlayer(
                                     showLyrics = showLyrics,
                                     positionProvider = { effectivePosition },
                                 )
+                            } else if (isWidePortrait && peekEnabled) {
+                                // Wide portrait (fold unfolded, tablets): the split cover/lyrics
+                                // Row is rendered on top of this sheet (below) so it is never
+                                // measured by AnimatedContent
+                                Spacer(modifier = Modifier.fillMaxSize())
                             } else {
                                 Thumbnail(
                                     sliderPositionProvider = sliderPositionProvider,
@@ -1972,7 +2000,50 @@ fun BottomSheetPlayer(
                             }
                         }
 
-                        if (!showInlineLyrics) {
+                        if (!showInlineLyrics && isWidePortrait && peekEnabled) {
+                            // Split the cover area — cover left, lyrics peek right; player
+                            // elements below stay untouched
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxSize(),
+                            ) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.weight(1f),
+                                ) {
+                                    Thumbnail(
+                                        sliderPositionProvider = sliderPositionProvider,
+                                        modifier =
+                                            Modifier.nestedScroll(state.preUpPostDownNestedScrollConnection),
+                                        isPlayerExpanded = isExpandedProvider,
+                                        isListenTogetherGuest = isListenTogetherGuest,
+                                        peekOverlay = false,
+                                    )
+                                }
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier =
+                                        Modifier
+                                            .weight(1f)
+                                            // Approximate the cover's own top offset (status bar
+                                            // inset + now-playing header) so the lyrics sit level
+                                            // with the cover center instead of the raw Box center
+                                            .padding(top = 72.dp),
+                                ) {
+                                    PlayerLyricsLine(
+                                        positionProvider = { effectivePosition },
+                                        contentColor = lyricsAccentColor,
+                                        onShowLyrics = { showInlineLyrics = true },
+                                        // The lyrics block fills the height it is offered (AnimatedContent
+                                        // inside) — cap it so the Box centering actually applies
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .heightIn(max = 140.dp),
+                                    )
+                                }
+                            }
+                        } else if (!showInlineLyrics) {
                             PlayerLyricsLine(
                                 positionProvider = { effectivePosition },
                                 contentColor = lyricsAccentColor,
