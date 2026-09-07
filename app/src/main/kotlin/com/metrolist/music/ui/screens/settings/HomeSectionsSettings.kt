@@ -70,6 +70,9 @@ private fun categoryLabelRes(category: String): Int =
         "recommended_playlists" -> R.string.section_order_recommended_playlists
         "account_mixes" -> R.string.section_order_account_mixes
         "podcasts" -> R.string.section_order_podcasts
+        "new_episodes" -> R.string.section_order_new_episodes
+        "trending" -> R.string.section_order_trending
+        "keep_listening" -> R.string.section_order_keep_listening
         "shows" -> R.string.section_order_shows
         "moods_and_genres" -> R.string.section_order_moods_and_genres
         "recaps" -> R.string.section_order_recaps

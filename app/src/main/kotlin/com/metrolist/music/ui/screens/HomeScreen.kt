@@ -819,19 +819,8 @@ fun HomeScreen(
         }
     }
 
-    // Keyed on homePage so the check re-runs after a refresh: YouTube's first home page
-    // only contains a few sections and the rest arrives via pagination — without this the
-    // visible-index snapshot may not change on refresh and page 2 would never load.
-    LaunchedEffect(lazylistState, homePage) {
-        snapshotFlow {
-            lazylistState.layoutInfo.totalItemsCount to
-                lazylistState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-        }.collect { (len, lastVisibleIndex) ->
-            if (len > 0 && lastVisibleIndex != null && lastVisibleIndex >= len - 3) {
-                viewModel.loadMoreYouTubeItems(homePage?.continuation)
-            }
-        }
-    }
+    // Endless scrolling is intentionally disabled: the paginated home feed re-introduces
+    // sections the user removed, so only the initial home page is rendered.
 
     if (selectedChip != null) {
         BackHandler {
@@ -1082,6 +1071,9 @@ fun HomeScreen(
                     "mediathek" in title || "from your library" in title -> "from_your_library"
                     "empfohlene mixe" in title || "recommended mixes" in title -> "recommended_mixes"
                     "empfohlene playlist" in title || "recommended playlist" in title -> "recommended_playlists"
+                    "neue folgen" in title || "new episodes" in title -> "new_episodes"
+                    "angesagt" in title || "trending" in title -> "trending"
+                    "weiter anhören" in title || "keep listening" in title -> "keep_listening"
                     "podcast" in title -> "podcasts"
                     "sendung" in title || "shows for you" in title -> "shows"
                     "stimmung" in title || "mood" in title -> "moods_and_genres"
@@ -1102,17 +1094,14 @@ fun HomeScreen(
             else -> "other"
         }
 
-    // Hidden entries are category ids; only unclassified ("other") YouTube sections can
-    // additionally be hidden individually by their exact title. App-internal sections are
-    // never hidden (always shown when logged out, toggled when logged in).
+    // Hidden entries are category ids. Unclassified ("other") YouTube sections are never
+    // shown at all — only known categories can appear, everything YouTube invents otherwise
+    // (genre carousels, one-off promotions, …) stays off the home page.
     fun isSectionHidden(section: HomeSection): Boolean {
         val category = categoryOf(section)
         if (category == "app_internal") return false
+        if (category == "other") return true
         if (category in hiddenHomeSections) return true
-        if (section is HomeSection.HomePageSection && category == "other") {
-            val title = homePage?.sections?.getOrNull(section.index)?.title
-            if (title != null && title in hiddenHomeSections) return true
-        }
         return false
     }
 
