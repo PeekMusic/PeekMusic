@@ -522,7 +522,7 @@ private fun ThumbnailItem(
                 }
             )
             .padding(horizontal = PlayerHorizontalPadding)
-            .then(if (isLandscape || !showLyricsPeek) Modifier else Modifier.padding(top = 64.dp))
+            .then(if (isLandscape || !showLyricsPeek) Modifier else Modifier.padding(top = 80.dp))
             .graphicsLayer {
                 // Render entire thumbnail item on separate hardware layer for smooth animations
                 compositingStrategy = CompositingStrategy.Offscreen

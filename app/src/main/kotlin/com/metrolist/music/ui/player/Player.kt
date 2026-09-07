@@ -89,6 +89,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -2091,13 +2092,24 @@ internal fun PlayerLyricsLine(
     // Only meaningful for synced lyrics; unsynced entries all sit at time 0
     val syncedEntries = entries.filter { !it.isBackground && it.time > 0 && it.text.isNotBlank() }
 
-    // Drive line changes and the interval ring with a position ticker — without it the
-    // current line would be evaluated once per composition and never update as playback advances
+    // Drive line changes, the interval ring and word karaoke from one frame-accurate
+    // position loop with extrapolation between provider updates — same approach as the full
+    // lyrics view. A fixed-delay ticker tops out at 20 fps and the word highlight stutters.
     var position by remember { mutableLongStateOf(positionProvider()) }
     LaunchedEffect(Unit) {
+        var lastPos = positionProvider()
+        var lastUpdate = System.currentTimeMillis()
         while (isActive) {
-            position = positionProvider()
-            delay(250)
+            withFrameMillis {
+                val now = System.currentTimeMillis()
+                val playerPos = positionProvider()
+                if (playerPos != lastPos) {
+                    lastPos = playerPos
+                    lastUpdate = now
+                }
+                val elapsed = now - lastUpdate
+                position = lastPos + if (playerConnection.player.isPlaying) elapsed else 0L
+            }
         }
     }
 
@@ -2189,16 +2201,9 @@ internal fun PlayerLyricsLine(
     val experimentalLyrics by rememberPreference(ExperimentalLyricsKey, true)
 
     // Word-by-word karaoke, matching the experimental lyrics view (only when it is enabled
-    // and the current line actually has word timings)
+    // and the current line actually has word timings). Position comes from the shared
+    // frame-accurate loop above.
     val wordSyncActive = experimentalLyrics && currentLine.words?.isNotEmpty() == true
-    var wordPosition by remember { mutableLongStateOf(0L) }
-    LaunchedEffect(wordSyncActive, currentLine.text) {
-        if (!wordSyncActive) return@LaunchedEffect
-        while (isActive) {
-            wordPosition = positionProvider()
-            delay(50)
-        }
-    }
 
     // Keep the block height stable per song: when romanization is enabled, the sub-line is
     // always rendered (empty when there is nothing to show) so the main line never shifts.
@@ -2272,11 +2277,11 @@ internal fun PlayerLyricsLine(
                                 val wordStartMs = (word.startTime * 1000).toLong()
                                 val wordEndMs = (word.endTime * 1000).toLong()
                                 val wordDuration = wordEndMs - wordStartMs
-                                val isWordActive = wordPosition >= wordStartMs && wordPosition < wordEndMs
-                                val hasWordPassed = wordPosition >= wordEndMs
+                                val isWordActive = position >= wordStartMs && position < wordEndMs
+                                val hasWordPassed = position >= wordEndMs
                                 val progress =
                                     if (isWordActive && wordDuration > 0) {
-                                        (wordPosition - wordStartMs).toFloat() / wordDuration
+                                        (position - wordStartMs).toFloat() / wordDuration
                                     } else if (hasWordPassed) {
                                         1f
                                     } else {
