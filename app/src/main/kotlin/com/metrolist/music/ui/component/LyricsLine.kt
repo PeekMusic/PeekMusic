@@ -277,7 +277,7 @@ internal fun LyricsLine(
                 }
                 
                 if (romanizeLyrics && enabledLanguages.isNotEmpty()) {
-                    subText?.let { 
+                    subText?.takeIf { !it.trim().equals(mainText?.trim().orEmpty(), ignoreCase = true) }?.let {
                         Text(
                             text = it,
                             fontSize = 18.sp,
@@ -290,7 +290,7 @@ internal fun LyricsLine(
                 }
                 
                 val transText by item.translatedTextFlow.collectAsStateWithLifecycle()
-                transText?.let { 
+                transText?.takeIf { !it.trim().equals(mainText?.trim().orEmpty(), ignoreCase = true) }?.let { 
                     Text(
                         text = it,
                         fontSize = 16.sp,

@@ -1053,6 +1053,10 @@ fun OriginalLyrics(
 
                             val mainText = if (romanizeAsMain && isRomanizedAvailable) romanizedText else item.text
                             val subText = if (romanizeAsMain && isRomanizedAvailable) item.text else romanizedText
+                            // ponytail: background lines carry "(...)" while romanization/translation do not —
+                            // strip both sides before comparing so equality checks hold for background lines
+                            val mainTextCmp = if (item.isBackground) mainText.removePrefix("(").removeSuffix(")") else mainText
+                            val subTextCmp = subText?.let { if (item.isBackground) it.removePrefix("(").removeSuffix(")") else it }
 
                             val hasWordTimings = if (romanizeAsMain && isRomanizedAvailable) false else item.words?.isNotEmpty() == true
 
@@ -1643,8 +1647,8 @@ fun OriginalLyrics(
                                 )
                             }
                             if (currentSong?.romanizeLyrics == true && enabledLanguages.isNotEmpty()) {
-                                // Show secondary text (romanized or original) if available
-                                subText?.let { text ->
+                                // Show secondary text (romanized or original) if available and not a duplicate of the main line
+                                subText?.takeIf { !subTextCmp?.trim().orEmpty().equals(mainTextCmp.trim(), ignoreCase = true) }?.let { text ->
                                     Text(
                                         text = text,
                                         fontSize = 18.sp,
@@ -1661,9 +1665,9 @@ fun OriginalLyrics(
                                 }
                             }
 
-                            // Show translated text if available
+                            // Show translated text if available and not a duplicate of the displayed main line
                             val translatedText by item.translatedTextFlow.collectAsStateWithLifecycle()
-                            translatedText?.let { translated ->
+                            translatedText?.takeIf { !it.trim().equals(mainTextCmp.trim(), ignoreCase = true) }?.let { translated ->
                                 Text(
                                     text = translated,
                                     fontSize = 16.sp,
