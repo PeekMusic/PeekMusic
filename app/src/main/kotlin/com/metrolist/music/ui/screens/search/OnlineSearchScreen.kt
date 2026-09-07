@@ -396,7 +396,7 @@ fun OnlineSearchScreen(
             )
         }
 
-        items(viewState.suggestions, key = { "suggestion_$it" }) { query ->
+        items(viewState.suggestions.take(4), key = { "suggestion_$it" }) { query ->
             SuggestionItem(
                 query = query,
                 online = true,
