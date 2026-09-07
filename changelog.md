@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.5.0
+
+- Lyrics peek everywhere: in landscape (folded and unfolded) the peek line and
+  the controls now sit as one unit, vertically centered next to the cover; on
+  wide portrait screens (unfolded) the peek lives in the right-hand column
+  instead of overlaying the cover
+- The player stays open through display changes — folding, unfolding and
+  rotating no longer collapse it back to the mini player
+- Player design: button color now defaults to the dynamic primary color and
+  the squiggly slider is the default
+- Android Auto: selecting a song under Songs now starts a Mix seeded from that
+  song, bound to the auto-radio switch; when the mix can't load it falls back
+  to the plain song list
+- Merged upstream v13.7.0: playback and resource regression fixes, liked
+  playlist sync, account info loading, unified update prompt, translations
+
 ## v0.4.0
 
 - Lyrics peek in the player: the currently active line now lives right between
