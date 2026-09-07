@@ -840,6 +840,7 @@
     <string name="home_section_order">Home section order</string>
     <string name="home_section_order_shuffle_hint">Section order is ignored while shuffle is enabled.</string>
     <string name="home_sections_settings_desc">Change the order of home screen sections or hide them</string>
+    <string name="home_sections_settings_login_required">Only available when logged in — sign in to reorder or hide home screen sections</string>
     <string name="section_order_quick_picks">Quick picks</string>
     <string name="section_order_forgotten_favorites">Forgotten favorites</string>
     <string name="section_order_from_your_library">From your library</string>
@@ -847,6 +848,9 @@
     <string name="section_order_recommended_playlists">Recommended playlists for you</string>
     <string name="section_order_account_mixes">Mixes</string>
     <string name="section_order_podcasts">Your podcasts</string>
+    <string name="section_order_new_episodes">New episodes</string>
+    <string name="section_order_trending">Trending songs</string>
+    <string name="section_order_keep_listening">Keep listening</string>
     <string name="section_order_shows">Shows for you</string>
     <string name="section_order_moods_and_genres">Moods and genres</string>
     <string name="section_order_recaps">Recaps</string>

@@ -23,13 +23,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.metrolist.innertube.utils.parseCookieString
 import com.metrolist.music.LocalPlayerAwareWindowInsets
 import com.metrolist.music.R
+import com.metrolist.music.constants.InnerTubeCookieKey
 import com.metrolist.music.constants.ShowCachedPlaylistKey
 import com.metrolist.music.constants.ShowDownloadedPlaylistKey
 import com.metrolist.music.constants.ShowLikedPlaylistKey
@@ -72,6 +75,11 @@ fun HomeSettings(
             defaultValue = true,
         )
 
+    val (innerTubeCookie) = rememberPreference(InnerTubeCookieKey, "")
+    val isLoggedIn = remember(innerTubeCookie) {
+        "SAPISID" in parseCookieString(innerTubeCookie)
+    }
+
     Column(
         Modifier
             .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
@@ -83,7 +91,15 @@ fun HomeSettings(
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.home_outlined),
                     title = { Text(stringResource(R.string.home_screen_sections)) },
-                    description = { Text(stringResource(R.string.home_sections_settings_desc)) },
+                    description = {
+                        Text(
+                            stringResource(
+                                if (isLoggedIn) R.string.home_sections_settings_desc
+                                else R.string.home_sections_settings_login_required
+                            )
+                        )
+                    },
+                    enabled = isLoggedIn,
                     onClick = { navController.navigate("settings/home_sections") },
                 ),
             ),
