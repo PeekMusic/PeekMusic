@@ -40,14 +40,19 @@ object LyricsTranslationHelper {
     val clearTranslationsTrigger: SharedFlow<Unit> = _clearTranslationsTrigger.asSharedFlow()
 
     private var translationJob: kotlinx.coroutines.Job? = null
-    private var isCompositionActive = true
+
+    // Ref-counted: every visible lyrics surface (full views + player peek) registers itself;
+    // translation results are only applied while at least one surface is visible.
+    private var activeCompositions = 0
+    private val isCompositionActive: Boolean
+        get() = activeCompositions > 0
+
+    fun setCompositionActive(active: Boolean) {
+        activeCompositions = (activeCompositions + if (active) 1 else -1).coerceAtLeast(0)
+    }
 
     // Cache translations in memory to avoid redundant API calls during a session
     private val translationCache = ConcurrentHashMap<String, List<String?>>()
-
-    fun setCompositionActive(active: Boolean) {
-        isCompositionActive = active
-    }
 
     fun triggerManualTranslation() {
         _manualTrigger.tryEmit(Unit)
