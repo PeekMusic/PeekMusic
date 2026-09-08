@@ -66,7 +66,11 @@ import com.metrolist.music.constants.LyricsScrollKey
 import com.metrolist.music.constants.LyricsTextPositionKey
 import com.metrolist.music.constants.LyricsTextSizeKey
 import com.metrolist.music.constants.RespectAgentPositioningKey
+import com.metrolist.music.constants.PeekShowRomanizationKey
+import com.metrolist.music.constants.PeekShowTranslationKey
+import com.metrolist.music.constants.PeekTranslationHintShownKey
 import com.metrolist.music.lyrics.LyricsProviderRegistry
+import com.metrolist.music.ui.component.ActionPromptDialog
 import com.metrolist.music.ui.component.DefaultDialog
 import com.metrolist.music.ui.component.DraggableLyricsProviderItem
 import com.metrolist.music.ui.component.DraggableLyricsProviderList
@@ -104,6 +108,9 @@ fun LyricsSettings(
     val (respectAgentPositioning, onRespectAgentPositioningChange) = rememberPreference(RespectAgentPositioningKey, defaultValue = true)
     val (experimentalLyrics, onExperimentalLyricsChange) = rememberPreference(ExperimentalLyricsKey, defaultValue = true)
     val (playerLyricsPeek, onPlayerLyricsPeekChange) = rememberPreference(ShowPlayerLyricsPeekKey, defaultValue = true)
+    val (peekShowTranslation, onPeekShowTranslationChange) = rememberPreference(PeekShowTranslationKey, defaultValue = false)
+    val (peekShowRomanization, onPeekShowRomanizationChange) = rememberPreference(PeekShowRomanizationKey, defaultValue = false)
+    val (peekTranslationHintShown, onPeekTranslationHintShownChange) = rememberPreference(PeekTranslationHintShownKey, defaultValue = false)
 
     val (lyricsGlowEffect, onLyricsGlowEffectChange) = rememberPreference(LyricsGlowEffectKey, defaultValue = false)
     val (lyricsAnimationStyle, onLyricsAnimationStyleChange) =
@@ -140,6 +147,7 @@ fun LyricsSettings(
         )
 
     var showExperimentalLyricsBetaDialog by remember { mutableStateOf(false) }
+    var showPeekTranslationHint by remember { mutableStateOf(false) }
     var showLyricsAnimationStyleDialog by remember { mutableStateOf(false) }
     var showLyricsTextSizeDialog by remember { mutableStateOf(false) }
     var showLyricsLineSpacingDialog by remember { mutableStateOf(false) }
@@ -197,6 +205,19 @@ fun LyricsSettings(
                 }
             },
         )
+    }
+
+    if (showPeekTranslationHint) {
+        ActionPromptDialog(
+            title = stringResource(R.string.player_lyrics_peek_translation_hint_title),
+            onDismiss = { showPeekTranslationHint = false },
+            onConfirm = { showPeekTranslationHint = false },
+        ) {
+            Text(
+                text = stringResource(R.string.player_lyrics_peek_translation_hint),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     }
 
     if (showLyricsTextSizeDialog) {
@@ -679,31 +700,6 @@ fun LyricsSettings(
                         ),
                     )
 
-                    add(
-                        Material3SettingsItem(
-                            icon = painterResource(R.drawable.lyrics),
-                            title = { Text(stringResource(R.string.player_lyrics_peek)) },
-                            description = { Text(stringResource(R.string.player_lyrics_peek_desc)) },
-                            trailingContent = {
-                                Switch(
-                                    checked = playerLyricsPeek,
-                                    onCheckedChange = onPlayerLyricsPeekChange,
-                                    thumbContent = {
-                                        Icon(
-                                            painter =
-                                                painterResource(
-                                                    id = if (playerLyricsPeek) R.drawable.check else R.drawable.close,
-                                                ),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    },
-                                )
-                            },
-                            onClick = { onPlayerLyricsPeekChange(!playerLyricsPeek) },
-                        ),
-                    )
-
                     if (!experimentalLyrics) {
                         add(
                             Material3SettingsItem(
@@ -877,6 +873,92 @@ fun LyricsSettings(
                         ),
                     )
                 },
+        )
+
+        Material3SettingsGroup(
+            title = stringResource(R.string.player_lyrics_peek),
+            items =
+                listOf(
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.lyrics),
+                        title = { Text(stringResource(R.string.player_lyrics_peek)) },
+                        description = { Text(stringResource(R.string.player_lyrics_peek_desc)) },
+                        trailingContent = {
+                            Switch(
+                                checked = playerLyricsPeek,
+                                onCheckedChange = onPlayerLyricsPeekChange,
+                                thumbContent = {
+                                    Icon(
+                                        painter =
+                                        painterResource(
+                                            id = if (playerLyricsPeek) R.drawable.check else R.drawable.close,
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                },
+                            )
+                        },
+                        onClick = { onPlayerLyricsPeekChange(!playerLyricsPeek) },
+                    ),
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.translate),
+                        title = { Text(stringResource(R.string.player_lyrics_peek_translation)) },
+                        description = { Text(stringResource(R.string.player_lyrics_peek_translation_desc)) },
+                        trailingContent = {
+                            Switch(
+                                checked = peekShowTranslation,
+                                onCheckedChange = { checked ->
+                                    onPeekShowTranslationChange(checked)
+                                    if (checked && !peekTranslationHintShown) {
+                                        onPeekTranslationHintShownChange(true)
+                                        showPeekTranslationHint = true
+                                    }
+                                },
+                                thumbContent = {
+                                    Icon(
+                                        painter =
+                                        painterResource(
+                                            id = if (peekShowTranslation) R.drawable.check else R.drawable.close,
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                },
+                            )
+                        },
+                        onClick = {
+                            val newValue = !peekShowTranslation
+                            onPeekShowTranslationChange(newValue)
+                            if (newValue && !peekTranslationHintShown) {
+                                onPeekTranslationHintShownChange(true)
+                                showPeekTranslationHint = true
+                            }
+                        },
+                    ),
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.lyrics),
+                        title = { Text(stringResource(R.string.player_lyrics_peek_romanization)) },
+                        description = { Text(stringResource(R.string.player_lyrics_peek_romanization_desc)) },
+                        trailingContent = {
+                            Switch(
+                                checked = peekShowRomanization,
+                                onCheckedChange = onPeekShowRomanizationChange,
+                                thumbContent = {
+                                    Icon(
+                                        painter =
+                                        painterResource(
+                                            id = if (peekShowRomanization) R.drawable.check else R.drawable.close,
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                },
+                            )
+                        },
+                        onClick = { onPeekShowRomanizationChange(!peekShowRomanization) },
+                    ),
+                ),
         )
 
         Spacer(modifier = Modifier.height(27.dp))

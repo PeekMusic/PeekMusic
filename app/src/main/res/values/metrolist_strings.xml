@@ -207,6 +207,13 @@
     <string name="experimental_lyrics_beta_message">The new lyrics component is currently in development and may contain bugs. Are you sure you want to enable it?</string>
     <string name="player_lyrics_peek">Lyrics line in player</string>
     <string name="player_lyrics_peek_desc">Show the current lyrics line centered between the cover and the player controls</string>
+    <string name="player_lyrics_peek_translation">Show translation in peek</string>
+    <string name="player_lyrics_peek_translation_desc">Display the translated lyric line below the original in the player lyrics peek</string>
+    <string name="player_lyrics_peek_romanization">Show romanization in peek</string>
+    <string name="player_lyrics_peek_romanization_desc">Display the romanized lyric line below the original in the player lyrics peek</string>
+    <string name="player_lyrics_peek_translate">Translate</string>
+    <string name="player_lyrics_peek_translation_hint_title">Lyrics translation</string>
+    <string name="player_lyrics_peek_translation_hint">Translations are enabled per song: they use Google Translate, which can hit rate limits. Start a translation for individual songs from the peek or the lyrics menu.</string>
     <string name="config_proxy">Configure proxy</string>
     <string name="proxy_username">Proxy username</string>
     <string name="proxy_password">Proxy password</string>

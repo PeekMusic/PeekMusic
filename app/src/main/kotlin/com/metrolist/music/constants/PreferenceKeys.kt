@@ -466,6 +466,9 @@ val RespectAgentPositioningKey = booleanPreferencesKey("respectAgentPositioning"
 val ShowIntervalIndicatorKey = booleanPreferencesKey("showIntervalIndicator")
 val ExperimentalLyricsKey = booleanPreferencesKey("experimentalLyrics")
 val ShowPlayerLyricsPeekKey = booleanPreferencesKey("showPlayerLyricsPeek")
+val PeekShowTranslationKey = booleanPreferencesKey("peekShowTranslation")
+val PeekShowRomanizationKey = booleanPreferencesKey("peekShowRomanization")
+val PeekTranslationHintShownKey = booleanPreferencesKey("peekTranslationHintShown")
 
 val PlayerVolumeKey = floatPreferencesKey("playerVolume")
 val SleepTimerDefaultKey = floatPreferencesKey("sleepTimerDefault")

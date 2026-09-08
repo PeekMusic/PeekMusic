@@ -63,11 +63,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
@@ -112,6 +114,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
@@ -154,6 +157,8 @@ import com.metrolist.music.constants.HidePlayerThumbnailKey
 import com.metrolist.music.constants.HideStatusBarOnFullscreenKey
 import com.metrolist.music.constants.KeepScreenOn
 import com.metrolist.music.constants.LyricsRomanizeCyrillicByLineKey
+import com.metrolist.music.constants.PeekShowRomanizationKey
+import com.metrolist.music.constants.PeekShowTranslationKey
 import com.metrolist.music.constants.LyricsRomanizeList
 import com.metrolist.music.constants.LyricsAnimationStyle
 import com.metrolist.music.constants.LyricsAnimationStyleKey
@@ -172,12 +177,14 @@ import com.metrolist.music.constants.SliderStyle
 import com.metrolist.music.constants.SliderStyleKey
 import com.metrolist.music.constants.SquigglySliderKey
 import com.metrolist.music.constants.ThumbnailCornerRadius
+import com.metrolist.music.constants.TranslateLanguageKey
 import com.metrolist.music.constants.UseNewPlayerDesignKey
 import com.metrolist.music.db.entities.LyricsEntity
 import com.metrolist.music.extensions.metadata
 import com.metrolist.music.extensions.togglePlayPause
 import com.metrolist.music.extensions.toggleRepeatMode
 import com.metrolist.music.listentogether.RoomRole
+import com.metrolist.music.lyrics.LyricsTranslationHelper
 import com.metrolist.music.lyrics.LyricsUtils
 import com.metrolist.music.models.MediaMetadata
 import com.metrolist.music.ui.component.BottomSheet
@@ -186,6 +193,7 @@ import com.metrolist.music.ui.component.IntervalIndicator
 import com.metrolist.music.ui.component.LocalBottomSheetPageState
 import com.metrolist.music.ui.component.LocalMenuState
 import com.metrolist.music.ui.component.Lyrics
+import com.metrolist.music.ui.component.ManualLyricsSearchDialog
 import com.metrolist.music.ui.component.PlayerSliderTrack
 import com.metrolist.music.ui.component.ResizableIconButton
 import com.metrolist.music.ui.component.SquigglySlider
@@ -2122,6 +2130,9 @@ internal fun PlayerLyricsLine(
 
     val romanizeLyricsList = rememberPreference(LyricsRomanizeList, "")
     val romanizeCyrillicByLine by rememberPreference(LyricsRomanizeCyrillicByLineKey, false)
+    val (peekShowTranslation) = rememberPreference(PeekShowTranslationKey, false)
+    val (peekShowRomanization) = rememberPreference(PeekShowRomanizationKey, false)
+    val (translateLanguage) = rememberPreference(TranslateLanguageKey, "en")
 
     // Fetch lyrics even when the full lyrics pane was never opened (same helper as InlineLyricsView)
     LaunchedEffect(mediaMetadata?.id, currentLyrics) {
@@ -2152,7 +2163,64 @@ internal fun PlayerLyricsLine(
     }
 
     val lyricsText = remember(currentLyrics) { currentLyrics?.lyrics?.trim() }
-    if (lyricsText == LyricsEntity.LYRICS_NOT_FOUND) return
+
+    if (lyricsText == LyricsEntity.LYRICS_NOT_FOUND) {
+        val coroutineScope = rememberCoroutineScope()
+        var showSearchDialog by rememberSaveable { mutableStateOf(false) }
+        val metadata = mediaMetadata
+
+        Row(
+            modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = PlayerHorizontalPadding),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.lyrics_not_found),
+                style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
+                color = contentColor.copy(alpha = 0.6f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            IconButton(
+                onClick = {
+                    val id = metadata?.id ?: return@IconButton
+                    // Delete the not-found marker; the fetch effect above re-fires and retries
+                    coroutineScope.launch(Dispatchers.IO) {
+                        database.lyrics(id).first()?.let { entity ->
+                            database.query { delete(entity) }
+                        }
+                    }
+                },
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.cached),
+                    contentDescription = stringResource(R.string.refetch),
+                    tint = contentColor.copy(alpha = 0.8f),
+                )
+            }
+            IconButton(
+                onClick = { showSearchDialog = true },
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.search),
+                    contentDescription = stringResource(R.string.search),
+                    tint = contentColor.copy(alpha = 0.8f),
+                )
+            }
+        }
+
+        if (showSearchDialog && metadata != null) {
+            ManualLyricsSearchDialog(
+                mediaMetadata = metadata,
+                onDismiss = { showSearchDialog = false },
+                onHostDismiss = { showSearchDialog = false },
+            )
+        }
+        return
+    }
     if (lyricsText.isNullOrEmpty()) {
         // Still searching — same indicator as the full lyrics view
         ContainedLoadingIndicator(modifier = modifier)
@@ -2162,6 +2230,9 @@ internal fun PlayerLyricsLine(
     val entries = remember(lyricsText) { LyricsUtils.parseLyrics(lyricsText) }
     // Only meaningful for synced lyrics; unsynced entries all sit at time 0
     val syncedEntries = entries.filter { !it.isBackground && it.time > 0 && it.text.isNotBlank() }
+
+    // Song-specific lyrics offset (ms), same semantics as the full lyrics views
+    val offset = (currentSong?.song?.lyricsOffset ?: 0).toLong()
 
     // Drive line changes, the interval ring and word karaoke from one frame-accurate
     // position loop with extrapolation between provider updates — same approach as the full
@@ -2184,7 +2255,7 @@ internal fun PlayerLyricsLine(
         }
     }
 
-    val activeLine = syncedEntries.lastOrNull { it.time <= position }
+    val activeLine = syncedEntries.lastOrNull { it.time <= position + offset }
     val showIntervalIndicator by rememberPreference(ShowIntervalIndicatorKey, true)
 
     // Gap ring: shown before the first line (intro) and during long instrumental gaps —
@@ -2225,8 +2296,8 @@ internal fun PlayerLyricsLine(
             IntervalIndicator(
                 gapStartMs = gapRange.first,
                 gapEndMs = gapRange.second - 650L,
-                currentPositionMs = position,
-                visible = position >= gapRange.first && position < gapRange.second - 650L,
+                currentPositionMs = position + offset,
+                visible = position + offset >= gapRange.first && position + offset < gapRange.second - 650L,
                 color = contentColor,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -2253,10 +2324,11 @@ internal fun PlayerLyricsLine(
         lyricsText,
         enabledLanguages,
         romanizeCyrillicByLine,
-        currentSong?.romanizeLyrics,
+        peekShowRomanization,
+        currentSong?.song?.romanizeLyrics,
     ) {
         value =
-            if (currentSong?.romanizeLyrics == true && enabledLanguages.isNotEmpty()) {
+            if (peekShowRomanization && currentSong?.song?.romanizeLyrics == true && enabledLanguages.isNotEmpty()) {
                 LyricsUtils.romanize(
                     text = lyricsText,
                     line = currentLine.text,
@@ -2278,7 +2350,7 @@ internal fun PlayerLyricsLine(
 
     // Keep the block height stable per song: when romanization is enabled, the sub-line is
     // always rendered (empty when there is nothing to show) so the main line never shifts.
-    val romanizationActive = currentSong?.romanizeLyrics == true && enabledLanguages.isNotEmpty()
+    val romanizationActive = peekShowRomanization && currentSong?.song?.romanizeLyrics == true && enabledLanguages.isNotEmpty()
     val romanizedSub =
         if (romanizationActive) {
             romanizedLine
@@ -2287,6 +2359,34 @@ internal fun PlayerLyricsLine(
         } else {
             ""
         }
+
+    // Translated sub-line, aligned by index over non-blank entries — same basis as
+    // the translation storage in LyricsTranslationHelper. Display-only: whatever is
+    // stored in the DB is shown, no language/mode re-check.
+    val translatedSub =
+        remember(currentLine, currentLyrics, peekShowTranslation) {
+            if (peekShowTranslation && !currentLyrics?.translatedLyrics.isNullOrEmpty() && currentLine.text.isNotBlank()) {
+                val nonBlankEntries = entries.filter { it.text.isNotBlank() }
+                val index = nonBlankEntries.indexOf(currentLine)
+                currentLyrics?.translatedLyrics
+                    ?.split("\n")
+                    ?.getOrNull(index)
+                    ?.takeIf { it.isNotBlank() && !it.trim().equals(currentLine.text.trim(), ignoreCase = true) }
+            } else {
+                null
+            }
+        }
+
+    val translationStatus by LyricsTranslationHelper.status.collectAsStateWithLifecycle()
+
+    // Keep the translation helper's result guard alive while the peek is visible
+    DisposableEffect(Unit) {
+        LyricsTranslationHelper.setCompositionActive(true)
+        onDispose {
+            LyricsTranslationHelper.setCompositionActive(false)
+        }
+    }
+    val coroutineScope = rememberCoroutineScope()
 
     val mainLineStyle =
         MaterialTheme.typography.titleMedium.copy(
@@ -2304,7 +2404,7 @@ internal fun PlayerLyricsLine(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AnimatedContent(
-            targetState = currentLine.text to romanizedSub,
+            targetState = Triple(currentLine.text, romanizedSub, translatedSub),
             transitionSpec = {
                 when (lyricsAnimationStyle) {
                     LyricsAnimationStyle.NONE ->
@@ -2336,6 +2436,7 @@ internal fun PlayerLyricsLine(
         ) { target ->
             val line = target.first
             val romanized = target.second
+            val translated = target.third
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth(),
@@ -2348,11 +2449,11 @@ internal fun PlayerLyricsLine(
                                 val wordStartMs = (word.startTime * 1000).toLong()
                                 val wordEndMs = (word.endTime * 1000).toLong()
                                 val wordDuration = wordEndMs - wordStartMs
-                                val isWordActive = position >= wordStartMs && position < wordEndMs
-                                val hasWordPassed = position >= wordEndMs
+                                val isWordActive = position + offset >= wordStartMs && position + offset < wordEndMs
+                                val hasWordPassed = position + offset >= wordEndMs
                                 val progress =
                                     if (isWordActive && wordDuration > 0) {
-                                        (position - wordStartMs).toFloat() / wordDuration
+                                        (position + offset - wordStartMs).toFloat() / wordDuration
                                     } else if (hasWordPassed) {
                                         1f
                                     } else {
@@ -2412,6 +2513,72 @@ internal fun PlayerLyricsLine(
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                translated?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
+                        color = contentColor.copy(alpha = 0.6f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+        }
+        // Offer on-demand translation when the toggle is on but nothing is stored yet.
+        // The helper persists to the DB, so currentLyrics re-emits and this row disappears.
+        if (peekShowTranslation && currentLyrics?.translatedLyrics.isNullOrEmpty()) {
+            if (translationStatus is LyricsTranslationHelper.TranslationStatus.Translating) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    color = contentColor.copy(alpha = 0.6f),
+                    strokeWidth = 2.dp,
+                )
+            } else {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(
+                        onClick = {
+                            LyricsTranslationHelper.translateLyrics(
+                                lyrics = entries,
+                                targetLanguage = translateLanguage,
+                                mode = "Literal",
+                                scope = coroutineScope,
+                                context = context,
+                                songId = mediaMetadata?.id ?: "",
+                                database = database,
+                            )
+                        },
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.translate),
+                            contentDescription = stringResource(R.string.player_lyrics_peek_translate),
+                            tint = contentColor.copy(alpha = 0.6f),
+                        )
+                    }
+                    Text(
+                        text = stringResource(R.string.player_lyrics_peek_translate),
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
+                        color = contentColor.copy(alpha = 0.6f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier =
+                            Modifier.clickable(
+                                role = Role.Button,
+                                onClick = {
+                                    LyricsTranslationHelper.translateLyrics(
+                                        lyrics = entries,
+                                        targetLanguage = translateLanguage,
+                                        mode = "Literal",
+                                        scope = coroutineScope,
+                                        context = context,
+                                        songId = mediaMetadata?.id ?: "",
+                                        database = database,
+                                    )
+                                },
+                            ),
                     )
                 }
             }
