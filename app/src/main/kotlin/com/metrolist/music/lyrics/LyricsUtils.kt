@@ -599,33 +599,51 @@ object LyricsUtils {
 
         val wordTimings = mutableListOf<WordTimestamp>()
 
-        wordMatches.forEachIndexed { index, match ->
-            val minutes = match.groupValues[1].toLongOrNull() ?: 0L
-            val seconds = match.groupValues[2].toLongOrNull() ?: 0L
-            val fraction = match.groupValues[3].toLongOrNull() ?: 0L
+        // A word ends where the next word starts. Tags whose captured text is
+        // whitespace-only are end-tags (`<e>`) or the trailing line-end marker,
+        // not word starts — the official SimpMusic parser ignores them, so the
+        // next word start is the next tag that carries actual text.
+        val matchStartTimes = wordMatches.map { match ->
+            val m = match.groupValues[1].toLongOrNull() ?: 0L
+            val s = match.groupValues[2].toLongOrNull() ?: 0L
+            val f = match.groupValues[3].toLongOrNull() ?: 0L
+            val fracPart = if (match.groupValues[3].length == 3) f / 1000.0 else f / 100.0
+            m * 60.0 + s + fracPart
+        }
+        val nextWordStart = DoubleArray(wordMatches.size) { Double.NaN }
+        var bearingStart = Double.NaN
+        for (i in wordMatches.lastIndex downTo 0) {
+            nextWordStart[i] = bearingStart
+            if (wordMatches[i].groupValues[4].isNotBlank()) {
+                bearingStart = matchStartTimes[i]
+            }
+        }
 
-            val fractionPart = if (match.groupValues[3].length == 3) fraction / 1000.0 else fraction / 100.0
-            val startTimeSeconds = minutes * 60.0 + seconds + fractionPart
+        wordMatches.forEachIndexed { index, match ->
+            val startTimeSeconds = matchStartTimes[index]
 
             val rawText = match.groupValues[4]
             val hasTrailingSpace = rawText.endsWith(" ")
             val words = rawText.trim().split(Regex("\\s+")).filter { it.isNotBlank() }
+            if (words.isEmpty()) return@forEachIndexed
+
+            // The trailing line-end marker only counts when it lies after the
+            // word it follows; SimpMusic usually repeats the last word's start
+            // time there (a 0 ms end), so anything else falls back to the next
+            // line's start like any other last word.
+            val validTrailingEnd = trailingEndTime?.takeIf { it > startTimeSeconds }
 
             // Get the next timestamp for end time calculation
             val nextTimestamp: Double
             val nextLineTime: Double?
 
-            if (index < wordMatches.size - 1) {
-                val nextMatch = wordMatches[index + 1]
-                val nextMin = nextMatch.groupValues[1].toLongOrNull() ?: 0L
-                val nextSec = nextMatch.groupValues[2].toLongOrNull() ?: 0L
-                val nextFrac = nextMatch.groupValues[3].toLongOrNull() ?: 0L
-                val nextFracPart = if (nextMatch.groupValues[3].length == 3) nextFrac / 1000.0 else nextFrac / 100.0
-                nextTimestamp = nextMin * 60.0 + nextSec + nextFracPart
+            if (!nextWordStart[index].isNaN()) {
+                nextTimestamp = nextWordStart[index]
                 nextLineTime = null
             } else {
                 nextLineTime = getNextLineStartTime(currentIndex, allLines)
-                nextTimestamp = trailingEndTime ?: nextLineTime ?: (startTimeSeconds + 0.5)
+                nextTimestamp = validTrailingEnd ?: nextLineTime
+                    ?: (startTimeSeconds + (wordTimings.lastOrNull()?.let { it.endTime - it.startTime } ?: 0.5))
             }
 
             words.forEachIndexed { wordIndex, word ->
@@ -635,10 +653,14 @@ object LyricsUtils {
                 val wordStartTime = startTimeSeconds + (nextTimestamp - startTimeSeconds) * wordIndex / words.size
                 val wordEndTime = if (!isLastWordInGroup) {
                     startTimeSeconds + (nextTimestamp - startTimeSeconds) * (wordIndex + 1) / words.size
-                } else if (!isLastWordOverall) {
-                    nextTimestamp
                 } else {
-                    trailingEndTime ?: nextLineTime ?: (startTimeSeconds + 0.5)
+                    // Guard against a trailing marker that sits after the group
+                    // start but before this (interpolated) word's own start.
+                    if (nextWordStart[index].isNaN() && nextTimestamp <= wordStartTime) {
+                        nextLineTime ?: (wordStartTime + 0.5)
+                    } else {
+                        nextTimestamp
+                    }
                 }
 
                 val wordHasTrailingSpace = if (!isLastWordInGroup) {
@@ -817,8 +839,13 @@ object LyricsUtils {
     /**
      * Returns the set of line indices that are currently active (being sung).
      * A line is active if playback position >= line.time AND position < line end time.
-     * Line end time = the last word's endTime if word timings exist, otherwise the next line's start time.
-     * This supports simultaneous singers whose lines overlap in time.
+     * Line end time = the start of the next non-background line, regardless of word
+     * timings: a line stays "current" until the next one begins, so there is no gap
+     * with no active line and the view does not scroll on early. Background lines
+     * are skipped when looking for the next line because they overlap the line they
+     * accompany rather than marking where it ends — the same semantics
+     * [getNextLineStartTime] uses for word timings. This supports simultaneous
+     * singers whose lines overlap in time.
      */
     fun findActiveLineIndices(
         lines: List<LyricsEntry>,
@@ -831,14 +858,12 @@ object LyricsUtils {
             val line = lines[index]
             if (line.time > position) break // Past current position, stop early
 
-            // Determine this line's end time
-            val lineEndMs: Long = if (!line.words.isNullOrEmpty()) {
-                // Use last word's endTime converted to ms
-                (line.words.last().endTime * 1000).toLong()
-            } else {
-                // Fallback: next line's start time
-                if (index + 1 < lines.size) lines[index + 1].time else Long.MAX_VALUE
+            // Determine this line's end time: next non-background line's start
+            var nextIndex = index + 1
+            while (nextIndex < lines.size && lines[nextIndex].isBackground) {
+                nextIndex++
             }
+            val lineEndMs = if (nextIndex < lines.size) lines[nextIndex].time else Long.MAX_VALUE
 
             if (position <= lineEndMs) {
                 active.add(index)
