@@ -2258,6 +2258,13 @@ internal fun PlayerLyricsLine(
     val activeLine = syncedEntries.lastOrNull { it.time <= position + offset }
     val showIntervalIndicator by rememberPreference(ShowIntervalIndicatorKey, true)
 
+    val mainLineStyle =
+        MaterialTheme.typography.titleMedium.copy(
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.5).sp,
+        )
+
     // Gap ring: shown before the first line (intro) and during long instrumental gaps —
     // same 4s threshold as the full lyrics view (LyricsViewModel)
     val gapRange =
@@ -2293,6 +2300,19 @@ internal fun PlayerLyricsLine(
                     .clickable(onClick = onShowLyrics),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            // Keep the lyric line that just ended visible while the gap indicator is shown,
+            // so the previous line doesn't disappear before the instrumental break symbol.
+            activeLine?.text?.takeIf { it.isNotBlank() }?.let { lineText ->
+                Text(
+                    text = lineText,
+                    style = mainLineStyle,
+                    color = contentColor,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
             IntervalIndicator(
                 gapStartMs = gapRange.first,
                 gapEndMs = gapRange.second - 650L,
@@ -2387,13 +2407,6 @@ internal fun PlayerLyricsLine(
         }
     }
     val coroutineScope = rememberCoroutineScope()
-
-    val mainLineStyle =
-        MaterialTheme.typography.titleMedium.copy(
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = (-0.5).sp,
-        )
 
     Column(
         modifier =
