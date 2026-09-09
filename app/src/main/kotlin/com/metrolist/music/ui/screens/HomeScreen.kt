@@ -125,7 +125,7 @@ import com.metrolist.music.constants.InnerTubeCookieKey
 import com.metrolist.music.constants.ListItemHeight
 import com.metrolist.music.constants.ListThumbnailSize
 import com.metrolist.music.constants.RandomizeHomeOrderKey
-import com.metrolist.music.constants.ShowInternalHomeSectionsKey
+
 import com.metrolist.music.constants.SmallGridThumbnailHeight
 import com.metrolist.music.constants.ThumbnailCornerRadius
 import com.metrolist.music.db.entities.Album
@@ -713,11 +713,10 @@ fun HomeScreen(
     val accountName by viewModel.accountName.collectAsStateWithLifecycle()
     val accountImageUrl by viewModel.accountImageUrl.collectAsStateWithLifecycle()
     val innerTubeCookie by rememberPreference(InnerTubeCookieKey, "")
-    val (randomizeHomeOrder) = rememberPreference(RandomizeHomeOrderKey, true)
+    val (randomizeHomeOrder) = rememberPreference(RandomizeHomeOrderKey, false)
     val hiddenHomeSectionsState = rememberPreference(HiddenYouTubeHomeSectionsKey, emptySet<String>())
     val hiddenHomeSections = hiddenHomeSectionsState.value
     val (homeSectionOrder) = rememberPreference(HomeSectionOrderKey, DEFAULT_HOME_SECTION_ORDER)
-    val (showInternalHomeSectionsPref) = rememberPreference(ShowInternalHomeSectionsKey, false)
     val autoRadioQueue by rememberPreference(AutoRadioQueueKey, defaultValue = true)
 
     LaunchedEffect(Unit) { viewModel.loadHomeData() }
@@ -730,9 +729,8 @@ fun HomeScreen(
         remember(innerTubeCookie) {
             "SAPISID" in parseCookieString(innerTubeCookie)
         }
-    // App-generated sections are always shown when logged out; when logged in they require
-    // the toggle in the content settings.
-    val showInternalSections = !isLoggedIn || showInternalHomeSectionsPref
+    // App-generated sections (except Quick Picks) are only shown when logged out.
+    val showInternalSections = !isLoggedIn
     val url = if (isLoggedIn) accountImageUrl else null
 
     // Extract unique podcasts from episodes for "Podcast Channels" row
@@ -1052,7 +1050,7 @@ fun HomeScreen(
     val similarToLabel = stringResource(R.string.similar_to)
     fun categoryOf(section: HomeSection): String =
         when (section) {
-            HomeSection.SpeedDial,
+            HomeSection.SpeedDial -> "speed_dial"
             HomeSection.QuickPicks,
             HomeSection.DailyDiscover,
             HomeSection.KeepListening,
@@ -1091,7 +1089,6 @@ fun HomeScreen(
                     else -> "other"
                 }
             }
-            else -> "other"
         }
 
     // Hidden entries are category ids. Unclassified ("other") YouTube sections are never
@@ -1099,8 +1096,11 @@ fun HomeScreen(
     // (genre carousels, one-off promotions, …) stays off the home page.
     fun isSectionHidden(section: HomeSection): Boolean {
         val category = categoryOf(section)
-        if (category == "app_internal") return false
         if (category == "other") return true
+        // Speed Dial is always visible and not hideable.
+        if (category == "speed_dial") return false
+        // Other app-internal sections are only shown when logged out.
+        if (category == "app_internal" && !showInternalSections) return true
         if (category in hiddenHomeSections) return true
         return false
     }
@@ -1131,8 +1131,11 @@ fun HomeScreen(
             val list = mutableListOf<HomeSection>()
             val chipActive = selectedChip != null
 
+            // Speed Dial is always available, even when logged in.
+            if (!chipActive && speedDialItems.isNotEmpty()) {
+                list.add(HomeSection.SpeedDial)
+            }
             if (showInternalSections && !chipActive) {
-                if (speedDialItems.isNotEmpty()) list.add(HomeSection.SpeedDial)
                 if (quickPicks?.isNotEmpty() == true) list.add(HomeSection.QuickPicks)
                 if (dailyDiscover?.isNotEmpty() == true) list.add(HomeSection.DailyDiscover)
                 if (keepListening?.isNotEmpty() == true) list.add(HomeSection.KeepListening)

@@ -855,7 +855,8 @@
     <string name="home_section_order">Home section order</string>
     <string name="home_section_order_shuffle_hint">Section order is ignored while shuffle is enabled.</string>
     <string name="home_sections_settings_desc">Change the order of home screen sections or hide them</string>
-    <string name="home_sections_settings_login_required">Only available when logged in — sign in to reorder or hide home screen sections</string>
+    <string name="home_sections_settings_login_required">Sign in to reorder or hide home screen sections</string>
+    <string name="section_order_speed_dial">Speed dial</string>
     <string name="section_order_quick_picks">Quick picks</string>
     <string name="section_order_forgotten_favorites">Forgotten favorites</string>
     <string name="section_order_from_your_library">From your library</string>
@@ -881,8 +882,6 @@
     <string name="personalized_browsing">Personalized browsing</string>
     <string name="personalized_browsing_desc">Sign home, browse and playback requests with your YouTube account so recommendations fit your taste. Turn off to browse anonymously — what you explore then won\'t shape your YouTube history or recommendations.</string>
     <string name="account_and_sync">Account &amp; sync</string>
-    <string name="show_app_home_sections">App home sections</string>
-    <string name="show_app_home_sections_desc">Show app-generated sections on the home screen (quick picks, keep listening, forgotten favorites, daily discover). They are always shown when you\'re not logged in; when logged in, turn this on to see them alongside your YouTube content.</string>
     <string name="android_auto_recommendations_source">Recommendations source</string>
     <string name="android_auto_recommendations_source_desc">Where the section content in Android Auto comes from</string>
     <string name="android_auto_recommendations_youtube">YouTube</string>

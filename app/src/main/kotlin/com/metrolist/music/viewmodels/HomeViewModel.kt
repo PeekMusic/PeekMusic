@@ -26,15 +26,18 @@ import com.metrolist.innertube.pages.HomePage
 import com.metrolist.innertube.utils.completed
 import com.metrolist.innertube.utils.parseCookieString
 import com.metrolist.music.constants.AccountNameKey
+import com.metrolist.music.constants.DEFAULT_HOME_SECTION_ORDER
 import com.metrolist.music.constants.HideExplicitKey
 import com.metrolist.music.constants.HideVideoSongsKey
 import com.metrolist.music.constants.HideYoutubeShortsKey
+import com.metrolist.music.constants.HiddenYouTubeHomeSectionsKey
+import com.metrolist.music.constants.HomeSectionOrderKey
 import com.metrolist.music.constants.InnerTubeCookieKey
 import com.metrolist.music.constants.QuickPicks
 import com.metrolist.music.constants.QuickPicksKey
-import com.metrolist.music.constants.ShowInternalHomeSectionsKey
 import com.metrolist.music.constants.ShowWrappedCardKey
 import com.metrolist.music.constants.WrappedSeenKey
+import com.metrolist.music.constants.effectiveHomeSectionOrder
 import com.metrolist.music.db.MusicDatabase
 import com.metrolist.music.db.entities.Album
 import com.metrolist.music.db.entities.LocalItem
@@ -43,6 +46,7 @@ import com.metrolist.music.db.entities.SpeedDialItem
 import com.metrolist.music.extensions.filterVideoSongs
 import com.metrolist.music.extensions.toEnum
 import com.metrolist.music.models.SimilarRecommendation
+import com.metrolist.music.models.toMediaMetadata
 import com.metrolist.music.ui.screens.wrapped.WrappedAudioService
 import com.metrolist.music.ui.screens.wrapped.WrappedManager
 import com.metrolist.music.utils.NetworkConnectivityObserver
@@ -95,9 +99,30 @@ internal fun buildSpeedDialItems(
         .distinctBy { it.id }
         .take(27)
 
-// YouTube's first home page only carries a few sections; load() pulls continuation pages
-// until at least this many sections are present.
-private const val MIN_HOME_SECTIONS = 9
+// Minimum number of YouTube sections to load regardless of settings.
+private const val MIN_HOME_YOUTUBE_SECTIONS = 4
+
+// App-internal section categories visible per login state. Used to derive how many
+// YouTube sections need to be loaded to reach the number of enabled sections.
+private val INTERNAL_CATEGORIES_LOGGED_IN = setOf("speed_dial", "account_mixes")
+private val INTERNAL_CATEGORIES_LOGGED_OUT = setOf(
+    "speed_dial",
+    "app_internal",
+)
+
+private fun targetHomeYouTubeSections(context: Context, loggedIn: Boolean): Int {
+    val internalCategories = if (loggedIn) INTERNAL_CATEGORIES_LOGGED_IN else INTERNAL_CATEGORIES_LOGGED_OUT
+    val storedOrder = effectiveHomeSectionOrder(
+        context.dataStore.get(HomeSectionOrderKey, DEFAULT_HOME_SECTION_ORDER)
+    )
+    val hiddenCategories = context.dataStore.get(HiddenYouTubeHomeSectionsKey, emptySet<String>())
+
+    // Count sections the user has actually enabled in settings plus the internal sections
+    // that are always shown for the current login state.
+    val enabledCategories = (storedOrder.filter { it !in hiddenCategories } + internalCategories).distinct()
+    val targetTotal = enabledCategories.size.coerceAtLeast(6)
+    return (targetTotal - internalCategories.size).coerceAtLeast(MIN_HOME_YOUTUBE_SECTIONS)
+}
 
 // Initial home screen loading window: the loading animation shows for at least
 // MIN_HOME_LOADING_MS (so sections don't pop in one by one) and at most
@@ -497,11 +522,10 @@ class HomeViewModel @Inject constructor(
         val fromTimeStamp = LocalDateTime.now().minusWeeks(2)
         val loadStartMs = System.currentTimeMillis()
 
-        // App-generated sections are always shown when logged out (the app would be nearly
-        // empty otherwise); when logged in they only load if enabled in the content settings.
         val loggedIn = "SAPISID" in parseCookieString(YouTube.cookie.orEmpty())
-        val showInternalSections =
-            !loggedIn || context.dataStore.get(ShowInternalHomeSectionsKey, false)
+        // App-generated sections are always shown when logged out. When logged in, only
+        // Quick Picks and account-specific sections remain; the rest is hidden.
+        val showInternalSections = !loggedIn
 
         // Phase 1: Load essential sections in parallel — local DB (fast) + YouTube home page.
         coroutineScope {
@@ -511,11 +535,11 @@ class HomeViewModel @Inject constructor(
                         reportException(IllegalStateException("YouTube.home() returned no page"))
                         return@launch
                     }
-                // The first home page only carries a few sections; pull continuation pages
-                // until the feed is full, so cold start and pull-to-refresh show the same
-                // content instead of relying on scroll-triggered pagination to catch up.
+                // Pull enough YouTube sections so that, together with the app-generated
+                // sections, the home screen reaches the number of sections enabled in settings.
+                val targetYouTubeSections = targetHomeYouTubeSections(context, loggedIn)
                 var combined = firstPage
-                while (combined.sections.size < MIN_HOME_SECTIONS && combined.continuation != null) {
+                while (combined.sections.size < targetYouTubeSections && combined.continuation != null) {
                     val next = YouTube.home(combined.continuation).getOrNull()
                     if (next == null) break
                     combined = next.copy(

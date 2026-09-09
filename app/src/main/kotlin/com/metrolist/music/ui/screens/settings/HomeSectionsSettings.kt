@@ -16,11 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,13 +42,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.metrolist.innertube.utils.parseCookieString
 import com.metrolist.music.LocalPlayerAwareWindowInsets
 import com.metrolist.music.R
 import com.metrolist.music.constants.DEFAULT_HOME_SECTION_ORDER
 import com.metrolist.music.constants.HiddenYouTubeHomeSectionsKey
 import com.metrolist.music.constants.HomeSectionOrderKey
+import com.metrolist.music.constants.InnerTubeCookieKey
 import com.metrolist.music.constants.RandomizeHomeOrderKey
-import com.metrolist.music.constants.ShowInternalHomeSectionsKey
 import com.metrolist.music.constants.effectiveHomeSectionOrder
 import com.metrolist.music.ui.component.IconButton
 import com.metrolist.music.ui.component.Material3SettingsGroup
@@ -63,6 +64,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 private fun categoryLabelRes(category: String): Int =
     when (category) {
+        "speed_dial" -> R.string.section_order_speed_dial
         "quick_picks" -> R.string.section_order_quick_picks
         "forgotten_favorites" -> R.string.section_order_forgotten_favorites
         "from_your_library" -> R.string.section_order_from_your_library
@@ -88,124 +90,28 @@ private fun categoryLabelRes(category: String): Int =
         else -> 0
     }
 
-@Composable
-private fun homeSettingsSwitchItem(
-    icon: Int,
-    titleRes: Int,
-    descriptionRes: Int?,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-): Material3SettingsItem =
-    Material3SettingsItem(
-        icon = painterResource(icon),
-        title = { Text(stringResource(titleRes)) },
-        description = descriptionRes?.let { { Text(stringResource(it)) } },
-        trailingContent = {
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
-                thumbContent = {
-                    Icon(
-                        painter = painterResource(
-                            id = if (checked) R.drawable.check else R.drawable.close
-                        ),
-                        contentDescription = null,
-                        modifier = Modifier.size(SwitchDefaults.IconSize)
-                    )
-                }
-            )
-        },
-        onClick = { onCheckedChange(!checked) }
-    )
-
 /**
- * Home screen settings: the home-related toggles live here, the draggable section order
- * (including hide/restore) is in the subsection.
+ * Home screen section settings: randomize toggle, draggable section order and hide/restore.
+ * The order list is read-only when the user is not logged in.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeSectionsSettings(
     navController: NavController,
 ) {
-    val (randomizeHomeOrder, onRandomizeHomeOrderChange) = rememberPreference(RandomizeHomeOrderKey, true)
-    val (showInternalHomeSections, onShowInternalHomeSectionsChange) =
-        rememberPreference(ShowInternalHomeSectionsKey, false)
-
-    Column(
-        modifier = Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-    ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)
-            )
-        )
-
-        Spacer(Modifier.height(16.dp))
-
-        Material3SettingsGroup(
-            title = stringResource(R.string.home_screen_sections),
-            items = listOf(
-                homeSettingsSwitchItem(
-                    icon = R.drawable.shuffle,
-                    titleRes = R.string.randomize_home_order,
-                    descriptionRes = R.string.randomize_home_order_desc,
-                    checked = randomizeHomeOrder,
-                    onCheckedChange = onRandomizeHomeOrderChange,
-                ),
-                homeSettingsSwitchItem(
-                    icon = R.drawable.home_outlined,
-                    titleRes = R.string.show_app_home_sections,
-                    descriptionRes = R.string.show_app_home_sections_desc,
-                    checked = showInternalHomeSections,
-                    onCheckedChange = onShowInternalHomeSectionsChange,
-                ),
-                Material3SettingsItem(
-                    icon = painterResource(R.drawable.drag_handle),
-                    title = { Text(stringResource(R.string.home_section_order)) },
-                    enabled = !randomizeHomeOrder,
-                    onClick = { navController.navigate("settings/home_sections/order") },
-                ),
-            )
-        )
-
-        Spacer(Modifier.height(16.dp))
-    }
-
-    TopAppBar(
-        title = { Text(stringResource(R.string.home_screen_sections)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        },
-    )
-}
-
-/**
- * Subsection of the home screen settings: order the section categories via drag & drop and
- * hide/restore whole categories with the toggle.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun HomeSectionOrderScreen(
-    navController: NavController,
-) {
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
-    val (randomizeHomeOrder) = rememberPreference(RandomizeHomeOrderKey, true)
+    val (randomizeHomeOrder, onRandomizeHomeOrderChange) = rememberPreference(RandomizeHomeOrderKey, false)
     val (hiddenCategories, onHiddenCategoriesChange) =
         rememberPreference(HiddenYouTubeHomeSectionsKey, emptySet<String>())
     val (_, onHomeSectionOrderChange) =
         rememberPreference(HomeSectionOrderKey, DEFAULT_HOME_SECTION_ORDER)
+
+    val innerTubeCookie by rememberPreference(InnerTubeCookieKey, "")
+    val isLoggedIn = remember(innerTubeCookie) {
+        "SAPISID" in parseCookieString(innerTubeCookie)
+    }
+    val canReorder = isLoggedIn && !randomizeHomeOrder
 
     var categories by remember {
         mutableStateOf(
@@ -219,6 +125,7 @@ fun HomeSectionOrderScreen(
 
     val lazyListState = rememberLazyListState()
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        if (!canReorder) return@rememberReorderableLazyListState
         val fromIndex = from.index
         val toIndex = to.index
         if (fromIndex in categories.indices && toIndex in categories.indices) {
@@ -231,6 +138,7 @@ fun HomeSectionOrderScreen(
     }
 
     fun toggleHidden(category: String) {
+        if (!isLoggedIn) return
         onHiddenCategoriesChange(
             if (category in hiddenCategories) hiddenCategories - category
             else hiddenCategories + category
@@ -250,20 +158,59 @@ fun HomeSectionOrderScreen(
             )
         )
 
-        if (randomizeHomeOrder) {
+        Spacer(Modifier.height(16.dp))
+
+        Material3SettingsGroup(
+            title = stringResource(R.string.home_screen_sections),
+            items = listOf(
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.shuffle),
+                    title = { Text(stringResource(R.string.randomize_home_order)) },
+                    description = { Text(stringResource(R.string.randomize_home_order_desc)) },
+                    trailingContent = {
+                        Switch(
+                            checked = randomizeHomeOrder,
+                            onCheckedChange = onRandomizeHomeOrderChange,
+                            thumbContent = {
+                                Icon(
+                                    painter = painterResource(
+                                        id = if (randomizeHomeOrder) R.drawable.check else R.drawable.close
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                                )
+                            }
+                        )
+                    },
+                    onClick = { onRandomizeHomeOrderChange(!randomizeHomeOrder) }
+                )
+            )
+        )
+
+        if (randomizeHomeOrder || !isLoggedIn) {
+            Spacer(Modifier.height(16.dp))
             Material3SettingsGroup(
                 items = listOf(
                     Material3SettingsItem(
                         title = {},
                         description = {
-                            Text(stringResource(R.string.home_section_order_shuffle_hint))
+                            Text(
+                                stringResource(
+                                    if (randomizeHomeOrder) {
+                                        R.string.home_section_order_shuffle_hint
+                                    } else {
+                                        R.string.home_sections_settings_login_required
+                                    }
+                                )
+                            )
                         },
                         onClick = null
                     )
                 )
             )
-            Spacer(Modifier.height(16.dp))
         }
+
+        Spacer(Modifier.height(16.dp))
 
         Material3SettingsGroup(
             title = stringResource(R.string.home_section_order),
@@ -300,17 +247,28 @@ fun HomeSectionOrderScreen(
                                             contentDescription = null,
                                             modifier = Modifier
                                                 .size(24.dp)
-                                                .longPressDraggableHandle(
-                                                    onDragStarted = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                .then(
+                                                    if (canReorder) {
+                                                        Modifier.longPressDraggableHandle(
+                                                            onDragStarted = {
+                                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                            }
+                                                        )
+                                                    } else {
+                                                        Modifier
                                                     }
                                                 ),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            tint = if (canReorder) {
+                                                MaterialTheme.colorScheme.onSurfaceVariant
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                                            },
                                         )
                                         Spacer(Modifier.width(12.dp))
-                                        Switch(
+                                         Switch(
                                             checked = !hidden,
                                             onCheckedChange = { toggleHidden(category) },
+                                            enabled = isLoggedIn,
                                             thumbContent = {
                                                 Icon(
                                                     painter = painterResource(
@@ -324,6 +282,7 @@ fun HomeSectionOrderScreen(
                                     }
                                 },
                                 onClick = { toggleHidden(category) },
+                                enabled = isLoggedIn,
                             )
                         )
                     )
@@ -334,7 +293,7 @@ fun HomeSectionOrderScreen(
     }
 
     TopAppBar(
-        title = { Text(stringResource(R.string.home_section_order)) },
+        title = { Text(stringResource(R.string.home_screen_sections)) },
         navigationIcon = {
             IconButton(
                 onClick = navController::navigateUp,

@@ -91,15 +91,7 @@ fun HomeSettings(
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.home_outlined),
                     title = { Text(stringResource(R.string.home_screen_sections)) },
-                    description = {
-                        Text(
-                            stringResource(
-                                if (isLoggedIn) R.string.home_sections_settings_desc
-                                else R.string.home_sections_settings_login_required
-                            )
-                        )
-                    },
-                    enabled = isLoggedIn,
+                    description = { Text(stringResource(R.string.home_sections_settings_desc)) },
                     onClick = { navController.navigate("settings/home_sections") },
                 ),
             ),
