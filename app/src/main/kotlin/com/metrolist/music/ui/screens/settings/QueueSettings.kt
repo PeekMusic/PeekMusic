@@ -5,9 +5,12 @@
 
 package com.metrolist.music.ui.screens.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -15,15 +18,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -36,9 +50,12 @@ import com.metrolist.music.constants.AutoRadioQueueKey
 import com.metrolist.music.constants.AutoSkipNextOnErrorKey
 import com.metrolist.music.constants.AutoplayKey
 import com.metrolist.music.constants.DisableLoadMoreWhenRepeatAllKey
+import com.metrolist.music.constants.ExcludeRecentlyPlayedFromQueueKey
 import com.metrolist.music.constants.PersistentQueueKey
+import com.metrolist.music.constants.RecentlyPlayedTrackIdsKey
 import com.metrolist.music.constants.PersistentShuffleAcrossQueuesKey
 import com.metrolist.music.constants.PreventDuplicateTracksInQueueKey
+import com.metrolist.music.constants.RecentlyPlayedWindowSizeKey
 import com.metrolist.music.constants.RememberShuffleAndRepeatKey
 import com.metrolist.music.constants.ShufflePlaylistFirstKey
 import com.metrolist.music.constants.SimilarContent
@@ -47,12 +64,16 @@ import com.metrolist.music.ui.component.Material3SettingsGroup
 import com.metrolist.music.ui.component.Material3SettingsItem
 import com.metrolist.music.ui.utils.backToMain
 import com.metrolist.music.utils.rememberPreference
+import com.metrolist.music.utils.safeDataStoreEdit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QueueSettings(
     navController: NavController
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     val (persistentQueue, onPersistentQueueChange) = rememberPreference(
         PersistentQueueKey,
         defaultValue = true
@@ -101,6 +122,67 @@ fun QueueSettings(
         PreventDuplicateTracksInQueueKey,
         defaultValue = false
     )
+    val (excludeRecentlyPlayedFromQueue, onExcludeRecentlyPlayedFromQueueChange) = rememberPreference(
+        ExcludeRecentlyPlayedFromQueueKey,
+        defaultValue = true
+    )
+    val (recentlyPlayedWindowSize, onRecentlyPlayedWindowSizeChangeRaw) = rememberPreference(
+        RecentlyPlayedWindowSizeKey,
+        defaultValue = 25
+    )
+    val onRecentlyPlayedWindowSizeChange: (Int) -> Unit = { newSize ->
+        onRecentlyPlayedWindowSizeChangeRaw(newSize)
+        // Trim the stored window to the new size immediately so the change takes effect
+        // without waiting for the next song to be played.
+        coroutineScope.launch {
+            context.safeDataStoreEdit { prefs ->
+                val raw = prefs[RecentlyPlayedTrackIdsKey]
+                val current = if (raw.isNullOrBlank()) emptyList() else raw.split(",").filter { it.isNotBlank() }
+                if (current.size > newSize) {
+                    prefs[RecentlyPlayedTrackIdsKey] = current.takeLast(newSize).joinToString(",")
+                }
+            }
+        }
+    }
+
+    var showWindowSizeDialog by rememberSaveable { mutableStateOf(false) }
+    if (showWindowSizeDialog) {
+        var tempSize by rememberSaveable { mutableFloatStateOf(recentlyPlayedWindowSize.toFloat()) }
+        AlertDialog(
+            onDismissRequest = { showWindowSizeDialog = false },
+            title = { Text(stringResource(R.string.recently_played_window_size)) },
+            text = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(tempSize.toInt().toString())
+                    Slider(
+                        value = tempSize,
+                        onValueChange = { tempSize = it },
+                        valueRange = 1f..100f,
+                        steps = 98
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onRecentlyPlayedWindowSizeChange(tempSize.toInt())
+                        showWindowSizeDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.save))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showWindowSizeDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 
     Column(
         Modifier
@@ -353,6 +435,35 @@ fun QueueSettings(
                         )
                     },
                     onClick = { onPreventDuplicateTracksInQueueChange(!preventDuplicateTracksInQueue) }
+                ),
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.history),
+                    title = { Text(stringResource(R.string.exclude_recently_played_from_queue)) },
+                    description = { Text(stringResource(R.string.exclude_recently_played_from_queue_desc)) },
+                    trailingContent = {
+                        Switch(
+                            checked = excludeRecentlyPlayedFromQueue,
+                            onCheckedChange = onExcludeRecentlyPlayedFromQueueChange,
+                            thumbContent = {
+                                Icon(
+                                    painter = painterResource(
+                                        id = if (excludeRecentlyPlayedFromQueue) R.drawable.check else R.drawable.close
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                                )
+                            }
+                        )
+                    },
+                    onClick = { onExcludeRecentlyPlayedFromQueueChange(!excludeRecentlyPlayedFromQueue) }
+                ),
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.history),
+                    title = { Text(stringResource(R.string.recently_played_window_size)) },
+                    description = { Text(stringResource(R.string.recently_played_window_size_desc, recentlyPlayedWindowSize)) },
+                    trailingContent = { Text(recentlyPlayedWindowSize.toString()) },
+                    enabled = excludeRecentlyPlayedFromQueue,
+                    onClick = { showWindowSizeDialog = true }
                 ),
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.skip_next),

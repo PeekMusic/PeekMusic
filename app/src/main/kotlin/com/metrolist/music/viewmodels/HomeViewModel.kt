@@ -715,7 +715,12 @@ class HomeViewModel @Inject constructor(
             homePage.value = nextSections.copy(
                 chips = homePage.value?.chips,
                 sections = nextSections.sections.mapNotNull { section ->
-                    section.copy(items = section.items.filterOutNulls().filterExplicit(hideExplicit).filterVideoSongs(hideVideoSongs).filterYoutubeShorts(hideYoutubeShorts))
+                    val filtered = section.items
+                        .filterOutNulls()
+                        .filterExplicit(hideExplicit)
+                        .filterVideoSongs(hideVideoSongs)
+                        .filterYoutubeShorts(hideYoutubeShorts)
+                    section.copy(items = filtered)
                 }
             )
             selectedChip.value = chip
@@ -801,7 +806,12 @@ class HomeViewModel @Inject constructor(
                     homePage.value = nextSections.copy(
                         chips = homePage.value?.chips,
                         sections = nextSections.sections.mapNotNull { section ->
-                            section.copy(items = section.items.filterOutNulls().filterExplicit(hideExplicit).filterVideoSongs(hideVideoSongs).filterYoutubeShorts(hideYoutubeShorts))
+                            val filtered = section.items
+                                .filterOutNulls()
+                                .filterExplicit(hideExplicit)
+                                .filterVideoSongs(hideVideoSongs)
+                                .filterYoutubeShorts(hideYoutubeShorts)
+                            section.copy(items = filtered)
                         }
                     )
                 }

@@ -13,6 +13,7 @@ class ListQueue(
     val items: List<MediaItem>,
     val startIndex: Int = 0,
     val position: Long = 0L,
+    override val isRadioMix: Boolean = false,
 ) : Queue {
     override val preloadItem: MediaMetadata? = null
 

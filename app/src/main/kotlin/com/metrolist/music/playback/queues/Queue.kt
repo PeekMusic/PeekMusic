@@ -12,6 +12,12 @@ import com.metrolist.music.models.MediaMetadata
 interface Queue {
     val preloadItem: MediaMetadata?
 
+    /**
+     * True for radio/mix queues whose initial items should be filtered against
+     * the recently-played window (e.g. YouTube mixes or song radios).
+     */
+    val isRadioMix: Boolean get() = false
+
     suspend fun getInitialStatus(): Status
 
     fun hasNextPage(): Boolean

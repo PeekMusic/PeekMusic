@@ -118,6 +118,9 @@ import com.metrolist.music.constants.EnableSongCacheKey
 import com.metrolist.music.constants.PreloadQueueCountKey
 import com.metrolist.music.constants.HideExplicitKey
 import com.metrolist.music.constants.HideVideoSongsKey
+import com.metrolist.music.constants.ExcludeRecentlyPlayedFromQueueKey
+import com.metrolist.music.constants.RecentlyPlayedTrackIdsKey
+import com.metrolist.music.constants.RecentlyPlayedWindowSizeKey
 import com.metrolist.music.constants.HistoryDuration
 import com.metrolist.music.constants.MediaSessionConstants
 import com.metrolist.music.constants.MediaSessionConstants.CommandAddToTargetPlaylist
@@ -236,6 +239,9 @@ import java.util.Collections
 
 private const val INSTANT_SILENCE_SKIP_STEP_MS = 15_000L
 private const val INSTANT_SILENCE_SKIP_SETTLE_MS = 350L
+
+// Default number of recently played track ids kept in DataStore to avoid repeats in mixes/radios.
+private const val DEFAULT_RECENTLY_PLAYED_WINDOW_SIZE = 25
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -1575,35 +1581,36 @@ class MusicService :
                         .filterExplicit(dataStore.get(HideExplicitKey, false))
                         .filterVideoSongs(dataStore.get(HideVideoSongsKey, false))
                 }
+            val filteredStatus = initialStatus.withRecentlyPlayedFiltered(queue)
             if (queue.preloadItem != null && player.playbackState == STATE_IDLE) return@launch
-            if (initialStatus.title != null) {
-                queueTitle = initialStatus.title
+            if (filteredStatus.title != null) {
+                queueTitle = filteredStatus.title
             }
-            if (initialStatus.items.isEmpty()) return@launch
+            if (filteredStatus.items.isEmpty()) return@launch
             // Track original queue size for shuffle playlist first feature
-            originalQueueSize = initialStatus.items.size
+            originalQueueSize = filteredStatus.items.size
             if (queue.preloadItem != null) {
                 player.addMediaItems(
                     0,
-                    initialStatus.items.subList(0, initialStatus.mediaItemIndex),
+                    filteredStatus.items.subList(0, filteredStatus.mediaItemIndex),
                 )
                 player.addMediaItems(
-                    initialStatus.items.subList(
-                        initialStatus.mediaItemIndex + 1,
-                        initialStatus.items.size,
+                    filteredStatus.items.subList(
+                        filteredStatus.mediaItemIndex + 1,
+                        filteredStatus.items.size,
                     ),
                 )
             } else {
                 player.setMediaItems(
-                    initialStatus.items,
-                    if (initialStatus.mediaItemIndex >
+                    filteredStatus.items,
+                    if (filteredStatus.mediaItemIndex >
                         0
                     ) {
-                        initialStatus.mediaItemIndex
+                        filteredStatus.mediaItemIndex
                     } else {
                         0
                     },
-                    initialStatus.position,
+                    filteredStatus.position,
                 )
                 player.prepare()
                 player.playWhenReady = playWhenReady
@@ -2297,6 +2304,8 @@ class MusicService :
             }
         }
         lastTransitionedMediaId = mediaItem?.mediaId
+        mediaItem?.mediaId?.takeIf { reason != Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT }
+            ?.let { addToRecentlyPlayed(it) }
         initialBufferRecoveryJob?.cancel()
         initialBufferRecoveryJob = null
         initialBufferRecoveryAttemptedMediaId = null
@@ -2366,8 +2375,32 @@ class MusicService :
                             .filterExplicit(cachedHideExplicit)
                             .filterVideoSongs(cachedHideVideoSongs)
                     }
-                if (player.playbackState != STATE_IDLE && mediaItems.isNotEmpty()) {
-                    player.addMediaItems(mediaItems)
+
+                val preventDuplicates = dataStore.get(PreventDuplicateTracksInQueueKey, false)
+                val excludeRecentlyPlayed = dataStore.get(ExcludeRecentlyPlayedFromQueueKey, true)
+                val existingIds =
+                    if (preventDuplicates || excludeRecentlyPlayed) {
+                        (0 until player.mediaItemCount)
+                            .map { player.getMediaItemAt(it).mediaId }
+                            .toSet()
+                    } else {
+                        emptySet()
+                    }
+                val recentlyPlayedIds = if (excludeRecentlyPlayed) getRecentlyPlayedIds() else emptySet()
+
+                var itemsToAdd = mediaItems
+                if (preventDuplicates) {
+                    itemsToAdd = itemsToAdd.filter { it.mediaId !in existingIds }
+                }
+                if (excludeRecentlyPlayed) {
+                    val filtered = itemsToAdd.filter { it.mediaId !in recentlyPlayedIds }
+                    // Fallback: keep at least half of the original batch so the queue never starves.
+                    val threshold = mediaItems.size / 2
+                    itemsToAdd = if (filtered.size >= threshold) filtered else itemsToAdd
+                }
+
+                if (player.playbackState != STATE_IDLE && itemsToAdd.isNotEmpty()) {
+                    player.addMediaItems(itemsToAdd)
                     if (player.shuffleModeEnabled) {
                         applyShuffleOrder(player.currentMediaItemIndex, player.mediaItemCount, cachedShufflePlaylistFirst)
                     }
@@ -2637,6 +2670,77 @@ class MusicService :
             }
             player.setShuffleOrder(DefaultShuffleOrder(shuffledIndices, System.currentTimeMillis()))
         }
+    }
+
+    /**
+     * Parses the persisted recently-played list (oldest first, newest last).
+     * Empty string yields an empty list.
+     */
+    private fun getRecentlyPlayedIds(): List<String> {
+        val raw = dataStore.get(RecentlyPlayedTrackIdsKey, "")
+        return parseRecentlyPlayedIds(raw)
+    }
+
+    private fun parseRecentlyPlayedIds(raw: String?): List<String> {
+        if (raw.isNullOrBlank()) return emptyList()
+        return raw.split(",").filter { it.isNotBlank() }
+    }
+
+    /**
+     * Adds a track id to the rolling recently-played window, dropping the oldest entry
+     * when the window exceeds the user-configurable size.
+     */
+    private fun addToRecentlyPlayed(mediaId: String) {
+        scope.launch(SilentHandler) {
+            safeDataStoreEdit { prefs ->
+                val windowSize = prefs[RecentlyPlayedWindowSizeKey] ?: DEFAULT_RECENTLY_PLAYED_WINDOW_SIZE
+                val current = parseRecentlyPlayedIds(prefs[RecentlyPlayedTrackIdsKey])
+                val updated =
+                    if (mediaId in current) {
+                        // Move to the end by rebuilding order: keep existing order, remove, append.
+                        (current.filterNot { it == mediaId } + mediaId).take(windowSize)
+                    } else if (current.size >= windowSize) {
+                        (current.drop(1) + mediaId).take(windowSize)
+                    } else {
+                        current + mediaId
+                    }
+                prefs[RecentlyPlayedTrackIdsKey] = updated.joinToString(",")
+            }
+        }
+    }
+
+    /**
+     * Filters the tail of an initial radio/mix queue against the recently-played window.
+     * The item at [Queue.Status.mediaItemIndex] and everything before it is kept so the
+     * selected starting point is never removed. If filtering removes too many songs,
+     * additional pages are fetched until enough remain; otherwise the original suffix
+     * is restored as a fallback.
+     */
+    private suspend fun Queue.Status.withRecentlyPlayedFiltered(queue: Queue): Queue.Status {
+        if (!dataStore.get(ExcludeRecentlyPlayedFromQueueKey, true)) return this
+        if (!queue.isRadioMix || items.isEmpty()) return this
+
+        val recentlyPlayed = getRecentlyPlayedIds()
+        val currentIndex = mediaItemIndex.coerceIn(0, items.lastIndex)
+        val prefix = items.take(currentIndex + 1)
+        val suffix = items.drop(currentIndex + 1)
+
+        val minDesired = maxOf(suffix.size / 2, 5)
+        var filteredSuffix = suffix.filter { it.mediaId !in recentlyPlayed }
+
+        while (filteredSuffix.size < minDesired && queue.hasNextPage()) {
+            val nextItems = withContext(Dispatchers.IO) { queue.nextPage() }
+            val newItems = nextItems.filter {
+                it.mediaId !in recentlyPlayed && it.mediaId !in prefix.map { item -> item.mediaId }
+            }
+            filteredSuffix = filteredSuffix + newItems
+        }
+
+        if (filteredSuffix.size < minDesired) {
+            filteredSuffix = suffix
+        }
+
+        return copy(items = prefix + filteredSuffix)
     }
 
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
