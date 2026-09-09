@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.6.0
+
+- Player lyrics peek: supports lyrics offset, translation and romanization, and
+  shows refresh/search actions when lyrics are not found; the previous line now
+  stays visible while the instrumental gap indicator is running
+- Lyrics fixes: SimpMusic rich-sync word-end timing corrected and a translation
+  composition lifecycle bug resolved
+- Queue: added an option to exclude recently played songs from generated mixes
+  and radios, with a configurable window (1–100 tracks); duplicate prevention now
+  also covers the auto-load-more path for mixes and radios
+- Home screen: the speed-dial grid is always visible, even when logged in; the
+  separate "App home sections" master toggle is removed, while the remaining
+  internal sections stay logged-out only; home section order and shuffle are now
+  in one settings screen and the order list is only editable while logged in and
+  shuffle is off
+
 ## v0.5.1
 
 - Fix: the update badge (red dot on the profile picture) no longer shows on the
