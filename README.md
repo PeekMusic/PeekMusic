@@ -43,6 +43,27 @@ screen, lyrics, the player — gets extra polish.
 - Options grouped into focused pages instead of endless scrolling (Player design, Audio, Queue, Sleep & Alarm, Lyrics, Home screen, …).
 - Android Auto: choose whether recommendations come from your YouTube home feed or local suggestions.
 
+## Screenshots
+
+<div align="center">
+
+<table>
+  <tr>
+    <td><img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_01.jpg" width="200" /></td>
+    <td><img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_02.jpg" width="200" /></td>
+    <td><img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_03.jpg" width="200" /></td>
+    <td><img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_04.jpg" width="200" /></td>
+  </tr>
+  <tr>
+    <td><img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_05.jpg" width="200" /></td>
+    <td><img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_06.jpg" width="200" /></td>
+    <td><img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_07.jpg" width="200" /></td>
+    <td><img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_08.jpg" width="200" /></td>
+  </tr>
+</table>
+
+</div>
+
 ## What's been removed
 
 Things this fork deliberately doesn't carry:
