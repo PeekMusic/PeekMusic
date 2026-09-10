@@ -16,32 +16,36 @@ screen, lyrics, the player — gets extra polish.
 
 ## What's different (and why it's better)
 
-**A home screen you actually control**
-- Reorder *all* sections — including the YouTube-generated ones — with drag & drop, and hide any section you don't want to see. Hiding a category (like "Similar to") hides all of its instances.
-- Optional shuffle ordering for a fresh layout on every start.
-- App-generated sections (quick picks, forgotten favorites, …) are separate from YouTube's content: off by default when you're logged in, on when you're not.
+**The "Peek" Feature**: The currently active lyric line lives directly between the cover and the title in the player, no more flipping to the lyrics page just to see what's being sung.
 
-**Smoother where it matters**
-- Home screen and player animations reworked (rendering off the main thread, fewer database observers, draw-phase animation progress)
-- Configurable queue pre-caching: buffer up to 8 upcoming songs while you listen, so skips are instant.
-- Crossfade follows an equal-power curve — no more audible volume dips between songs.
-- Search stays out of your way: at most 4 autocomplete suggestions, then straight to music results.
+**✨ First-Launch Onboarding**
+- **7-Step Introduction**: A comprehensive first-launch onboarding flow with live previews for theme, player design, lyrics peek, playback, smart queue/caching, content filters, and update checks.
 
-**Lyrics, taken seriously**
-- More providers: SimpMusic and Musixmatch joined the existing ones (BetterLyrics, Paxsenix, LrcLib, KuGou, LyricsPlus, YouTube).
-- Auto-pick best provider: the app finds the best synced lyrics per song on its own, preferring word-by-word (karaoke-style) results. Prefer a specific provider? Reorder or search manually — results are grouped by source.
-- Free, keyless lyric translation — no API keys, no accounts. (Rate Limits may apply). Mixed-language songs translate completely, identical lines are never shown twice. 
-- Full cache control: clear translation or lyrics caches any time in Settings → Storage.
-- **Lyrics peek**: the active line lives right in the player, between the cover and the title — with karaoke highlighting, romanization and a ring that fills during instrumental passages. One tap opens the full lyrics view; disable it in Settings → Songtexte if you prefer a clean player.
+**🎵 Player & Lyrics**
+- **Advanced Peek Lyrics**: The Peek feature supports offset adjustments, translations, and romanization!
+- **Layout Adaptability**: The player stays open through display changes (folding, unfolding, rotating). In landscape, the peek line and controls sit as one unit; on wide portrait screens, the peek lives in the right-hand column.
+- **Karaoke & Translations**: Word-by-word karaoke animations when timings are available. Added a keyless Google Translate backend for free full-song lyrics translation in a single tap!
+- **Robust Romanization**: Correct language detection for Japanese romanization, and identical romanization/translation lines are intelligently merged to prevent duplication.
 
-**A home feed that stays configured**
-- Sections are matched against fixed categories, so hiding one (e.g. "Similar to") really hides all of them — no surprises when more content loads.
-- No endless scrolling: the feed stays exactly as you arranged it.
-- Section options are only available while logged in (they only affect the YouTube feed anyway).
+**📱 Widgets & Playlists**
+- **Unified Playlist Controls**: The Shuffle button has been moved out of submenus and placed consistently between the Play and Menu buttons across all playlist and album views.
+- **Widget Upgrades**: Replaced the "Like" button with Previous/Next track buttons on both the 4x2 and 4x3 player widgets for quicker, more useful playback control.
 
-**A settings menu that makes sense**
-- Options grouped into focused pages instead of endless scrolling (Player design, Audio, Queue, Sleep & Alarm, Lyrics, Home screen, …).
-- Android Auto: choose whether recommendations come from your YouTube home feed or local suggestions.
+**🏠 Home Screen & Search**
+- **Always-on Speed Dial**: The speed-dial grid is now always visible, even when logged in.
+- **Clean Feed**: The Home screen strictly focuses on YouTube content.
+- **Category Management**: Home sections are grouped into 19 categories with drag-and-drop reordering, and the ability to hide/restore entire categories.
+- **Snappy Reloads**: Pull-to-refresh loads the full feed (continuation pages) instantly behind a short shimmer, preventing sections from popping in one by one.
+- **Smarter Search**: Search autocomplete shows at most 4 suggestions before jumping straight to music results.
+
+**🔀 Queue & Android Auto**
+- **Exclude Recently Played**: A new option to prevent recently played songs from appearing in generated mixes and radios (configurable window of 1–100 tracks).
+- **Android Auto Choice**: Choose your recommendations source — your YouTube home feed or local suggestions. Selecting a song under "Songs" now seeds an automatic Mix.
+
+**⚙️ Settings & Performance**
+- **Restructured Settings**: The overloaded settings pages were split into focused categories: Player, Audio, Queue, Sleep & Alarm, Lyrics, and Home.
+- **Audio Quality Dialog**: Audio quality selection now uses an easy-to-use dropdown dialog in Onboarding and Settings.
+- **Smart Caching**: Pre-caching settings visibility now toggles based on the main cache state.
 
 ## Screenshots
 
