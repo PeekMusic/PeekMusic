@@ -2325,33 +2325,21 @@ internal fun PlayerLyricsLine(
             null
         }
 
-    if (gapRange != null) {
-        Column(
-            modifier =
-                modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = PlayerHorizontalPadding)
-                    .clickable(onClick = onShowLyrics),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    val isInGap = gapRange != null && position + offset >= gapRange.first && position + offset < gapRange.second - 650L
+
+    if (isInGap) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = PlayerHorizontalPadding)
+                .clickable(onClick = onShowLyrics),
+            contentAlignment = Alignment.Center,
         ) {
-            // Keep the lyric line that just ended visible while the gap indicator is shown,
-            // so the previous line doesn't disappear before the instrumental break symbol.
-            activeLine?.text?.takeIf { it.isNotBlank() }?.let { lineText ->
-                Text(
-                    text = lineText,
-                    style = mainLineStyle,
-                    color = contentColor,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
             IntervalIndicator(
-                gapStartMs = gapRange.first,
+                gapStartMs = gapRange!!.first,
                 gapEndMs = gapRange.second - 650L,
                 currentPositionMs = position + offset,
-                visible = position + offset >= gapRange.first && position + offset < gapRange.second - 650L,
+                visible = true,
                 color = contentColor,
                 modifier = Modifier.fillMaxWidth(),
             )
