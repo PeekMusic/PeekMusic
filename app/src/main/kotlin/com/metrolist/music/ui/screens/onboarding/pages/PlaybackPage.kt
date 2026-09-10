@@ -38,6 +38,7 @@ import com.metrolist.music.utils.rememberPreference
 @Composable
 fun PlaybackPage(modifier: Modifier = Modifier) {
     val (audioQuality, onAudioQualityChange) = rememberEnumPreference(AudioQualityKey, AudioQuality.AUTO)
+    val showAudioQualityDialog = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     val (crossfade, onCrossfadeChange) = rememberPreference(CrossfadeEnabledKey, false)
     val (crossfadeDuration, onCrossfadeDurationChange) = rememberPreference(
         com.metrolist.music.constants.CrossfadeDurationKey,
@@ -45,6 +46,26 @@ fun PlaybackPage(modifier: Modifier = Modifier) {
     )
     val (autoRadioQueue, onAutoRadioQueueChange) = rememberPreference(AutoRadioQueueKey, true)
     val (autoDownloadOnLike, onAutoDownloadOnLikeChange) = rememberPreference(AutoDownloadOnLikeKey, false)
+
+    if (showAudioQualityDialog.value) {
+        com.metrolist.music.ui.component.EnumDialog(
+            onDismiss = { showAudioQualityDialog.value = false },
+            onSelect = {
+                onAudioQualityChange(it)
+                showAudioQualityDialog.value = false
+            },
+            title = stringResource(R.string.onboarding_audio_quality),
+            current = audioQuality,
+            values = AudioQuality.entries.toList(),
+            valueText = {
+                when (it) {
+                    AudioQuality.AUTO -> stringResource(R.string.audio_quality_auto)
+                    AudioQuality.HIGH -> stringResource(R.string.audio_quality_high)
+                    AudioQuality.LOW -> stringResource(R.string.audio_quality_low)
+                }
+            }
+        )
+    }
 
     Column(
         modifier = modifier
@@ -75,15 +96,16 @@ fun PlaybackPage(modifier: Modifier = Modifier) {
                         description = { Text(stringResource(R.string.onboarding_audio_quality_desc)) },
                         trailingContent = {
                             Text(
-                                text = audioQuality.name,
+                                text = when (audioQuality) {
+                                    AudioQuality.AUTO -> stringResource(R.string.audio_quality_auto)
+                                    AudioQuality.HIGH -> stringResource(R.string.audio_quality_high)
+                                    AudioQuality.LOW -> stringResource(R.string.audio_quality_low)
+                                },
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.primary,
                             )
                         },
-                        onClick = {
-                            val next = AudioQuality.entries[(audioQuality.ordinal + 1) % AudioQuality.entries.size]
-                            onAudioQualityChange(next)
-                        },
+                        onClick = { showAudioQualityDialog.value = true },
                     )
                 )
                 add(

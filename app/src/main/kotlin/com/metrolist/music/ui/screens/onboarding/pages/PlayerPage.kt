@@ -46,8 +46,8 @@ fun PlayerPage(modifier: Modifier = Modifier) {
     }
     
     val (peekEnabled, onPeekEnabledChange) = rememberPreference(ShowPlayerLyricsPeekKey, true)
-    val (showRomanization, onShowRomanizationChange) = rememberPreference(PeekShowRomanizationKey, true)
-    val (showTranslation, onShowTranslationChange) = rememberPreference(PeekShowTranslationKey, true)
+    val (showRomanization, onShowRomanizationChange) = rememberPreference(PeekShowRomanizationKey, false)
+    val (showTranslation, onShowTranslationChange) = rememberPreference(PeekShowTranslationKey, false)
 
     Column(
         modifier = modifier
