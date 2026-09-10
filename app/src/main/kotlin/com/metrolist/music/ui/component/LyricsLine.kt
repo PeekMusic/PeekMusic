@@ -4,6 +4,7 @@
  */
 
 package com.metrolist.music.ui.component
+import com.metrolist.music.lyrics.LyricsUtils
 
 import android.graphics.BlurMaskFilter
 import androidx.compose.animation.AnimatedVisibility
@@ -277,7 +278,7 @@ internal fun LyricsLine(
                 }
                 
                 if (romanizeLyrics && enabledLanguages.isNotEmpty()) {
-                    subText?.takeIf { !it.trim().equals(mainText?.trim().orEmpty(), ignoreCase = true) }?.let {
+                    subText?.takeIf { !LyricsUtils.isSameLyricsLine(it, mainText) }?.let {
                         Text(
                             text = it,
                             fontSize = 18.sp,
@@ -290,7 +291,7 @@ internal fun LyricsLine(
                 }
                 
                 val transText by item.translatedTextFlow.collectAsStateWithLifecycle()
-                transText?.takeIf { !it.trim().equals(mainText?.trim().orEmpty(), ignoreCase = true) }?.let { 
+                transText?.takeIf { !LyricsUtils.isSameLyricsLine(it, mainText) }?.let { 
                     Text(
                         text = it,
                         fontSize = 16.sp,

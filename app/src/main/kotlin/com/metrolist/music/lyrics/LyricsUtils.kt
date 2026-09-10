@@ -1438,4 +1438,11 @@ object LyricsUtils {
                 lyrics.contains(PAXSENIX_AGENT_LINE_REGEX) ||
                 lyrics.contains(PAXSENIX_BG_LINE_REGEX)
     }
+
+    fun isSameLyricsLine(line1: String?, line2: String?): Boolean {
+        if (line1 == null || line2 == null) return line1 == line2
+        val normalized1 = line1.replace("\\s+".toRegex(), "")
+        val normalized2 = line2.replace("\\s+".toRegex(), "")
+        return normalized1.equals(normalized2, ignoreCase = true)
+    }
 }

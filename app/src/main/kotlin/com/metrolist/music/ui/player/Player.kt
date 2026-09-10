@@ -2374,7 +2374,7 @@ internal fun PlayerLyricsLine(
     val romanizedSub =
         if (romanizationActive) {
             romanizedLine
-                ?.takeIf { it.isNotBlank() && !it.trim().equals(currentLine.text.trim(), ignoreCase = true) }
+                ?.takeIf { it.isNotBlank() && !LyricsUtils.isSameLyricsLine(it, currentLine.text) }
                 .orEmpty()
         } else {
             ""
@@ -2391,7 +2391,7 @@ internal fun PlayerLyricsLine(
                 currentLyrics?.translatedLyrics
                     ?.split("\n")
                     ?.getOrNull(index)
-                    ?.takeIf { it.isNotBlank() && !it.trim().equals(currentLine.text.trim(), ignoreCase = true) }
+                    ?.takeIf { it.isNotBlank() && !LyricsUtils.isSameLyricsLine(it, currentLine.text) }
             } else {
                 null
             }

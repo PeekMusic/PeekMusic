@@ -4,6 +4,7 @@
  */
 
 package com.metrolist.music.ui.component
+import com.metrolist.music.lyrics.LyricsUtils
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -1648,7 +1649,7 @@ fun OriginalLyrics(
                             }
                             if (currentSong?.romanizeLyrics == true && enabledLanguages.isNotEmpty()) {
                                 // Show secondary text (romanized or original) if available and not a duplicate of the main line
-                                subText?.takeIf { !subTextCmp?.trim().orEmpty().equals(mainTextCmp.trim(), ignoreCase = true) }?.let { text ->
+                                subText?.takeIf { !LyricsUtils.isSameLyricsLine(subTextCmp, mainTextCmp) }?.let { text ->
                                     Text(
                                         text = text,
                                         fontSize = 18.sp,
@@ -1667,7 +1668,7 @@ fun OriginalLyrics(
 
                             // Show translated text if available and not a duplicate of the displayed main line
                             val translatedText by item.translatedTextFlow.collectAsStateWithLifecycle()
-                            translatedText?.takeIf { !it.trim().equals(mainTextCmp.trim(), ignoreCase = true) }?.let { translated ->
+                            translatedText?.takeIf { !LyricsUtils.isSameLyricsLine(it, mainTextCmp) }?.let { translated ->
                                 Text(
                                     text = translated,
                                     fontSize = 16.sp,
