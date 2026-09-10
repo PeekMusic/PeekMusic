@@ -1316,7 +1316,11 @@ object LyricsUtils {
         if (text.isEmpty()) return false
         val cjkCharCount = text.count { char -> char in '\u4E00'..'\u9FFF' }
         val hiraganaKatakanaCount = text.count { char -> (char in '\u3040'..'\u309F') || (char in '\u30A0'..'\u30FF') }
-        return cjkCharCount > 0 && (hiraganaKatakanaCount.toDouble() / text.length.toDouble()) < 0.1
+        
+        val totalEastAsianChars = cjkCharCount + hiraganaKatakanaCount
+        if (totalEastAsianChars == 0) return false
+        
+        return cjkCharCount > 0 && (hiraganaKatakanaCount.toDouble() / totalEastAsianChars.toDouble()) < 0.1
     }
 
     fun isHindi(text: String): Boolean {
