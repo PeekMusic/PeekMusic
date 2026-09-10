@@ -209,7 +209,8 @@
     <string name="experimental_lyrics_desc">Enable the new experimental lyrics component with enhanced animations and performance</string>
     <string name="experimental_lyrics_beta_title">Experimental feature</string>
     <string name="experimental_lyrics_beta_message">The new lyrics component is currently in development and may contain bugs. Are you sure you want to enable it?</string>
-    <string name="player_lyrics_peek">Lyrics line in player</string>
+    <string name="peek_category">Peek</string>
+    <string name="player_lyrics_peek">Show Peek</string>
     <string name="player_lyrics_peek_desc">Show the current lyrics line centered between the cover and the player controls</string>
     <string name="player_lyrics_peek_translation">Show translation in peek</string>
     <string name="player_lyrics_peek_translation_desc">Display the translated lyric line below the original in the player lyrics peek</string>
@@ -1077,9 +1078,9 @@
     <string name="onboarding_new_player_design">New player design</string>
     <string name="onboarding_new_mini_player_design">New mini-player design</string>
 
-    <string name="onboarding_peek_title">Peek lyrics</string>
+    <string name="onboarding_peek_title">Peek</string>
     <string name="onboarding_peek_description">Peek lyrics add the current lyric line above the song title under the album cover while playing. Great for quick sing-alongs.</string>
-    <string name="onboarding_peek_toggle">Show peek lyrics</string>
+    <string name="onboarding_peek_toggle">Show Peek</string>
     <string name="onboarding_peek_toggle_desc">Add a single lyric line above the song info</string>
     <string name="onboarding_peek_sample_line">I am different different different</string>
     <string name="onboarding_peek_sample_subline">Next line appears right here</string>

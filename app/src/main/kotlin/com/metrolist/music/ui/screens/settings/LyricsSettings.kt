@@ -876,7 +876,7 @@ fun LyricsSettings(
         )
 
         Material3SettingsGroup(
-            title = stringResource(R.string.player_lyrics_peek),
+            title = stringResource(R.string.peek_category),
             items =
                 listOf(
                     Material3SettingsItem(
