@@ -907,7 +907,7 @@ object LyricsUtils {
             }
             katakanaToRomaji(currentReading, nextTokenReading)
         }
-        romanizedTokens.joinToString(" ")
+        romanizedTokens.joinToString("")
     }
 
     fun katakanaToRomaji(katakana: String?, nextKatakana: String? = null): String {
