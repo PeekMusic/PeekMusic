@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- First-launch onboarding: a 7-step introduction with live previews for theme,
+  player design, lyrics peek, playback, smart queue/caching, content filters,
+  and update checks; optional YouTube sign-in or guest mode
+
 ## v0.6.0
 
 - Player lyrics peek: supports lyrics offset, translation and romanization, and

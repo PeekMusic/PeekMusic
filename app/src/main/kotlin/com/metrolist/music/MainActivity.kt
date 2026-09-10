@@ -141,6 +141,7 @@ import com.metrolist.music.constants.DarkModeKey
 import com.metrolist.music.constants.DefaultOpenTabKey
 import com.metrolist.music.constants.DismissedKmpUpdateKey
 import com.metrolist.music.constants.DismissedStandaloneUpdateKey
+import com.metrolist.music.constants.HasCompletedOnboardingKey
 import com.metrolist.music.constants.DensityScaleKey
 import com.metrolist.music.constants.DisableScreenshotKey
 import com.metrolist.music.constants.DynamicThemeKey
@@ -193,6 +194,7 @@ import com.metrolist.music.ui.menu.YouTubeSongMenu
 import com.metrolist.music.ui.player.BottomSheetPlayer
 import com.metrolist.music.ui.screens.Screens
 import com.metrolist.music.ui.screens.navigationBuilder
+import com.metrolist.music.ui.screens.onboarding.OnboardingScreen
 import com.metrolist.music.ui.screens.settings.ChangelogScreen
 import com.metrolist.music.ui.screens.settings.DarkMode
 import com.metrolist.music.ui.screens.settings.NavigationTab
@@ -429,6 +431,18 @@ class MainActivity : FragmentActivity() {
                 }
         }
 
+        // Existing installs should not see the first-launch onboarding flow.
+        // If the app has been run before (LastSeenVersionKey is present) and the
+        // onboarding flag has not been written yet, mark it as completed.
+        lifecycleScope.launch(Dispatchers.IO) {
+            val preferences = dataStore.data.first()
+            if (preferences[HasCompletedOnboardingKey] != true && preferences[LastSeenVersionKey] != null) {
+                safeDataStoreEdit { settings ->
+                    settings[HasCompletedOnboardingKey] = true
+                }
+            }
+        }
+
         // Defer migration and version tracking to avoid blocking first frame
         lifecycleScope.launch(Dispatchers.IO) {
             val preferences = dataStore.data.first()
@@ -497,6 +511,7 @@ class MainActivity : FragmentActivity() {
         syncUtils: SyncUtils,
     ) {
         val checkForUpdates by rememberPreference(CheckForUpdatesKey, defaultValue = true)
+        val hasCompletedOnboarding by rememberPreference(HasCompletedOnboardingKey, defaultValue = false)
         var availableUpdate by remember { mutableStateOf<AvailableUpdate?>(null) }
 
         if (BuildConfig.UPDATER_AVAILABLE) {
@@ -738,7 +753,8 @@ class MainActivity : FragmentActivity() {
                 LaunchedEffect(Unit) {
                     val lastSeenVersion = dataStore.data.first()[LastSeenVersionKey] ?: ""
                     val currentVersion = BuildConfig.BASE_VERSION_NAME
-                    if (lastSeenVersion != currentVersion) {
+                    // Don't show the changelog while onboarding is still in progress.
+                    if (hasCompletedOnboarding && lastSeenVersion != currentVersion) {
                         showChangelog.value = true
                     }
                 }
@@ -1061,10 +1077,6 @@ class MainActivity : FragmentActivity() {
                     LocalChangelogState provides showChangelog,
                     LocalArtistNameAliases provides artistNameAliases,
                 ) {
-                    if (showChangelog.value) {
-                        ChangelogScreen(onDismiss = { showChangelog.value = false })
-                    }
-
                     Scaffold(
                         snackbarHost = { SnackbarHost(snackbarHostState) },
                         topBar = {
@@ -1535,6 +1547,17 @@ class MainActivity : FragmentActivity() {
                                 },
                             )
                         }
+                    }
+
+                    if (showChangelog.value) {
+                        ChangelogScreen(onDismiss = { showChangelog.value = false })
+                    }
+
+                    if (!hasCompletedOnboarding) {
+                        OnboardingScreen(
+                            onLogin = { navController.navigate("login") },
+                            onFinish = { },
+                        )
                     }
                 }
             }

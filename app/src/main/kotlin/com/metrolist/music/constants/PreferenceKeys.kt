@@ -232,6 +232,7 @@ val QueueEditLockKey = booleanPreferencesKey("queueEditLock")
 val ShowWrappedCardKey = booleanPreferencesKey("show_wrapped_card")
 val WrappedSeenKey = booleanPreferencesKey("wrapped_seen")
 val LastSeenVersionKey = stringPreferencesKey("lastSeenVersion")
+val HasCompletedOnboardingKey = booleanPreferencesKey("hasCompletedOnboarding")
 val RandomizeHomeOrderKey = booleanPreferencesKey("randomizeHomeOrder")
 
 val HiddenYouTubeHomeSectionsKey = stringSetPreferencesKey("hidden_youtube_home_sections")

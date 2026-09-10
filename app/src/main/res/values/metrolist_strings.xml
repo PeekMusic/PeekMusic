@@ -1050,4 +1050,90 @@
     <string name="stream_source_web_creator_desc">Creator web client.</string>
     <string name="settings_sleep_alarm">Sleep &amp; Alarm</string>
     <string name="download_update">Download update</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_back">Back</string>
+
+    <string name="onboarding_welcome_title">Welcome to DripMusic</string>
+    <string name="onboarding_welcome_subtitle">A clean, fast YouTube Music experience.</string>
+    <string name="onboarding_welcome_description">A clean, fast YouTube Music experience. Sign in to sync your library, or start exploring right away.</string>
+    <string name="onboarding_welcome_benefit_1">Stream millions of songs</string>
+    <string name="onboarding_welcome_benefit_2">Build your own library</string>
+    <string name="onboarding_welcome_benefit_3">Customise the look and playback</string>
+    <string name="onboarding_get_started">Get started</string>
+    <string name="onboarding_sign_in">Sign in with YouTube</string>
+    <string name="onboarding_use_guest">Continue as guest</string>
+    <string name="onboarding_continue_guest">Continue as guest</string>
+
+    <string name="onboarding_appearance_title">Look &amp; feel</string>
+    <string name="onboarding_theme_title">Theme &amp; colors</string>
+    <string name="onboarding_player_design_title">Player design</string>
+    <string name="onboarding_dynamic_theme">Dynamic theme</string>
+    <string name="onboarding_dynamic_theme_desc">Match the app colors to your wallpaper</string>
+    <string name="onboarding_pure_black">Pure black</string>
+    <string name="onboarding_pure_black_desc">Use true black backgrounds in dark mode</string>
+    <string name="onboarding_new_player_design">New player design</string>
+    <string name="onboarding_new_mini_player_design">New mini-player design</string>
+
+    <string name="onboarding_peek_title">Peek lyrics</string>
+    <string name="onboarding_peek_description">Peek lyrics add the current lyric line above the song title under the album cover while playing. Great for quick sing-alongs.</string>
+    <string name="onboarding_peek_toggle">Show peek lyrics</string>
+    <string name="onboarding_peek_toggle_desc">Add a single lyric line above the song info</string>
+    <string name="onboarding_peek_sample_line">I am different different different</string>
+    <string name="onboarding_peek_sample_subline">Next line appears right here</string>
+    <string name="onboarding_romanization_toggle">Show romanization</string>
+    <string name="onboarding_translation_toggle">Show translation</string>
+
+    <string name="onboarding_playback_title">Playback</string>
+    <string name="onboarding_audio_quality">Audio quality</string>
+    <string name="onboarding_audio_quality_desc">Preferred quality for streaming</string>
+    <string name="onboarding_crossfade">Crossfade</string>
+    <string name="onboarding_crossfade_desc">Smoothly fade between songs</string>
+    <string name="onboarding_auto_radio_queue">Auto radio queue</string>
+    <string name="onboarding_auto_radio_queue_desc">Continue with related tracks when a queue ends</string>
+    <string name="onboarding_auto_download_like">Auto-download liked songs</string>
+    <string name="onboarding_auto_download_like_desc">Download songs automatically when you like them</string>
+
+    <string name="onboarding_queue_title">Smart queue &amp; cache</string>
+    <string name="onboarding_queue_preload_label">Preload upcoming songs</string>
+    <string name="onboarding_queue_preload_desc">Cache the next songs in the queue for seamless playback</string>
+    <plurals name="onboarding_queue_preload_count">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
+    <string name="onboarding_queue_preload_visual_hint">%d upcoming songs are preloaded</string>
+    <string name="onboarding_queue_now_playing">Now playing</string>
+    <string name="onboarding_queue_cached">Preloaded</string>
+    <string name="onboarding_queue_pending">Not cached</string>
+    <string name="onboarding_queue_exclude_recent">Exclude recently played</string>
+    <string name="onboarding_queue_exclude_recent_desc">Don\'t add recently played songs to smart queues</string>
+    <string name="onboarding_queue_cache_size">Song cache size</string>
+    <string name="onboarding_queue_cache_size_desc">Played songs are cached so they don\'t have to be loaded again. Here you can set how much storage the app can use for this.</string>
+    <string name="onboarding_crossfade_warning_title">Crossfade warning</string>
+    <string name="onboarding_crossfade_warning_desc">You have crossfade enabled but preloading is set to 0. For crossfading to work well, preloading should be at least 1. Do you still want to continue?</string>
+    <string name="onboarding_crossfade_warning_continue">Continue anyway</string>
+    <string name="onboarding_crossfade_warning_back">Go back</string>
+
+    <string name="onboarding_content_title">Content filters</string>
+    <string name="onboarding_content_description">Choose what DripMusic should hide from search, charts, and recommendations.</string>
+    <string name="onboarding_extra_settings_title">Almost there</string>
+    <string name="onboarding_hide_explicit">Hide explicit content</string>
+    <string name="onboarding_hide_explicit_desc">Filter songs marked as explicit</string>
+    <string name="onboarding_hide_video_songs">Hide video-only songs</string>
+    <string name="onboarding_hide_video_songs_desc">Hide tracks that are videos instead of audio</string>
+
+    <string name="onboarding_login_title">Log in to YouTube Music</string>
+    <string name="onboarding_login_description">Sign in with your Google account to get the most out of DripMusic.</string>
+    <string name="onboarding_login_benefit_1">Sync your library and playlists</string>
+    <string name="onboarding_login_benefit_2">Get personalised recommendations</string>
+    <string name="onboarding_login_benefit_3">Access your history across devices</string>
+    <string name="onboarding_login_more_settings">There are many more settings and customization options waiting for you in the app settings. Be sure to check them out!</string>
+
+    <string name="onboarding_finish_title">You\'re all set!</string>
+    <string name="onboarding_finish_description">Enjoy your music.</string>
+    <string name="onboarding_finish_button">Finish</string>
+    <string name="onboarding_check_for_updates">Check for updates</string>
+    <string name="onboarding_check_for_updates_desc">Get notified when a new DripMusic release is available</string>
 </resources>
