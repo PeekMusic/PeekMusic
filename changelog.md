@@ -2,8 +2,9 @@
 
 ## v1.0.1
 
-- Added an active state indicator to the Lyrics button in the legacy player design.
-- Removed excessive spaces in Japanese romanization for better readability.
+**✨ Improvements & Fixes**
+- **Smarter Lyrics Button**: The lyrics button in the classic player now perfectly highlights its active state, making it super clear how to jump back.
+- **Cleaner Romanization**: Removed the excessive spacing in Japanese romanization for a much cleaner, more natural reading experience! 🇯🇵
 
 ## v1.0.0
 
