@@ -508,10 +508,17 @@ fun Queue(
                         }
                     }
 
+                    val lyricsActiveColor = textButtonColor
+                    val lyricsOnActiveColor = iconButtonColor
+                    
                     TextButton(
                         onClick = {
                             onToggleLyrics()
                         },
+                        colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+                            containerColor = if (showInlineLyrics) lyricsActiveColor else androidx.compose.ui.graphics.Color.Transparent,
+                            contentColor = if (showInlineLyrics) lyricsOnActiveColor else TextBackgroundColor
+                        ),
                         modifier = Modifier.weight(1f),
                     ) {
                         Row(
@@ -523,12 +530,12 @@ fun Queue(
                                 painter = painterResource(id = R.drawable.lyrics),
                                 contentDescription = null,
                                 modifier = Modifier.size(20.dp),
-                                tint = TextBackgroundColor,
+                                tint = if (showInlineLyrics) lyricsOnActiveColor else TextBackgroundColor,
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = stringResource(R.string.lyrics),
-                                color = TextBackgroundColor,
+                                color = if (showInlineLyrics) lyricsOnActiveColor else TextBackgroundColor,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 textAlign = TextAlign.Center,
