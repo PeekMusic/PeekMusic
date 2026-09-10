@@ -63,21 +63,21 @@
             android:baselineAligned="false" android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- Like Button -->
+            <!-- Previous Button -->
             <FrameLayout
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@drawable/widget_like_button_bg">
 
                 <ImageButton
-                    android:id="@+id/widget_like_button"
+                    android:id="@+id/widget_skip_previous"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="12dp"
                     android:scaleType="fitCenter"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/ic_widget_heart_outline_nav"
-                    android:contentDescription="@string/like" />
+                    android:src="@drawable/ic_widget_skip_previous"
+                    android:contentDescription="@string/previous" />
             </FrameLayout>
 
             <!-- Play/Pause Container -->
@@ -86,7 +86,8 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/widget_play_pill_bg">
 
                 <ImageView
@@ -96,6 +97,23 @@
                     android:layout_gravity="center"
                     android:src="@drawable/ic_widget_play"
                     android:contentDescription="@string/play_pause" />
+            </FrameLayout>
+
+            <!-- Next Button -->
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/widget_like_button_bg">
+
+                <ImageButton
+                    android:id="@+id/widget_skip_next"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="12dp"
+                    android:scaleType="fitCenter"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_widget_skip_next"
+                    android:contentDescription="@string/next" />
             </FrameLayout>
 
         </LinearLayout>
