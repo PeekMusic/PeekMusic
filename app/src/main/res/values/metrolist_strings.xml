@@ -166,7 +166,7 @@
     <string name="prevent_duplicate_tracks_in_queue">Prevent duplicate tracks in queue</string>
     <string name="prevent_duplicate_tracks_in_queue_desc">When adding a track that\'s already in the queue, it will be moved from its previous position rather than added again</string>
     <string name="exclude_recently_played_from_queue">Exclude recently played songs</string>
-    <string name="exclude_recently_played_from_queue_desc">Skip songs that were played recently when loading mixes and recommendations</string>
+    <string name="exclude_recently_played_from_queue_desc">Prevent songs you\'ve recently listened to from repeating in auto-generated radio queues and mixes</string>
     <string name="recently_played_window_size">Recently played window size</string>
     <string name="recently_played_window_size_desc">Number of recent songs to exclude from mixes (currently %1$d)</string>
     <string name="add_to_playlist_position">Add to playlist position</string>
@@ -1108,7 +1108,7 @@
     <string name="onboarding_queue_cached">Preloaded</string>
     <string name="onboarding_queue_pending">Not cached</string>
     <string name="onboarding_queue_exclude_recent">Exclude recently played</string>
-    <string name="onboarding_queue_exclude_recent_desc">Don\'t add recently played songs to smart queues</string>
+    <string name="onboarding_queue_exclude_recent_desc">Prevent songs you\'ve recently listened to from repeating in auto-generated radio queues and mixes.</string>
     <string name="onboarding_queue_cache_size">Song cache size</string>
     <string name="onboarding_queue_cache_size_desc">Played songs are cached so they don\'t have to be loaded again. Here you can set how much storage the app can use for this.</string>
     <string name="onboarding_crossfade_warning_title">Crossfade warning</string>
