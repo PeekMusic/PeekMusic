@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.1
+
+- Added an active state indicator to the Lyrics button in the legacy player design.
+- Removed excessive spaces in Japanese romanization for better readability.
+
 ## v1.0.0
 
 - Rebranded the entire app to **PeekMusic**
