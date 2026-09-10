@@ -1348,6 +1348,29 @@ fun BottomSheetPlayer(
 
                     Spacer(modifier = Modifier.size(12.dp))
 
+                    AnimatedContent(targetState = showInlineLyrics, label = "LikeButtonTop") { showLyrics ->
+                        if (!showLyrics) {
+                            val isEpisode = currentSong?.song?.isEpisode == true
+                            val isFavorite = if (isEpisode) currentSong?.song?.inLibrary != null else currentSong?.song?.liked == true
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(RoundedCornerShape(24.dp))
+                                    .background(textButtonColor)
+                                    .clickable { playerConnection.toggleLike() },
+                            ) {
+                                Icon(
+                                    painter = painterResource(if (isFavorite) R.drawable.favorite else R.drawable.favorite_border),
+                                    contentDescription = null,
+                                    tint = if (isFavorite) MaterialTheme.colorScheme.error else iconButtonColor,
+                                    modifier = Modifier.align(Alignment.Center).size(24.dp),
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.size(12.dp))
+
                     AnimatedContent(targetState = showInlineLyrics, label = "LikeButton") { showLyrics ->
                         if (showLyrics) {
                             val currentLyrics by playerConnection.currentLyrics.collectAsStateWithLifecycle(initialValue = null)
@@ -1847,18 +1870,17 @@ fun BottomSheetPlayer(
                             }
 
                             Box(modifier = Modifier.weight(1f)) {
-                                // For episodes, show saved state (inLibrary); for songs, show liked state
-                                val isEpisode = currentSong?.song?.isEpisode == true
-                                val isFavorite = if (isEpisode) currentSong?.song?.inLibrary != null else currentSong?.song?.liked == true
+                                val shuffleModeEnabled by playerConnection.shuffleModeEnabled.collectAsStateWithLifecycle(false)
                                 ResizableIconButton(
-                                    icon = if (isFavorite) R.drawable.favorite else R.drawable.favorite_border,
-                                    color = if (isFavorite) MaterialTheme.colorScheme.error else TextBackgroundColor,
-                                    modifier =
-                                        Modifier
-                                            .size(32.dp)
-                                            .padding(4.dp)
-                                            .align(Alignment.Center),
-                                    onClick = playerConnection::toggleLike,
+                                    icon = R.drawable.shuffle,
+                                    color = TextBackgroundColor,
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .padding(4.dp)
+                                        .align(Alignment.Center)
+                                        .alpha(if (isListenTogetherGuest || !shuffleModeEnabled) 0.5f else 1f),
+                                    enabled = !isListenTogetherGuest,
+                                    onClick = { playerConnection.player.shuffleModeEnabled = !shuffleModeEnabled },
                                 )
                             }
                         }

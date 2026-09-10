@@ -533,9 +533,11 @@ private fun CachePlaylistHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
+            }
+            Spacer(modifier = Modifier.size(16.dp))
             // Play Button - Larger primary circular button
             Surface(
                 onClick = {
@@ -563,6 +565,8 @@ private fun CachePlaylistHeader(
                 }
             }
 
+            Spacer(modifier = Modifier.size(16.dp))
+            Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.Start), verticalAlignment = Alignment.CenterVertically) {
             // Shuffle Button - Smaller secondary button
             androidx.compose.material3.Surface(
                 onClick = {
@@ -622,6 +626,7 @@ private fun CachePlaylistHeader(
                         modifier = Modifier.size(24.dp)
                     )
                 }
+            }
             }
         }
     }

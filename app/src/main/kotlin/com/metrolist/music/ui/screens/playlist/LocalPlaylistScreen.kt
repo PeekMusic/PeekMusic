@@ -1317,9 +1317,11 @@ fun LocalPlaylistHeader(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
+            }
+            Spacer(modifier = Modifier.size(16.dp))
             // Play Button - Larger primary circular button
             Surface(
                 onClick = {
@@ -1347,6 +1349,8 @@ fun LocalPlaylistHeader(
                 }
             }
 
+            Spacer(modifier = Modifier.size(16.dp))
+            Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.Start), verticalAlignment = Alignment.CenterVertically) {
             // Shuffle Button - Smaller secondary button
             Surface(
                 onClick = {
@@ -1442,6 +1446,7 @@ fun LocalPlaylistHeader(
                         modifier = Modifier.size(24.dp),
                     )
                 }
+            }
             }
         }
     }
