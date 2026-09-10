@@ -261,10 +261,7 @@ class PlaylistWidgetManager @Inject constructor(
 
         val playPauseIcon = if (isPlaying) R.drawable.ic_widget_pause else R.drawable.ic_widget_play
         views.setImageViewResource(R.id.widget_playlist_play_pause, playPauseIcon)
-        views.setImageViewResource(
-            R.id.widget_playlist_like_button,
-            if (isLiked) R.drawable.ic_widget_heart_nav else R.drawable.ic_widget_heart_outline_nav,
-        )
+
 
         val progressLevel = if (duration > 0) {
             ((currentPosition.toDouble() / duration.toDouble()) * 10000).toInt().coerceIn(0, 10000)
@@ -286,10 +283,7 @@ class PlaylistWidgetManager @Inject constructor(
             R.id.widget_playlist_next_container,
             getMusicWidgetIntent(MusicWidgetReceiver.ACTION_NEXT, 503),
         )
-        views.setOnClickPendingIntent(
-            R.id.widget_playlist_like_button,
-            getMusicWidgetIntent(MusicWidgetReceiver.ACTION_LIKE, 504),
-        )
+
 
         bindQuickPicks(views, options, quickPicks)
         return views

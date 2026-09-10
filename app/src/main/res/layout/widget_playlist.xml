@@ -66,10 +66,11 @@
                 <FrameLayout
                     android:id="@+id/widget_playlist_prev_container"
                     android:layout_width="36dp"
-                    android:layout_height="36dp">
+                    android:layout_height="36dp"
+                    android:background="@drawable/widget_like_button_bg">
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_widget_skip_previous"
                         android:contentDescription="@string/previous" />
@@ -77,8 +78,9 @@
 
                 <FrameLayout
                     android:id="@+id/widget_playlist_play_pause_container"
-                    android:layout_width="48dp"
+                    android:layout_width="0dp"
                     android:layout_height="36dp"
+                    android:layout_weight="1"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
                     android:background="@drawable/widget_play_pill_bg">
@@ -94,28 +96,14 @@
                 <FrameLayout
                     android:id="@+id/widget_playlist_next_container"
                     android:layout_width="36dp"
-                    android:layout_height="36dp">
+                    android:layout_height="36dp"
+                    android:background="@drawable/widget_like_button_bg">
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_widget_skip_next"
                         android:contentDescription="@string/next" />
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginStart="6dp">
-                    <ImageButton
-                        android:id="@+id/widget_playlist_like_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="8dp"
-                        android:scaleType="fitCenter"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/ic_widget_heart_outline_nav"
-                        android:contentDescription="@string/like" />
                 </FrameLayout>
             </LinearLayout>
 
