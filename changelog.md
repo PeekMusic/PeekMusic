@@ -1,7 +1,9 @@
 # Changelog
 
-## Unreleased
+## v1.0.0
 
+- Rebranded the entire app to **PeekMusic**
+- Unified Playlist Header Controls: Placed the Shuffle button consistently between the Play and Menu buttons across all playlist/album views.
 - First-launch onboarding: a 7-step introduction with live previews for theme,
   player design, lyrics peek, playback, smart queue/caching, content filters,
   and update checks; optional YouTube sign-in or guest mode
