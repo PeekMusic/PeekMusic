@@ -37,6 +37,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import com.metrolist.music.playback.queues.YouTubeQueue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -711,6 +712,29 @@ private fun OnlinePlaylistHeader(
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(32.dp),
                     )
+                }
+            }
+
+            // Shuffle Button - Smaller secondary button
+            playlist.shuffleEndpoint?.let { shuffleEndpoint ->
+                Surface(
+                    onClick = {
+                        playerConnection.playQueue(YouTubeQueue(shuffleEndpoint))
+                    },
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    modifier = Modifier.size(48.dp),
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.shuffle),
+                            contentDescription = stringResource(R.string.shuffle),
+                            modifier = Modifier.size(24.dp),
+                        )
+                    }
                 }
             }
 
