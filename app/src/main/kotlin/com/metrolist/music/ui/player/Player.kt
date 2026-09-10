@@ -48,6 +48,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
@@ -2031,6 +2032,16 @@ fun BottomSheetPlayer(
                         }
 
                         if (!showInlineLyrics && isWidePortrait && peekEnabled) {
+                            val queueTitle by playerConnection.queueTitle.collectAsStateWithLifecycle()
+                            ThumbnailHeader(
+                                queueTitle = queueTitle,
+                                albumTitle = mediaMetadata?.album?.title,
+                                textColor = TextBackgroundColor,
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .statusBarsPadding()
+                            )
+
                             // Split the cover area — cover left, lyrics peek right; player
                             // elements below stay untouched
                             Row(
@@ -2048,6 +2059,7 @@ fun BottomSheetPlayer(
                                         isPlayerExpanded = isExpandedProvider,
                                         isListenTogetherGuest = isListenTogetherGuest,
                                         peekOverlay = false,
+                                        showHeader = false,
                                     )
                                 }
                                 Box(

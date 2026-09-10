@@ -204,6 +204,7 @@ fun Thumbnail(
     isPlayerExpanded: () -> Boolean = { true },
     isLandscape: Boolean = false,
     isListenTogetherGuest: Boolean = false,
+    showHeader: Boolean = true,
     peekOverlay: Boolean = true,
 ) {
     val playerConnection = LocalPlayerConnection.current ?: return
@@ -337,7 +338,7 @@ fun Thumbnail(
                 verticalArrangement = if (isLandscape) Arrangement.Center else Arrangement.Top
             ) {
                 // Now Playing header - hide in landscape mode
-                if (!isLandscape) {
+                if (!isLandscape && showHeader) {
                     ThumbnailHeader(
                         queueTitle = queueTitle,
                         albumTitle = mediaMetadata?.album?.title,
@@ -438,7 +439,7 @@ fun Thumbnail(
  * Header component showing "Now Playing" and queue/album title.
  */
 @Composable
-private fun ThumbnailHeader(
+fun ThumbnailHeader(
     queueTitle: String?,
     albumTitle: String?,
     textColor: Color,
@@ -503,6 +504,7 @@ private fun ThumbnailItem(
     context: android.content.Context,
     isLandscape: Boolean = false,
     isListenTogetherGuest: Boolean = false,
+    showHeader: Boolean = true,
     currentMediaId: String? = null,
     currentMediaThumbnail: String? = null,
     // Wide-portrait split layout centers the cover and drops the peek top padding
