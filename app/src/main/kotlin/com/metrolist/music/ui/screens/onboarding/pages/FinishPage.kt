@@ -69,12 +69,12 @@ fun FinishPage(
 
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.Start,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(text = "• " + stringResource(R.string.onboarding_login_benefit_1), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(text = "• " + stringResource(R.string.onboarding_login_benefit_2), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(text = "• " + stringResource(R.string.onboarding_login_benefit_3), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(text = stringResource(R.string.onboarding_login_benefit_1), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+            Text(text = stringResource(R.string.onboarding_login_benefit_2), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+            Text(text = stringResource(R.string.onboarding_login_benefit_3), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }
 
         Spacer(modifier = Modifier.height(32.dp))

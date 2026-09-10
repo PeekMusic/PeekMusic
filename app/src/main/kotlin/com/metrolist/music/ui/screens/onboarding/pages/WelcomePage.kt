@@ -72,7 +72,7 @@ fun WelcomePage(
 
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.Start,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth(),
         ) {
             BenefitItem(stringResource(R.string.onboarding_welcome_benefit_1))
@@ -94,10 +94,10 @@ fun WelcomePage(
 @Composable
 private fun BenefitItem(text: String) {
     Text(
-        text = "• $text",
+        text = text,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        textAlign = TextAlign.Start,
+        textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
     )
 }
