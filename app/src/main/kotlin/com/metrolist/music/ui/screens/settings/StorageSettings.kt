@@ -369,7 +369,7 @@ fun StorageSettings(
 
         Material3SettingsGroup(
             title = stringResource(R.string.song_cache),
-            items = listOf(
+            items = listOfNotNull(
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.cached),
                     title = { Text(stringResource(R.string.enable_song_cache)) },
@@ -449,37 +449,48 @@ fun StorageSettings(
                             }
                         },
                     ),
-                    Material3SettingsItem(
-                        icon = painterResource(R.drawable.download),
-                        title = { Text(stringResource(R.string.preload_queue_songs)) },
-                        description = {
-                            Column {
-                                Text(
-                                    text = if (preloadQueueCount == 0) {
-                                        stringResource(R.string.disable)
-                                    } else {
-                                        pluralStringResource(
-                                            R.plurals.preload_queue_songs_count,
-                                            preloadQueueCount,
-                                            preloadQueueCount,
+                    if (enableSongCache && maxSongCacheSize != 0) {
+                        Material3SettingsItem(
+                            icon = painterResource(R.drawable.download),
+                            title = { Text(stringResource(R.string.preload_queue_songs)) },
+                            description = {
+                                Column {
+                                    Text(
+                                        text = stringResource(R.string.preload_queue_songs_desc),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                    )
+                                    if (preloadQueueCount > 0) {
+                                        Spacer(modifier = Modifier.padding(top = 16.dp))
+                                        Text(
+                                            text = pluralStringResource(
+                                                R.plurals.preload_queue_songs_count,
+                                                preloadQueueCount,
+                                                preloadQueueCount,
+                                            ),
+                                            style = MaterialTheme.typography.bodyMedium,
                                         )
+                                        Slider(
+                                            value = preloadQueueCount.toFloat(),
+                                            onValueChange = { onPreloadQueueCountChange(it.roundToInt()) },
+                                            steps = 6,
+                                            valueRange = 1f..8f,
+                                        )
+                                    }
+                                }
+                            },
+                            trailingContent = {
+                                Switch(
+                                    checked = preloadQueueCount > 0,
+                                    onCheckedChange = { checked ->
+                                        onPreloadQueueCountChange(if (checked) 1 else 0)
                                     },
                                 )
-                                Slider(
-                                    value = preloadQueueCount.toFloat(),
-                                    enabled = enableSongCache,
-                                    onValueChange = { onPreloadQueueCountChange(it.roundToInt()) },
-                                    steps = 6,
-                                    valueRange = 0f..8f,
-                                )
-                                Text(
-                                    text = stringResource(R.string.preload_queue_songs_desc),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                            }
-                        },
-                        enabled = enableSongCache,
-                    ),
+                            },
+                            onClick = {
+                                onPreloadQueueCountChange(if (preloadQueueCount > 0) 0 else 1)
+                            },
+                        )
+                    } else null,
                     Material3SettingsItem(
                         icon = painterResource(R.drawable.clear_all),
                         title = { Text(stringResource(R.string.clear_song_cache)) },
