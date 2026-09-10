@@ -87,14 +87,14 @@
   integrations removed
 - Fixes: update badge no longer shows permanently when no update exists, top bar
   avatar loads at app start instead of after opening the account dialog, oversized
-  login header fixed, in-app updater checks DripMusic releases
-- Branding: Wrapped feature and playlist covers rebranded to DripMusic, new app
+  login header fixed, in-app updater checks PeekMusic releases
+- Branding: Wrapped feature and playlist covers rebranded to PeekMusic, new app
   icon with proper themed-icon (monochrome) support, settings entry for lyrics
   translation renamed to plain "Translation" in all locales
 
 ## v0.1.0 (pre-release)
 
-First DripMusic release. Fork changes on top of upstream Metrolist v13.6.3:
+First PeekMusic release. Fork changes on top of upstream Metrolist v13.6.3:
 
 - Home screen shows only YouTube content; app-internal sections (speed dial,
   quick picks, keep listening, forgotten favorites, daily discover) are disabled
@@ -107,7 +107,7 @@ First DripMusic release. Fork changes on top of upstream Metrolist v13.6.3:
 - Removed the toggles for YouTube home sections and endless scrolling
   (both permanently enabled)
 
-## v13.6.3-drip.1
+## v13.6.3-peek.1
 
 Fork changes on top of upstream Metrolist v13.6.3:
 
@@ -120,6 +120,6 @@ Fork changes on top of upstream Metrolist v13.6.3:
   playlists, moods & genres) including their network requests
 - Build: release APKs are signed directly by Gradle when keystore environment
   variables are set
-- Repo: rebrand to DripMusic (README, fastlane en-US/de-DE)
+- Repo: rebrand to PeekMusic (README, fastlane en-US/de-DE)
 
 Upstream Metrolist history remains available in the git history of this repository.

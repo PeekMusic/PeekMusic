@@ -1,14 +1,14 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="DripMusic logo" width="160" />
+<img src="assets/logo.png" alt="PeekMusic logo" width="160" />
 
-# DripMusic
+# PeekMusic
 
 ### A YouTube Music client for Android that only keeps what you actually use — a fork of [Metrolist](https://github.com/MetrolistGroup/Metrolist)
 
 </div>
 
-DripMusic is a personal fork of [Metrolist](https://github.com/MetrolistGroup/Metrolist),
+PeekMusic is a personal fork of [Metrolist](https://github.com/MetrolistGroup/Metrolist),
 a third-party YouTube Music client. The idea is simple: **less noise, more convenience.**
 Everything that gets in the way — features nobody asked for, clutter in the settings,
 janky animations — gets removed or reworked. Everything you touch every day — the home

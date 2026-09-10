@@ -18,8 +18,8 @@ fun keystoreSecret(propertyKey: String, envKey: String): String? =
     keystoreProperties.getProperty(propertyKey)?.takeIf { it.isNotBlank() }
         ?: System.getenv(envKey)?.takeIf { it.isNotBlank() }
 
-val baseApplicationId = "com.dripmusic.app"
-val dripVersionName = "0.6.0"
+val baseApplicationId = "com.peekmusic.app"
+val peekVersionName = "0.6.0"
 val applicationIdOverride = System.getenv("METROLIST_APPLICATION_ID")?.takeIf { it.isNotBlank() }
 val appNameOverride = System.getenv("METROLIST_APP_NAME")?.takeIf { it.isNotBlank() }
 val buildCommit =
@@ -53,11 +53,11 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 159
-        versionName = dripVersionName
+        versionName = peekVersionName
         val baseVersionName = requireNotNull(versionName)
         buildConfigField("String", "BASE_VERSION_NAME", "\"$baseVersionName\"")
         buildCommit?.let { versionName = "$baseVersionName+$it" }
-        resValue("string", "app_name", appNameOverride ?: "DripMusic")
+        resValue("string", "app_name", appNameOverride ?: "PeekMusic")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -143,7 +143,7 @@ android {
             }
             isDebuggable = true
             if (appNameOverride == null) {
-                resValue("string", "app_name", "DripMusic Debug")
+                resValue("string", "app_name", "PeekMusic Debug")
             }
             signingConfig =
                 if (workflowDebugKeystoreFile != null) {
@@ -215,12 +215,12 @@ android {
     }
 }
 
-// Name APKs DripMusic-<version>-<variant><buildType>.apk instead of the default
+// Name APKs PeekMusic-<version>-<variant><buildType>.apk instead of the default
 // app-<flavor>-<buildType>.apk.
 androidComponents {
     onVariants(selector().all()) { variant ->
         variant.outputs.forEach { output ->
-            output.outputFileName.set("DripMusic-${dripVersionName}-${variant.name}.apk")
+            output.outputFileName.set("PeekMusic-${peekVersionName}-${variant.name}.apk")
         }
     }
 }

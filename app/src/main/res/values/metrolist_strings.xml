@@ -267,7 +267,7 @@
     <string name="release_notes">Release notes</string>
     <string name="changelog">Changelog</string>
     <string name="changelog_empty">No changelogs available</string>
-    <string name="github_releases_url">https://github.com/endritlim/DripMusic/releases</string>
+    <string name="github_releases_url">https://github.com/endritlim/PeekMusic/releases</string>
     <string name="list_bullet">•</string>
     <string name="view_on_github">View on GitHub</string>
     <string name="current_version">Current version</string>
@@ -487,10 +487,10 @@
     <string name="wrapped_total_artists_subtitle">unique artists!</string>
     <string name="wrapped_total_songs_title">You\'ve listened to</string>
     <string name="wrapped_total_songs_subtitle">unique songs!</string>
-    <string name="wrapped_intro_title">DRIPMUSIC</string>
+    <string name="wrapped_intro_title">PEEKMUSIC</string>
     <string name="wrapped_intro_subtitle">it\'s time to see what you\'ve been listening to all this year…</string>
     <string name="wrapped_intro_button">let\'s go!</string>
-    <string name="wrapped_logo_content_description">DripMusic Logo</string>
+    <string name="wrapped_logo_content_description">PeekMusic Logo</string>
     <string name="wrapped_year">2025</string>
     <string name="wrapped_ready_title">YOUR WRAPPED IS READY!</string>
     <string name="wrapped_ready_subtitle">Time to see what you loved all this year…</string>
@@ -1056,7 +1056,7 @@
     <string name="onboarding_next">Next</string>
     <string name="onboarding_back">Back</string>
 
-    <string name="onboarding_welcome_title">Welcome to DripMusic</string>
+    <string name="onboarding_welcome_title">Welcome to PeekMusic</string>
     <string name="onboarding_welcome_subtitle">A clean, fast YouTube Music experience.</string>
     <string name="onboarding_welcome_description">A clean, fast YouTube Music experience. Sign in to sync your library, or start exploring right away.</string>
     <string name="onboarding_welcome_benefit_1">Stream millions of songs</string>
@@ -1117,7 +1117,7 @@
     <string name="onboarding_crossfade_warning_back">Go back</string>
 
     <string name="onboarding_content_title">Content filters</string>
-    <string name="onboarding_content_description">Choose what DripMusic should hide from search, charts, and recommendations.</string>
+    <string name="onboarding_content_description">Choose what PeekMusic should hide from search, charts, and recommendations.</string>
     <string name="onboarding_extra_settings_title">Almost there</string>
     <string name="onboarding_hide_explicit">Hide explicit content</string>
     <string name="onboarding_hide_explicit_desc">Filter songs marked as explicit</string>
@@ -1125,7 +1125,7 @@
     <string name="onboarding_hide_video_songs_desc">Hide tracks that are videos instead of audio</string>
 
     <string name="onboarding_login_title">Log in to YouTube Music</string>
-    <string name="onboarding_login_description">Sign in with your Google account to get the most out of DripMusic.</string>
+    <string name="onboarding_login_description">Sign in with your Google account to get the most out of PeekMusic.</string>
     <string name="onboarding_login_benefit_1">Sync your library and playlists</string>
     <string name="onboarding_login_benefit_2">Get personalised recommendations</string>
     <string name="onboarding_login_benefit_3">Access your history across devices</string>
@@ -1135,5 +1135,5 @@
     <string name="onboarding_finish_description">Enjoy your music.</string>
     <string name="onboarding_finish_button">Finish</string>
     <string name="onboarding_check_for_updates">Check for updates</string>
-    <string name="onboarding_check_for_updates_desc">Get notified when a new DripMusic release is available</string>
+    <string name="onboarding_check_for_updates_desc">Get notified when a new PeekMusic release is available</string>
 </resources>

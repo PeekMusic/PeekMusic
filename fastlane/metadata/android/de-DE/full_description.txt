@@ -1,4 +1,4 @@
-DripMusic ist ein auf Performance fokussierter Fork des Material-3-YouTube-Music-Clients Metrolist.
+PeekMusic ist ein auf Performance fokussierter Fork des Material-3-YouTube-Music-Clients Metrolist.
 
 Funktionen:
 

@@ -39,12 +39,12 @@ object Updater {
     private var cachedAllReleases: List<ReleaseInfo> = emptyList()
     
     private const val CHECK_INTERVAL_MILLIS = 2 * 60 * 60 * 1000L // 2 hours
-    private const val GITHUB_API_BASE = "https://api.github.com/repos/endritlim/DripMusic"
-    // No separate KMP fork exists for DripMusic; point at our own releases. The plain
-    // "DripMusic.apk" asset name never matches our parseAssets filter, so the KMP prompt
+    private const val GITHUB_API_BASE = "https://api.github.com/repos/endritlim/PeekMusic"
+    // No separate KMP fork exists for PeekMusic; point at our own releases. The plain
+    // "PeekMusic.apk" asset name never matches our parseAssets filter, so the KMP prompt
     // never triggers — the normal release path handles updates.
-    private const val KMP_LATEST_RELEASE_URL = "https://api.github.com/repos/endritlim/DripMusic/releases/latest"
-    private const val KMP_APK_NAME = "DripMusic.apk"
+    private const val KMP_LATEST_RELEASE_URL = "https://api.github.com/repos/endritlim/PeekMusic/releases/latest"
+    private const val KMP_APK_NAME = "PeekMusic.apk"
 
     /**
      * Compares two version strings.
@@ -85,8 +85,8 @@ object Updater {
 
     /**
      * Parse release assets from GitHub API response.
-     * Expects DripMusic APKs named DripMusic-<version>-<variant>.apk
-     * (e.g. DripMusic-0.1.0-fossRelease.apk); all builds are universal.
+     * Expects PeekMusic APKs named PeekMusic-<version>-<variant>.apk
+     * (e.g. PeekMusic-0.1.0-fossRelease.apk); all builds are universal.
      */
     private fun parseAssets(assetsArray: JSONArray): List<ReleaseAsset> {
         val assets = mutableListOf<ReleaseAsset>()
@@ -99,8 +99,8 @@ object Updater {
             if (!name.endsWith(".apk")) continue
 
             val variant = when {
-                name.startsWith("DripMusic-") && name.endsWith("-gmsRelease.apk") -> "gms"
-                name.startsWith("DripMusic-") && name.endsWith("Release.apk") -> "foss"
+                name.startsWith("PeekMusic-") && name.endsWith("-gmsRelease.apk") -> "gms"
+                name.startsWith("PeekMusic-") && name.endsWith("Release.apk") -> "foss"
                 else -> null
             } ?: continue
 
@@ -120,7 +120,7 @@ object Updater {
 
     /**
      * Fetch latest release from GitHub API. Uses the releases list (not /releases/latest)
-     * because pre-releases are excluded from /latest and DripMusic releases are pre-releases.
+     * because pre-releases are excluded from /latest and PeekMusic releases are pre-releases.
      */
     suspend fun getLatestRelease(forceRefresh: Boolean = false): Result<ReleaseInfo> =
         withContext(Dispatchers.IO) {
