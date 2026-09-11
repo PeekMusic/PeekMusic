@@ -81,10 +81,10 @@
     <string name="player_background_solid">纯色</string>
     <string name="follow_theme">遵循主题</string>
     <string name="gradient">渐变</string>
-    <string name="new_player_design">Player design</string>
+    <string name="new_player_design">新播放器设计</string>
     <string name="design_modern">Modern</string>
     <string name="design_classic">Classic</string>
-    <string name="new_mini_player_design">Mini-player design</string>
+    <string name="new_mini_player_design">新迷你播放器设计</string>
     <string name="player_background_blur">模糊</string>
     <string name="player_buttons_style">播放器按钮颜色</string>
     <string name="default_style">默认</string>
