@@ -232,9 +232,6 @@ fun Thumbnail(
     // Pre-calculate text color based on background style
     val textBackgroundColor = getTextColor(playerBackground)
     
-    // Grid state
-    val thumbnailLazyGridState = rememberLazyGridState()
-    
     // Calculate media items data - memoized
     val mediaItemsData by remember(
         playerConnection.player.currentMediaItemIndex,
@@ -249,6 +246,11 @@ fun Thumbnail(
     
     val mediaItems = mediaItemsData.items
     val currentMediaIndex = mediaItemsData.currentIndex
+
+    // Grid state
+    val thumbnailLazyGridState = rememberLazyGridState(
+        initialFirstVisibleItemIndex = maxOf(0, currentMediaIndex)
+    )
 
     // Snap behavior - created once per grid state
     val thumbnailSnapLayoutInfoProvider = remember(thumbnailLazyGridState) {
