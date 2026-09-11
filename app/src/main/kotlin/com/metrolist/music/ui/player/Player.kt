@@ -168,7 +168,6 @@ import com.metrolist.music.constants.PlayerButtonsStyle
 import com.metrolist.music.constants.PlayerButtonsStyleKey
 import com.metrolist.music.constants.PlayerHorizontalPadding
 import com.metrolist.music.constants.ShowPlayerLyricsPeekKey
-import com.metrolist.music.constants.ShowIntervalIndicatorKey
 import com.metrolist.music.constants.QueuePeekHeight
 import com.metrolist.music.constants.SleepTimerDefaultKey
 import com.metrolist.music.constants.SleepTimerFadeOutKey
@@ -2268,7 +2267,7 @@ internal fun PlayerLyricsLine(
     }
 
     val activeLine = syncedEntries.lastOrNull { it.time <= position + offset }
-    val showIntervalIndicator by rememberPreference(ShowIntervalIndicatorKey, true)
+    val showIntervalIndicator = true
 
     val mainLineStyle =
         MaterialTheme.typography.titleMedium.copy(

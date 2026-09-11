@@ -54,7 +54,6 @@ import com.metrolist.music.ui.component.NewAction
 import com.metrolist.music.ui.component.NewActionGrid
 import com.metrolist.music.ui.component.TextFieldDialog
 import com.metrolist.music.viewmodels.LyricsMenuViewModel
-import com.metrolist.music.constants.ShowIntervalIndicatorKey
 import com.metrolist.music.utils.rememberPreference
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,7 +69,6 @@ fun LyricsMenu(
     val context = LocalContext.current
     val database = LocalDatabase.current
 
-    var showIntervalIndicator by rememberPreference(ShowIntervalIndicatorKey, true)
 
     // Observe the authoritative translation-active state from the singleton; this persists
     // correctly across menu open/close cycles and avoids the lyricsProvider() race condition.
@@ -291,43 +289,7 @@ fun LyricsMenu(
                                 }
                             )
                         )
-                    add(
-                        Material3MenuItemData(
-                            title = { Text(stringResource(R.string.show_interval_indicator)) },
-                            description = { Text(stringResource(R.string.show_interval_indicator_desc)) },
-                            icon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.lyrics),
-                                    contentDescription = null,
-                                )
-                            },
-                            onClick = {
-                                showIntervalIndicator = !showIntervalIndicator
-                            },
-                            trailingContent = {
-                                Switch(
-                                    checked = showIntervalIndicator,
-                                    onCheckedChange = { newCheckedState ->
-                                        showIntervalIndicator = newCheckedState
-                                    },
-                                    thumbContent = {
-                                        Icon(
-                                            painter = painterResource(
-                                                id = if (showIntervalIndicator) R.drawable.check else R.drawable.close
-                                            ),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize)
-                                        )
-                                    },
-                                    colors = SwitchDefaults.colors(
-                                        uncheckedThumbColor = MaterialTheme.colorScheme.primaryContainer,
-                                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                                        checkedTrackColor = MaterialTheme.colorScheme.primary
-                                    )
-                                )
-                            }
-                        )
-                    )
+
                     
                     add(
                         Material3MenuItemData(
