@@ -2613,6 +2613,7 @@ fun InlineLyricsView(
     val context = LocalContext.current
     val database = LocalDatabase.current
     val coroutineScope = rememberCoroutineScope()
+    var showSearchDialog by rememberSaveable { mutableStateOf(false) }
 
     var appInForeground by remember {
         mutableStateOf(
@@ -2711,12 +2712,56 @@ fun InlineLyricsView(
             }
 
             lyrics == LyricsEntity.LYRICS_NOT_FOUND -> {
-                Text(
-                    text = stringResource(R.string.lyrics_not_found),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                    textAlign = TextAlign.Center,
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.lyrics_not_found),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        IconButton(
+                            onClick = {
+                                val id = mediaMetadata?.id ?: return@IconButton
+                                coroutineScope.launch(Dispatchers.IO) {
+                                    database.lyrics(id).first()?.let { entity ->
+                                        database.query { delete(entity) }
+                                    }
+                                }
+                            },
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.cached),
+                                contentDescription = stringResource(R.string.refetch),
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                            )
+                        }
+                        IconButton(
+                            onClick = { showSearchDialog = true },
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.search),
+                                contentDescription = stringResource(R.string.search),
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                            )
+                        }
+                    }
+                }
+                
+                if (showSearchDialog && mediaMetadata != null) {
+                    ManualLyricsSearchDialog(
+                        mediaMetadata = mediaMetadata,
+                        onDismiss = { showSearchDialog = false },
+                        onHostDismiss = { showSearchDialog = false },
+                    )
+                }
             }
 
             else -> {
