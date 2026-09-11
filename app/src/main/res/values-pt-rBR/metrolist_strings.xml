@@ -82,10 +82,10 @@
     <string name="player_background_solid">Sólido</string>
     <string name="follow_theme">Seguir o tema</string>
     <string name="gradient">Gradiente</string>
-    <string name="new_player_design">Player design</string>
+    <string name="new_player_design">Novo design do tocador</string>
     <string name="design_modern">Modern</string>
     <string name="design_classic">Classic</string>
-    <string name="new_mini_player_design">Mini-player design</string>
+    <string name="new_mini_player_design">Novo design do mini-reprodutor</string>
     <string name="player_background_blur">Desfocado</string>
     <string name="player_buttons_style">Cores dos botões do tocador</string>
     <string name="default_style">Padrão</string>
