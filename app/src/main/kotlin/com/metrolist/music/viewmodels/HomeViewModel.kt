@@ -548,14 +548,7 @@ class HomeViewModel @Inject constructor(
                     )
                 }
                 homePage.value = combined.copy(
-                    sections = combined.sections.mapNotNull { section ->
-                        val filtered = section.items
-                            .filterOutNulls()
-                            .filterExplicit(hideExplicit)
-                            .filterVideoSongs(hideVideoSongs)
-                            .filterYoutubeShorts(hideYoutubeShorts)
-                        if (filtered.isEmpty()) null else section.copy(items = filtered)
-                    }
+                    sections = combined.sections.processSections(hideExplicit, hideVideoSongs, hideYoutubeShorts)
                 )
             }
 
@@ -704,14 +697,7 @@ class HomeViewModel @Inject constructor(
 
             homePage.value = nextSections.copy(
                 chips = homePage.value?.chips,
-                sections = (homePage.value?.sections.orEmpty() + nextSections.sections).mapNotNull { section ->
-                    val filteredItems = section.items
-                        .filterOutNulls()
-                        .filterExplicit(hideExplicit)
-                        .filterVideoSongs(hideVideoSongs)
-                        .filterYoutubeShorts(hideYoutubeShorts)
-                    if (filteredItems.isEmpty()) null else section.copy(items = filteredItems)
-                }
+                sections = homePage.value?.sections.orEmpty() + nextSections.sections.processSections(hideExplicit, hideVideoSongs, hideYoutubeShorts)
             )
             _isLoadingMore.value = false
         }
@@ -737,14 +723,7 @@ class HomeViewModel @Inject constructor(
 
             homePage.value = nextSections.copy(
                 chips = homePage.value?.chips,
-                sections = nextSections.sections.mapNotNull { section ->
-                    val filtered = section.items
-                        .filterOutNulls()
-                        .filterExplicit(hideExplicit)
-                        .filterVideoSongs(hideVideoSongs)
-                        .filterYoutubeShorts(hideYoutubeShorts)
-                    section.copy(items = filtered)
-                }
+                sections = nextSections.sections.processSections(hideExplicit, hideVideoSongs, hideYoutubeShorts)
             )
             selectedChip.value = chip
 
@@ -828,14 +807,7 @@ class HomeViewModel @Inject constructor(
                 if (nextSections != null) {
                     homePage.value = nextSections.copy(
                         chips = homePage.value?.chips,
-                        sections = nextSections.sections.mapNotNull { section ->
-                            val filtered = section.items
-                                .filterOutNulls()
-                                .filterExplicit(hideExplicit)
-                                .filterVideoSongs(hideVideoSongs)
-                                .filterYoutubeShorts(hideYoutubeShorts)
-                            section.copy(items = filtered)
-                        }
+                        sections = nextSections.sections.processSections(hideExplicit, hideVideoSongs, hideYoutubeShorts)
                     )
                 }
             } else {
@@ -946,4 +918,47 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    private fun com.metrolist.music.db.entities.Song.toSongItem(): com.metrolist.innertube.models.SongItem {
+        return com.metrolist.innertube.models.SongItem(
+            id = this.id,
+            title = this.title,
+            artists = this.artists.map { com.metrolist.innertube.models.Artist(name = it.name, id = it.id) },
+            album = this.album?.let { com.metrolist.innertube.models.Album(name = it.title, id = it.id) },
+            duration = this.song.duration,
+            thumbnail = this.thumbnailUrl ?: "",
+            explicit = this.song.explicit
+        )
+    }
+
+    private suspend fun List<com.metrolist.innertube.pages.HomePage.Section>.processSections(
+        hideExplicit: Boolean,
+        hideVideoSongs: Boolean,
+        hideYoutubeShorts: Boolean
+    ): List<com.metrolist.innertube.pages.HomePage.Section> {
+        return this.mapNotNull { section ->
+            var filteredItems = section.items
+                .filterOutNulls()
+                .filterExplicit(hideExplicit)
+                .filterVideoSongs(hideVideoSongs)
+                .filterYoutubeShorts(hideYoutubeShorts)
+            
+            val titleLower = section.title.lowercase()
+            if ("schnellauswahl" in titleLower || "quick picks" in titleLower) {
+                val localSongs = database.forgottenFavorites().first()
+                    .filterVideoSongs(hideVideoSongs)
+                    .shuffled()
+                    .take(3)
+                    .map { it.toSongItem() }
+                    
+                val localIds = localSongs.map { it.id }
+                val remainingYt = filteredItems.filter { it.id !in localIds }
+                
+                filteredItems = (localSongs + remainingYt).shuffled()
+            }
+            
+            if (filteredItems.isEmpty()) null else section.copy(items = filteredItems)
+        }
+    }
+
 }
