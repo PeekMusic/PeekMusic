@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.1.0 — The "Less is More" Update
+
+This release is all about **decluttering**. We ripped out a ton of settings that nobody touches (but everybody has to scroll past), polished the lyrics experience, and made the home screen feel fresher every time you open it.
+
+**🧹 Settings Spring Clean**
+- **Gone for good**: Hide player thumbnail, High refresh rate, Listen Together top bar toggle, Skip silence, Varispeed, Progressive seek, Lyrics auto-scroll, Respect agent positioning, Hide YouTube Shorts, Autoplay, Playlist & queue locks, Lyrics interval indicator, and Equalizer shortcuts from the player menu — all hardcoded to their best defaults. Fewer switches, same great experience.
+- **Queue settings reorganized**: Grouped into clean categories. "Prevent duplicate tracks" is now on by default.
+- **Player design selector**: "New" and "Old" renamed to **Modern** and **Classic**, now using a proper selection dialog instead of toggle switches.
+- **App language moved** to the General section in Content settings where it belongs.
+
+**🎵 Lyrics & Player**
+- **Missing lyrics? No problem**: When no lyrics are found in the main player view, you now get **Reload** and **Search** buttons right there — no need to dig through menus anymore.
+- **Android Auto fix**: Removed an annoying double-spacing gap in the Android Auto settings when YouTube is selected as the source.
+
+**🏠 Home Screen**
+- **Fresher Quick Picks**: Your "Quick Picks" section now shuffles its order every time, and mixes in a few songs from your local forgotten favorites — so you'll actually rediscover music you forgot you loved! 🎲
+
+**🌐 Translations**
+- **Crowdin is live!** PeekMusic translations are now managed on [Crowdin](https://crowdin.com/project/peekmusic). Help translate the app into your language!
+
 ## v1.0.1
 
 **✨ Improvements & Fixes**
