@@ -133,6 +133,9 @@ fun PlayerDesignSettings(
             defaultValue = PlayerButtonsStyle.PRIMARY,
         )
 
+    var showPlayerDesignDialog by rememberSaveable { mutableStateOf(false) }
+    var showMiniPlayerDesignDialog by rememberSaveable { mutableStateOf(false) }
+
     val availableBackgroundStyles =
         PlayerBackgroundStyle.entries.filter {
             it != PlayerBackgroundStyle.BLUR || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
@@ -190,6 +193,39 @@ fun PlayerDesignSettings(
                     PlayerButtonsStyle.TERTIARY -> stringResource(R.string.tertiary_color_style)
                 }
             },
+        )
+    }
+
+
+    if (showPlayerDesignDialog) {
+        EnumDialog(
+            onDismiss = { showPlayerDesignDialog = false },
+            onSelect = {
+                onUseNewPlayerDesignChange(it)
+                showPlayerDesignDialog = false
+            },
+            title = stringResource(R.string.new_player_design),
+            current = useNewPlayerDesign,
+            values = listOf(true, false),
+            valueText = {
+                stringResource(if (it) R.string.design_modern else R.string.design_classic)
+            }
+        )
+    }
+
+    if (showMiniPlayerDesignDialog) {
+        EnumDialog(
+            onDismiss = { showMiniPlayerDesignDialog = false },
+            onSelect = {
+                onUseNewMiniPlayerDesignChange(it)
+                showMiniPlayerDesignDialog = false
+            },
+            title = stringResource(R.string.new_mini_player_design),
+            current = useNewMiniPlayerDesign,
+            values = listOf(true, false),
+            valueText = {
+                stringResource(if (it) R.string.design_modern else R.string.design_classic)
+            }
         )
     }
 
@@ -454,23 +490,10 @@ fun PlayerDesignSettings(
                         Material3SettingsItem(
                             icon = painterResource(R.drawable.nav_bar),
                             title = { Text(stringResource(R.string.new_mini_player_design)) },
-                            trailingContent = {
-                                Switch(
-                                    checked = useNewMiniPlayerDesign,
-                                    onCheckedChange = onUseNewMiniPlayerDesignChange,
-                                    thumbContent = {
-                                        Icon(
-                                            painter =
-                                                painterResource(
-                                                    id = if (useNewMiniPlayerDesign) R.drawable.check else R.drawable.close,
-                                                ),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    },
-                                )
+                            description = {
+                                Text(stringResource(if (useNewMiniPlayerDesign) R.string.design_modern else R.string.design_classic))
                             },
-                            onClick = { onUseNewMiniPlayerDesignChange(!useNewMiniPlayerDesign) },
+                            onClick = { showMiniPlayerDesignDialog = true },
                         ),
                     )
                     add(
@@ -524,23 +547,10 @@ fun PlayerDesignSettings(
                     Material3SettingsItem(
                         icon = painterResource(R.drawable.palette),
                         title = { Text(stringResource(R.string.new_player_design)) },
-                        trailingContent = {
-                            Switch(
-                                checked = useNewPlayerDesign,
-                                onCheckedChange = onUseNewPlayerDesignChange,
-                                thumbContent = {
-                                    Icon(
-                                        painter =
-                                            painterResource(
-                                                id = if (useNewPlayerDesign) R.drawable.check else R.drawable.close,
-                                            ),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                },
-                            )
+                        description = {
+                            Text(stringResource(if (useNewPlayerDesign) R.string.design_modern else R.string.design_classic))
                         },
-                        onClick = { onUseNewPlayerDesignChange(!useNewPlayerDesign) },
+                        onClick = { showPlayerDesignDialog = true },
                     ),
                     Material3SettingsItem(
                         icon = painterResource(R.drawable.gradient),

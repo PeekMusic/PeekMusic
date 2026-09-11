@@ -18,6 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.metrolist.music.ui.component.EnumDialog
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -37,7 +42,7 @@ import com.metrolist.music.utils.rememberPreference
 @Composable
 fun PlayerPage(modifier: Modifier = Modifier) {
     val (useNewPlayerDesign, onUseNewPlayerDesignChangeRaw) = rememberPreference(UseNewPlayerDesignKey, true)
-    val (_, onUseNewMiniPlayerDesignChange) = rememberPreference(UseNewMiniPlayerDesignKey, true)
+    val (useNewMiniPlayerDesign, onUseNewMiniPlayerDesignChange) = rememberPreference(UseNewMiniPlayerDesignKey, true)
     
     // One toggle for both designs
     val onUseNewDesignChange: (Boolean) -> Unit = { enabled ->
@@ -48,6 +53,41 @@ fun PlayerPage(modifier: Modifier = Modifier) {
     val (peekEnabled, onPeekEnabledChange) = rememberPreference(ShowPlayerLyricsPeekKey, true)
     val (showRomanization, onShowRomanizationChange) = rememberPreference(PeekShowRomanizationKey, false)
     val (showTranslation, onShowTranslationChange) = rememberPreference(PeekShowTranslationKey, false)
+
+    var showPlayerDesignDialog by rememberSaveable { mutableStateOf(false) }
+    var showMiniPlayerDesignDialog by rememberSaveable { mutableStateOf(false) }
+    
+    if (showPlayerDesignDialog) {
+        EnumDialog(
+            onDismiss = { showPlayerDesignDialog = false },
+            onSelect = {
+                onUseNewPlayerDesignChangeRaw(it)
+                showPlayerDesignDialog = false
+            },
+            title = stringResource(R.string.onboarding_new_player_design),
+            current = useNewPlayerDesign,
+            values = listOf(true, false),
+            valueText = {
+                stringResource(if (it) R.string.design_modern else R.string.design_classic)
+            }
+        )
+    }
+
+    if (showMiniPlayerDesignDialog) {
+        EnumDialog(
+            onDismiss = { showMiniPlayerDesignDialog = false },
+            onSelect = {
+                onUseNewMiniPlayerDesignChange(it)
+                showMiniPlayerDesignDialog = false
+            },
+            title = stringResource(R.string.onboarding_new_mini_player_design),
+            current = useNewMiniPlayerDesign,
+            values = listOf(true, false),
+            valueText = {
+                stringResource(if (it) R.string.design_modern else R.string.design_classic)
+            }
+        )
+    }
 
     Column(
         modifier = modifier
@@ -78,13 +118,19 @@ fun PlayerPage(modifier: Modifier = Modifier) {
                 add(
                     Material3SettingsItem(
                         title = { Text(stringResource(R.string.onboarding_new_player_design)) },
-                        trailingContent = {
-                            Switch(
-                                checked = useNewPlayerDesign,
-                                onCheckedChange = onUseNewDesignChange,
-                            )
+                        description = {
+                            Text(stringResource(if (useNewPlayerDesign) R.string.design_modern else R.string.design_classic))
                         },
-                        onClick = { onUseNewDesignChange(!useNewPlayerDesign) },
+                        onClick = { showPlayerDesignDialog = true },
+                    )
+                )
+                add(
+                    Material3SettingsItem(
+                        title = { Text(stringResource(R.string.onboarding_new_mini_player_design)) },
+                        description = {
+                            Text(stringResource(if (useNewMiniPlayerDesign) R.string.design_modern else R.string.design_classic))
+                        },
+                        onClick = { showMiniPlayerDesignDialog = true },
                     )
                 )
                 add(
