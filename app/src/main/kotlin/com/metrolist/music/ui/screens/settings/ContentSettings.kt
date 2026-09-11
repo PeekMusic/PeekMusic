@@ -398,6 +398,31 @@ fun ContentSettings(
         Material3SettingsGroup(
             title = stringResource(R.string.general),
             items = listOf(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.language),
+                        title = { Text(stringResource(R.string.app_language)) },
+                        onClick = {
+                            context.startActivity(
+                                Intent(
+                                    Settings.ACTION_APP_LOCALE_SETTINGS,
+                                    "package:${context.packageName}".toUri()
+                                )
+                            )
+                        }
+                    )
+                } else {
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.language),
+                        title = { Text(stringResource(R.string.app_language)) },
+                        description = {
+                            Text(
+                                LanguageCodeToName.getOrElse(appLanguage) { stringResource(R.string.system_default) }
+                            )
+                        },
+                        onClick = { showAppLanguageDialog = true }
+                    )
+                },
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.language),
                     title = { Text(stringResource(R.string.content_language)) },
@@ -570,38 +595,7 @@ fun ContentSettings(
             )
         )
 
-        Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
-            title = stringResource(R.string.app_language),
-            items = listOf(
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    Material3SettingsItem(
-                        icon = painterResource(R.drawable.language),
-                        title = { Text(stringResource(R.string.app_language)) },
-                        onClick = {
-                            context.startActivity(
-                                Intent(
-                                    Settings.ACTION_APP_LOCALE_SETTINGS,
-                                    "package:${context.packageName}".toUri()
-                                )
-                            )
-                        }
-                    )
-                } else {
-                    Material3SettingsItem(
-                        icon = painterResource(R.drawable.language),
-                        title = { Text(stringResource(R.string.app_language)) },
-                        description = {
-                            Text(
-                                LanguageCodeToName.getOrElse(appLanguage) { stringResource(R.string.system_default) }
-                            )
-                        },
-                        onClick = { showAppLanguageDialog = true }
-                    )
-                }
-            )
-        )
 
         Spacer(modifier = Modifier.height(27.dp))
 
