@@ -82,8 +82,10 @@
     <string name="player_background_solid">Solid</string>
     <string name="follow_theme">Follow theme</string>
     <string name="gradient">Gradient</string>
-    <string name="new_player_design">New player design</string>
-    <string name="new_mini_player_design">New mini-player design</string>
+    <string name="new_player_design">Player design</string>
+    <string name="design_modern">Modern</string>
+    <string name="design_classic">Classic</string>
+    <string name="new_mini_player_design">Mini-player design</string>
     <string name="player_background_blur">Blur</string>
     <string name="player_buttons_style">Player button colors</string>
     <string name="default_style">Default</string>
@@ -155,7 +157,7 @@
     <string name="exclude_recently_played_from_queue">Exclude recently played songs</string>
     <string name="exclude_recently_played_from_queue_desc">Prevent songs you\'ve recently listened to from repeating in auto-generated radio queues and mixes</string>
     <string name="recently_played_window_size">Recently played window size</string>
-    <string name="recently_played_window_size_desc">Number of recent songs to exclude from mixes (currently %1$d)</string>
+    <string name="recently_played_window_size_desc">Number of recent songs to exclude from mixes</string>
     <string name="add_to_playlist_position">Add to playlist position</string>
     <string name="playlist_position_beginning">Beginning of playlist</string>
     <string name="playlist_position_beginning_desc">Newly added songs appear before existing songs</string>
@@ -995,8 +997,8 @@
     <string name="onboarding_dynamic_theme_desc">Match the app colors to your wallpaper</string>
     <string name="onboarding_pure_black">Pure black</string>
     <string name="onboarding_pure_black_desc">Use true black backgrounds in dark mode</string>
-    <string name="onboarding_new_player_design">New player design</string>
-    <string name="onboarding_new_mini_player_design">New mini-player design</string>
+    <string name="onboarding_new_player_design">Player design</string>
+    <string name="onboarding_new_mini_player_design">Mini-player design</string>
     <string name="onboarding_peek_title">Peek</string>
     <string name="onboarding_peek_description">Peek lyrics add the current lyric line above the song title under the album cover while playing. Great for quick sing-alongs.</string>
     <string name="onboarding_peek_toggle">Show Peek</string>
