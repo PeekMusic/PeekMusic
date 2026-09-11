@@ -74,7 +74,6 @@ import com.metrolist.music.LocalListenTogetherManager
 import com.metrolist.music.LocalPlayerConnection
 import com.metrolist.music.R
 import com.metrolist.music.constants.CropAlbumArtKey
-import com.metrolist.music.constants.HidePlayerThumbnailKey
 import com.metrolist.music.constants.ShowPlayerLyricsPeekKey
 import com.metrolist.music.constants.PlayerBackgroundStyle
 import com.metrolist.music.constants.PlayerBackgroundStyleKey
@@ -222,7 +221,6 @@ fun Thumbnail(
     // Disable swipe for Listen Together guests
     val swipeThumbnailPref by rememberPreference(SwipeThumbnailKey, true)
     val swipeThumbnail = swipeThumbnailPref && !isListenTogetherGuest
-    val hidePlayerThumbnail by rememberPreference(HidePlayerThumbnailKey, false)
     val cropAlbumArt by rememberPreference(CropAlbumArtKey, false)
     val playerBackground by rememberEnumPreference(
         key = PlayerBackgroundStyleKey,
@@ -399,7 +397,6 @@ fun Thumbnail(
                             ThumbnailItem(
                                 item = item,
                                 dimensions = dimensions,
-                                hidePlayerThumbnail = hidePlayerThumbnail,
                                 cropAlbumArt = cropAlbumArt,
                                 textBackgroundColor = textBackgroundColor,
                                 layoutDirection = layoutDirection,
@@ -497,7 +494,6 @@ fun ThumbnailHeader(
 private fun ThumbnailItem(
     item: MediaItem,
     dimensions: ThumbnailDimensions,
-    hidePlayerThumbnail: Boolean,
     cropAlbumArt: Boolean,
     textBackgroundColor: Color,
     layoutDirection: LayoutDirection,
@@ -579,20 +575,16 @@ private fun ThumbnailItem(
                 .size(dimensions.thumbnailSize)
                 .clip(RoundedCornerShape(dimensions.cornerRadius))
         ) {
-            if (hidePlayerThumbnail) {
-                HiddenThumbnailPlaceholder(textBackgroundColor = textBackgroundColor)
+            val artworkUriToUse = if (item.mediaId == currentMediaId && !currentMediaThumbnail.isNullOrBlank()) {
+                currentMediaThumbnail
             } else {
-                val artworkUriToUse = if (item.mediaId == currentMediaId && !currentMediaThumbnail.isNullOrBlank()) {
-                    currentMediaThumbnail
-                } else {
-                    item.mediaMetadata.artworkUri?.toString()
-                }
-
-                ThumbnailImage(
-                    artworkUri = artworkUriToUse,
-                    cropArtwork = cropAlbumArt
-                )
+                item.mediaMetadata.artworkUri?.toString()
             }
+
+            ThumbnailImage(
+                artworkUri = artworkUriToUse,
+                cropArtwork = cropAlbumArt
+            )
             
             // Cast button at top-right corner of thumbnail
             CastButton(

@@ -49,7 +49,6 @@ import androidx.navigation.NavController
 import com.metrolist.music.LocalPlayerAwareWindowInsets
 import com.metrolist.music.R
 import com.metrolist.music.constants.CropAlbumArtKey
-import com.metrolist.music.constants.HidePlayerThumbnailKey
 import com.metrolist.music.constants.MiniPlayerBackgroundStyle
 import com.metrolist.music.constants.MiniPlayerBackgroundStyleKey
 import com.metrolist.music.constants.PlayerBackgroundStyle
@@ -109,11 +108,6 @@ fun PlayerDesignSettings(
     val (pureBlackMiniPlayer, onPureBlackMiniPlayerChange) =
         rememberPreference(
             PureBlackMiniPlayerKey,
-            defaultValue = false,
-        )
-    val (hidePlayerThumbnail, onHidePlayerThumbnailChange) =
-        rememberPreference(
-            HidePlayerThumbnailKey,
             defaultValue = false,
         )
     val (cropAlbumArt, onCropAlbumArtChange) =
@@ -566,28 +560,7 @@ fun PlayerDesignSettings(
                         },
                         onClick = { showPlayerBackgroundDialog = true },
                     ),
-                    Material3SettingsItem(
-                        icon = painterResource(R.drawable.hide_image),
-                        title = { Text(stringResource(R.string.hide_player_thumbnail)) },
-                        description = { Text(stringResource(R.string.hide_player_thumbnail_desc)) },
-                        trailingContent = {
-                            Switch(
-                                checked = hidePlayerThumbnail,
-                                onCheckedChange = onHidePlayerThumbnailChange,
-                                thumbContent = {
-                                    Icon(
-                                        painter =
-                                            painterResource(
-                                                id = if (hidePlayerThumbnail) R.drawable.check else R.drawable.close,
-                                            ),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                },
-                            )
-                        },
-                        onClick = { onHidePlayerThumbnailChange(!hidePlayerThumbnail) },
-                    ),
+
                     Material3SettingsItem(
                         icon = painterResource(R.drawable.crop),
                         title = { Text(stringResource(R.string.crop_album_art)) },
