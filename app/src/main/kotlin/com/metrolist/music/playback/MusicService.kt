@@ -141,8 +141,6 @@ import com.metrolist.music.constants.ShowLyricsKey
 import com.metrolist.music.constants.ShuffleModeKey
 import com.metrolist.music.constants.ShufflePlaylistFirstKey
 import com.metrolist.music.constants.SimilarContent
-import com.metrolist.music.constants.SkipSilenceInstantKey
-import com.metrolist.music.constants.SkipSilenceKey
 import com.metrolist.music.constants.StopMusicOnTaskClearKey
 import com.metrolist.music.db.MusicDatabase
 import com.metrolist.music.db.entities.Event
@@ -820,7 +818,7 @@ class MusicService :
         }
 
         dataStore.data
-            .map { (it[SkipSilenceKey] ?: false) to (it[SkipSilenceInstantKey] ?: false) }
+            .map { false to false }
             .distinctUntilChanged()
             .collectLatest(scope) { (skipSilence, instantSkip) ->
                 player.skipSilenceEnabled = skipSilence
@@ -1082,15 +1080,11 @@ class MusicService :
 
         // Set initial state — use pre-read prefs when available, otherwise fall back to DataStore
         val useAudioTrackPlaybackParams = if (prefs != null) {
-            val skipSilence = prefs[SkipSilenceKey] ?: false
-            val instantSkip = prefs[SkipSilenceInstantKey] ?: false
-            silenceProcessor.instantModeEnabled = skipSilence && instantSkip
+            silenceProcessor.instantModeEnabled = false
             prefs[AudioTrackPlaybackParamsKey] ?: true
         } else {
             runBlocking {
-                val skipSilence = dataStore.get(SkipSilenceKey, false)
-                val instantSkip = dataStore.get(SkipSilenceInstantKey, false)
-                silenceProcessor.instantModeEnabled = skipSilence && instantSkip
+                silenceProcessor.instantModeEnabled = false
                 dataStore.get(AudioTrackPlaybackParamsKey, true)
             }
         }
@@ -1138,14 +1132,14 @@ class MusicService :
             val offload = prefs[AudioOffload] ?: false
             val crossfade = prefs[CrossfadeEnabledKey] ?: false
             player.setOffloadEnabled(if (crossfade) false else offload)
-            player.skipSilenceEnabled = prefs[SkipSilenceKey] ?: false
+            player.skipSilenceEnabled = false
         } else {
             player.apply {
                 runBlocking {
                     val offload = dataStore.get(AudioOffload, false)
                     val crossfade = dataStore.get(CrossfadeEnabledKey, false)
                     setOffloadEnabled(if (crossfade) false else offload)
-                    skipSilenceEnabled = dataStore.get(SkipSilenceKey, false)
+                    skipSilenceEnabled = false
                 }
             }
         }

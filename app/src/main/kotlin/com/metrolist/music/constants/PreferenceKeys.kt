@@ -58,7 +58,6 @@ val SwipeToRemoveSongKey = booleanPreferencesKey("SwipeToRemoveSong")
 val UseNewPlayerDesignKey = booleanPreferencesKey("useNewPlayerDesign")
 val UseNewMiniPlayerDesignKey = booleanPreferencesKey("useNewMiniPlayerDesign")
 val CropAlbumArtKey = booleanPreferencesKey("cropAlbumArt")
-val SeekExtraSeconds = booleanPreferencesKey("seekExtraSeconds")
 val PauseOnMute = booleanPreferencesKey("pauseOnMute")
 val ResumeOnBluetoothConnectKey = booleanPreferencesKey("resumeOnBluetoothConnect")
 val KeepScreenOn = booleanPreferencesKey("keepScreenOn")
@@ -116,14 +115,11 @@ enum class AudioQuality {
 val AudioOffload = booleanPreferencesKey("enableOffload")
 val AudioTrackPlaybackParamsKey = booleanPreferencesKey("audioTrackPlaybackParams")
 
-val VarispeedKey = booleanPreferencesKey("varispeed")
 
 val PersistentQueueKey = booleanPreferencesKey("persistentQueue")
 val PersistentShuffleAcrossQueuesKey = booleanPreferencesKey("persistentShuffleAcrossQueues")
 val RememberShuffleAndRepeatKey = booleanPreferencesKey("rememberShuffleAndRepeat")
 val ShuffleModeKey = booleanPreferencesKey("shuffleMode")
-val SkipSilenceKey = booleanPreferencesKey("skipSilence")
-val SkipSilenceInstantKey = booleanPreferencesKey("skipSilenceInstant")
 val AudioNormalizationKey = booleanPreferencesKey("audioNormalization")
 
 val LoudnessLevelKey = stringPreferencesKey("loudnessLevel")

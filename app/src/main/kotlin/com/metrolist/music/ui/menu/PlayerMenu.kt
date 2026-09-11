@@ -83,7 +83,6 @@ import com.metrolist.music.LocalListenTogetherManager
 import com.metrolist.music.LocalPlayerConnection
 import com.metrolist.music.R
 import com.metrolist.music.constants.ListItemHeight
-import com.metrolist.music.constants.VarispeedKey
 import com.metrolist.music.listentogether.ConnectionState
 import com.metrolist.music.listentogether.ListenTogetherEvent
 import com.metrolist.music.models.MediaMetadata
@@ -132,8 +131,7 @@ fun PlayerMenu(
     val castVolume by castHandler?.castVolume?.collectAsStateWithLifecycle() ?: remember { mutableFloatStateOf(1f) }
     val castDeviceName by castHandler?.castDeviceName?.collectAsStateWithLifecycle() ?: remember { mutableStateOf<String?>(null) }
 
-    val varispeedMode by rememberPreference(VarispeedKey, defaultValue = false)
-
+    
     val librarySong by database.song(mediaMetadata.id).collectAsStateWithLifecycle(initialValue = null)
     val coroutineScope = rememberCoroutineScope()
     val downloadUtil = LocalDownloadUtil.current
@@ -730,8 +728,7 @@ fun PlayerMenu(
                                         )
                                     },
                                     onClick = {
-                                        if (!varispeedMode) showPitchTempoDialog = true
-                                        else showSpeedDialog = true
+                                        showPitchTempoDialog = true
                                     },
                                 ),
                             )

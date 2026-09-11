@@ -78,7 +78,6 @@ import com.metrolist.music.constants.ShowPlayerLyricsPeekKey
 import com.metrolist.music.constants.PlayerBackgroundStyle
 import com.metrolist.music.constants.PlayerBackgroundStyleKey
 import com.metrolist.music.constants.PlayerHorizontalPadding
-import com.metrolist.music.constants.SeekExtraSeconds
 import com.metrolist.music.constants.SwipeThumbnailKey
 import com.metrolist.music.constants.ThumbnailCornerRadius
 import com.metrolist.music.listentogether.RoomRole
@@ -509,8 +508,7 @@ private fun ThumbnailItem(
     peekOverlay: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
-    val incrementalSeekSkipEnabled by rememberPreference(SeekExtraSeconds, defaultValue = false)
-    var skipMultiplier by remember { mutableIntStateOf(1) }
+        var skipMultiplier by remember { mutableIntStateOf(1) }
     var lastTapTime by remember { mutableLongStateOf(0L) }
     val peekPref by rememberPreference(ShowPlayerLyricsPeekKey, true)
     val showLyricsPeek = peekOverlay && peekPref
@@ -541,7 +539,7 @@ private fun ThumbnailItem(
                         val duration = playerConnection.player.duration
 
                         val now = System.currentTimeMillis()
-                        if (incrementalSeekSkipEnabled && now - lastTapTime < 1000) {
+                        if (false) {
                             skipMultiplier++
                         } else {
                             skipMultiplier = 1
