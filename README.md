@@ -77,6 +77,15 @@ Things this fork deliberately doesn't carry:
 - **AI lyric translation behind API keys** — replaced by the free keyless translation above.
 - **Zemer and YouTube Subtitle lyrics providers** — replaced by SimpMusic and Musixmatch.
 
+## 🌐 Help Translate PeekMusic
+
+PeekMusic is continuously being translated by our awesome community. You can help translate the app into your native language!
+
+We manage our translations via Crowdin. Join our project and start translating:
+**[Contribute to PeekMusic on Crowdin](https://crowdin.com/project/peekmusic)**
+
+*(If your language isn't listed, request it directly on Crowdin!)*
+
 ## Build
 
 Debug build (for development):
