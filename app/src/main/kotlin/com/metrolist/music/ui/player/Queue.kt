@@ -105,7 +105,7 @@ import com.metrolist.music.LocalPlayerConnection
 import com.metrolist.music.R
 import com.metrolist.music.constants.ListItemHeight
 import com.metrolist.music.constants.PlayerBackgroundStyle
-import com.metrolist.music.constants.QueueEditLockKey
+
 import com.metrolist.music.constants.UseNewPlayerDesignKey
 import com.metrolist.music.extensions.metadata
 import com.metrolist.music.extensions.move
@@ -213,7 +213,7 @@ fun Queue(
         BackHandler(onBack = onExitSelectionMode)
     }
 
-    var locked by rememberPreference(QueueEditLockKey, defaultValue = true)
+    
 
     val (useNewPlayerDesign, onUseNewPlayerDesignChange) =
         rememberPreference(
@@ -877,7 +877,7 @@ fun Queue(
                                                     )
                                                 }
                                             }
-                                            if (!locked && !isListenTogetherGuest) {
+                                            if (!isListenTogetherGuest) {
                                                 IconButton(
                                                     onClick = { },
                                                     modifier = Modifier.draggableHandle(),
@@ -937,7 +937,7 @@ fun Queue(
                             }
                         }
 
-                        if (locked) {
+                        if (isListenTogetherGuest) {
                             content()
                         } else {
                             SwipeToDismissBox(
@@ -1075,15 +1075,7 @@ fun Queue(
                     exit = fadeOut() + slideOutVertically { it },
                 ) {
                     Row {
-                        IconButton(
-                            onClick = { locked = !locked },
-                            modifier = Modifier.padding(horizontal = 6.dp),
-                        ) {
-                            Icon(
-                                painter = painterResource(if (locked) R.drawable.lock else R.drawable.lock_open),
-                                contentDescription = null,
-                            )
-                        }
+
                     }
                 }
 

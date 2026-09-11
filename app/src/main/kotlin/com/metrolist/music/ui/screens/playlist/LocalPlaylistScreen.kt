@@ -110,7 +110,6 @@ import com.metrolist.music.LocalPlayerConnection
 import com.metrolist.music.LocalSyncUtils
 import com.metrolist.music.R
 import com.metrolist.music.constants.DarkModeKey
-import com.metrolist.music.constants.PlaylistEditLockKey
 import com.metrolist.music.constants.PlaylistSongSortDescendingKey
 import com.metrolist.music.constants.PlaylistSongSortType
 import com.metrolist.music.constants.PlaylistSongSortTypeKey
@@ -187,7 +186,7 @@ fun LocalPlaylistScreen(
             PlaylistSongSortDescendingKey,
             true,
         )
-    var locked by rememberPreference(PlaylistEditLockKey, defaultValue = true)
+    
 
     val coroutineScope = rememberCoroutineScope()
     val syncUtils = LocalSyncUtils.current
@@ -528,17 +527,7 @@ fun LocalPlaylistScreen(
                                 },
                                 modifier = Modifier.weight(1f),
                             )
-                            if (editable) {
-                                IconButton(
-                                    onClick = { locked = !locked },
-                                    modifier = Modifier.padding(horizontal = 6.dp),
-                                ) {
-                                    Icon(
-                                        painter = painterResource(if (locked) R.drawable.lock else R.drawable.lock_open),
-                                        contentDescription = null,
-                                    )
-                                }
-                            }
+
                         }
                     }
                 }
@@ -639,7 +628,7 @@ fun LocalPlaylistScreen(
                                         )
                                     }
 
-                                    if (sortType == PlaylistSongSortType.CUSTOM && !locked && !inSelectMode && !isSearching && editable) {
+                                    if (sortType == PlaylistSongSortType.CUSTOM && !inSelectMode && !isSearching && editable) {
                                         IconButton(
                                             onClick = { },
                                             modifier = Modifier.draggableHandle(),
@@ -701,7 +690,7 @@ fun LocalPlaylistScreen(
                         )
                     }
 
-                    if (locked || inSelectMode || !swipeRemoveEnabled) {
+                    if (inSelectMode || !swipeRemoveEnabled) {
                         Box(modifier = Modifier.animateItem()) {
                             content()
                         }
