@@ -22,7 +22,6 @@ import com.metrolist.innertube.models.filterYoutubeShorts
 import com.metrolist.innertube.pages.SearchSummaryPage
 import com.metrolist.music.constants.HideExplicitKey
 import com.metrolist.music.constants.HideVideoSongsKey
-import com.metrolist.music.constants.HideYoutubeShortsKey
 import com.metrolist.music.models.ItemsPage
 import com.metrolist.music.utils.SearchRoutes
 import com.metrolist.music.utils.dataStore
@@ -102,7 +101,7 @@ constructor(
                     val resolvedPage = page.copy(summaries = resolvedSummaries)
                     val hideExplicit = context.dataStore.get(HideExplicitKey, false)
                     val hideVideoSongs = context.dataStore.get(HideVideoSongsKey, false)
-                    val hideYoutubeShorts = context.dataStore.get(HideYoutubeShortsKey, false)
+                    val hideYoutubeShorts = true
                     summaryPage =
                         resolvedPage
                             .filterExplicit(hideExplicit)
@@ -144,7 +143,7 @@ constructor(
                                 val resolvedItems = resolveSearchMetadata(result.items)
                                 val hideExplicit = context.dataStore.get(HideExplicitKey, false)
                                 val hideVideoSongs = context.dataStore.get(HideVideoSongsKey, false)
-                                val hideYoutubeShorts = context.dataStore.get(HideYoutubeShortsKey, false)
+                                val hideYoutubeShorts = true
                                 viewStateMap[filter.value] =
                                     ItemsPage(
                                         resolvedItems
@@ -174,7 +173,7 @@ constructor(
             val resolvedItems = resolveSearchMetadata(searchResult.items)
             val hideExplicit = context.dataStore.get(HideExplicitKey, false)
             val hideVideoSongs = context.dataStore.get(HideVideoSongsKey, false)
-            val hideYoutubeShorts = context.dataStore.get(HideYoutubeShortsKey, false)
+            val hideYoutubeShorts = true
             val newItems = resolvedItems
                 .filterExplicit(hideExplicit)
                 .filterVideoSongs(hideVideoSongs)

@@ -14,7 +14,6 @@ import com.metrolist.innertube.models.ArtistItem
 import com.metrolist.innertube.models.PlaylistItem
 import com.metrolist.innertube.models.filterYoutubeShorts
 import com.metrolist.innertube.utils.completed
-import com.metrolist.music.constants.HideYoutubeShortsKey
 import com.metrolist.music.db.MusicDatabase
 import com.metrolist.music.db.entities.PodcastEntity
 import com.metrolist.music.ui.utils.resize
@@ -58,7 +57,7 @@ class AccountViewModel @Inject constructor(
     val selectedContentType = MutableStateFlow(AccountContentType.PLAYLISTS)
 
     private suspend fun loadPlaylists() {
-        val hideYoutubeShorts = context.dataStore.get(HideYoutubeShortsKey, false)
+        val hideYoutubeShorts = true
         YouTube.library("FEmusic_liked_playlists").completed().onSuccess {
             val all = it.items.filterIsInstance<PlaylistItem>()
             // Extract SE playlist separately for Podcasts tab
@@ -107,7 +106,7 @@ class AccountViewModel @Inject constructor(
         // Listen for HideYoutubeShorts preference changes and reload playlists instantly
         viewModelScope.launch(Dispatchers.IO) {
             context.dataStore.data
-                .map { it[HideYoutubeShortsKey] ?: false }
+                .map { true }
                 .distinctUntilChanged()
                 .collect {
                     if (playlists.value != null) {

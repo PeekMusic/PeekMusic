@@ -29,7 +29,6 @@ import com.metrolist.music.constants.ArtistSortType
 import com.metrolist.music.constants.ArtistSortTypeKey
 import com.metrolist.music.constants.HideExplicitKey
 import com.metrolist.music.constants.HideVideoSongsKey
-import com.metrolist.music.constants.HideYoutubeShortsKey
 import com.metrolist.music.constants.PlaylistSortDescendingKey
 import com.metrolist.music.constants.PlaylistSortType
 import com.metrolist.music.constants.PlaylistSortTypeKey
@@ -287,7 +286,7 @@ constructor(
                 Triple(
                     it[PlaylistSortTypeKey].toEnum(PlaylistSortType.CREATE_DATE),
                     it[PlaylistSortDescendingKey] ?: true,
-                    it[HideYoutubeShortsKey] ?: false
+                    true
                 )
             }.distinctUntilChanged()
             .flatMapLatest { (sortType, descending, hideYoutubeShorts) ->
@@ -386,7 +385,7 @@ constructor(
             database.albumsLiked(AlbumSortType.CREATE_DATE, true).map { it.filterExplicitAlbums(hideExplicit) }
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
     var songs = context.dataStore.data
-        .map { Triple(it[HideExplicitKey] ?: false, it[HideVideoSongsKey] ?: false, it[HideYoutubeShortsKey] ?: false) }
+        .map { Triple(it[HideExplicitKey] ?: false, it[HideVideoSongsKey] ?: false, true) }
         .distinctUntilChanged()
         .flatMapLatest { (hideExplicit, hideVideoSongs, _) ->
             combine(
@@ -400,7 +399,7 @@ constructor(
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
     var playlists = context.dataStore.data
-        .map { it[HideYoutubeShortsKey] ?: false }
+        .map { true }
         .distinctUntilChanged()
         .flatMapLatest { hideYoutubeShorts ->
             database.playlists(PlaylistSortType.CREATE_DATE, true).map { it.filterYoutubeShorts(hideYoutubeShorts) }

@@ -24,7 +24,6 @@ import com.metrolist.innertube.models.filterYoutubeShorts
 import com.metrolist.innertube.pages.ArtistPage
 import com.metrolist.music.constants.HideExplicitKey
 import com.metrolist.music.constants.HideVideoSongsKey
-import com.metrolist.music.constants.HideYoutubeShortsKey
 import com.metrolist.music.db.MusicDatabase
 import com.metrolist.music.db.entities.ArtistEntity
 import com.metrolist.music.db.entities.deserializeArtistPage
@@ -106,7 +105,7 @@ class ArtistViewModel @Inject constructor(
                     Triple(
                         it[HideExplicitKey] ?: false,
                         it[HideVideoSongsKey] ?: false,
-                        it[HideYoutubeShortsKey] ?: false
+                        true
                     )
                 }
                 .distinctUntilChanged()
@@ -124,7 +123,7 @@ class ArtistViewModel @Inject constructor(
                 val page = cachedDto.toArtistPage()
                 val hideExplicit = context.dataStore.get(HideExplicitKey, false)
                 val hideVideoSongs = context.dataStore.get(HideVideoSongsKey, false)
-                val hideYoutubeShorts = context.dataStore.get(HideYoutubeShortsKey, false)
+                val hideYoutubeShorts = true
 
                 val filteredSections = page.sections
                     .map { section ->
@@ -144,7 +143,7 @@ class ArtistViewModel @Inject constructor(
         viewModelScope.launch {
             val hideExplicit = context.dataStore.get(HideExplicitKey, false)
             val hideVideoSongs = context.dataStore.get(HideVideoSongsKey, false)
-            val hideYoutubeShorts = context.dataStore.get(HideYoutubeShortsKey, false)
+            val hideYoutubeShorts = true
             YouTube.artist(artistId)
                 .onSuccess { page ->
                     // Collect all items from all sections and resolve artist IDs once
