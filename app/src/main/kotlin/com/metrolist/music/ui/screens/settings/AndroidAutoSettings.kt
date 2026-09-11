@@ -340,9 +340,8 @@ fun AndroidAutoSettings(
                 )
             )
         )
-        }
-
         Spacer(Modifier.height(27.dp))
+        }
 
         // Recommendations source
         Material3SettingsGroup(
