@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="local_history">Local</string>
     <string name="remote_history">Remote</string>
 
@@ -170,7 +171,7 @@
     <string name="exclude_recently_played_from_queue">Exclude recently played songs</string>
     <string name="exclude_recently_played_from_queue_desc">Prevent songs you\'ve recently listened to from repeating in auto-generated radio queues and mixes</string>
     <string name="recently_played_window_size">Recently played window size</string>
-    <string name="recently_played_window_size_desc">Number of recent songs to exclude from mixes (currently %1$d)</string>
+    <string name="recently_played_window_size_desc">Number of recent songs to exclude from mixes</string>
     <string name="add_to_playlist_position">Add to playlist position</string>
     <string name="playlist_position_beginning">Beginning of playlist</string>
     <string name="playlist_position_beginning_desc">Newly added songs appear before existing songs</string>

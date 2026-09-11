@@ -48,7 +48,6 @@ import com.metrolist.music.constants.AutoDownloadOnLikeKey
 import com.metrolist.music.constants.AutoLoadMoreKey
 import com.metrolist.music.constants.AutoRadioQueueKey
 import com.metrolist.music.constants.AutoSkipNextOnErrorKey
-import com.metrolist.music.constants.AutoplayKey
 import com.metrolist.music.constants.DisableLoadMoreWhenRepeatAllKey
 import com.metrolist.music.constants.ExcludeRecentlyPlayedFromQueueKey
 import com.metrolist.music.constants.PersistentQueueKey
@@ -102,10 +101,6 @@ fun QueueSettings(
         AutoSkipNextOnErrorKey,
         defaultValue = false
     )
-    val (autoplay, onAutoplayChange) = rememberPreference(
-        AutoplayKey,
-        defaultValue = true
-    )
     val (persistentShuffleAcrossQueues, onPersistentShuffleAcrossQueuesChange) = rememberPreference(
         PersistentShuffleAcrossQueuesKey,
         defaultValue = false
@@ -120,7 +115,7 @@ fun QueueSettings(
     )
     val (preventDuplicateTracksInQueue, onPreventDuplicateTracksInQueueChange) = rememberPreference(
         PreventDuplicateTracksInQueueKey,
-        defaultValue = false
+        defaultValue = true
     )
     val (excludeRecentlyPlayedFromQueue, onExcludeRecentlyPlayedFromQueueChange) = rememberPreference(
         ExcludeRecentlyPlayedFromQueueKey,
@@ -202,6 +197,7 @@ fun QueueSettings(
             )
         )
 
+        
         Material3SettingsGroup(
             title = stringResource(R.string.queue),
             items = listOf(
@@ -248,6 +244,27 @@ fun QueueSettings(
                     onClick = { onAutoLoadMoreChange(!autoLoadMore) }
                 ),
                 Material3SettingsItem(
+                    icon = painterResource(R.drawable.repeat),
+                    title = { Text(stringResource(R.string.disable_load_more_when_repeat_all)) },
+                    description = { Text(stringResource(R.string.disable_load_more_when_repeat_all_desc)) },
+                    trailingContent = {
+                        Switch(
+                            checked = disableLoadMoreWhenRepeatAll,
+                            onCheckedChange = onDisableLoadMoreWhenRepeatAllChange,
+                            thumbContent = {
+                                Icon(
+                                    painter = painterResource(
+                                        id = if (disableLoadMoreWhenRepeatAll) R.drawable.check else R.drawable.close
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                                )
+                            }
+                        )
+                    },
+                    onClick = { onDisableLoadMoreWhenRepeatAllChange(!disableLoadMoreWhenRepeatAll) }
+                ),
+                Material3SettingsItem(
                     icon = painterResource(R.drawable.radio),
                     title = { Text(stringResource(R.string.auto_radio_queue)) },
                     description = { Text(stringResource(R.string.auto_radio_queue_desc)) },
@@ -269,17 +286,17 @@ fun QueueSettings(
                     onClick = { onAutoRadioQueueChange(!autoRadioQueue) }
                 ),
                 Material3SettingsItem(
-                    icon = painterResource(R.drawable.skip_next),
-                    title = { Text(stringResource(R.string.autoplay)) },
-                    description = { Text(stringResource(R.string.autoplay_desc)) },
+                    icon = painterResource(R.drawable.similar),
+                    title = { Text(stringResource(R.string.enable_similar_content)) },
+                    description = { Text(stringResource(R.string.similar_content_desc)) },
                     trailingContent = {
                         Switch(
-                            checked = autoplay,
-                            onCheckedChange = onAutoplayChange,
+                            checked = similarContentEnabled,
+                            onCheckedChange = similarContentEnabledChange,
                             thumbContent = {
                                 Icon(
                                     painter = painterResource(
-                                        id = if (autoplay) R.drawable.check else R.drawable.close
+                                        id = if (similarContentEnabled) R.drawable.check else R.drawable.close
                                     ),
                                     contentDescription = null,
                                     modifier = Modifier.size(SwitchDefaults.IconSize)
@@ -287,28 +304,7 @@ fun QueueSettings(
                             }
                         )
                     },
-                    onClick = { onAutoplayChange(!autoplay) }
-                ),
-                Material3SettingsItem(
-                    icon = painterResource(R.drawable.repeat),
-                    title = { Text(stringResource(R.string.disable_load_more_when_repeat_all)) },
-                    description = { Text(stringResource(R.string.disable_load_more_when_repeat_all_desc)) },
-                    trailingContent = {
-                        Switch(
-                            checked = disableLoadMoreWhenRepeatAll,
-                            onCheckedChange = onDisableLoadMoreWhenRepeatAllChange,
-                            thumbContent = {
-                                Icon(
-                                    painter = painterResource(
-                                        id = if (disableLoadMoreWhenRepeatAll) R.drawable.check else R.drawable.close
-                                    ),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(SwitchDefaults.IconSize)
-                                )
-                            }
-                        )
-                    },
-                    onClick = { onDisableLoadMoreWhenRepeatAllChange(!disableLoadMoreWhenRepeatAll) }
+                    onClick = { similarContentEnabledChange(!similarContentEnabled) }
                 ),
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.download),
@@ -332,17 +328,17 @@ fun QueueSettings(
                     onClick = { onAutoDownloadOnLikeChange(!autoDownloadOnLike) }
                 ),
                 Material3SettingsItem(
-                    icon = painterResource(R.drawable.similar),
-                    title = { Text(stringResource(R.string.enable_similar_content)) },
-                    description = { Text(stringResource(R.string.similar_content_desc)) },
+                    icon = painterResource(R.drawable.skip_next),
+                    title = { Text(stringResource(R.string.auto_skip_next_on_error)) },
+                    description = { Text(stringResource(R.string.auto_skip_next_on_error_desc)) },
                     trailingContent = {
                         Switch(
-                            checked = similarContentEnabled,
-                            onCheckedChange = similarContentEnabledChange,
+                            checked = autoSkipNextOnError,
+                            onCheckedChange = onAutoSkipNextOnErrorChange,
                             thumbContent = {
                                 Icon(
                                     painter = painterResource(
-                                        id = if (similarContentEnabled) R.drawable.check else R.drawable.close
+                                        id = if (autoSkipNextOnError) R.drawable.check else R.drawable.close
                                     ),
                                     contentDescription = null,
                                     modifier = Modifier.size(SwitchDefaults.IconSize)
@@ -350,8 +346,13 @@ fun QueueSettings(
                             }
                         )
                     },
-                    onClick = { similarContentEnabledChange(!similarContentEnabled) }
-                ),
+                    onClick = { onAutoSkipNextOnErrorChange(!autoSkipNextOnError) }
+                )
+            )
+        )
+        Material3SettingsGroup(
+            title = stringResource(R.string.shuffle),
+            items = listOf(
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.shuffle),
                     title = { Text(stringResource(R.string.persistent_shuffle_title)) },
@@ -414,7 +415,12 @@ fun QueueSettings(
                         )
                     },
                     onClick = { onShufflePlaylistFirstChange(!shufflePlaylistFirst) }
-                ),
+                )
+            )
+        )
+        Material3SettingsGroup(
+            title = stringResource(R.string.history),
+            items = listOf(
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.queue_music),
                     title = { Text(stringResource(R.string.prevent_duplicate_tracks_in_queue)) },
@@ -460,31 +466,10 @@ fun QueueSettings(
                 Material3SettingsItem(
                     icon = painterResource(R.drawable.history),
                     title = { Text(stringResource(R.string.recently_played_window_size)) },
-                    description = { Text(stringResource(R.string.recently_played_window_size_desc, recentlyPlayedWindowSize)) },
+                    description = { Text(stringResource(R.string.recently_played_window_size_desc)) },
                     trailingContent = { Text(recentlyPlayedWindowSize.toString()) },
                     enabled = excludeRecentlyPlayedFromQueue,
                     onClick = { showWindowSizeDialog = true }
-                ),
-                Material3SettingsItem(
-                    icon = painterResource(R.drawable.skip_next),
-                    title = { Text(stringResource(R.string.auto_skip_next_on_error)) },
-                    description = { Text(stringResource(R.string.auto_skip_next_on_error_desc)) },
-                    trailingContent = {
-                        Switch(
-                            checked = autoSkipNextOnError,
-                            onCheckedChange = onAutoSkipNextOnErrorChange,
-                            thumbContent = {
-                                Icon(
-                                    painter = painterResource(
-                                        id = if (autoSkipNextOnError) R.drawable.check else R.drawable.close
-                                    ),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(SwitchDefaults.IconSize)
-                                )
-                            }
-                        )
-                    },
-                    onClick = { onAutoSkipNextOnErrorChange(!autoSkipNextOnError) }
                 )
             )
         )

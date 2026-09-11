@@ -109,7 +109,6 @@ import com.metrolist.music.constants.AudioTrackPlaybackParamsKey
 import com.metrolist.music.constants.AutoDownloadOnLikeKey
 import com.metrolist.music.constants.AutoLoadMoreKey
 import com.metrolist.music.constants.AutoSkipNextOnErrorKey
-import com.metrolist.music.constants.AutoplayKey
 import com.metrolist.music.constants.CrossfadeDurationKey
 import com.metrolist.music.constants.CrossfadeEnabledKey
 import com.metrolist.music.constants.CrossfadeGaplessKey
@@ -943,7 +942,7 @@ class MusicService :
             dataStore.data.map { it[PersistentQueueKey] ?: true }.distinctUntilChanged().collect { cachedPersistentQueue = it }
         }
         scope.launch {
-            dataStore.data.map { it[AutoplayKey] ?: true }.distinctUntilChanged().collect { cachedAutoplay = it }
+            cachedAutoplay = true
         }
         scope.launch {
             dataStore.data.map { it[DisableLoadMoreWhenRepeatAllKey] ?: false }.distinctUntilChanged().collect { cachedDisableLoadMoreWhenRepeatAll = it }
@@ -1821,7 +1820,7 @@ class MusicService :
             return
         }
 
-        if (dataStore.get(PreventDuplicateTracksInQueueKey, false)) {
+        if (dataStore.get(PreventDuplicateTracksInQueueKey, true)) {
             val itemIds = items.map { it.mediaId }.toSet()
             val indicesToRemove = mutableListOf<Int>()
             val currentIndex = player.currentMediaItemIndex
@@ -1904,7 +1903,7 @@ class MusicService :
     }
 
     fun addToQueue(items: List<MediaItem>) {
-        if (dataStore.get(PreventDuplicateTracksInQueueKey, false)) {
+        if (dataStore.get(PreventDuplicateTracksInQueueKey, true)) {
             val itemIds = items.map { it.mediaId }.toSet()
             val indicesToRemove = mutableListOf<Int>()
             val currentIndex = player.currentMediaItemIndex
@@ -2370,7 +2369,7 @@ class MusicService :
                             .filterVideoSongs(cachedHideVideoSongs)
                     }
 
-                val preventDuplicates = dataStore.get(PreventDuplicateTracksInQueueKey, false)
+                val preventDuplicates = dataStore.get(PreventDuplicateTracksInQueueKey, true)
                 val excludeRecentlyPlayed = dataStore.get(ExcludeRecentlyPlayedFromQueueKey, true)
                 val existingIds =
                     if (preventDuplicates || excludeRecentlyPlayed) {
@@ -3279,7 +3278,7 @@ class MusicService :
      */
     private fun handleFinalFailure() {
         val autoSkipOnError = dataStore.get(AutoSkipNextOnErrorKey, false)
-        val autoplay = dataStore.get(AutoplayKey, true)
+        val autoplay = true
         val canAdvance = player.hasNextMediaItem()
 
         if (autoSkipOnError || (autoplay && canAdvance)) {
