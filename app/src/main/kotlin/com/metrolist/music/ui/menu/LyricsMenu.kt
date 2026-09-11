@@ -54,7 +54,6 @@ import com.metrolist.music.ui.component.NewAction
 import com.metrolist.music.ui.component.NewActionGrid
 import com.metrolist.music.ui.component.TextFieldDialog
 import com.metrolist.music.viewmodels.LyricsMenuViewModel
-import com.metrolist.music.constants.RespectAgentPositioningKey
 import com.metrolist.music.constants.ShowIntervalIndicatorKey
 import com.metrolist.music.utils.rememberPreference
 
@@ -71,7 +70,6 @@ fun LyricsMenu(
     val context = LocalContext.current
     val database = LocalDatabase.current
 
-    var respectAgentPositioning by rememberPreference(RespectAgentPositioningKey, true)
     var showIntervalIndicator by rememberPreference(ShowIntervalIndicatorKey, true)
 
     // Observe the authoritative translation-active state from the singleton; this persists
@@ -293,45 +291,6 @@ fun LyricsMenu(
                                 }
                             )
                         )
-
-                    add(
-                        Material3MenuItemData(
-                            title = { Text(stringResource(R.string.respect_agent_positioning)) },
-                            description = { Text(stringResource(R.string.respect_agent_positioning_desc)) },
-                            icon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.lyrics),
-                                    contentDescription = null,
-                                )
-                            },
-                            onClick = {
-                                respectAgentPositioning = !respectAgentPositioning
-                            },
-                            trailingContent = {
-                                Switch(
-                                    checked = respectAgentPositioning,
-                                    onCheckedChange = { newCheckedState ->
-                                        respectAgentPositioning = newCheckedState
-                                    },
-                                    thumbContent = {
-                                        Icon(
-                                            painter = painterResource(
-                                                id = if (respectAgentPositioning) R.drawable.check else R.drawable.close
-                                            ),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize)
-                                        )
-                                    },
-                                    colors = SwitchDefaults.colors(
-                                        uncheckedThumbColor = MaterialTheme.colorScheme.primaryContainer,
-                                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                                        checkedTrackColor = MaterialTheme.colorScheme.primary
-                                    )
-                                )
-                            }
-                        )
-                    )
-                    
                     add(
                         Material3MenuItemData(
                             title = { Text(stringResource(R.string.show_interval_indicator)) },

@@ -62,10 +62,8 @@ import com.metrolist.music.constants.LyricsClickKey
 import com.metrolist.music.constants.LyricsGlowEffectKey
 import com.metrolist.music.constants.LyricsLineSpacingKey
 import com.metrolist.music.constants.LyricsProviderOrderKey
-import com.metrolist.music.constants.LyricsScrollKey
 import com.metrolist.music.constants.LyricsTextPositionKey
 import com.metrolist.music.constants.LyricsTextSizeKey
-import com.metrolist.music.constants.RespectAgentPositioningKey
 import com.metrolist.music.constants.PeekShowRomanizationKey
 import com.metrolist.music.constants.PeekShowTranslationKey
 import com.metrolist.music.constants.PeekTranslationHintShownKey
@@ -95,17 +93,11 @@ fun LyricsSettings(
             defaultValue = LyricsPosition.CENTER,
         )
     val (lyricsClick, onLyricsClickChange) = rememberPreference(LyricsClickKey, defaultValue = true)
-    val (lyricsScroll, onLyricsScrollChange) =
-        rememberPreference(
-            LyricsScrollKey,
-            defaultValue = true,
-        )
     val (hideStatusBarOnFullscreen, onHideStatusBarOnFullscreenChange) =
         rememberPreference(
             HideStatusBarOnFullscreenKey,
             defaultValue = false,
         )
-    val (respectAgentPositioning, onRespectAgentPositioningChange) = rememberPreference(RespectAgentPositioningKey, defaultValue = true)
     val (experimentalLyrics, onExperimentalLyricsChange) = rememberPreference(ExperimentalLyricsKey, defaultValue = true)
     val (playerLyricsPeek, onPlayerLyricsPeekChange) = rememberPreference(ShowPlayerLyricsPeekKey, defaultValue = true)
     val (peekShowTranslation, onPeekShowTranslationChange) = rememberPreference(PeekShowTranslationKey, defaultValue = false)
@@ -778,30 +770,7 @@ fun LyricsSettings(
                             onClick = { showLyricsPositionDialog = true },
                         ),
                     )
-                    add(
-                        Material3SettingsItem(
-                            icon = painterResource(R.drawable.lyrics),
-                            title = { Text(stringResource(R.string.respect_agent_positioning)) },
-                            description = { Text(stringResource(R.string.respect_agent_positioning_desc)) },
-                            trailingContent = {
-                                Switch(
-                                    checked = respectAgentPositioning,
-                                    onCheckedChange = onRespectAgentPositioningChange,
-                                    thumbContent = {
-                                        Icon(
-                                            painter =
-                                                painterResource(
-                                                    id = if (respectAgentPositioning) R.drawable.check else R.drawable.close,
-                                                ),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    },
-                                )
-                            },
-                            onClick = { onRespectAgentPositioningChange(!respectAgentPositioning) },
-                        ),
-                    )
+
                     add(
                         Material3SettingsItem(
                             icon = painterResource(R.drawable.lyrics),
@@ -825,29 +794,7 @@ fun LyricsSettings(
                             onClick = { onLyricsClickChange(!lyricsClick) },
                         ),
                     )
-                    add(
-                        Material3SettingsItem(
-                            icon = painterResource(R.drawable.lyrics),
-                            title = { Text(stringResource(R.string.lyrics_auto_scroll)) },
-                            trailingContent = {
-                                Switch(
-                                    checked = lyricsScroll,
-                                    onCheckedChange = onLyricsScrollChange,
-                                    thumbContent = {
-                                        Icon(
-                                            painter =
-                                                painterResource(
-                                                    id = if (lyricsScroll) R.drawable.check else R.drawable.close,
-                                                ),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    },
-                                )
-                            },
-                            onClick = { onLyricsScrollChange(!lyricsScroll) },
-                        ),
-                    )
+
                     add(
                         Material3SettingsItem(
                             icon = painterResource(R.drawable.lyrics),

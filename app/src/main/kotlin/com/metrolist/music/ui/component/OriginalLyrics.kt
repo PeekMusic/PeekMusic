@@ -128,7 +128,6 @@ import com.metrolist.music.constants.LyricsLineSpacingKey
 import com.metrolist.music.constants.LyricsRomanizeAsMainKey
 import com.metrolist.music.constants.LyricsRomanizeCyrillicByLineKey
 import com.metrolist.music.constants.LyricsRomanizeList
-import com.metrolist.music.constants.LyricsScrollKey
 import com.metrolist.music.constants.LyricsTextPositionKey
 import com.metrolist.music.constants.LyricsTextSizeKey
 import com.metrolist.music.constants.PlayerBackgroundStyle
@@ -201,7 +200,7 @@ fun OriginalLyrics(
 
     val lyricsTextPosition by rememberEnumPreference(LyricsTextPositionKey, LyricsPosition.CENTER)
     val changeLyrics by rememberPreference(LyricsClickKey, true)
-    val scrollLyrics by rememberPreference(LyricsScrollKey, true)
+    val scrollLyrics = true
     val romanizeLyricsList = rememberPreference(LyricsRomanizeList, "")
     val romanizeAsMain by rememberPreference(LyricsRomanizeAsMainKey, false)
     val romanizeCyrillicByLine by rememberPreference(LyricsRomanizeCyrillicByLineKey, false)

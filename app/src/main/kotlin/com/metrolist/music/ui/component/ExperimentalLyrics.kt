@@ -95,7 +95,6 @@ import com.metrolist.music.constants.LyricsRomanizeList
 import com.metrolist.music.constants.LyricsTextPositionKey
 import com.metrolist.music.constants.PlayerBackgroundStyle
 import com.metrolist.music.constants.PlayerBackgroundStyleKey
-import com.metrolist.music.constants.RespectAgentPositioningKey
 import com.metrolist.music.constants.ShowIntervalIndicatorKey
 import com.metrolist.music.constants.TranslateLanguageKey
 import com.metrolist.music.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
@@ -154,7 +153,7 @@ fun ExperimentalLyrics(
     val romanizeLyricsList = rememberPreference(LyricsRomanizeList, "")
     val romanizeAsMain by rememberPreference(LyricsRomanizeAsMainKey, false)
     val romanizeCyrillicByLine by rememberPreference(LyricsRomanizeCyrillicByLineKey, false)
-    val respectAgentPositioning by rememberPreference(RespectAgentPositioningKey, true)
+    val respectAgentPositioning = true
     val showIntervalIndicator by rememberPreference(ShowIntervalIndicatorKey, true)
     
     // AI Translation Preferences
