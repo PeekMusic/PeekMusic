@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="local_history">स्थानीय</string>
+    <string name="charts">आरेख</string>
+    <string name="mixes">मिश्रण</string>
     <string name="back_button_desc">पीछे</string>
     <string name="album_cover_desc">एल्बम का चित्र</string>
     <string name="top_music_videos">शीर्ष संगीत वीडियो</string>
@@ -34,11 +36,54 @@
     <string name="secondary_text_color">द्वितीयक पाठ रंग</string>
     <string name="background_color">पृष्ठभूमि का रंग</string>
     <string name="remove_from_cache">कैश से निकालें</string>
+    <!-- Artist about section -->
     <string name="about_artist">कलाकार पर्ची चयन</string>
     <string name="show_more">और दिखाएं</string>
     <string name="show_less">कम दिखाएं</string>
     <string name="artist_page_settings">कलाकार पृष्ठ</string>
     <string name="show_artist_description">कलाकार का वर्णन दिखाएं</string>
-    <string name="charts">आरेख</string>
-    <string name="mixes">मिश्रण</string>
+    <!-- Menu descriptions -->
+    <!-- Playlist cover edit -->
+    <!-- General -->
+    <!-- Sleep timer -->
+    <!-- Alarm -->
+    <!-- Player Settings -->
+    <!-- Romanization Settings -->
+    <!-- Lyrics Offset Settings -->
+    <!-- Material 3 Settings Sections -->
+    <!-- Updater -->
+    <!-- Offload -->
+    <!-- Varispeed -->
+    <!-- AudioTrack Playback Parameters -->
+    <!-- Google Cast -->
+    <!-- Last.fm -->
+    <!-- Equalizer UI -->
+    <!-- EQ Wizard -->
+    <!-- Hardcoded strings -->
+    <!-- Playback errors -->
+    <!-- Widget strings -->
+    <!-- Music Recognizer Widget strings -->
+    <!-- Player Client Settings -->
+    <!-- Decryption Library Settings -->
+    <!-- Listen Together -->
+    <!-- AI Lyrics Translation -->
+    <!-- Crash Handler -->
+    <!-- Theme Palette Names -->
+    <!-- Theme Content Descriptions -->
+    <!-- Music Recognition -->
+    <!-- CSV Import Strings -->
+    <!-- Daily Discover -->
+    <!-- Logout dialog -->
+    <!-- Credits / About Screen -->
+    <!-- Podcasts -->
+    <!-- Restore confirmation dialog -->
+    <!-- Cache settings -->
+    <!-- Upload songs -->
+    <!-- Android Auto settings -->
+    <!-- Stats time transfer -->
+    <!-- Player and Audio Settings -->
+    <!-- Accessibility -->
+    <!-- Loudness Level -->
+    <!-- Stream sources -->
+    <!-- Onboarding -->
 </resources>
