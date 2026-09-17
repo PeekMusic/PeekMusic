@@ -3,6 +3,7 @@
     <string name="local_history">Plaaslik</string>
     <string name="remote_history">Afstandsbediening</string>
     <string name="charts">Grafieks</string>
+    <string name="mixes">Mengsels</string>
     <string name="back_button_desc">Terug</string>
     <string name="album_cover_desc">Albumomslag</string>
     <string name="top_music_videos">Top musiekvideo\'s</string>
@@ -11,11 +12,9 @@
     <string name="weeks">Weke</string>
     <string name="months">Maande</string>
     <string name="years">Yare</string>
-    <string name="mixes">Mengsels</string>
     <string name="continuous">Deurlopend</string>
     <string name="liked">Gehou van</string>
     <string name="offline">Afgelaai</string>
-    <string name="my_top">My Top</string>
     <string name="weekly_most_playlist_name">Weekliks Meeste</string>
     <string name="monthly_most_playlist_name">Maandeliks Meeste</string>
     <string name="cached_playlist">Gekas</string>
@@ -39,6 +38,7 @@
     <string name="secondary_text_color">Sekondêre tekskleur</string>
     <string name="background_color">Agtergrondkleur</string>
     <string name="remove_from_cache">Verwyder uit kas</string>
+    <!-- Artist about section -->
     <string name="about_artist">Meer oor</string>
     <string name="show_more">Wys meer</string>
     <string name="show_less">Wys minder</string>
@@ -46,6 +46,7 @@
     <string name="show_artist_description">Wys kunstenaarbeskrywing</string>
     <string name="show_artist_subscriber_count">Wys intekenaartelling</string>
     <string name="show_artist_monthly_listeners">Wys maandelikse luisteraars</string>
+    <!-- Menu descriptions -->
     <string name="download_playlist_desc">Laai alle liedjies af vir vanlyn afspeel</string>
     <string name="remove_download_playlist_desc">Verwyder alle afgelaaide liedjies uit hierdie snitlys</string>
     <string name="download_in_progress_desc">\'n Aflaai is tans aan die gang</string>
@@ -111,7 +112,6 @@
     <string name="lyrics_animation_fade">Vervaag</string>
     <string name="lyrics_animation_glow">Gloei</string>
     <string name="lyrics_animation_slide">Gly</string>
-    <string name="lyrics_animation_karaoke">Karaoke</string>
     <string name="lyrics_animation_apple">Apple Music-styl</string>
     <string name="lyrics_text_size">Lirieke-teksgrootte</string>
     <string name="lyrics_line_spacing">Lirieke-reëlspasiëring</string>
@@ -155,11 +155,13 @@
     <string name="more_content">Meer inhoud</string>
     <string name="sort_ascending">Sorteer oplopend</string>
     <string name="sort_descending">Sorteer aflopend</string>
+    <!-- Playlist cover edit -->
     <string name="edit_playlist_cover">Wysig snitlys-omslag</string>
     <string name="edit_playlist_cover_note">LET WEL: Jou rekening moet aan \'n foonnommer gekoppel en op YouTube Music geverifieer wees om die snitlys-omslag te verander</string>
     <string name="edit_playlist_cover_note_wait">Nadat jy \'n beeld gekies het, wag asseblief \'n oomblik vir die nuwe omslag om in jou snitlys te verskyn</string>
     <string name="choose_from_library">Kies uit biblioteek</string>
     <string name="remove_custom_image">Verwyder pasgemaakte beeld</string>
+    <!-- General -->
     <string name="general">Algemeen</string>
     <string name="proxy">Instaanbediener</string>
     <string name="default_lib_chips">Verander verstekbiblioteekskyfie</string>
@@ -184,7 +186,6 @@
     <string name="persistent_shuffle_desc">Hou deurmekaarspel geaktiveer wanneer nuwe liedjies of snitlyste begin word</string>
     <string name="remember_shuffle_and_repeat">Onthou deurmekaarspel en herhaling</string>
     <string name="remember_shuffle_and_repeat_desc">Onthou deurmekaarspel- en herhalingsinstellings wanneer die toep herbegin word</string>
-    <string name="percentage_format">%d%%</string>
     <string name="import_online">Voer \'n M3U-snitlys in</string>
     <string name="import_csv">Voer \'n CSV-snitlys in</string>
     <string name="playlist_unavailable">Snitlys onbeskikbaar</string>
@@ -199,7 +200,6 @@
     <string name="auto_download_on_like">Outo-aflaai met hou van</string>
     <string name="auto_download_on_like_desc">Laai liedjies outomaties af wanneer jy daarvan hou</string>
     <string name="swipe_sensitivity">Minispeler-veesensitiwiteit</string>
-    <string name="sensitivity_percentage">%1$d%%</string>
     <string name="clear_song_cache_dialog">Is jy seker jy wil alle gekaste liedjies uitvee?</string>
     <string name="clear_image_cache_dialog">Is jy seker jy wil alle gekaste beelde uitvee?</string>
     <string name="clear_downloads_dialog">Is jy seker jy wil alle afgelaaides uitvee?</string>
@@ -210,8 +210,6 @@
     <string name="release_notes">Vrystellingsnotas</string>
     <string name="changelog">Veranderingslog</string>
     <string name="changelog_empty">Geen veranderingslogboeke beskikbaar nie</string>
-    <string name="github_releases_url">https://github.com/endritlim/PeekMusic/releases</string>
-    <string name="list_bullet">•</string>
     <string name="view_on_github">Bekyk op GitHub</string>
     <string name="current_version">Huidige weergawe</string>
     <string name="version_format">Weergawe: %s</string>
@@ -241,6 +239,7 @@
         <item quantity="one">1 sekonde</item>
         <item quantity="other">%d sekondes</item>
     </plurals>
+    <!-- Sleep timer -->
     <string name="set_as_default">Stel as verstek</string>
     <string name="sleep_timer_default_set">Sluimertydhouer-verstek gestel op %d minute</string>
     <string name="enable_automatic_sleeptimer">Aktiveer outomatiese sluimertydhouer</string>
@@ -265,7 +264,7 @@
     <string name="sleep_timer_stop_after_current_song_description">Wag vir die liedjie wat tans speel om klaar te speel voordat dit stop</string>
     <string name="sleep_timer_fade_out_title">Vervaag uit</string>
     <string name="sleep_timer_fade_out_description">Vervaag die volume geleidelik uit in die laaste minuut</string>
-    <string name="alarm">Alarm</string>
+    <!-- Alarm -->
     <string name="alarm_enabled">Aktiveer alarm</string>
     <string name="alarm_time">Alarmtyd</string>
     <string name="alarm_playlist">Snitlys</string>
@@ -287,55 +286,6 @@
     <string name="alarm_save">Stoor</string>
     <string name="alarm_time_picker_value">Tyd: %s</string>
     <string name="alarm_delete">Vee alarm uit</string>
-    <string name="listen_together_auto_approval_suggestions_desc">Keur outomaties liedjievoorstelle van gaste goed en voeg dit by die tou</string>
-    <string name="listen_together_sync_volume">Sinkroniseer gasheer-volume</string>
-    <string name="listen_together_sync_volume_desc">Gaste sal by die gasheer se volume-vlak pas</string>
-    <string name="listen_together_in_top_bar">Luister Saam in boonste balk</string>
-    <string name="listen_together_in_top_bar_desc">Wys Luister Saam in die boonste toep-balk in plaas van die navigasiebalk</string>
-    <string name="listen_together_description">Luister intyds saam met jou vriende na musiek. Skep \'n kamer om aan te bied, of sluit by \'n bestaande kamer aan met \'n kode</string>
-    <string name="listen_together_background_disconnect_note">LET WEL: Wanneer jy gekoppel is maar nie in \'n kamer is nie, ontkoppel Luister Saam na 30 minute in die agtergrond om battery te bespaar</string>
-    <string name="listen_together_not_configured">Luister Saam is nie opgestel nie. Stel asseblief die bediener-URL op in: Luister Saam &gt; Instellings &gt; Bediener-URL</string>
-    <string name="listen_together_suggestion_received">%1$s het %2$s voorgestel</string>
-    <string name="listen_together_suggestion_sent">Voorstel aan gasheer gestuur!</string>
-    <string name="listen_together_join_request_notification">%1$s wil by die kamer aansluit</string>
-    <string name="listen_together_notification_channel_name">Luister Saam</string>
-    <string name="listen_together_notification_channel_desc">Kennisgewings vir Luister Saam-gebeure</string>
-    <string name="listen_together_room_created">Kamer geskep: %s</string>
-    <string name="listen_together_cannot_edit_username_in_room">Die gebruikersnaam kan nie verander word terwyl jy in \'n kamer is nie</string>
-    <string name="waiting_for_approval">Wag vir gasheer-goedkeuring…</string>
-    <string name="invalid_room_code">Ongeldige kamerkode</string>
-    <string name="join_request_denied">Aansluitversoek geweier</string>
-    <string name="join_existing_room">Sluit aan by bestaande kamer</string>
-    <string name="room_code">Kamerkode</string>
-    <string name="leave_room">Verlaat kamer</string>
-    <string name="join_room">Sluit aan</string>
-    <string name="create_room">Skep</string>
-    <string name="joining_room">Sluit aan by kamer %s…</string>
-    <string name="creating_room">Skep tans kamer…</string>
-    <string name="connect">Koppel</string>
-    <string name="disconnect">Ontkoppel</string>
-    <string name="create">Skep</string>
-    <string name="join">Sluit aan</string>
-    <string name="approve">Keur goed</string>
-    <string name="reject">Keur af</string>
-    <string name="clear">Vee uit</string>
-    <string name="copy">Kopieer</string>
-    <string name="change">Verander</string>
-    <string name="copied_to_clipboard">Na knipbord gekopieer</string>
-    <string name="not_set">Nie gestel nie</string>
-    <string name="hosting_room">Bied kamer aan</string>
-    <string name="in_room">In kamer</string>
-    <string name="pending_requests">Hangende versoeke</string>
-    <string name="pending_suggestions">Hangende voorstelle</string>
-    <string name="suggest_to_host">Stel aan gasheer voor</string>
-    <string name="kick_user">Verwyder</string>
-    <string name="host_label">Gasheer</string>
-    <string name="you_label">Jy</string>
-    <string name="connected_users">Gekoppelde gebruikers</string>
-    <string name="enter_username">Voer \'n gebruikersnaam in</string>
-    <string name="enter_room_code">Voer \'n kamerkode in</string>
-    <string name="listen_together_settings_desc">Stel bediener, gebruikersnaam, en meer op</string>
-    <string name="error_username_empty">\'n Gebruikersnaam word vereis</string>
     <string name="alarm_duplicate_time_warning">Daar bestaan reeds \'n ander alarm op hierdie tyd. As albei gelyktydig afgaan, sal net een dalk speel</string>
     <string name="alarm_random_song">Speel \'n lukrake liedjie uit die snitlys</string>
     <string name="alarm_not_scheduled">Nie geskeduleer nie</string>
@@ -343,6 +293,7 @@
     <string name="alarm_exact_permission_desc">Verleen toestemming vir presiese alarmtydsberekening, wat betroubaarheid verbeter wanneer die toep in die agtergrond is</string>
     <string name="alarm_battery_optimization_title">Battery-optimering</string>
     <string name="alarm_battery_optimization_desc">Deaktiveer battery-optimering vir meer betroubare alarmgedrag in die agtergrond</string>
+    <!-- Player Settings -->
     <string name="disable_load_more_when_repeat_all">Deaktiveer outolaai in herhaal alles-modus</string>
     <string name="disable_load_more_when_repeat_all_desc">Moenie outomaties meer liedjies of soortgelyke inhoud laai wanneer herhaal alles geaktiveer is nie</string>
     <string name="pause_music_when_media_is_muted">Onderbreek musiek wanneer media gedemp is</string>
@@ -353,16 +304,20 @@
     <string name="crossfade_duration">Kruisvervaging-duur</string>
     <string name="crossfade_gapless">Deaktiveer vir albums sonder gapings</string>
     <string name="crossfade_gapless_desc">Slaan kruisvervaging oor vir albums wat ontwerp is om sonder gapings te speel</string>
+    <!-- Romanization Settings -->
     <string name="lyrics_romanize_title">Romanisering</string>
     <string name="lyrics_romanization">Lirieke-romanisering</string>
     <string name="line_by_line_option_title">Bespeur taal reël-vir-reël</string>
     <string name="romanize_current_track">Romaniseer huidige snit</string>
+    <!-- Lyrics Offset Settings -->
     <string name="lyrics_offset">Lirieke-afwyking</string>
+    <!-- Material 3 Settings Sections -->
     <string name="settings_section_ui">Koppelvlak</string>
     <string name="settings_section_privacy">Privaatheid &amp; Sekuriteit</string>
     <string name="settings_section_player_content">Speler &amp; Inhoud</string>
     <string name="settings_section_storage">Berging &amp; Data</string>
     <string name="settings_section_system">Stelsel &amp; Meer oor</string>
+    <!-- Updater -->
     <string name="updater">Opdateerder</string>
     <string name="check_for_updates">Kyk outomaties vir opdaterings</string>
     <string name="update_notifications">Aktiveer opdateringskennisgewings</string>
@@ -373,20 +328,24 @@
     <string name="kmp_upgrade_warning">Metrolist KMP is in vroeë toegang. Kenmerke kan stukkend, onvolledig wees, of sonder kennisgewing verander.</string>
     <string name="kmp_upgrade_action">Gradeer op na KMP</string>
     <string name="kmp_upgrade_later">Nie nou nie</string>
+    <!-- Offload -->
     <string name="audio_offload">Aktiveer oudiodeling</string>
     <string name="audio_offload_description">Gebruik die hardeware-oudiodeling-pad vir afspeel. Deaktivering hiervan kan batteryverbruik verhoog, maar kan help as jy probleme met afspeel of oudionabewerking ervaar</string>
     <string name="audio_offload_disabled_by_crossfade">Gedeaktiveer omdat kruisvervaging aktief is</string>
+    <!-- Varispeed -->
     <string name="speed">Afspeelspoed</string>
     <string name="varispeed">Aktiveer varispoed</string>
     <string name="varispeed_description">Koppel toonhoogte aan afspeelspoed, wat bandstyl-versnellings- en vertragingseffekte tot gevolg het</string>
+    <!-- AudioTrack Playback Parameters -->
     <string name="audio_track_playback_params">Gebruik hardeware-oudioverwerking</string>
     <string name="audio_track_playback_params_description">Gebruik Android se AudioTrack vir spoed-/toonhoogte-veranderings in plaas van sagteware-verwerking. Meer betroubaar vir ekstreme toonhoogte-waardes</string>
-    <string name="google_cast">Google Cast</string>
+    <!-- Google Cast -->
     <string name="google_cast_description">Saai oudio na Chromecast en ander Cast-versoenbare toestelle uit</string>
     <string name="lyrics_romanize_as_main">Wys geromaniseerde lirieke as hoof</string>
     <string name="integrations">Integrasies</string>
     <string name="username">Gebruikersnaam</string>
     <string name="password">Wagwoord</string>
+    <!-- Last.fm -->
     <string name="lastfm_integration">Last.fm-integrasie</string>
     <string name="enable_scrobbling">Aktiveer skrobbeling</string>
     <string name="lastfm_now_playing">Stuur Speel nou-status</string>
@@ -437,6 +396,188 @@
     <string name="wrapped_top_artist_title">Jou top-kunstenaar van die jaar is</string>
     <string name="wrapped_top_artist_image_content_description">Top-kunstenaar-beeld</string>
     <string name="wrapped_top_artist_listening_time">Jy het vir %d minute na hulle geluister!</string>
+    <string name="wrapped_top_song_title">Jou mees gespeelde liedjie is</string>
+    <string name="wrapped_top_song_listening_time">Jy het vir %d minute geluister!</string>
+    <string name="wrapped_total_artists_title">Jy het geluister na</string>
+    <string name="wrapped_total_artists_subtitle">unieke kunstenaars!</string>
+    <string name="wrapped_total_songs_title">Jy het geluister na</string>
+    <string name="wrapped_total_songs_subtitle">unieke liedjies!</string>
+    <string name="wrapped_intro_title">METROLIST</string>
+    <string name="wrapped_intro_subtitle">dit is tyd om te sien waarna jy die hele jaar geluister het…</string>
+    <string name="wrapped_intro_button">kom ons gaan!</string>
+    <string name="wrapped_logo_content_description">Metrolist-logo</string>
+    <string name="wrapped_ready_title">JOUN WRAPPED IS GEREED!</string>
+    <string name="wrapped_ready_subtitle">Tyd om te sien wat jy die hele jaar geliefhet het…</string>
+    <string name="wrapped_thank_you">Dankie dat jy geluister het!</string>
+    <string name="wrapped_special_thanks">Spesiale dank aan MO Agamy vir die skep van Metrolist</string>
+    <string name="wrapped_close">Sluit Wrapped</string>
+    <string name="wrapped_playlist_title">Jou %s Wrapped</string>
+    <string name="wrapped_create_playlist">Skep snitlys</string>
+    <string name="wrapped_playlist_saved">Snitlys gestoor</string>
+    <!-- Equalizer UI -->
+    <string name="no_profiles">Geen equalizer-profiele ni</string>
+    <string name="import_profile">Voer profiel in</string>
+    <string name="system_equalizer">Stelselequalizer</string>
+    <string name="system_equalizer_desc">Maak Android se ingeboude equalizer oop</string>
+    <string name="eq_disabled">Gedeaktiveer</string>
+    <string name="eq_wizard">AutoEQ-towenaar</string>
+    <string name="eq_download_db">Laai AutoEQ-databasis af (17 MB)</string>
+    <string name="eq_downloading">Besig om af te laai…</string>
+    <string name="import_from_file">Voer uit lêer in</string>
+    <plurals name="band_count">
+        <item quantity="one">%d-band</item>
+        <item quantity="other">%d-bande</item>
+    </plurals>
+    <string name="delete_profile_desc">Vee profiel uit</string>
+    <string name="delete_profile_confirmation">Is jy seker jy wil %1$s uitvee? Hierdie aksie kan nie ongedaan gemaak word nie</string>
+    <string name="error_file_read">Kon nie lêer lees nie</string>
+    <string name="error_file_open">Kon nie lêer oopmaak nie: %1$s</string>
+    <string name="import_error_title">Invoerfout</string>
+    <string name="error_title">Fout</string>
+    <string name="error_eq_apply_failed">Kon nie equalizer-profiel toepas nie: %1$s</string>
+    <!-- EQ Wizard -->
+    <string name="wizard_select_model">Kies Model</string>
+    <string name="wizard_select_profiles">Kies Profiele</string>
+    <string name="wizard_search_model_hint">Soek vir jou koptelefoon- of oorfoonmodel</string>
+    <string name="wizard_model_name">Modelnaam</string>
+    <string name="wizard_model_placeholder">bv. Sony WH-1000XM4, Bose QuietComfort 45</string>
+    <string name="wizard_no_models">Geen modelle gevind nie</string>
+    <string name="wizard_multiple_variants">Verskeie variante beskikbaar</string>
+    <string name="wizard_select_eq_profiles">Kies EQ-profiele vir %s</string>
+    <string name="wizard_save_profiles">Stoor Profiele</string>
+    <!-- Hardcoded strings -->
+    <string name="found_in_settings_content">Gevind in Instellings &gt; Inhoud</string>
+    <string name="your_daily_discover">Jou daaglikse ontdekking</string>
+    <string name="plays">speelbeurte</string>
+    <string name="casting_to">Beeldskerm na %s</string>
+    <string name="progress_percent">Vordering %s%%</string>
+    <string name="open">Maak oop</string>
+    <string name="failed_to_create_image">Kon nie beeld skep nie: %s</string>
+    <string name="copied_title">Titel gekopieer</string>
+    <string name="copied_artist">Kunstenaar gekopieer</string>
+    <string name="error_playing">Afspeelfout</string>
+    <string name="failed_to_parse_proxy">Kon nie proxy-URL ontleed nie</string>
+    <!-- Playback errors -->
+    <string name="error_playback_failed">Afspeel het misluk</string>
+    <string name="error_job_cancelled">Die video is nie beskikbaar vir afspeel nie. Probeer weer of slaan oor na die volgende liedjie.</string>
+    <string name="error_episode_save">Kon nie episode stoor nie</string>
+    <string name="error_episode_remove">Kon nie episode verwyder nie</string>
+    <string name="error_podcast_subscribe">Kon nie op Podcast inteken nie</string>
+    <string name="error_podcast_unsubscribe">Kon nie van Podcast onttrek nie</string>
+    <string name="view_channel">Bekyk kanaal</string>
+    <!-- Widget strings -->
+    <string name="album_art">Albumkuns</string>
+    <string name="no_song_playing">Geen liedjie speel nie</string>
+    <string name="tap_to_open">Tik om Metrolist oop te maak</string>
+    <string name="previous">Vorige</string>
+    <string name="play_pause">Speel/Pauseer</string>
+    <string name="next">Volgende</string>
+    <string name="like">Hou van</string>
+    <string name="not_playing">Geen liedjie speel nie</string>
+    <string name="tap_to_play">Tik om Metrolist oop te maak</string>
+    <string name="widget_description">Musiekspeler-widget met afspeelbeheer</string>
+    <string name="turntable_widget_description">Sirkelvormige musiek-widget met speel- en hou-van-beheer</string>
+    <string name="widget_music_player">Musiekspeler</string>
+    <string name="widget_turntable">Draaitafel</string>
+    <!-- Music Recognizer Widget strings -->
+    <string name="widget_recognizer_name">Musiekherkenner</string>
+    <string name="widget_recognizer_description">Identifiseer liedjies wat rondom jou speel direk vanaf jou tuisskerm</string>
+    <string name="widget_recognizer_tap_to_search">Tik om \'n liedjie te identifiseer</string>
+    <string name="widget_recognizer_listening">Besig om te luister…</string>
+    <string name="widget_recognizer_processing">Besig om te identifiseer…</string>
+    <string name="widget_recognizer_no_match">Geen passing gevind nie. Probeer weer</string>
+    <string name="widget_recognizer_error">Herkenning het misluk</string>
+    <string name="widget_recognizer_error_generic">Iets het verkeerd geloop. Probeer asseblief weer</string>
+    <string name="widget_recognizer_unknown_song">Onbekende liedjie</string>
+    <string name="widget_recognizer_unknown_artist">Onbekende kunstenaar</string>
+    <string name="widget_recognizer_mic_desc">Identifiseer \'n liedjie</string>
+    <string name="widget_recognizer_channel_name">Musiekherkenning</string>
+    <string name="widget_recognizer_channel_desc">Wys \'n kennisgewing terwyl \'n liedjie vanuit die widget geïdentifiseer word</string>
+    <string name="widget_recognizer_notification_text">Neem klank op om die liedjie te identifiseer…</string>
+    <!-- Player Client Settings -->
+    <!-- Decryption Library Settings -->
+    <!-- Listen Together -->
+    <string name="together">Saam</string>
+    <string name="listen_together">Luister Saam</string>
+    <string name="listen_together_server_url">Bedienerskakel</string>
+    <string name="listen_together_choose_server">Kies bediener</string>
+    <string name="listen_together_custom_server">Pasgemaakte bediener</string>
+    <string name="listen_together_use_custom_server">Gebruik pasgemaakte bediener</string>
+    <string name="listen_together_username">Gebruikersnaam</string>
+    <string name="listen_together_connected">Gekoppel</string>
+    <string name="listen_together_reconnecting">Besig om weer te verbind…</string>
+    <string name="listen_together_disconnected">Ontkoppel</string>
+    <string name="listen_together_connecting">Besig om te verbind…</string>
+    <string name="listen_together_error">Verbindingsfout</string>
+    <string name="listen_together_create_room">Skep kamer</string>
+    <string name="listen_together_create_room_desc">Skep \'n kamer en deel die kode met jou vriende</string>
+    <string name="listen_together_join_room">Sluit aan by kamer</string>
+    <string name="listen_together_room_code">Kamerkode</string>
+    <string name="listen_together_you_are_host">Jy is die gasheer</string>
+    <string name="listen_together_you_are_guest">Jy is \'n gas</string>
+    <string name="mute">Demp</string>
+    <string name="unmute">Ontdemp</string>
+    <string name="listen_together_join_requests">Versoeke om aan te sluit</string>
+    <string name="listen_together_view_logs">Bekyk logs</string>
+    <string name="listen_together_view_logs_desc">Ontfout verbindingsgebeurtenisse en boodskappe</string>
+    <string name="listen_together_logs">Verbindingslogs</string>
+    <string name="listen_together_no_logs">Nog geen logs nie</string>
+    <string name="listen_together_auto_approval_joins">Keur versoeke om aan te sluit outomaties goed</string>
+    <string name="listen_together_auto_approval_joins_desc">Keur versoeke om aan te sluit outomaties goed sonder om hulle handmatig te hersien</string>
+    <string name="listen_together_auto_approval_suggestions">Keur liedjie-voorstelle outomaties goed</string>
+    <string name="listen_together_auto_approval_suggestions_desc">Keur outomaties liedjievoorstelle van gaste goed en voeg dit by die tou</string>
+    <string name="listen_together_sync_volume">Sinkroniseer gasheer-volume</string>
+    <string name="listen_together_sync_volume_desc">Gaste sal by die gasheer se volume-vlak pas</string>
+    <string name="listen_together_in_top_bar">Luister Saam in boonste balk</string>
+    <string name="listen_together_in_top_bar_desc">Wys Luister Saam in die boonste toep-balk in plaas van die navigasiebalk</string>
+    <string name="listen_together_description">Luister intyds saam met jou vriende na musiek. Skep \'n kamer om aan te bied, of sluit by \'n bestaande kamer aan met \'n kode</string>
+    <string name="listen_together_background_disconnect_note">LET WEL: Wanneer jy gekoppel is maar nie in \'n kamer is nie, ontkoppel Luister Saam na 30 minute in die agtergrond om battery te bespaar</string>
+    <string name="listen_together_not_configured">Luister Saam is nie opgestel nie. Stel asseblief die bediener-URL op in: Luister Saam &gt; Instellings &gt; Bediener-URL</string>
+    <string name="listen_together_suggestion_received">%1$s het %2$s voorgestel</string>
+    <string name="listen_together_suggestion_sent">Voorstel aan gasheer gestuur!</string>
+    <string name="listen_together_join_request_notification">%1$s wil by die kamer aansluit</string>
+    <string name="listen_together_notification_channel_name">Luister Saam</string>
+    <string name="listen_together_notification_channel_desc">Kennisgewings vir Luister Saam-gebeure</string>
+    <string name="listen_together_room_created">Kamer geskep: %s</string>
+    <string name="listen_together_cannot_edit_username_in_room">Die gebruikersnaam kan nie verander word terwyl jy in \'n kamer is nie</string>
+    <string name="waiting_for_approval">Wag vir gasheer-goedkeuring…</string>
+    <string name="invalid_room_code">Ongeldige kamerkode</string>
+    <string name="join_request_denied">Aansluitversoek geweier</string>
+    <string name="join_existing_room">Sluit aan by bestaande kamer</string>
+    <string name="room_code">Kamerkode</string>
+    <string name="leave_room">Verlaat kamer</string>
+    <string name="join_room">Sluit aan</string>
+    <string name="create_room">Skep</string>
+    <string name="joining_room">Sluit aan by kamer %s…</string>
+    <string name="creating_room">Skep tans kamer…</string>
+    <string name="connect">Koppel</string>
+    <string name="disconnect">Ontkoppel</string>
+    <string name="create">Skep</string>
+    <string name="join">Sluit aan</string>
+    <string name="approve">Keur goed</string>
+    <string name="reject">Keur af</string>
+    <string name="clear">Vee uit</string>
+    <string name="copy">Kopieer</string>
+    <string name="change">Verander</string>
+    <string name="copied_to_clipboard">Na knipbord gekopieer</string>
+    <string name="not_set">Nie gestel nie</string>
+    <string name="hosting_room">Bied kamer aan</string>
+    <string name="in_room">In kamer</string>
+    <string name="pending_requests">Hangende versoeke</string>
+    <string name="pending_suggestions">Hangende voorstelle</string>
+    <string name="suggest_to_host">Stel aan gasheer voor</string>
+    <string name="kick_user">Verwyder</string>
+    <string name="host_label">Gasheer</string>
+    <string name="you_label">Jy</string>
+    <string name="connected_users">Gekoppelde gebruikers</string>
+    <string name="enter_username">Voer \'n gebruikersnaam in</string>
+    <string name="enter_room_code">Voer \'n kamerkode in</string>
+    <string name="listen_together_settings_desc">Stel bediener, gebruikersnaam, en meer op</string>
+    <string name="error_username_empty">\'n Gebruikersnaam word vereis</string>
+    <string name="resync">Hersinkroniseer</string>
+    <string name="copy_code">Kopieer kode</string>
+    <string name="kick_user_desc">Verwyder hierdie persoon uit die sessie</string>
+    <string name="permanently_kick_user">Blokkeer permanent</string>
     <string name="permanently_kick_user_desc">Blokkeer hierdie persoon se versoeke om aan te sluit en steek hul voorstelle weg</string>
     <string name="transfer_ownership">Dra eienaarskap oor</string>
     <string name="transfer_ownership_desc">Maak hierdie persoon die gasheer van die kamer</string>
@@ -446,43 +587,17 @@
     <string name="listen_together_no_blocked_users">Geen geblokkeerde gebruikers nie</string>
     <string name="unblock">Deblokkeer</string>
     <string name="user_blocked_by_host">Geblokkeer deur gasheer</string>
+    <!-- AI Lyrics Translation -->
     <string name="ai_lyrics_translation">Vertaling</string>
     <string name="ai_translating_lyrics">Besig om lirieke te vertaal…</string>
     <string name="ai_lyrics_translated">Lirieke vertaal</string>
-    <string name="ai_provider">Verskaffer</string>
-    <string name="ai_base_url">Basis-URL</string>
-    <string name="ai_api_key">API-sleutel</string>
-    <string name="ai_model">Model</string>
-    <string name="ai_translation_mode">Vertaalmodus</string>
     <string name="ai_target_language">Teikentaal</string>
-    <string name="ai_setup_guide">API-geloofsbriewe</string>
-    <string name="ai_translation_literal">Vertaaling</string>
-    <string name="ai_translation_literal_desc">Vertaal die betekenis na die teikentaal</string>
-    <string name="ai_translation_transcribed">Transkripsie</string>
-    <string name="ai_translation_transcribed_desc">Skakel uitspraak om na die teikenskrif</string>
-    <string name="ai_api_key_required">API-sleutel vereis</string>
-    <string name="ai_error_api_key_required">\'n API-sleutel word vereis</string>
     <string name="ai_error_no_lyrics">Geen lirieke om te vertaal nie</string>
     <string name="ai_error_lyrics_empty">Lirieke is leeg</string>
     <string name="ai_error_language_required">’n Teikentaal word vereis</string>
     <string name="ai_error_unknown">\'n Onbekende fout het voorgekom</string>
     <string name="ai_error_translation_failed">Vertaaling het misluk</string>
-    <string name="ai_provider_help">Kry API-sleutels</string>
-    <string name="ai_provider_openrouter_help">Besoek https://openrouter.ai vir gratis en betaalde modelle</string>
-    <string name="ai_provider_openai_help">Besoek https://platform.openai.com/api-keys</string>
-    <string name="ai_provider_claude_help">Besoek https://console.anthropic.com/settings/keys</string>
-    <string name="ai_provider_gemini_help">Besoek https://aistudio.google.com/apikey</string>
-    <string name="ai_provider_perplexity_help">Besoek https://perplexity.ai/settings/api</string>
-    <string name="ai_provider_xai_help">Besoek https://console.x.ai</string>
-    <string name="ai_provider_deepl_help">Besoek https://deepl.com/pro-api vir gratis en betaalde sleutels</string>
-    <string name="ai_provider_mistral_help">Besoek https://console.mistral.ai/api-keys</string>
-    <string name="ai_deepl_formality">Formaliteit</string>
-    <string name="ai_deepl_formality_default">Standaard</string>
-    <string name="ai_deepl_formality_more">Meer formeel</string>
-    <string name="ai_deepl_formality_less">Minder formeel</string>
-    <string name="ai_system_prompt">Stelselopdrag</string>
-    <string name="ai_system_prompt_default">Standaard</string>
-    <string name="ai_system_prompt_reset">Herstel na standaard</string>
+    <!-- Crash Handler -->
     <string name="crash_title">Toepassing het vasgeloop</string>
     <string name="crash_description">’n Onverwagte fout het voorgekom. Deel asseblief die ineenstortingsverslag om ons te help om die probleem op te los</string>
     <string name="crash_share_logs">Deel logs</string>
@@ -490,26 +605,25 @@
     <string name="crash_report_subject">Metrolist-ineenstortingsverslag</string>
     <string name="crash_close">Sluit</string>
     <string name="crash_no_log">Geen ineenstortingslog beskikbaar nie</string>
+    <!-- Theme Palette Names -->
     <string name="palette_dynamic">Dinamies</string>
     <string name="palette_crimson">Karmosyn</string>
     <string name="palette_rose">Roos</string>
     <string name="palette_purple">Pers</string>
     <string name="palette_deep_purple">Diep pers</string>
-    <string name="palette_indigo">Indigo</string>
     <string name="palette_blue">Blou</string>
     <string name="palette_sky_blue">Hemelblou</string>
     <string name="palette_cyan">Siaan</string>
-    <string name="palette_teal">Teal</string>
     <string name="palette_green">Groen</string>
     <string name="palette_light_green">Liggroen</string>
     <string name="palette_lime">Lemoen</string>
     <string name="palette_yellow">Geel</string>
-    <string name="palette_amber">Amber</string>
     <string name="palette_orange">Oranje</string>
     <string name="palette_deep_orange">Diep oranje</string>
     <string name="palette_brown">Bruin</string>
     <string name="palette_grey">Grys</string>
     <string name="palette_blue_grey">Blougrys</string>
+    <!-- Theme Content Descriptions -->
     <string name="cd_back">Terug</string>
     <string name="cd_pure_black_mode">Suiwer swartmodus</string>
     <string name="cd_light_mode">Ligmodus</string>
@@ -521,6 +635,7 @@
     <string name="enable_high_refresh_rate_desc">Dwing die skerm om teen sy hoogste ondersteunde verversingspoed te werk (bv. 120Hz)</string>
     <string name="enable_landscape_scaling">Landskapskaal</string>
     <string name="enable_landscape_scaling_desc">Skaal UI in landskapmodus vir groter skerms</string>
+    <!-- Music Recognition -->
     <string name="recognize_music">Herken musiek</string>
     <string name="tap_to_recognize">Tik om te herken</string>
     <string name="listening">Besig om te luister…</string>
@@ -542,6 +657,7 @@
     <string name="recognition_notification_no_match">Geen passing gevind nie</string>
     <string name="recognition_notification_failed">Herkenning het misluk</string>
     <string name="listen_on_metrolist">Luister op Metrolist</string>
+    <!-- CSV Import Strings -->
     <string name="map_csv_columns">Karteer CSV-kolomme</string>
     <string name="first_row_is_header">Eerste ry is koptekst</string>
     <string name="artist_name_column">Kunstenaarnaam-kolom</string>
@@ -584,8 +700,6 @@
     <string name="discord_enable_button_1">Wys knoppie 1</string>
     <string name="discord_enable_button_2">Wys knoppie 2</string>
     <string name="discord_button_label">Etiket</string>
-    <string name="discord_button_url">URL</string>
-    <string name="discord_status">Status</string>
     <string name="discord_status_online">Aanlyn</string>
     <string name="discord_status_idle">Ledig</string>
     <string name="discord_status_dnd">Moenie Steur Nie</string>
@@ -596,16 +710,19 @@
     <string name="unpin">Losmaak</string>
     <string name="randomize_home_order">Rangskik tuisskerm-volgorde lukraak</string>
     <string name="randomize_home_order_desc">Herrangskik tuisskerm-afdelings lukraak met geweegde prioriteite</string>
+    <!-- Daily Discover -->
     <string name="daily_discover_sounds_like">Klink soos %1$s</string>
     <string name="daily_discover_because_you_listen_to">Omdat jy na %1$s luister</string>
     <string name="daily_discover_similar_to">Soortgelyk aan %1$s</string>
     <string name="daily_discover_based_on">Gebaseer op %1$s</string>
     <string name="daily_discover_for_fans_of">Vir aanhangers van %1$s</string>
     <string name="from_the_community">Van die gemeenskap</string>
+    <!-- Logout dialog -->
     <string name="logout_dialog_title">Hou biblioteekdata?</string>
     <string name="logout_dialog_message">Wil jy jou snitlyste en biblioteekdata hou? Afgelaaide liedjies sal altyd behou word</string>
     <string name="logout_keep">Hou</string>
     <string name="logout_clear">Vee uit</string>
+    <!-- Credits / About Screen -->
     <string name="credits_lead_developer">Hoofontwikkelaar</string>
     <string name="credits_collaborator">Medewerker</string>
     <string name="credits_collaborators_section">Medewerkers</string>
@@ -616,94 +733,11 @@
     <string name="credits_view_repo">Bekyk bewaarplek</string>
     <string name="buy_mo_a_coffee">Koop vir my \'n koffie!</string>
     <string name="community_and_info">Gemeenskap &amp; Inligting</string>
-    <string name="metrolist">METROLIST</string>
     <string name="wanna_play_favorite_song">Wil jy hul gunstelingliedjie speel?</string>
     <string name="yeah">Ja!</string>
     <string name="stands_with_palestine">Hierdie projek staan saam met Palestina 🇵🇸</string>
-    <string name="filter_podcasts">Podcasts</string>
+    <!-- Podcasts -->
     <string name="view_podcast">Bekyk podcast</string>
-    <string name="wrapped_top_song_title">Jou mees gespeelde liedjie is</string>
-    <string name="wrapped_top_song_listening_time">Jy het vir %d minute geluister!</string>
-    <string name="wrapped_total_artists_title">Jy het geluister na</string>
-    <string name="wrapped_total_artists_subtitle">unieke kunstenaars!</string>
-    <string name="wrapped_total_songs_title">Jy het geluister na</string>
-    <string name="wrapped_total_songs_subtitle">unieke liedjies!</string>
-    <string name="wrapped_intro_title">METROLIST</string>
-    <string name="wrapped_intro_subtitle">dit is tyd om te sien waarna jy die hele jaar geluister het…</string>
-    <string name="wrapped_intro_button">kom ons gaan!</string>
-    <string name="wrapped_logo_content_description">Metrolist-logo</string>
-    <string name="wrapped_year">2025</string>
-    <string name="wrapped_ready_title">JOUN WRAPPED IS GEREED!</string>
-    <string name="wrapped_ready_subtitle">Tyd om te sien wat jy die hele jaar geliefhet het…</string>
-    <string name="wrapped_thank_you">Dankie dat jy geluister het!</string>
-    <string name="wrapped_special_thanks">Spesiale dank aan MO Agamy vir die skep van Metrolist</string>
-    <string name="wrapped_close">Sluit Wrapped</string>
-    <string name="wrapped_playlist_title">Jou %s Wrapped</string>
-    <string name="wrapped_create_playlist">Skep snitlys</string>
-    <string name="wrapped_playlist_saved">Snitlys gestoor</string>
-    <string name="equalizer_header">Equalizer</string>
-    <string name="no_profiles">Geen equalizer-profiele ni</string>
-    <string name="import_profile">Voer profiel in</string>
-    <string name="system_equalizer">Stelselequalizer</string>
-    <string name="system_equalizer_desc">Maak Android se ingeboude equalizer oop</string>
-    <string name="eq_disabled">Gedeaktiveer</string>
-    <string name="eq_wizard">AutoEQ-towenaar</string>
-    <string name="eq_download_db">Laai AutoEQ-databasis af (17 MB)</string>
-    <string name="eq_downloading">Besig om af te laai…</string>
-    <string name="import_from_file">Voer uit lêer in</string>
-    <plurals name="band_count">
-        <item quantity="one">%d-band</item>
-        <item quantity="other">%d-bande</item>
-    </plurals>
-    <string name="delete_profile_desc">Vee profiel uit</string>
-    <string name="delete_profile_confirmation">Is jy seker jy wil %1$s uitvee? Hierdie aksie kan nie ongedaan gemaak word nie</string>
-    <string name="error_file_read">Kon nie lêer lees nie</string>
-    <string name="error_file_open">Kon nie lêer oopmaak nie: %1$s</string>
-    <string name="import_error_title">Invoerfout</string>
-    <string name="error_title">Fout</string>
-    <string name="error_eq_apply_failed">Kon nie equalizer-profiel toepas nie: %1$s</string>
-    <string name="wizard_select_model">Kies Model</string>
-    <string name="wizard_select_profiles">Kies Profiele</string>
-    <string name="wizard_search_model_hint">Soek vir jou koptelefoon- of oorfoonmodel</string>
-    <string name="wizard_model_name">Modelnaam</string>
-    <string name="wizard_model_placeholder">bv. Sony WH-1000XM4, Bose QuietComfort 45</string>
-    <string name="wizard_no_models">Geen modelle gevind nie</string>
-    <string name="widget_recognizer_mic_desc">Identifiseer \'n liedjie</string>
-    <string name="widget_recognizer_channel_name">Musiekherkenning</string>
-    <string name="widget_recognizer_channel_desc">Wys \'n kennisgewing terwyl \'n liedjie vanuit die widget geïdentifiseer word</string>
-    <string name="widget_recognizer_notification_text">Neem klank op om die liedjie te identifiseer…</string>
-    <string name="together">Saam</string>
-    <string name="listen_together">Luister Saam</string>
-    <string name="listen_together_server_url">Bedienerskakel</string>
-    <string name="listen_together_choose_server">Kies bediener</string>
-    <string name="listen_together_custom_server">Pasgemaakte bediener</string>
-    <string name="listen_together_use_custom_server">Gebruik pasgemaakte bediener</string>
-    <string name="listen_together_username">Gebruikersnaam</string>
-    <string name="listen_together_connected">Gekoppel</string>
-    <string name="listen_together_reconnecting">Besig om weer te verbind…</string>
-    <string name="listen_together_disconnected">Ontkoppel</string>
-    <string name="listen_together_connecting">Besig om te verbind…</string>
-    <string name="listen_together_error">Verbindingsfout</string>
-    <string name="listen_together_create_room">Skep kamer</string>
-    <string name="listen_together_create_room_desc">Skep \'n kamer en deel die kode met jou vriende</string>
-    <string name="listen_together_join_room">Sluit aan by kamer</string>
-    <string name="listen_together_room_code">Kamerkode</string>
-    <string name="listen_together_you_are_host">Jy is die gasheer</string>
-    <string name="listen_together_you_are_guest">Jy is \'n gas</string>
-    <string name="mute">Demp</string>
-    <string name="unmute">Ontdemp</string>
-    <string name="listen_together_join_requests">Versoeke om aan te sluit</string>
-    <string name="listen_together_view_logs">Bekyk logs</string>
-    <string name="listen_together_view_logs_desc">Ontfout verbindingsgebeurtenisse en boodskappe</string>
-    <string name="listen_together_logs">Verbindingslogs</string>
-    <string name="listen_together_no_logs">Nog geen logs nie</string>
-    <string name="listen_together_auto_approval_joins">Keur versoeke om aan te sluit outomaties goed</string>
-    <string name="listen_together_auto_approval_joins_desc">Keur versoeke om aan te sluit outomaties goed sonder om hulle handmatig te hersien</string>
-    <string name="listen_together_auto_approval_suggestions">Keur liedjie-voorstelle outomaties goed</string>
-    <string name="resync">Hersinkroniseer</string>
-    <string name="copy_code">Kopieer kode</string>
-    <string name="kick_user_desc">Verwyder hierdie persoon uit die sessie</string>
-    <string name="permanently_kick_user">Blokkeer permanent</string>
     <string name="podcast_channels">Podcastkanale</string>
     <string name="latest_episodes">Nuutste episodes</string>
     <string name="your_shows">Jou programme</string>
@@ -717,7 +751,6 @@
         <item quantity="one">%d-episode</item>
         <item quantity="other">%d-episodes</item>
     </plurals>
-    <string name="filter_episodes">Episodes</string>
     <string name="filter_profiles">Profiele</string>
     <string name="filter_channels">Kanale</string>
     <string name="auto_playlist">Outomatiese snitlys</string>
@@ -728,6 +761,7 @@
         <item quantity="one">%d-kanaal</item>
         <item quantity="other">%d-kanale</item>
     </plurals>
+    <!-- Restore confirmation dialog -->
     <string name="restore_confirm_title">Herstel rugsteun?</string>
     <string name="restore_confirm_message">Dit sal jou toepassingsdata vanaf die geselekteerde rugsteun herstel</string>
     <string name="restore_account_warning">Die volgende rekeninginligting sal herstel en behou word:</string>
@@ -735,6 +769,8 @@
     <string name="restore_database_incompatible">Kan nie rugsteun herstel nie: databasis-weergawe is onversoenbaar. Jou huidige data is behou.</string>
     <string name="checking_previous_account">Besig om na vorige rekening te kyk…</string>
     <string name="no_account_found">Geen rekening gevind nie</string>
+    <!-- Cache settings -->
+    <!-- Upload songs -->
     <string name="upload_songs">Laai liedjies op</string>
     <string name="uploading">Besig om op te laai…</string>
     <string name="upload_progress">%1$d van %2$d</string>
@@ -750,7 +786,7 @@
     <string name="delete_uploaded_songs_confirm">Is jy seker jy wil %1$d opgelaaide liedjies uitvee? Hierdie aksie kan nie ongedaan gemaak word nie</string>
     <string name="deleted_n_songs">%1$d liedjies uitgevee</string>
     <string name="deleting">Besig om uit te vee…</string>
-    <string name="android_auto">Android Auto</string>
+    <!-- Android Auto settings -->
     <string name="android_auto_visible_sections">Sigbare afdelings</string>
     <string name="android_auto_reorder_hint">Tik op \'n afdeling om dit te aktiveer of te deaktiveer.\nDruk lank op die sleephandvatsel om te herrangskik. Die eerste afdeling sal by verstek gewys word</string>
     <string name="android_auto_youtube_playlists">Wys YouTube se voorgestelde snitlyste</string>
@@ -761,6 +797,7 @@
     <string name="android_auto_search_options">Soekopsies</string>
     <string name="android_auto_search_local_songs_limit">Liedjie-soekperk</string>
     <string name="android_auto_search_local_songs_limit_desc">Beperk die aantal plaaslike liedjies wat in die soekresultate gewys word. Dit word aanbeveel om nie onbeperk te stel nie om geheue-ineenstortings te voorkom</string>
+    <!-- Stats time transfer -->
     <string name="time_transfer_title">Tydoordrag</string>
     <string name="time_transfer_warning">WAARSKUWING: Hierdie aksie kan nie ongedaan gemaak word nadat dit voltooi is nie. Maak \'n rugsteun voordat jy voortgaan. Slegs liedjies met ten minste een geregistreerde speelbeurt kom in aanmerking</string>
     <string name="time_transfer_source_song">Bronliedjie</string>
@@ -768,14 +805,17 @@
     <string name="time_transfer_listen_time_label">Luistertyd:</string>
     <string name="time_transfer_convert">Skakel om</string>
     <string name="song_dropdown_more_results">Hou aan tik om resultate te vernou (%d meer)</string>
+    <!-- Player and Audio Settings -->
     <string name="autoplay">Outomatiese afspeel</string>
     <string name="autoplay_desc">Speel outomaties die volgende liedjie wanneer die huidige een eindig</string>
+    <!-- Accessibility -->
     <string name="back">Terug</string>
     <string name="clear_search">Vee soektog uit</string>
     <string name="close_chip">Sluit</string>
     <string name="switch_to_list_view">Skakel oor na lys-aansig</string>
     <string name="switch_to_grid_view">Skakel oor na rooster-aansig</string>
     <string name="more_options">Meer opsies</string>
+    <!-- Loudness Level -->
     <string name="loudness_level">Luidheidvlak</string>
     <string name="loudness_level_aggressive">Aggressief (-7 dB)</string>
     <string name="loudness_level_loud">Hard (-11 dB)</string>
@@ -788,6 +828,7 @@
     <string name="format_player_hash">Speler-hash</string>
     <string name="format_cipher_support_added">Sifte-ondersteuning bygevoeg</string>
     <string name="not_applicable">N/B</string>
+    <!-- Stream sources -->
     <string name="enable_dynamic_icon">Dinamiese ikoonkleure</string>
     <string name="enable_dynamic_icon_desc">Gebruik dinamiese temakleure vir die toepassingsikoon. Wanneer gedeaktiveer, gebruik die ikoon soliede kleure.</string>
     <string name="stream_sources">Stroombronne</string>
@@ -795,58 +836,10 @@
     <string name="stream_source_web_clients">Webkliënte</string>
     <string name="stream_source_native_clients">Inheemse kliënte</string>
     <string name="stream_source_creator_clients">Skepperkliënte</string>
-    <string name="stream_source_web_remix">WEB_REMIX</string>
     <string name="stream_source_web_remix_desc">Primêre kliënt. Gemagtig; dek die meeste snitte.</string>
-    <string name="stream_source_tvhtml5">TVHTML5</string>
     <string name="stream_source_tvhtml5_desc">TV-kliënt. Betroubare opsie.</string>
-    <string name="stream_source_visionos">visionOS</string>
     <string name="stream_source_visionos_desc">Apple Vision. Geen versmoringhek; baie betroubaar.</string>
-    <string name="stream_source_android_vr">Android VR</string>
     <string name="stream_source_android_vr_desc">Android VR-kliënte (alle weergawes).</string>
-    <string name="stream_source_web_creator">WEB_CREATOR</string>
     <string name="stream_source_web_creator_desc">Skepper-webkliënt.</string>
-    <string name="wizard_multiple_variants">Verskeie variante beskikbaar</string>
-    <string name="wizard_select_eq_profiles">Kies EQ-profiele vir %s</string>
-    <string name="wizard_save_profiles">Stoor Profiele</string>
-    <string name="found_in_settings_content">Gevind in Instellings &gt; Inhoud</string>
-    <string name="your_daily_discover">Jou daaglikse ontdekking</string>
-    <string name="plays">speelbeurte</string>
-    <string name="casting_to">Beeldskerm na %s</string>
-    <string name="progress_percent">Vordering %s%%</string>
-    <string name="open">Maak oop</string>
-    <string name="failed_to_create_image">Kon nie beeld skep nie: %s</string>
-    <string name="copied_title">Titel gekopieer</string>
-    <string name="copied_artist">Kunstenaar gekopieer</string>
-    <string name="error_playing">Afspeelfout</string>
-    <string name="failed_to_parse_proxy">Kon nie proxy-URL ontleed nie</string>
-    <string name="error_playback_failed">Afspeel het misluk</string>
-    <string name="error_job_cancelled">Die video is nie beskikbaar vir afspeel nie. Probeer weer of slaan oor na die volgende liedjie.</string>
-    <string name="error_episode_save">Kon nie episode stoor nie</string>
-    <string name="error_episode_remove">Kon nie episode verwyder nie</string>
-    <string name="error_podcast_subscribe">Kon nie op Podcast inteken nie</string>
-    <string name="error_podcast_unsubscribe">Kon nie van Podcast onttrek nie</string>
-    <string name="view_channel">Bekyk kanaal</string>
-    <string name="album_art">Albumkuns</string>
-    <string name="no_song_playing">Geen liedjie speel nie</string>
-    <string name="tap_to_open">Tik om Metrolist oop te maak</string>
-    <string name="previous">Vorige</string>
-    <string name="play_pause">Speel/Pauseer</string>
-    <string name="next">Volgende</string>
-    <string name="like">Hou van</string>
-    <string name="not_playing">Geen liedjie speel nie</string>
-    <string name="tap_to_play">Tik om Metrolist oop te maak</string>
-    <string name="widget_description">Musiekspeler-widget met afspeelbeheer</string>
-    <string name="turntable_widget_description">Sirkelvormige musiek-widget met speel- en hou-van-beheer</string>
-    <string name="widget_music_player">Musiekspeler</string>
-    <string name="widget_turntable">Draaitafel</string>
-    <string name="widget_recognizer_name">Musiekherkenner</string>
-    <string name="widget_recognizer_description">Identifiseer liedjies wat rondom jou speel direk vanaf jou tuisskerm</string>
-    <string name="widget_recognizer_tap_to_search">Tik om \'n liedjie te identifiseer</string>
-    <string name="widget_recognizer_listening">Besig om te luister…</string>
-    <string name="widget_recognizer_processing">Besig om te identifiseer…</string>
-    <string name="widget_recognizer_no_match">Geen passing gevind nie. Probeer weer</string>
-    <string name="widget_recognizer_error">Herkenning het misluk</string>
-    <string name="widget_recognizer_error_generic">Iets het verkeerd geloop. Probeer asseblief weer</string>
-    <string name="widget_recognizer_unknown_song">Onbekende liedjie</string>
-    <string name="widget_recognizer_unknown_artist">Onbekende kunstenaar</string>
+    <!-- Onboarding -->
 </resources>
