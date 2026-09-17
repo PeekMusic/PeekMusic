@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="local_history">Local</string>
     <string name="remote_history">Remoto</string>
     <string name="charts">Listas de éxitos</string>
     <string name="mixes">Mezclas</string>
@@ -83,8 +82,6 @@
     <string name="follow_theme">Seguir tema</string>
     <string name="gradient">Gradiente</string>
     <string name="new_player_design">Nuevo diseño del reproductor</string>
-    <string name="design_modern">Modern</string>
-    <string name="design_classic">Classic</string>
     <string name="new_mini_player_design">Nuevo diseño del mini reproductor</string>
     <string name="player_background_blur">Desenfoque</string>
     <string name="player_buttons_style">Colores de los botones del reproductor</string>
@@ -115,7 +112,6 @@
     <string name="lyrics_animation_fade">Desvanecimiento</string>
     <string name="lyrics_animation_glow">Brillar</string>
     <string name="lyrics_animation_slide">Deslizar</string>
-    <string name="lyrics_animation_karaoke">Karaoke</string>
     <string name="lyrics_animation_apple">Estilo de Apple Music</string>
     <string name="lyrics_text_size">Tamaño del texto de la letra</string>
     <string name="lyrics_line_spacing">Interlineado de la letra</string>
@@ -124,13 +120,6 @@
     <string name="youtube_music_lyrics_note">NOTA: Las letras de YouTube Music se mostrarán automáticamente cuando no haya otras letras disponibles. Las letras de YTM no suelen estar sincronizadas</string>
     <string name="enable_better_lyrics">Habilitar Better Lyrics</string>
     <string name="enable_better_lyrics_desc">Letras sincronizadas por sílabas para cualquier canción, ideales para karaoke</string>
-    <string name="enable_musixmatch">Enable Musixmatch</string>
-    <string name="enable_musixmatch_desc">Large catalog of synced lyrics, including word-by-word timings</string>
-    <string name="enable_simp_music">Enable SimpMusic</string>
-    <string name="enable_simp_music_desc">Community lyrics database, matched by YouTube video, often with word-by-word timings</string>
-    <string name="auto_pick_best_lyrics">Auto-pick best lyrics</string>
-    <string name="auto_pick_best_lyrics_desc">Prefers word-by-word synced lyrics from any provider before falling back to the first available result. Provider order is fixed while this is on.</string>
-    <string name="lyrics_word_synced">Word-by-word</string>
     <string name="enable_paxsenix">Habilitar Paxsenix</string>
     <string name="enable_paxsenix_desc">Letras sincronizadas de alta calidad por la API Paxsenix</string>
     <string name="enable_lyricsplus">Activar LyricsPlus</string>
@@ -154,10 +143,6 @@
     <string name="shuffle_playlist_first_desc">Al reproducir en modo aleatorio, reproduce primero todas las canciones de la lista de reproducción o álbum actual antes de pasar al contenido similar</string>
     <string name="prevent_duplicate_tracks_in_queue">Evitar pistas duplicadas en la cola</string>
     <string name="prevent_duplicate_tracks_in_queue_desc">Al agregar una pista que ya está en la cola, se moverá desde su posición anterior en lugar de añadirse de nuevo</string>
-    <string name="exclude_recently_played_from_queue">Exclude recently played songs</string>
-    <string name="exclude_recently_played_from_queue_desc">Prevent songs you\'ve recently listened to from repeating in auto-generated radio queues and mixes</string>
-    <string name="recently_played_window_size">Recently played window size</string>
-    <string name="recently_played_window_size_desc">Number of recent songs to exclude from mixes</string>
     <string name="add_to_playlist_position">Agregar a la posición de la lista de reproducción</string>
     <string name="playlist_position_beginning">Inicio de la lista de reproducción</string>
     <string name="playlist_position_beginning_desc">Las canciones nuevas aparecen antes de las canciones existentes</string>
@@ -182,8 +167,6 @@
     <string name="choose_from_library">Elegir desde la biblioteca</string>
     <string name="remove_custom_image">Eliminar imagen personalizada</string>
     <!-- General -->
-    <string name="general">General</string>
-    <string name="proxy">Proxy</string>
     <string name="default_lib_chips">Cambiar chip de biblioteca predeterminado</string>
     <string name="set_quick_picks">Establecer selecciones rápidas</string>
     <string name="last_song_listened">Basado en la última canción escuchada</string>
@@ -194,16 +177,6 @@
     <string name="experimental_lyrics_desc">Activar Nuevas letras experimentales con mejor animación y rendimiento</string>
     <string name="experimental_lyrics_beta_title">Característica experimental</string>
     <string name="experimental_lyrics_beta_message">El nuevo componente de letras está en desarrollo aún y puede contener errores ¿estás seguro de activar?</string>
-    <string name="peek_category">Peek</string>
-    <string name="player_lyrics_peek">Show Peek</string>
-    <string name="player_lyrics_peek_desc">Show the current lyrics line centered between the cover and the player controls</string>
-    <string name="player_lyrics_peek_translation">Show translation in peek</string>
-    <string name="player_lyrics_peek_translation_desc">Display the translated lyric line below the original in the player lyrics peek</string>
-    <string name="player_lyrics_peek_romanization">Show romanization in peek</string>
-    <string name="player_lyrics_peek_romanization_desc">Display the romanized lyric line below the original in the player lyrics peek</string>
-    <string name="player_lyrics_peek_translate">Translate</string>
-    <string name="player_lyrics_peek_translation_hint_title">Lyrics translation</string>
-    <string name="player_lyrics_peek_translation_hint">Translations are enabled per song: they use Google Translate, which can hit rate limits. Start a translation for individual songs from the peek or the lyrics menu.</string>
     <string name="config_proxy">Configurar proxy</string>
     <string name="proxy_username">Nombre de usuario proxy</string>
     <string name="proxy_password">Contraseña de proxy</string>
@@ -216,7 +189,6 @@
     <string name="persistent_shuffle_desc">Mantener la reproducción aleatoria habilitada al iniciar nuevas canciones o listas de reproducción</string>
     <string name="remember_shuffle_and_repeat">Recuerda mezclar y repetir</string>
     <string name="remember_shuffle_and_repeat_desc">Recordar los ajustes de modo aleatorio y repetición al reiniciar la aplicación</string>
-    <string name="percentage_format">%d%%</string>
     <string name="import_online">Importar una lista de reproducción M3U</string>
     <string name="import_csv">Importar una lista de reproducción CSV</string>
     <string name="playlist_unavailable">Lista de reproducción no disponible</string>
@@ -232,7 +204,6 @@
     <string name="auto_download_on_like">Descargar automáticamente al dar me gusta</string>
     <string name="auto_download_on_like_desc">Descargar canciones automáticamente al darle a me gusta</string>
     <string name="swipe_sensitivity">Sensibilidad al deslizar el mini reproductor</string>
-    <string name="sensitivity_percentage">%1$d%%</string>
     <string name="clear_song_cache_dialog">¿Estás seguro de que quieres borrar todas las canciones en caché?</string>
     <string name="clear_image_cache_dialog">¿Estás seguro de que deseas borrar todas las imágenes almacenadas en caché?</string>
     <string name="clear_downloads_dialog">¿Estás seguro de que quieres eliminar todas las descargas?</string>
@@ -243,8 +214,6 @@
     <string name="release_notes">Notas de la versión</string>
     <string name="changelog">Registro de cambios</string>
     <string name="changelog_empty">No hay registros de cambios disponibles</string>
-    <string name="github_releases_url">https://github.com/endritlim/PeekMusic/releases</string>
-    <string name="list_bullet">•</string>
     <string name="view_on_github">Ver en GitHub</string>
     <string name="current_version">Versión actual</string>
     <string name="version_format">Versión: %s</string>
@@ -349,12 +318,10 @@
     <string name="lyrics_offset">Desfase de la letra</string>
     <!-- Material 3 Settings Sections -->
     <string name="settings_section_ui">Interfaz</string>
-    <string name="settings_section_playback">Playback</string>
     <string name="settings_section_privacy">Privacidad y seguridad</string>
     <string name="settings_section_player_content">Reproductor y contenido</string>
     <string name="settings_section_storage">Almacenamiento y datos</string>
     <string name="settings_section_system">Sistema y Acerca de</string>
-    <string name="settings_audio">Audio</string>
     <!-- Updater -->
     <string name="updater">Actualizador</string>
     <string name="check_for_updates">Buscar actualizaciones automáticamente</string>
@@ -447,7 +414,6 @@
     <string name="wrapped_intro_subtitle">Es hora de ver lo que has estado escuchando durante el año…</string>
     <string name="wrapped_intro_button">¡vamos!</string>
     <string name="wrapped_logo_content_description">Logo de Metrolist</string>
-    <string name="wrapped_year">2025</string>
     <string name="wrapped_ready_title">¡TU RECAP ESTÁ LISTO!</string>
     <string name="wrapped_ready_subtitle">Es hora de ver lo que te gustó este año…</string>
     <string name="wrapped_thank_you">¡Gracias por escuchar!</string>
@@ -476,7 +442,6 @@
     <string name="error_file_read">No se pudo leer el archivo</string>
     <string name="error_file_open">No se pudo abrir el archivo: %1$s</string>
     <string name="import_error_title">Error de importación</string>
-    <string name="error_title">Error</string>
     <string name="error_eq_apply_failed">Error al aplicar el perfil de ecualización: %1$s</string>
     <!-- EQ Wizard -->
     <string name="wizard_select_model">Seleccionar modelo</string>
@@ -635,30 +600,14 @@
     <string name="user_blocked_by_host">Bloqueado por el anfitrión</string>
     <!-- AI Lyrics Translation -->
     <string name="ai_lyrics_translation">Traducción</string>
-    <string name="clear_translation_cache">Clear translation cache</string>
-    <string name="clear_translation_cache_desc">Removes all lyric translations saved on this device</string>
-    <string name="clear_translation_cache_confirm">All saved lyric translations will be removed. They can be re-translated at any time. Continue?</string>
-    <string name="clear_lyrics_cache">Clear lyrics cache</string>
-    <string name="clear_lyrics_cache_desc">Removes all lyrics saved on this device so they are fetched fresh from the providers</string>
-    <string name="clear_lyrics_cache_confirm">All saved lyrics will be removed. They will be downloaded again when you open a song. Continue?</string>
-    <string name="clear_all">Clear all</string>
     <string name="ai_translating_lyrics">Traduciendo letras…</string>
     <string name="ai_lyrics_translated">Letras traducidas</string>
     <string name="ai_target_language">Idioma destino</string>
-    <string name="lyrics_translation_free_hint">Translations are provided for free by Google Translate and require no API key. Availability depends on Google not rate-limiting the request.</string>
     <string name="ai_error_no_lyrics">No hay letras para traducir</string>
     <string name="ai_error_lyrics_empty">Las letras están vacías</string>
     <string name="ai_error_language_required">Se requiere un idioma de destino</string>
     <string name="ai_error_unknown">Ocurrió un error desconocido</string>
     <string name="ai_error_translation_failed">Traducción fallida</string>
-    <string name="ai_error_rate_limited">Too many translations in a short time. Please try again later.</string>
-    <string name="ai_error_rate_limited_retry">Too many translations in a short time. Please try again in %1$d seconds.</string>
-    <string name="preload_queue_songs">Preload queue</string>
-    <plurals name="preload_queue_songs_count">
-        <item quantity="one">%d song</item>
-        <item quantity="other">%d songs</item>
-    </plurals>
-    <string name="preload_queue_songs_desc">How many upcoming queue songs are cached to storage while the current song plays</string>
     <!-- Crash Handler -->
     <string name="crash_title">La aplicación dejó de funcionar</string>
     <string name="crash_description">Ocurrió un error inesperado. Por favor comparte el informe de fallos para ayudarnos a solucionar el problema</string>
@@ -746,8 +695,6 @@
     <string name="discord_error_invalid_scope">Discord rechazó la conexión. Vuelve a conectarte y concede el permiso requerido.</string>
     <string name="discord_error_banner_title">Error de Discord</string>
     <string name="discord_rpc_preview">Vista previa de Rich Presence</string>
-    <string name="discord_integration">Discord Integration</string>
-    <string name="enable_discord_rpc">Enable Rich Presence</string>
     <string name="discord_advanced_mode">Modo avanzado</string>
     <string name="discord_advanced_mode_description">Mostrar opciones adicionales de personalización de Rich Presence</string>
     <string name="discord_presence">Presencia</string>
@@ -765,9 +712,6 @@
     <string name="discord_enable_button_1">Mostrar botón 1</string>
     <string name="discord_enable_button_2">Mostrar botón 2</string>
     <string name="discord_button_label">Etiqueta</string>
-    <string name="discord_button_url">URL</string>
-    <string name="discord_status">Status</string>
-    <string name="discord_status_online">Online</string>
     <string name="discord_status_idle">Ausente</string>
     <string name="discord_status_dnd">No molestar</string>
     <string name="speed_dial">Acceso rápido</string>
@@ -777,57 +721,6 @@
     <string name="unpin">Desanclar</string>
     <string name="randomize_home_order">Ordenar aleatoriamente la pantalla de inicio</string>
     <string name="randomize_home_order_desc">Reordenar aleatoriamente las secciones de la pantalla de inicio usando prioridades ponderadas</string>
-    <string name="home_screen_sections">Home screen sections</string>
-    <string name="show_speed_dial_section">Speed dial</string>
-    <string name="show_speed_dial_section_desc">Show the speed dial grid on the home screen</string>
-    <string name="show_keep_listening">Keep listening</string>
-    <string name="show_keep_listening_desc">Show recently played songs, albums and artists on the home screen</string>
-    <string name="show_forgotten_favorites">Forgotten favorites</string>
-    <string name="show_forgotten_favorites_desc">Show songs you liked but haven\'t played in a while</string>
-    <string name="show_daily_discover">Daily discover</string>
-    <string name="show_daily_discover_desc">Show daily recommendations based on your liked songs</string>
-    <string name="show_youtube_home_sections">YouTube home sections</string>
-    <string name="show_youtube_home_sections_desc">Show YouTube recommendations on the home screen: home rows, mixes, similar-to and moods &amp; genres</string>
-    <string name="home_pagination">Endless scrolling</string>
-    <string name="home_pagination_desc">Load more YouTube sections when scrolling to the bottom of the home screen</string>
-    <string name="hide_home_section">Hide section</string>
-    <string name="home_section_order">Home section order</string>
-    <string name="home_section_order_shuffle_hint">Section order is ignored while shuffle is enabled.</string>
-    <string name="home_sections_settings_desc">Change the order of home screen sections or hide them</string>
-    <string name="home_sections_settings_login_required">Sign in to reorder or hide home screen sections</string>
-    <string name="section_order_speed_dial">Speed dial</string>
-    <string name="section_order_quick_picks">Quick picks</string>
-    <string name="section_order_forgotten_favorites">Forgotten favorites</string>
-    <string name="section_order_from_your_library">From your library</string>
-    <string name="section_order_recommended_mixes">Recommended mixes</string>
-    <string name="section_order_recommended_playlists">Recommended playlists for you</string>
-    <string name="section_order_account_mixes">Mixes</string>
-    <string name="section_order_podcasts">Your podcasts</string>
-    <string name="section_order_new_episodes">New episodes</string>
-    <string name="section_order_trending">Trending songs</string>
-    <string name="section_order_keep_listening">Keep listening</string>
-    <string name="section_order_shows">Shows for you</string>
-    <string name="section_order_moods_and_genres">Moods and genres</string>
-    <string name="section_order_recaps">Recaps</string>
-    <string name="section_order_live_performances">Live performances</string>
-    <string name="section_order_music_videos">Music videos for you</string>
-    <string name="section_order_covers_and_remixes">Covers and remixes</string>
-    <string name="section_order_together">Listen together</string>
-    <string name="section_order_long_listens">Long listens</string>
-    <string name="section_order_similar_to">Similar to</string>
-    <string name="section_order_from_the_community">From the community</string>
-    <string name="section_order_artist">Single artists</string>
-    <string name="section_order_other">Everything else</string>
-    <string name="personalized_browsing">Personalized browsing</string>
-    <string name="personalized_browsing_desc">Sign home, browse and playback requests with your YouTube account so recommendations fit your taste. Turn off to browse anonymously — what you explore then won\'t shape your YouTube history or recommendations.</string>
-    <string name="account_and_sync">Account &amp; sync</string>
-    <string name="android_auto_recommendations_source">Recommendations source</string>
-    <string name="android_auto_recommendations_source_desc">Where the section content in Android Auto comes from</string>
-    <string name="android_auto_recommendations_youtube">YouTube</string>
-    <string name="android_auto_recommendations_app">Local</string>
-    <string name="android_auto_recommendations_login_note">YouTube recommendations require a Google account. While logged out, in-app content is used.</string>
-    <string name="sync">Sync</string>
-    <string name="yt_sync_desc">Sync likes and playlist changes from the app to your YouTube Music account</string>
     <!-- Daily Discover -->
     <string name="daily_discover_sounds_like">Suena como %1$s</string>
     <string name="daily_discover_because_you_listen_to">Porque escuchas a %1$s</string>
@@ -851,12 +744,10 @@
     <string name="credits_view_repo">Ver repositorio</string>
     <string name="buy_mo_a_coffee">¡Invítame un café!</string>
     <string name="community_and_info">Comunidad e información</string>
-    <string name="metrolist">METROLIST</string>
     <string name="wanna_play_favorite_song">¿Quieres reproducir su canción favorita?</string>
     <string name="yeah">¡Sí!</string>
     <string name="stands_with_palestine">Este proyecto apoya a Palestina 🇵🇸</string>
     <!-- Podcasts -->
-    <string name="filter_podcasts">Podcasts</string>
     <string name="view_podcast">Ver podcast</string>
     <string name="podcast_channels">Canales de podcast</string>
     <string name="latest_episodes">Últimos episodios</string>
@@ -908,7 +799,6 @@
     <string name="deleted_n_songs">Se eliminaron %1$d canciones</string>
     <string name="deleting">Eliminando…</string>
     <!-- Android Auto settings -->
-    <string name="android_auto">Android Auto</string>
     <string name="android_auto_visible_sections">Secciones visibles</string>
     <string name="android_auto_reorder_hint">Toca una sección para habilitarla o deshabilitarla\nMantén presionado el control de arrastre para reordenar. La primera sección se mostrará por defecto</string>
     <string name="android_auto_youtube_playlists">Mostrar lista de reproducción sugeridas por Youtube</string>
@@ -955,7 +845,6 @@
     <string name="stream_client">Cliente de streaming</string>
     <string name="format_player_hash">Hash del reproductor</string>
     <string name="format_cipher_support_added">Compatibilidad con cifrado añadida</string>
-    <string name="not_applicable">N/A</string>
     <!-- Stream sources -->
     <string name="enable_dynamic_icon">Colores dinámicos del icono</string>
     <string name="enable_dynamic_icon_desc">Usa los colores dinámicos del tema para el icono de la app. Cuando está desactivado, el icono utiliza colores sólidos.</string>
@@ -964,93 +853,10 @@
     <string name="stream_source_web_clients">Clientes web</string>
     <string name="stream_source_native_clients">Clientes nativos</string>
     <string name="stream_source_creator_clients">Clientes de creadores</string>
-    <string name="stream_source_web_remix">WEB_REMIX</string>
     <string name="stream_source_web_remix_desc">Cliente principal. Autenticado; cubre la mayoría de las pistas.</string>
-    <string name="stream_source_tvhtml5">TVHTML5</string>
     <string name="stream_source_tvhtml5_desc">Cliente de TV. Recurso fiable.</string>
-    <string name="stream_source_visionos">visionOS</string>
     <string name="stream_source_visionos_desc">Apple Vision. Sin limitación de velocidad; muy fiable.</string>
-    <string name="stream_source_android_vr">Android VR</string>
     <string name="stream_source_android_vr_desc">Clientes de Android VR (todas las versiones).</string>
-    <string name="stream_source_web_creator">WEB_CREATOR</string>
     <string name="stream_source_web_creator_desc">Cliente web de creador.</string>
-    <string name="settings_sleep_alarm">Sleep &amp; Alarm</string>
-    <string name="download_update">Download update</string>
     <!-- Onboarding -->
-    <string name="onboarding_skip">Skip</string>
-    <string name="onboarding_next">Next</string>
-    <string name="onboarding_back">Back</string>
-    <string name="onboarding_welcome_title">Welcome to PeekMusic</string>
-    <string name="onboarding_welcome_subtitle">A clean, fast YouTube Music experience.</string>
-    <string name="onboarding_welcome_description">A clean, fast YouTube Music experience. Sign in to sync your library, or start exploring right away.</string>
-    <string name="onboarding_welcome_benefit_1">Stream millions of songs</string>
-    <string name="onboarding_welcome_benefit_2">Build your own library</string>
-    <string name="onboarding_welcome_benefit_3">Customise the look and playback</string>
-    <string name="onboarding_get_started">Get started</string>
-    <string name="onboarding_sign_in">Sign in with YouTube</string>
-    <string name="onboarding_use_guest">Continue as guest</string>
-    <string name="onboarding_continue_guest">Continue as guest</string>
-    <string name="onboarding_appearance_title">Look &amp; feel</string>
-    <string name="onboarding_theme_title">Theme &amp; colors</string>
-    <string name="onboarding_player_design_title">Player design</string>
-    <string name="onboarding_dynamic_theme">Dynamic theme</string>
-    <string name="onboarding_dynamic_theme_desc">Match the app colors to your wallpaper</string>
-    <string name="onboarding_pure_black">Pure black</string>
-    <string name="onboarding_pure_black_desc">Use true black backgrounds in dark mode</string>
-    <string name="onboarding_new_player_design">Player design</string>
-    <string name="onboarding_new_mini_player_design">Mini-player design</string>
-    <string name="onboarding_peek_title">Peek</string>
-    <string name="onboarding_peek_description">Peek lyrics add the current lyric line above the song title under the album cover while playing. Great for quick sing-alongs.</string>
-    <string name="onboarding_peek_toggle">Show Peek</string>
-    <string name="onboarding_peek_toggle_desc">Add a single lyric line above the song info</string>
-    <string name="onboarding_peek_sample_line">I am different different different</string>
-    <string name="onboarding_peek_sample_subline">Next line appears right here</string>
-    <string name="onboarding_romanization_toggle">Show romanization</string>
-    <string name="onboarding_translation_toggle">Show translation</string>
-    <string name="onboarding_playback_title">Playback</string>
-    <string name="onboarding_audio_quality">Audio quality</string>
-    <string name="onboarding_audio_quality_desc">Preferred quality for streaming</string>
-    <string name="onboarding_crossfade">Crossfade</string>
-    <string name="onboarding_crossfade_desc">Smoothly fade between songs</string>
-    <string name="onboarding_auto_radio_queue">Auto radio queue</string>
-    <string name="onboarding_auto_radio_queue_desc">Continue with related tracks when a queue ends</string>
-    <string name="onboarding_auto_download_like">Auto-download liked songs</string>
-    <string name="onboarding_auto_download_like_desc">Download songs automatically when you like them</string>
-    <string name="onboarding_queue_title">Smart queue &amp; cache</string>
-    <string name="onboarding_queue_preload_label">Preload upcoming songs</string>
-    <string name="onboarding_queue_preload_desc">Cache the next songs in the queue for seamless playback</string>
-    <plurals name="onboarding_queue_preload_count">
-        <item quantity="one">%d song</item>
-        <item quantity="other">%d songs</item>
-    </plurals>
-    <string name="onboarding_queue_preload_visual_hint">%d upcoming songs are preloaded</string>
-    <string name="onboarding_queue_now_playing">Now playing</string>
-    <string name="onboarding_queue_cached">Preloaded</string>
-    <string name="onboarding_queue_pending">Not cached</string>
-    <string name="onboarding_queue_exclude_recent">Exclude recently played</string>
-    <string name="onboarding_queue_exclude_recent_desc">Prevent songs you\'ve recently listened to from repeating in auto-generated radio queues and mixes.</string>
-    <string name="onboarding_queue_cache_size">Song cache size</string>
-    <string name="onboarding_queue_cache_size_desc">Played songs are cached so they don\'t have to be loaded again. Here you can set how much storage the app can use for this.</string>
-    <string name="onboarding_crossfade_warning_title">Crossfade warning</string>
-    <string name="onboarding_crossfade_warning_desc">You have crossfade enabled but preloading is set to 0. For crossfading to work well, preloading should be at least 1. Do you still want to continue?</string>
-    <string name="onboarding_crossfade_warning_continue">Continue anyway</string>
-    <string name="onboarding_crossfade_warning_back">Go back</string>
-    <string name="onboarding_content_title">Content filters</string>
-    <string name="onboarding_content_description">Choose what PeekMusic should hide from search, charts, and recommendations.</string>
-    <string name="onboarding_extra_settings_title">Almost there</string>
-    <string name="onboarding_hide_explicit">Hide explicit content</string>
-    <string name="onboarding_hide_explicit_desc">Filter songs marked as explicit</string>
-    <string name="onboarding_hide_video_songs">Hide video-only songs</string>
-    <string name="onboarding_hide_video_songs_desc">Hide tracks that are videos instead of audio</string>
-    <string name="onboarding_login_title">Log in to YouTube Music</string>
-    <string name="onboarding_login_description">Sign in with your Google account to get the most out of PeekMusic.</string>
-    <string name="onboarding_login_benefit_1">Sync your library and playlists</string>
-    <string name="onboarding_login_benefit_2">Get personalised recommendations</string>
-    <string name="onboarding_login_benefit_3">Access your history across devices</string>
-    <string name="onboarding_login_more_settings">There are many more settings and customization options waiting for you in the app settings. Be sure to check them out!</string>
-    <string name="onboarding_finish_title">You\'re all set!</string>
-    <string name="onboarding_finish_description">Enjoy your music.</string>
-    <string name="onboarding_finish_button">Finish</string>
-    <string name="onboarding_check_for_updates">Check for updates</string>
-    <string name="onboarding_check_for_updates_desc">Get notified when a new PeekMusic release is available</string>
 </resources>
