@@ -33,6 +33,21 @@
     <string name="secondary_text_color">Sekundær tekstlet</string>
     <string name="background_color">Bakgrunnslet</string>
     <string name="remove_from_cache">Tak bort frå snarlagring</string>
+    <!-- Artist about section -->
+    <string name="about_artist">Om</string>
+    <string name="show_more">Syn meir</string>
+    <string name="show_less">Syn mindre</string>
+    <string name="artist_page_settings">Artistside</string>
+    <string name="show_artist_description">Syn artistskildring</string>
+    <string name="show_artist_subscriber_count">Syn abonnementstal</string>
+    <string name="show_artist_monthly_listeners">Syn månadlege lydarar</string>
+    <!-- Menu descriptions -->
+    <string name="download_playlist_desc">Lad ned alle songar for fråkopla avspeling</string>
+    <string name="remove_download_playlist_desc">Tak alle nedladde songar bort frå denne spelelista</string>
+    <string name="download_in_progress_desc">Nedlading er i gang</string>
+    <string name="share_playlist_desc">Del denne spelelista med andre</string>
+    <string name="delete_playlist_desc">Slett denne spelelista for æve</string>
+    <string name="sync_playlist_desc">Synkroniser spelelista med YouTube Music</string>
     <string name="copy_link">Kopier lenkje</string>
     <string name="select">Vel alle</string>
     <string name="like_all">Lik alle</string>
@@ -63,11 +78,22 @@
     <string name="player_background_blur">Uskarpleik</string>
     <string name="player_buttons_style">Let på avspelarknappar</string>
     <string name="default_style">Standard</string>
+    <string name="primary_color_style">Hovudlet</string>
+    <string name="tertiary_color_style">Tredjelet</string>
+    <string name="wavy">Snirklete</string>
     <string name="enable_swipe_thumbnail">Sveip for å byta songar</string>
     <string name="swipe_song_to_add">Sveip songen åt venstre for å leggja han til i køen eller til høgre for å spela han nest</string>
     <string name="swipe_song_to_remove">Sveip songen for å taka han bort frå spelelista</string>
     <string name="lyrics_click_change">Brigd songtekster ved klikk</string>
     <string name="lyrics_auto_scroll">Skroll songtekster sjølvverkande</string>
+    <string name="lyrics_glow_effect">Glødande songtekster</string>
+    <string name="lyrics_glow_effect_desc">Legg glød og sprett på den noverande songteksta</string>
+    <string name="lyrics_animation_style">Ord-etter-ord-animeringsstil</string>
+    <string name="lyrics_text_size">Tekststorleik på songtekster</string>
+    <string name="lyrics_line_spacing">Lineavstand på songtekster</string>
+    <string name="enable_better_lyrics">Slå på Better Lyrics</string>
+    <string name="enable_better_lyrics_desc">Nøyt Better Lyrics-tilbydaren for ord-etter-ord synkroniserte songtekster</string>
+    <string name="auto_scroll">Attsynkroniser</string>
     <string name="slim">Smal</string>
     <string name="slim_navbar">Smalt botnnavigeringsfelt</string>
     <string name="auto_playlists">Automatiske spelelister</string>
@@ -76,17 +102,25 @@
     <string name="show_top_playlist">Syn «Mine topp»-spelelista</string>
     <string name="show_cached_playlist">Syn «Snarlagra»-spelelista</string>
     <string name="show_uploaded_playlist">Syn «Oppladde»-spelelista</string>
+    <string name="shuffle_playlist_first">Blanda speleliste/album fyrst</string>
+    <string name="shuffle_playlist_first_desc">Når du blandar, skal alle songar frå den opphavlege spelelista/album verta spela av fyrst, og så liknande innhald</string>
+    <string name="show_wrapped_card">Syn Wrapped-kort</string>
+    <string name="skip_silence_desc">Hoppa fram gjennom ljodlause luter av songar</string>
+    <string name="skip_silence_instant">Hoppa over togn momentant</string>
+    <string name="skip_silence_instant_desc">Hoppa fram under togn i songen i staden for å auka avspelingsfarta</string>
     <string name="advanced_login">Logg inn med lykel</string>
     <string name="token_hidden">Trykk for å syna lykelen</string>
     <string name="token_shown">Trykk att for å kopiera eller brigda</string>
     <string name="token_adv_login_description">Dette er ein AVANSERT innloggingsmetode. Som alternativ til nettportalen, kan du direkte leggja inn eller oppdatera innloggingslykelen din (innloggings-«token») her. Dette kan t.d. gjera det å logga inn på fleire einingar snøggare. NB: Ugilde lykelformat som appen ikkje lukkast i å tolka, kjem ikkje til å verta godtekne</string>
     <string name="yt_sync">Automatisk synkronisering med konto</string>
     <string name="more_content">Meir innhald</string>
+    <!-- Playlist cover edit -->
     <string name="edit_playlist_cover">Brigd spelelisteomslag</string>
     <string name="edit_playlist_cover_note">NB: Kontoen din lyt vera lenkt til eit telefonnummer og stadfest på YouTube Music for å brigda spelelisteomslaget.</string>
     <string name="edit_playlist_cover_note_wait">Etter at du vel eit bilete, dukkar det nye omslaget på spelelista opp om eit bel. Venlegast vent imedan dette hender.</string>
     <string name="choose_from_library">Vel frå samling</string>
     <string name="remove_custom_image">Fjern eigendefinert bilete</string>
+    <!-- General -->
     <string name="general">Ålment</string>
     <string name="proxy">Proxytenar</string>
     <string name="default_lib_chips">Brigd standardvisning i samlinga</string>
@@ -99,25 +133,11 @@
     <string name="enable_authentication">Slå på autentisering</string>
     <string name="enable_similar_content">Slå på liknande innhald</string>
     <string name="similar_content_desc">Legg automatisk til fleire liknande songar når køen tek slutt</string>
+    <string name="remember_shuffle_and_repeat">Hugs blanding og tvitaking</string>
+    <string name="remember_shuffle_and_repeat_desc">Hugs blandings- og tvitakingsmodus når appen vert omstarta</string>
     <string name="percentage_format">%d %%</string>
     <string name="import_online">Importer m3u-speleliste</string>
     <string name="import_csv">Importer csv-speleliste</string>
-    <string name="download_playlist_desc">Lad ned alle songar for fråkopla avspeling</string>
-    <string name="remove_download_playlist_desc">Tak alle nedladde songar bort frå denne spelelista</string>
-    <string name="download_in_progress_desc">Nedlading er i gang</string>
-    <string name="share_playlist_desc">Del denne spelelista med andre</string>
-    <string name="delete_playlist_desc">Slett denne spelelista for æve</string>
-    <string name="sync_playlist_desc">Synkroniser spelelista med YouTube Music</string>
-    <string name="primary_color_style">Hovudlet</string>
-    <string name="tertiary_color_style">Tredjelet</string>
-    <string name="lyrics_glow_effect">Glødande songtekster</string>
-    <string name="lyrics_glow_effect_desc">Legg glød og sprett på den noverande songteksta</string>
-    <string name="enable_better_lyrics">Slå på Better Lyrics</string>
-    <string name="enable_better_lyrics_desc">Nøyt Better Lyrics-tilbydaren for ord-etter-ord synkroniserte songtekster</string>
-    <string name="auto_scroll">Attsynkroniser</string>
-    <string name="shuffle_playlist_first">Blanda speleliste/album fyrst</string>
-    <string name="shuffle_playlist_first_desc">Når du blandar, skal alle songar frå den opphavlege spelelista/album verta spela av fyrst, og så liknande innhald</string>
-    <string name="show_wrapped_card">Syn Wrapped-kort</string>
     <string name="playlist_add_local_to_synced_note">Obs! Det er ikkje støtt å leggja lokale songar inn i synkroniserte/fjerre spelelister. Alle andre samanblandingar funkar</string>
     <string name="auto_download_on_like">Lad sjølvverkande ned ved å lika</string>
     <string name="auto_download_on_like_desc">Lad sjølvverkande ned songar når du likar dei</string>
@@ -149,45 +169,43 @@
         <item quantity="one">1 sekund</item>
         <item quantity="other">%d sekund</item>
     </plurals>
+    <!-- Sleep timer -->
+    <!-- Alarm -->
+    <!-- Player Settings -->
     <string name="disable_load_more_when_repeat_all">Ikkje lad inn fleire når alt tvitekst</string>
     <string name="disable_load_more_when_repeat_all_desc">Ikkje lad sjølvverkande inn fleire songar og liknande innhald når tvitek alt-modus er påslege</string>
+    <string name="pause_music_when_media_is_muted">Pausa musikk når medium er dempa</string>
+    <!-- Romanization Settings -->
     <string name="lyrics_romanize_title">Romanisering</string>
     <string name="lyrics_romanization">Romanisering av songtekster</string>
     <string name="line_by_line_option_title">EKSPERIMENTELT: Kjenn att mål line etter line</string>
-    <string name="about_artist">Om</string>
-    <string name="show_more">Syn meir</string>
-    <string name="show_less">Syn mindre</string>
-    <string name="artist_page_settings">Artistside</string>
-    <string name="show_artist_description">Syn artistskildring</string>
-    <string name="show_artist_subscriber_count">Syn abonnementstal</string>
-    <string name="show_artist_monthly_listeners">Syn månadlege lydarar</string>
-    <string name="wavy">Snirklete</string>
-    <string name="skip_silence_desc">Hoppa fram gjennom ljodlause luter av songar</string>
-    <string name="skip_silence_instant">Hoppa over togn momentant</string>
-    <string name="skip_silence_instant_desc">Hoppa fram under togn i songen i staden for å auka avspelingsfarta</string>
-    <string name="remember_shuffle_and_repeat">Hugs blanding og tvitaking</string>
-    <string name="remember_shuffle_and_repeat_desc">Hugs blandings- og tvitakingsmodus når appen vert omstarta</string>
-    <string name="pause_music_when_media_is_muted">Pausa musikk når medium er dempa</string>
     <string name="romanize_current_track">Romaniser noverande song</string>
+    <!-- Lyrics Offset Settings -->
     <string name="lyrics_offset">Songtekstsforskuving</string>
+    <!-- Material 3 Settings Sections -->
     <string name="settings_section_ui">Grensesned</string>
     <string name="settings_section_privacy">Personvern og tryggleik</string>
     <string name="settings_section_player_content">Avspelar og innhald</string>
     <string name="settings_section_storage">Lagring og data</string>
     <string name="settings_section_system">System og opplysingar</string>
+    <!-- Updater -->
     <string name="updater">Oppdaterar</string>
     <string name="check_for_updates">Sjekka etter oppdateringar sjølvverkande</string>
     <string name="update_notifications">Slå på oppdateringsvarsel</string>
     <string name="update_available_title">Oppdatering tilgjengeleg</string>
     <string name="update_channel_name">Appoppdateringar</string>
     <string name="update_channel_desc">Varsel om nye utgåver</string>
+    <!-- Offload -->
     <string name="audio_offload">Slå på avlading</string>
     <string name="audio_offload_description">Nøyte avladingsljodstigen («offload audio path») for audioavspeling. Å slå dette av kan auka straumforbruk, men kan gagna om du opplever lyte med audioavspeling eller etterhandsaming</string>
-    <string name="google_cast">Google Cast</string>
+    <!-- Varispeed -->
+    <!-- AudioTrack Playback Parameters -->
+    <!-- Google Cast -->
     <string name="google_cast_description">Slå på det å kasta audio til Chromecast og andre Cast-kunnige einingar</string>
     <string name="integrations">Hopflettingar</string>
     <string name="username">Nøytarnamn</string>
     <string name="password">Passord</string>
+    <!-- Last.fm -->
     <string name="lastfm_integration">Hopfletting med Last.fm</string>
     <string name="enable_scrobbling">Slå på scrobbling</string>
     <string name="lastfm_now_playing">Send «Spelar no»</string>
@@ -216,10 +234,7 @@
     <string name="cache_size_warning_title">Vent no då!</string>
     <string name="cache_size_warning_message">Du har valt ei snarlagringsstorleiksgrense mindre en storleiken på snarlagringa nett no (%1$s). Dersom du held fram, kan appen taka bort somme snarlagra %2$s for å høva til den nye grensa. Hald fram likevel?</string>
     <string name="cache_size_warning_confirm">Hald fram</string>
-    <string name="lyrics_animation_style">Ord-etter-ord-animeringsstil</string>
     <string name="none">Ingen</string>
-    <string name="lyrics_text_size">Tekststorleik på songtekster</string>
-    <string name="lyrics_line_spacing">Lineavstand på songtekster</string>
     <string name="album_art_for">Albumkunst for %s</string>
     <string name="wrapped_total_albums_title">Du har høyrt på</string>
     <string name="wrapped_total_albums_subtitle">ulike album</string>
@@ -255,20 +270,19 @@
     <string name="wrapped_playlist_title">Din %s Wrapped</string>
     <string name="wrapped_create_playlist">Oppretta speleliste</string>
     <string name="wrapped_playlist_saved">Speleliste lagra</string>
+    <!-- Equalizer UI -->
     <string name="equalizer_header">Ljodutjemnar</string>
     <string name="no_profiles">Ingen ljodutjemnarprofilar</string>
     <string name="import_profile">Importer profil</string>
     <string name="system_equalizer">Systemljodutjemnar</string>
     <string name="eq_disabled">Slegen av</string>
-    <plurals name="band_count">
-        <item quantity="one">%d band</item>
-        <item quantity="other">%d band</item>
-    </plurals>
     <string name="delete_profile_desc">Tak bort profil</string>
     <string name="delete_profile_confirmation">Er du viss på at du vil taka bort «%1$s»? Dette kan ikkje angrast.</string>
     <string name="error_file_read">Klarte ikkje å lesa fil</string>
     <string name="error_file_open">Klarte ikkje å opna fil: %1$s</string>
     <string name="import_error_title">Importeringslyte</string>
+    <!-- EQ Wizard -->
+    <!-- Hardcoded strings -->
     <string name="casting_to">Kastar til %s</string>
     <string name="progress_percent">Framsteg %s %%</string>
     <string name="open">Opna</string>
@@ -277,6 +291,8 @@
     <string name="copied_artist">Kopierte artist</string>
     <string name="error_playing">Feil under avspeling</string>
     <string name="failed_to_parse_proxy">Mislukkast i å tolka mellomtenar-URL</string>
+    <!-- Playback errors -->
+    <!-- Widget strings -->
     <string name="album_art">Albumkunst</string>
     <string name="no_song_playing">Ingen song vert spela av</string>
     <string name="tap_to_open">Trykk for å opna Metrolist</string>
@@ -286,4 +302,28 @@
     <string name="like">Lika</string>
     <string name="widget_description">Musikkavspelarwidget med avspelingskontrollar</string>
     <string name="turntable_widget_description">Snartilgang til songen du spela av nylegast</string>
+    <!-- Music Recognizer Widget strings -->
+    <!-- Player Client Settings -->
+    <!-- Decryption Library Settings -->
+    <!-- Listen Together -->
+    <!-- AI Lyrics Translation -->
+    <!-- Crash Handler -->
+    <!-- Theme Palette Names -->
+    <!-- Theme Content Descriptions -->
+    <!-- Music Recognition -->
+    <!-- CSV Import Strings -->
+    <!-- Daily Discover -->
+    <!-- Logout dialog -->
+    <!-- Credits / About Screen -->
+    <!-- Podcasts -->
+    <!-- Restore confirmation dialog -->
+    <!-- Cache settings -->
+    <!-- Upload songs -->
+    <!-- Android Auto settings -->
+    <!-- Stats time transfer -->
+    <!-- Player and Audio Settings -->
+    <!-- Accessibility -->
+    <!-- Loudness Level -->
+    <!-- Stream sources -->
+    <!-- Onboarding -->
 </resources>
