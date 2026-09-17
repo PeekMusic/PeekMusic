@@ -4,6 +4,7 @@
  */
 
 package com.metrolist.music.ui.player
+import androidx.compose.foundation.layout.offset
 
 import androidx.activity.compose.BackHandler
 import android.content.ClipData
@@ -2414,6 +2415,21 @@ internal fun PlayerLyricsLine(
     }
 
     val activeLine = syncedEntries.lastOrNull { it.time <= position + offset }
+    val allBgLines = remember(entries) { entries.filter { it.isBackground && it.text.isNotBlank() } }
+    
+    val activeBgLine = allBgLines.findLast { bgLine ->
+        val currentMs = position + offset
+        if (!bgLine.words.isNullOrEmpty()) {
+            val startMs = (bgLine.words.first().startTime * 1000).toLong()
+            val endMs = (bgLine.words.last().endTime * 1000).toLong()
+            currentMs in startMs..endMs
+        } else {
+            // Fallback for unsynced adlibs (which is rare): show for 3.5 seconds
+            currentMs >= bgLine.time && currentMs <= bgLine.time + 3500
+        }
+    }
+    
+    val bgIndexInFiltered = activeBgLine?.let { allBgLines.indexOf(it) } ?: -1
     val showIntervalIndicator = true
 
     val mainLineStyle =
@@ -2570,14 +2586,18 @@ internal fun PlayerLyricsLine(
         }
     }
 
-    Column(
+    androidx.compose.foundation.layout.Box(
         modifier =
             modifier
                 .fillMaxWidth()
                 .padding(horizontal = PlayerHorizontalPadding)
                 .clickable(onClick = onShowLyrics),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        contentAlignment = Alignment.Center,
     ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
         AnimatedContent(
             targetState = Triple(currentLine.text, romanizedSub, translatedSub),
             transitionSpec = {
@@ -2641,12 +2661,11 @@ internal fun PlayerLyricsLine(
                                         isWordActive -> 0.55f + 0.45f * smoothProgress
                                         else -> 0.4f
                                     }
-                                val wordWeight =
-                                    when {
-                                        hasWordPassed -> FontWeight.Bold
-                                        isWordActive -> FontWeight.ExtraBold
-                                        else -> FontWeight.Normal
-                                    }
+                                
+                                // Verwende konsistent FontWeight.Bold für alle Wörter im Peek,
+                                // da das ständige Ändern des Gewichts sonst Zeilenumbrüche verschiebt.
+                                val wordWeight = FontWeight.Bold
+                                
                                 withStyle(
                                     SpanStyle(
                                         color = contentColor.copy(alpha = wordAlpha),
@@ -2710,8 +2729,51 @@ internal fun PlayerLyricsLine(
                 strokeWidth = 2.dp,
             )
         }
+    } // End of Column
+        
+    var lastValidBgIndex by remember { androidx.compose.runtime.mutableIntStateOf(0) }
+    if (bgIndexInFiltered >= 0) {
+        lastValidBgIndex = bgIndexInFiltered
     }
-}
+    val isLeftVariant = lastValidBgIndex % 2 == 0
+
+    androidx.compose.animation.AnimatedVisibility(
+        visible = activeBgLine != null,
+        enter = fadeIn(tween(300)) + scaleIn(initialScale = 0.8f) + slideInVertically { it / 2 },
+        exit = fadeOut(tween(300)) + scaleOut(targetScale = 0.8f) + slideOutVertically { it / 2 },
+        modifier = Modifier
+            .align(if (isLeftVariant) Alignment.TopStart else Alignment.TopEnd)
+            .offset(
+                x = if (isLeftVariant) 24.dp else (-24).dp,
+                y = (-20).dp
+            )
+            .graphicsLayer { rotationZ = if (isLeftVariant) -6f else 6f }
+    ) {
+        AnimatedContent(
+            targetState = activeBgLine,
+            transitionSpec = {
+                fadeIn(tween(200)) togetherWith fadeOut(tween(200))
+            },
+            label = "adlibText"
+        ) { bgLine ->
+            bgLine?.let {
+                Text(
+                    text = it.text,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        fontSize = 15.sp
+                    ),
+                    color = contentColor.copy(alpha = 0.7f),
+                    textAlign = if (isLeftVariant) TextAlign.Start else TextAlign.End,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+    }
+} // End of Box
+} // End of function
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
