@@ -6,6 +6,7 @@
 @file:Suppress("DEPRECATION")
 
 package com.metrolist.music.playback
+import androidx.datastore.preferences.core.edit
 
 import android.app.ForegroundServiceStartNotAllowedException
 import android.app.Notification
@@ -799,19 +800,34 @@ class MusicService :
         ) { mediaMetadata, showLyrics ->
             mediaMetadata to showLyrics
         }.collectLatest(scope) { (mediaMetadata, showLyrics) ->
-            if (showLyrics && mediaMetadata != null && database
+            val peekWidgetIds = android.appwidget.AppWidgetManager.getInstance(this@MusicService)
+                .getAppWidgetIds(android.content.ComponentName(this@MusicService, com.metrolist.music.widget.PeekWidgetReceiver::class.java))
+            val shouldFetch = showLyrics || peekWidgetIds.isNotEmpty()
+
+            if (shouldFetch && mediaMetadata != null && database
                     .lyrics(mediaMetadata.id)
                     .first() == null
             ) {
-                val lyricsWithProvider = lyricsHelper.getLyrics(mediaMetadata)
-                database.query {
-                    upsert(
-                        LyricsEntity(
-                            id = mediaMetadata.id,
-                            lyrics = lyricsWithProvider.lyrics,
-                            provider = lyricsWithProvider.provider,
-                        ),
-                    )
+                try {
+                    isLyricsSearching = true
+                    withContext(Dispatchers.Main) {
+                        updateWidgetUI(player.isPlaying)
+                    }
+                    val lyricsWithProvider = lyricsHelper.getLyrics(mediaMetadata)
+                    database.query {
+                        upsert(
+                            LyricsEntity(
+                                id = mediaMetadata.id,
+                                lyrics = lyricsWithProvider.lyrics,
+                                provider = lyricsWithProvider.provider,
+                            ),
+                        )
+                    }
+                } finally {
+                    isLyricsSearching = false
+                    withContext(Dispatchers.Main) {
+                        updateWidgetUI(player.isPlaying)
+                    }
                 }
             }
         }
@@ -3981,7 +3997,8 @@ class MusicService :
                 handleAlarmTrigger(intent)
             }
 
-            MusicWidgetReceiver.ACTION_PLAY_PAUSE -> {
+            MusicWidgetReceiver.ACTION_PLAY_PAUSE,
+            com.metrolist.music.widget.PeekWidgetReceiver.ACTION_PLAY_PAUSE -> {
                 if (player.isPlaying) player.pause() else player.play()
                 updateWidgetUI(player.isPlaying)
             }
@@ -3990,17 +4007,73 @@ class MusicService :
                 toggleLike()
             }
 
-            MusicWidgetReceiver.ACTION_NEXT -> {
+            MusicWidgetReceiver.ACTION_NEXT,
+            com.metrolist.music.widget.PeekWidgetReceiver.ACTION_NEXT -> {
                 player.seekToNext()
                 updateWidgetUI(player.isPlaying)
             }
 
-            MusicWidgetReceiver.ACTION_PREVIOUS -> {
+            MusicWidgetReceiver.ACTION_PREVIOUS,
+            com.metrolist.music.widget.PeekWidgetReceiver.ACTION_PREVIOUS -> {
                 player.seekToPrevious()
                 updateWidgetUI(player.isPlaying)
             }
 
+            com.metrolist.music.widget.PeekWidgetReceiver.ACTION_REFETCH_LYRICS -> {
+                val mediaMetadata = currentMediaMetadata.value
+                if (mediaMetadata != null) {
+                    scope.launch(Dispatchers.IO) {
+                        try {
+                            isLyricsSearching = true
+                            withContext(Dispatchers.Main) {
+                                updateWidgetUI(player.isPlaying)
+                            }
+                            val lyricsWithProvider = lyricsHelper.getLyrics(mediaMetadata)
+                            database.query {
+                                upsert(
+                                    LyricsEntity(
+                                        id = mediaMetadata.id,
+                                        lyrics = lyricsWithProvider.lyrics,
+                                        provider = lyricsWithProvider.provider,
+                                    ),
+                                )
+                            }
+                        } finally {
+                            isLyricsSearching = false
+                            withContext(Dispatchers.Main) {
+                                updateWidgetUI(player.isPlaying)
+                            }
+                        }
+                    }
+                }
+            }
+
+            com.metrolist.music.widget.PeekWidgetReceiver.ACTION_TOGGLE_TRANSLATION -> {
+                val mediaMetadata = currentMediaMetadata.value
+                if (mediaMetadata != null) {
+                    scope.launch {
+                        val lyricsEntity = database.lyrics(mediaMetadata.id).first()
+                        val lyricsText = lyricsEntity?.lyrics?.trim()
+                        if (!lyricsText.isNullOrEmpty() && lyricsText != com.metrolist.music.db.entities.LyricsEntity.LYRICS_NOT_FOUND) {
+                            val entries = com.metrolist.music.lyrics.LyricsUtils.parseLyrics(lyricsText)
+                            val prefs = dataStore.data.first()
+                            val translateLanguage = prefs[com.metrolist.music.constants.TranslateLanguageKey] ?: "en"
+                            com.metrolist.music.lyrics.LyricsTranslationHelper.translateLyrics(
+                                lyrics = entries,
+                                targetLanguage = translateLanguage,
+                                mode = "Literal",
+                                scope = scope,
+                                context = this@MusicService,
+                                songId = mediaMetadata.id,
+                                database = database,
+                            )
+                        }
+                    }
+                }
+            }
+
             MusicWidgetReceiver.ACTION_UPDATE_WIDGET,
+            com.metrolist.music.widget.PeekWidgetReceiver.ACTION_UPDATE_WIDGET,
             PlaylistWidgetReceiver.ACTION_UPDATE_WIDGET -> {
                 updateWidgetUI(player.isPlaying)
             }
@@ -4258,6 +4331,7 @@ class MusicService :
     // next 1s refresh tick fixes — not a critical counter.
     @Volatile
     private var widgetUpdateInFlight = false
+    @Volatile private var isLyricsSearching = false
 
     @Volatile
     private var pendingWidgetUpdate: WidgetUpdate? = null
@@ -4290,6 +4364,98 @@ class MusicService :
                     val songTitle = song?.title ?: getString(R.string.no_song_playing)
                     val artistName = songData?.artists?.joinToArtistString(getArtistSeparator(this@MusicService)) { it.name } ?: getString(R.string.tap_to_open)
                     val resolvedIsLiked = update.isLiked == true
+                    var currentLyricsLine: String? = null
+                    var romanizedLine: String? = null
+                    var translatedLine: String? = null
+                    var isLyricsNotFound = false
+                    var hasTranslation = false
+                    var isLyricsSearching = this@MusicService.isLyricsSearching
+                    var instrumentalProgress: Int? = null
+
+                    val songId = song?.id
+                    if (songId != null) {
+                        try {
+                            val lyricsEntity = database.lyrics(songId).first()
+                            val lyricsText = lyricsEntity?.lyrics?.trim()
+                            
+                            if (lyricsText == LyricsEntity.LYRICS_NOT_FOUND) {
+                                isLyricsNotFound = true
+                            } else if (!lyricsText.isNullOrEmpty()) {
+                                val entries = com.metrolist.music.lyrics.LyricsUtils.parseLyrics(lyricsText)
+                                val syncedEntries = entries.filter { !it.isBackground && it.time > 0 && it.text.isNotBlank() }
+                                
+                                if (syncedEntries.isNotEmpty()) {
+                                    val offset = song.lyricsOffset?.toLong() ?: 0L
+                                    val effectivePosition = update.currentPosition + offset
+                                    
+                                    val activeEntry = syncedEntries.lastOrNull { effectivePosition >= it.time }
+                                    
+                                    val gapStart = if (activeEntry == null) 0L else {
+                                        activeEntry.words?.lastOrNull()?.let { (it.endTime * 1000).toLong() }
+                                            ?: if (activeEntry.text.isBlank()) activeEntry.time else null
+                                    }
+                                    val nextEntry = if (activeEntry == null) syncedEntries.firstOrNull() else syncedEntries.getOrNull(syncedEntries.indexOf(activeEntry) + 1)
+                                    
+                                    if (nextEntry != null && gapStart != null && nextEntry.time - gapStart > 4000L && effectivePosition >= gapStart) {
+                                        val dur = nextEntry.time - gapStart
+                                        val elapsed = effectivePosition - gapStart
+                                        if (dur > 0) {
+                                            instrumentalProgress = ((elapsed.toFloat() / dur.toFloat()) * 10000).toInt().coerceIn(0, 10000)
+                                        }
+                                    }
+
+                                    if (activeEntry != null) {
+                                        currentLyricsLine = activeEntry.text
+                                        
+                                        // Romanization/Translation
+                                        val prefs = dataStore.data.first()
+                                        
+                                        val showRomanization = prefs[com.metrolist.music.constants.PeekShowRomanizationKey] ?: false
+                                        if (showRomanization && song.romanizeLyrics == true) {
+                                            val langsStr = prefs[com.metrolist.music.constants.LyricsRomanizeList]
+                                            val langs = if (langsStr.isNullOrEmpty()) {
+                                                listOf("Japanese", "Korean", "Chinese", "Hindi", "Punjabi", "Russian", "Ukrainian", "Serbian", "Bulgarian", "Belarusian", "Kyrgyz", "Macedonian")
+                                            } else {
+                                                langsStr.split(",")
+                                                    .mapNotNull { entry ->
+                                                        val parts = entry.split(":")
+                                                        if (parts.size == 2 && parts[1].toBoolean()) parts[0] else null
+                                                    }
+                                            }
+                                            
+                                            val cyrillicByLine = prefs[com.metrolist.music.constants.LyricsRomanizeCyrillicByLineKey] ?: false
+                                            if (langs.isNotEmpty()) {
+                                                val rom = com.metrolist.music.lyrics.LyricsUtils.romanize(
+                                                    text = lyricsText,
+                                                    line = activeEntry.text,
+                                                    enabledLanguages = langs,
+                                                    romanizeCyrillicByLine = cyrillicByLine
+                                                )
+                                                if (!rom.isNullOrBlank() && !com.metrolist.music.lyrics.LyricsUtils.isSameLyricsLine(rom, activeEntry.text)) {
+                                                    romanizedLine = rom
+                                                }
+                                            }
+                                        }
+                                        
+                                        val showTranslation = prefs[com.metrolist.music.constants.PeekShowTranslationKey] ?: false
+                                        if (!lyricsEntity?.translatedLyrics.isNullOrEmpty()) {
+                                            hasTranslation = true
+                                        }
+                                        if (showTranslation && !lyricsEntity?.translatedLyrics.isNullOrEmpty()) {
+                                            val nonBlankEntries = entries.filter { it.text.isNotBlank() }
+                                            val index = nonBlankEntries.indexOf(activeEntry)
+                                            val translated = lyricsEntity?.translatedLyrics?.split("\n")?.getOrNull(index)
+                                            if (!translated.isNullOrBlank() && !com.metrolist.music.lyrics.LyricsUtils.isSameLyricsLine(translated, activeEntry.text)) {
+                                                translatedLine = translated
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            // Ignore DB errors during widget update
+                        }
+                    }
 
                     widgetManager.updateWidgets(
                         title = songTitle,
@@ -4299,6 +4465,13 @@ class MusicService :
                         isLiked = resolvedIsLiked,
                         duration = update.duration,
                         currentPosition = update.currentPosition,
+                        currentLyricsLine = currentLyricsLine,
+                        romanizedLine = romanizedLine,
+                        translatedLine = translatedLine,
+                        isLyricsNotFound = isLyricsNotFound,
+                        hasTranslation = hasTranslation,
+                        isLyricsSearching = isLyricsSearching,
+                        instrumentalProgress = instrumentalProgress
                     )
                 }
             } catch (e: Exception) {
@@ -4321,7 +4494,7 @@ class MusicService :
                     // The widget shows a coarse progress bar, so 1s granularity is
                     // indistinguishable from 200ms — and saves four AppWidgetManager
                     // binder round-trips per second.
-                    delay(1_000)
+                    delay(500)
                 }
             }
     }

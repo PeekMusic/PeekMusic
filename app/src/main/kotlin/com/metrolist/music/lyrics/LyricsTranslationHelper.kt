@@ -264,7 +264,7 @@ object LyricsTranslationHelper {
                         }
 
                         delay(3000)
-                        if (_status.value is TranslationStatus.Success && isCompositionActive) {
+                        if (_status.value is TranslationStatus.Success ) {
                             _status.value = TranslationStatus.Idle
                         }
                         return@launch
@@ -275,9 +275,6 @@ object LyricsTranslationHelper {
                             text = fullText,
                             targetLanguage = targetLanguage,
                         ).onSuccess { translatedLines ->
-                            if (!isCompositionActive) {
-                                return@onSuccess
-                            }
 
                             // Map translations back to original non-empty entries (null when
                             // Google returned fewer lines than sent)
@@ -324,14 +321,11 @@ object LyricsTranslationHelper {
 
                             // Auto-hide success message after 3 seconds
                             delay(3000)
-                            if (_status.value is TranslationStatus.Success && isCompositionActive) {
+                            if (_status.value is TranslationStatus.Success ) {
                                 _status.value = TranslationStatus.Idle
                             }
                         }
                         .onFailure { error ->
-                            if (!isCompositionActive) {
-                                return@onFailure
-                            }
 
                             val httpError = error as? GoogleTranslateService.TranslationHttpException
                             val errorMessage = when {
@@ -351,15 +345,13 @@ object LyricsTranslationHelper {
                             // Show error in UI, auto-hide after a few seconds
                             _status.value = TranslationStatus.Error(errorMessage)
                             delay(5000)
-                            if ((_status.value as? TranslationStatus.Error)?.message == errorMessage &&
-                                isCompositionActive
-                            ) {
+                            if ((_status.value as? TranslationStatus.Error)?.message == errorMessage) {
                                 _status.value = TranslationStatus.Idle
                             }
                         }
                 } catch (e: Exception) {
                     // Ignore cancellation exceptions or if composition is no longer active
-                    if (e !is kotlinx.coroutines.CancellationException && isCompositionActive) {
+                    if (e !is kotlinx.coroutines.CancellationException ) {
                         val errorMessage = e.message ?: context.getString(com.metrolist.music.R.string.ai_error_translation_failed)
                         _status.value = TranslationStatus.Error(errorMessage)
                     }

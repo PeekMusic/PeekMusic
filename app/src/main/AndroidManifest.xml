@@ -288,6 +288,23 @@
                 android:resource="@xml/music_widget_info" />
         </receiver>
 
+        <receiver
+            android:name=".widget.PeekWidgetReceiver"
+            android:exported="true"
+            android:label="PeekMusic Peek">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.metrolist.music.widget.PLAY_PAUSE" />
+                <action android:name="com.metrolist.music.widget.NEXT" />
+                <action android:name="com.metrolist.music.widget.PREVIOUS" />
+                <action android:name="com.metrolist.music.widget.UPDATE_WIDGET" />
+                <action android:name="com.metrolist.music.widget.REFETCH_LYRICS" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/peek_widget_info" />
+        </receiver>
+
 
         <!-- Playlist Widget -->
         <receiver

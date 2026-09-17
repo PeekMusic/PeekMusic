@@ -63,7 +63,14 @@ class MetrolistWidgetManager @Inject constructor(
         isPlaying: Boolean,
         isLiked: Boolean,
         duration: Long = 0,
-        currentPosition: Long = 0
+        currentPosition: Long = 0,
+        currentLyricsLine: String? = null,
+        romanizedLine: String? = null,
+        translatedLine: String? = null,
+        isLyricsNotFound: Boolean = false,
+        isLyricsSearching: Boolean,
+        instrumentalProgress: Int? = null,
+        hasTranslation: Boolean = false
     ) {
         renderMutex.withLock {
             val appWidgetManager = AppWidgetManager.getInstance(context)
@@ -72,13 +79,15 @@ class MetrolistWidgetManager @Inject constructor(
             val widgetIds = appWidgetManager.getAppWidgetIds(componentName)
             val turntableComponentName = ComponentName(context, TurntableWidgetReceiver::class.java)
             val turntableWidgetIds = appWidgetManager.getAppWidgetIds(turntableComponentName)
+            val peekComponentName = ComponentName(context, PeekWidgetReceiver::class.java)
+            val peekWidgetIds = appWidgetManager.getAppWidgetIds(peekComponentName)
 
             // Nothing on the home screen — skip artwork decoding and binder traffic.
             // The refresh loop runs for the whole playback session, so this is the
             // common case. The playlist widget manager below is still called: it has
             // its own empty-IDs guard and keeps its lastWidgetState cache current
             // for playlist widgets added mid-playback.
-            if (widgetIds.isNotEmpty() || turntableWidgetIds.isNotEmpty()) {
+            if (widgetIds.isNotEmpty() || turntableWidgetIds.isNotEmpty() || peekWidgetIds.isNotEmpty()) {
                 // Use cached album art if URI hasn't changed, otherwise load new one
                 val albumArt: Bitmap?
                 val circularAlbumArt: Bitmap?
@@ -120,6 +129,25 @@ class MetrolistWidgetManager @Inject constructor(
                     )
                     turntableWidgetIds.forEach { widgetId ->
                         appWidgetManager.updateAppWidget(widgetId, turntableViews)
+                    }
+                }
+
+                if (peekWidgetIds.isNotEmpty()) {
+                    val peekViews = createPeekRemoteViews(
+                        title = title,
+                        artist = artist,
+                        albumArt = albumArt,
+                        isPlaying = isPlaying,
+                        currentLyricsLine = currentLyricsLine,
+                        romanizedLine = romanizedLine,
+                        translatedLine = translatedLine,
+                        isLyricsNotFound = isLyricsNotFound,
+                        isLyricsSearching = isLyricsSearching,
+                        instrumentalProgress = instrumentalProgress,
+                        hasTranslation = hasTranslation
+                    )
+                    peekWidgetIds.forEach { widgetId ->
+                        appWidgetManager.updateAppWidget(widgetId, peekViews)
                     }
                 }
             }
@@ -486,4 +514,102 @@ class MetrolistWidgetManager @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
+
+    private fun createPeekRemoteViews(
+        title: String,
+        artist: String,
+        albumArt: android.graphics.Bitmap?,
+        isPlaying: Boolean,
+        currentLyricsLine: String?,
+        romanizedLine: String?,
+        translatedLine: String?,
+        isLyricsNotFound: Boolean,
+        isLyricsSearching: Boolean,
+        instrumentalProgress: Int?,
+        hasTranslation: Boolean
+    ): RemoteViews {
+        val views = RemoteViews(context.packageName, R.layout.widget_peek)
+
+        views.setTextViewText(R.id.widget_song_title, title)
+        views.setTextViewText(R.id.widget_artist_name, artist)
+        
+        if (albumArt != null) {
+            views.setImageViewBitmap(R.id.widget_album_art, albumArt)
+        } else {
+            views.setImageViewResource(R.id.widget_album_art, R.mipmap.ic_launcher)
+        }
+        
+        val playPauseIcon = if (isPlaying) R.drawable.ic_widget_pause else R.drawable.ic_widget_play
+        views.setImageViewResource(R.id.widget_play_pause, playPauseIcon)
+        
+        if (isLyricsNotFound || isLyricsSearching) {
+            views.setViewVisibility(R.id.widget_peek_main_line, android.view.View.GONE)
+            views.setViewVisibility(R.id.widget_peek_sub_line, android.view.View.GONE)
+            views.setViewVisibility(R.id.widget_peek_translation_line, android.view.View.GONE)
+            views.setViewVisibility(R.id.widget_peek_instrumental_progress_container, android.view.View.GONE)
+            views.setViewVisibility(R.id.widget_peek_not_found_container, android.view.View.VISIBLE)
+            views.setTextViewText(R.id.widget_peek_not_found_text, if (isLyricsSearching) context.getString(R.string.widget_searching) else context.getString(R.string.lyrics_not_found))
+        } else {
+            views.setViewVisibility(R.id.widget_peek_not_found_container, android.view.View.GONE)
+            
+            if (instrumentalProgress != null) {
+                // Show instrumental progress bar, hide text
+                views.setViewVisibility(R.id.widget_peek_main_line, android.view.View.GONE)
+                views.setViewVisibility(R.id.widget_peek_sub_line, android.view.View.GONE)
+                views.setViewVisibility(R.id.widget_peek_translation_line, android.view.View.GONE)
+                
+                views.setViewVisibility(R.id.widget_peek_instrumental_progress_container, android.view.View.VISIBLE)
+                views.setInt(R.id.widget_peek_instrumental_fill, "setImageLevel", instrumentalProgress)
+            } else {
+                views.setViewVisibility(R.id.widget_peek_instrumental_progress_container, android.view.View.GONE)
+                
+                views.setViewVisibility(R.id.widget_peek_main_line, android.view.View.VISIBLE)
+                views.setTextViewText(R.id.widget_peek_main_line, currentLyricsLine ?: "")
+                
+                val isMainOnly = romanizedLine.isNullOrEmpty() && translatedLine.isNullOrEmpty()
+                val mainTextSize = if (isMainOnly) 28f else 22f
+                views.setTextViewTextSize(R.id.widget_peek_main_line, android.util.TypedValue.COMPLEX_UNIT_SP, mainTextSize)
+                
+                if (!romanizedLine.isNullOrEmpty()) {
+                    views.setViewVisibility(R.id.widget_peek_sub_line, android.view.View.VISIBLE)
+                    views.setTextViewText(R.id.widget_peek_sub_line, romanizedLine)
+                } else {
+                    views.setViewVisibility(R.id.widget_peek_sub_line, android.view.View.GONE)
+                }
+                
+                if (!translatedLine.isNullOrEmpty()) {
+                    views.setViewVisibility(R.id.widget_peek_translation_line, android.view.View.VISIBLE)
+                    views.setTextViewText(R.id.widget_peek_translation_line, translatedLine)
+                } else {
+                    views.setViewVisibility(R.id.widget_peek_translation_line, android.view.View.GONE)
+                }
+            }
+        }
+        
+        if (hasTranslation) {
+            views.setViewVisibility(R.id.widget_peek_toggle_translation_container, android.view.View.GONE)
+        } else {
+            views.setViewVisibility(R.id.widget_peek_toggle_translation_container, android.view.View.VISIBLE)
+        }
+        
+        views.setOnClickPendingIntent(R.id.widget_album_art, getOpenAppIntent())
+        views.setOnClickPendingIntent(R.id.widget_text_container, getOpenAppIntent())
+        val playPauseIntent = Intent(context, MusicWidgetReceiver::class.java).apply { action = MusicWidgetReceiver.ACTION_PLAY_PAUSE }
+        views.setOnClickPendingIntent(R.id.widget_play_pause_container, PendingIntent.getBroadcast(context, 0, playPauseIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+
+        val prevIntent = Intent(context, MusicWidgetReceiver::class.java).apply { action = MusicWidgetReceiver.ACTION_PREVIOUS }
+        views.setOnClickPendingIntent(R.id.widget_skip_previous, PendingIntent.getBroadcast(context, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+
+        val nextIntent = Intent(context, MusicWidgetReceiver::class.java).apply { action = MusicWidgetReceiver.ACTION_NEXT }
+        views.setOnClickPendingIntent(R.id.widget_skip_next, PendingIntent.getBroadcast(context, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+
+        val refetchIntent = Intent(context, PeekWidgetReceiver::class.java).apply { action = PeekWidgetReceiver.ACTION_REFETCH_LYRICS }
+        views.setOnClickPendingIntent(R.id.widget_peek_not_found_container, PendingIntent.getBroadcast(context, 0, refetchIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+
+        val toggleTranslationIntent = Intent(context, PeekWidgetReceiver::class.java).apply { action = PeekWidgetReceiver.ACTION_TOGGLE_TRANSLATION }
+        views.setOnClickPendingIntent(R.id.widget_peek_toggle_translation_container, PendingIntent.getBroadcast(context, 0, toggleTranslationIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+
+        return views
+    }
 }
+

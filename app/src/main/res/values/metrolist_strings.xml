@@ -567,13 +567,13 @@
     <!-- Widget strings -->
     <string name="album_art">Album art</string>
     <string name="no_song_playing">No song playing</string>
-    <string name="tap_to_open">Tap to open Metrolist</string>
+    <string name="tap_to_open">Tap to open PeekMusic</string>
     <string name="previous">Previous</string>
     <string name="play_pause">Play/Pause</string>
     <string name="next">Next</string>
     <string name="like">Like</string>
     <string name="not_playing">No song playing</string>
-    <string name="tap_to_play">Tap to open Metrolist</string>
+    <string name="tap_to_play">Tap to open PeekMusic</string>
     <string name="widget_description">Music player widget with playback controls</string>
     <string name="turntable_widget_description">Circular music widget with play and like controls</string>
     <string name="widget_music_player">Music Player</string>
@@ -1140,4 +1140,5 @@
     <string name="onboarding_finish_button">Finish</string>
     <string name="onboarding_check_for_updates">Check for updates</string>
     <string name="onboarding_check_for_updates_desc">Get notified when a new PeekMusic release is available</string>
+    <string name="widget_searching">Searching...</string>
 </resources>
