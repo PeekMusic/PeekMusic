@@ -907,7 +907,13 @@ object LyricsUtils {
             }
             katakanaToRomaji(currentReading, nextTokenReading)
         }
-        romanizedTokens.joinToString("")
+        romanizedTokens
+            .filter { it.isNotBlank() }
+            .joinToString(" ")
+            .replace("\\s+([.,!?。、！？」』\\)\\]])".toRegex(), "$1")
+            .replace("([「『\\(\\[])\\s+".toRegex(), "$1")
+            .replace("\\s+".toRegex(), " ")
+            .trim()
     }
 
     fun katakanaToRomaji(katakana: String?, nextKatakana: String? = null): String {
