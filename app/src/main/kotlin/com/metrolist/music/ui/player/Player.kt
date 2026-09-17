@@ -2599,37 +2599,38 @@ internal fun PlayerLyricsLine(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
         AnimatedContent(
-            targetState = Triple(currentLine.text, romanizedSub, translatedSub),
+            targetState = Triple(currentLine, romanizedSub, translatedSub),
             transitionSpec = {
-                when (lyricsAnimationStyle) {
+                val transition = when (lyricsAnimationStyle) {
                     LyricsAnimationStyle.NONE ->
                         EnterTransition.None togetherWith ExitTransition.None
 
                     LyricsAnimationStyle.FADE ->
-                        fadeIn(tween(durationMillis = 200)) togetherWith fadeOut(tween(durationMillis = 200))
+                        fadeIn(tween(durationMillis = 300)) togetherWith fadeOut(tween(durationMillis = 300))
 
                     LyricsAnimationStyle.SLIDE ->
                         (
-                            slideInVertically(tween(durationMillis = 200)) { it / 3 } +
-                                fadeIn(tween(durationMillis = 200))
+                            slideInVertically(tween(durationMillis = 300)) { it / 3 } +
+                                fadeIn(tween(durationMillis = 300))
                         ) togetherWith (
-                            slideOutVertically(tween(durationMillis = 200)) { -it / 3 } +
-                                fadeOut(tween(durationMillis = 200))
+                            slideOutVertically(tween(durationMillis = 300)) { -it / 3 } +
+                                fadeOut(tween(durationMillis = 300))
                         )
 
                     else ->
                         (
-                            fadeIn(tween(durationMillis = 200)) +
-                                scaleIn(initialScale = 0.92f, animationSpec = tween(durationMillis = 200))
+                            slideInVertically(tween(durationMillis = 400, easing = androidx.compose.animation.core.LinearOutSlowInEasing)) { it / 2 } +
+                                fadeIn(tween(durationMillis = 400, easing = androidx.compose.animation.core.LinearOutSlowInEasing))
                         ) togetherWith (
-                            fadeOut(tween(durationMillis = 150)) +
-                                scaleOut(targetScale = 0.95f, animationSpec = tween(durationMillis = 150))
+                            slideOutVertically(tween(durationMillis = 400, easing = androidx.compose.animation.core.FastOutLinearInEasing)) { -it / 2 } +
+                                fadeOut(tween(durationMillis = 300))
                         )
                 }
+                transition.using(androidx.compose.animation.SizeTransform(clip = false))
             },
             label = "playerLyricsLine",
         ) { target ->
-            val line = target.first
+            val line = target.first.text
             val romanized = target.second
             val translated = target.third
             Column(
@@ -2641,7 +2642,7 @@ internal fun PlayerLyricsLine(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        val words = currentLine.words.orEmpty()
+                        val words = target.first.words.orEmpty()
                         words.forEachIndexed { index, word ->
                             val wordStartMs = (word.startTime * 1000).toLong()
                             val wordEndMs = (word.endTime * 1000).toLong()
