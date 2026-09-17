@@ -2637,56 +2637,92 @@ internal fun PlayerLyricsLine(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 if (wordSyncActive) {
-                    val styledText =
-                        buildAnnotatedString {
-                            val words = currentLine.words.orEmpty()
-                            words.forEachIndexed { index, word ->
-                                val wordStartMs = (word.startTime * 1000).toLong()
-                                val wordEndMs = (word.endTime * 1000).toLong()
-                                val wordDuration = wordEndMs - wordStartMs
-                                val isWordActive = position + offset >= wordStartMs && position + offset < wordEndMs
-                                val hasWordPassed = position + offset >= wordEndMs
-                                val progress =
-                                    if (isWordActive && wordDuration > 0) {
-                                        (position + offset - wordStartMs).toFloat() / wordDuration
-                                    } else if (hasWordPassed) {
-                                        1f
-                                    } else {
-                                        0f
-                                    }.coerceIn(0f, 1f)
-                                val smoothProgress = progress * progress * (3f - 2f * progress)
-                                val wordAlpha =
-                                    when {
-                                        hasWordPassed -> 1f
-                                        isWordActive -> 0.55f + 0.45f * smoothProgress
-                                        else -> 0.4f
-                                    }
-                                
-                                // Verwende konsistent FontWeight.Bold für alle Wörter im Peek,
-                                // da das ständige Ändern des Gewichts sonst Zeilenumbrüche verschiebt.
-                                val wordWeight = FontWeight.Bold
-                                
-                                withStyle(
-                                    SpanStyle(
-                                        color = contentColor.copy(alpha = wordAlpha),
-                                        fontWeight = wordWeight,
-                                    ),
-                                ) {
-                                    append(word.text)
-                                    // Always separate words with a space so wrapping only
-                                    // happens at word boundaries (some providers omit them)
-                                    if (index < words.size - 1) append(" ")
+                    androidx.compose.foundation.layout.FlowRow(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        val words = currentLine.words.orEmpty()
+                        words.forEachIndexed { index, word ->
+                            val wordStartMs = (word.startTime * 1000).toLong()
+                            val wordEndMs = (word.endTime * 1000).toLong()
+                            val wordDuration = wordEndMs - wordStartMs
+                            val isWordActive = position + offset >= wordStartMs && position + offset < wordEndMs
+                            val hasWordPassed = position + offset >= wordEndMs
+                            
+                            val timeElapsed = position + offset - wordStartMs
+                            val linearProgress = if (wordDuration > 0) {
+                                (timeElapsed.toFloat() / wordDuration.toFloat()).coerceIn(0f, 1f)
+                            } else {
+                                if (hasWordPassed) 1f else 0f
+                            }
+                            
+                            val fillProgress = linearProgress * linearProgress * (3f - 2f * linearProgress)
+                            val wordBrush = if (isWordActive) {
+                                androidx.compose.ui.graphics.Brush.horizontalGradient(
+                                    0.0f to contentColor,
+                                    fillProgress to contentColor,
+                                    (fillProgress + 0.1f).coerceIn(0f, 1f) to contentColor.copy(alpha = 0.4f),
+                                    1.0f to contentColor.copy(alpha = 0.4f),
+                                )
+                            } else null
+                            
+                            val glowAlpha: Float
+                            val glowRadius: Float
+                            if (isWordActive) {
+                                val eased = fillProgress * fillProgress * (3f - 2f * fillProgress)
+                                glowAlpha = 0.1f + (0.25f * eased)
+                                glowRadius = 4f + (8f * eased)
+                            } else if (hasWordPassed) {
+                                val timeSincePassed = position + offset - wordEndMs
+                                if (timeSincePassed < 400) {
+                                    val fadeOut = 1f - (timeSincePassed / 400f).coerceIn(0f, 1f)
+                                    val eased = fadeOut * fadeOut * (3f - 2f * fadeOut)
+                                    glowAlpha = 0.35f * eased
+                                    glowRadius = 12f * eased
+                                } else {
+                                    glowAlpha = 0f
+                                    glowRadius = 0f
                                 }
+                            } else {
+                                glowAlpha = 0f
+                                glowRadius = 0f
+                            }
+                            
+                            val wordShadow = if (glowAlpha > 0f) {
+                                androidx.compose.ui.graphics.Shadow(
+                                    color = contentColor.copy(alpha = glowAlpha),
+                                    offset = androidx.compose.ui.geometry.Offset.Zero,
+                                    blurRadius = glowRadius
+                                )
+                            } else null
+                            
+                            val wordTextWithSpace = word.text + if (index < words.size - 1) " " else ""
+                            
+                            if (wordBrush != null) {
+                                Text(
+                                    text = wordTextWithSpace,
+                                    style = mainLineStyle.copy(
+                                        brush = wordBrush,
+                                        fontWeight = FontWeight.Bold,
+                                        shadow = wordShadow
+                                    )
+                                )
+                            } else {
+                                val wordAlpha = when {
+                                    hasWordPassed -> 1f
+                                    else -> 0.4f
+                                }
+                                Text(
+                                    text = wordTextWithSpace,
+                                    style = mainLineStyle.copy(
+                                        color = contentColor.copy(alpha = wordAlpha),
+                                        fontWeight = FontWeight.Bold,
+                                        shadow = wordShadow
+                                    )
+                                )
                             }
                         }
-                    Text(
-                        text = styledText,
-                        style = mainLineStyle,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                    }
                 } else {
                     Text(
                         text = line,
