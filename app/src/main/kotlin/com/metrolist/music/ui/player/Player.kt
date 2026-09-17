@@ -29,6 +29,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
@@ -234,6 +236,7 @@ fun BottomSheetPlayer(
     pureBlack: Boolean,
 ) {
     val context = LocalContext.current
+    val database = com.metrolist.music.LocalDatabase.current
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val menuState = LocalMenuState.current
     val sleepTimerDefaultSetTemplate = stringResource(R.string.sleep_timer_default_set)
@@ -257,6 +260,8 @@ fun BottomSheetPlayer(
     var isFullScreen by rememberSaveable {
         mutableStateOf(false)
     }
+
+    val (peekShowTranslation, onPeekShowTranslation) = rememberPreference(PeekShowTranslationKey, false)
 
     val playerBackground by rememberEnumPreference(
         key = PlayerBackgroundStyleKey,
@@ -344,6 +349,7 @@ fun BottomSheetPlayer(
     val playbackState by playerConnection.playbackState.collectAsState()
     val mediaMetadata by playerConnection.mediaMetadata.collectAsState()
     val currentSong by playerConnection.currentSong.collectAsStateWithLifecycle(initialValue = null)
+    val currentLyrics by playerConnection.currentLyrics.collectAsStateWithLifecycle(initialValue = null)
     val automix by playerConnection.service.automixItems.collectAsStateWithLifecycle()
     val repeatMode by playerConnection.repeatMode.collectAsStateWithLifecycle()
     val canSkipPrevious by playerConnection.canSkipPrevious.collectAsStateWithLifecycle()
@@ -1156,11 +1162,48 @@ fun BottomSheetPlayer(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
+                        val hasActiveTranslations by com.metrolist.music.lyrics.LyricsTranslationHelper.hasActiveTranslations.collectAsStateWithLifecycle()
+                        val isTranslationVisible = peekShowTranslation || showInlineLyrics
+
+                        AnimatedVisibility(
+                            visible = isTranslationVisible,
+                            enter = fadeIn() + expandHorizontally(),
+                            exit = fadeOut() + shrinkHorizontally(),
+                        ) {
+                            FilledIconButton(
+                                onClick = {
+                                    if (hasActiveTranslations) {
+                                        currentLyrics?.let { lyrics ->
+                                            val clearedLyrics = com.metrolist.music.lyrics.LyricsTranslationHelper.clearTranslations(lyrics)
+                                            database.query {
+                                                upsert(clearedLyrics)
+                                            }
+                                            com.metrolist.music.lyrics.LyricsTranslationHelper.triggerClearTranslations()
+                                        }
+                                    } else {
+                                        com.metrolist.music.lyrics.LyricsTranslationHelper.triggerManualTranslation()
+                                    }
+                                },
+                                shape = shareShape,
+                                colors = IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = if (hasActiveTranslations) textButtonColor else iconButtonColor,
+                                    contentColor = if (hasActiveTranslations) iconButtonColor else textButtonColor,
+                                ),
+                                modifier = Modifier.size(42.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.translate),
+                                    contentDescription = stringResource(R.string.player_lyrics_peek_translate),
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            }
+                        }
+                        
                         AnimatedContent(targetState = showInlineLyrics, label = "ShareButton") { showLyrics ->
                             if (showLyrics) {
                                 FilledIconButton(
                                     onClick = { isFullScreen = !isFullScreen },
-                                    shape = shareShape,
+                                    shape = if (isTranslationVisible) middleShape else shareShape,
                                     colors =
                                         IconButtonDefaults.filledIconButtonColors(
                                             containerColor = textButtonColor,
@@ -1188,7 +1231,7 @@ fun BottomSheetPlayer(
                                             }
                                         context.startActivity(Intent.createChooser(intent, null))
                                     },
-                                    shape = shareShape,
+                                    shape = if (isTranslationVisible) middleShape else shareShape,
                                     colors =
                                         IconButtonDefaults.filledIconButtonColors(
                                             containerColor = textButtonColor,
@@ -1271,6 +1314,47 @@ fun BottomSheetPlayer(
                         }
                     }
                 } else {
+                    val hasActiveTranslations by com.metrolist.music.lyrics.LyricsTranslationHelper.hasActiveTranslations.collectAsStateWithLifecycle()
+                    val isTranslationVisible = peekShowTranslation || showInlineLyrics
+
+                    AnimatedVisibility(
+                        visible = isTranslationVisible,
+                        enter = fadeIn() + expandHorizontally(),
+                        exit = fadeOut() + shrinkHorizontally(),
+                    ) {
+                        Row {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(RoundedCornerShape(24.dp))
+                                    .background(if (hasActiveTranslations) textButtonColor else iconButtonColor)
+                                    .clickable {
+                                        if (hasActiveTranslations) {
+                                            currentLyrics?.let { lyrics ->
+                                                val clearedLyrics = com.metrolist.music.lyrics.LyricsTranslationHelper.clearTranslations(lyrics)
+                                                database.query {
+                                                    upsert(clearedLyrics)
+                                                }
+                                                com.metrolist.music.lyrics.LyricsTranslationHelper.triggerClearTranslations()
+                                            }
+                                        } else {
+                                            com.metrolist.music.lyrics.LyricsTranslationHelper.triggerManualTranslation()
+                                        }
+                                    },
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.translate),
+                                    contentDescription = stringResource(R.string.player_lyrics_peek_translate),
+                                    tint = if (hasActiveTranslations) iconButtonColor else textButtonColor,
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .size(24.dp),
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                        }
+                    }
+
                     AnimatedContent(targetState = showInlineLyrics, label = "ShareButton") { showLyrics ->
                         if (showLyrics) {
                             Box(
@@ -1292,57 +1376,55 @@ fun BottomSheetPlayer(
                                 )
                             }
                         } else {
-                            Box(
-                                modifier =
-                                    Modifier
+                            Row {
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .size(40.dp)
+                                            .clip(RoundedCornerShape(24.dp))
+                                            .background(textButtonColor)
+                                            .clickable {
+                                                val intent =
+                                                    Intent().apply {
+                                                        action = Intent.ACTION_SEND
+                                                        type = "text/plain"
+                                                        putExtra(
+                                                            Intent.EXTRA_TEXT,
+                                                            "https://music.youtube.com/watch?v=${mediaMetadata.id}",
+                                                        )
+                                                    }
+                                                context.startActivity(Intent.createChooser(intent, null))
+                                            },
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.share),
+                                        contentDescription = null,
+                                        tint = iconButtonColor,
+                                        modifier =
+                                            Modifier
+                                                .align(Alignment.Center)
+                                                .size(24.dp),
+                                    )
+                                }
+                                
+                                Spacer(modifier = Modifier.size(12.dp))
+                                
+                                val isEpisode = currentSong?.song?.isEpisode == true
+                                val isFavorite = if (isEpisode) currentSong?.song?.inLibrary != null else currentSong?.song?.liked == true
+                                Box(
+                                    modifier = Modifier
                                         .size(40.dp)
                                         .clip(RoundedCornerShape(24.dp))
                                         .background(textButtonColor)
-                                        .clickable {
-                                            val intent =
-                                                Intent().apply {
-                                                    action = Intent.ACTION_SEND
-                                                    type = "text/plain"
-                                                    putExtra(
-                                                        Intent.EXTRA_TEXT,
-                                                        "https://music.youtube.com/watch?v=${mediaMetadata.id}",
-                                                    )
-                                                }
-                                            context.startActivity(Intent.createChooser(intent, null))
-                                        },
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.share),
-                                    contentDescription = null,
-                                    tint = iconButtonColor,
-                                    modifier =
-                                        Modifier
-                                            .align(Alignment.Center)
-                                            .size(24.dp),
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.size(12.dp))
-
-                    AnimatedContent(targetState = showInlineLyrics, label = "LikeButtonTop") { showLyrics ->
-                        if (!showLyrics) {
-                            val isEpisode = currentSong?.song?.isEpisode == true
-                            val isFavorite = if (isEpisode) currentSong?.song?.inLibrary != null else currentSong?.song?.liked == true
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(RoundedCornerShape(24.dp))
-                                    .background(textButtonColor)
-                                    .clickable { playerConnection.toggleLike() },
-                            ) {
-                                Icon(
-                                    painter = painterResource(if (isFavorite) R.drawable.favorite else R.drawable.favorite_border),
-                                    contentDescription = null,
-                                    tint = if (isFavorite) MaterialTheme.colorScheme.error else iconButtonColor,
-                                    modifier = Modifier.align(Alignment.Center).size(24.dp),
-                                )
+                                        .clickable { playerConnection.toggleLike() },
+                                ) {
+                                    Icon(
+                                        painter = painterResource(if (isFavorite) R.drawable.favorite else R.drawable.favorite_border),
+                                        contentDescription = null,
+                                        tint = if (isFavorite) MaterialTheme.colorScheme.error else iconButtonColor,
+                                        modifier = Modifier.align(Alignment.Center).size(24.dp),
+                                    )
+                                }
                             }
                         }
                     }
@@ -2472,6 +2554,22 @@ internal fun PlayerLyricsLine(
     }
     val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(peekShowTranslation, entries.size) {
+        com.metrolist.music.lyrics.LyricsTranslationHelper.manualTrigger.collect {
+            if (peekShowTranslation && entries.isNotEmpty()) {
+                com.metrolist.music.lyrics.LyricsTranslationHelper.translateLyrics(
+                    lyrics = entries,
+                    targetLanguage = translateLanguage,
+                    mode = "Literal",
+                    scope = coroutineScope,
+                    context = context,
+                    songId = mediaMetadata?.id ?: "",
+                    database = database,
+                )
+            }
+        }
+    }
+
     Column(
         modifier =
             modifier
@@ -2605,60 +2703,12 @@ internal fun PlayerLyricsLine(
                 }
             }
         }
-        // Offer on-demand translation when the toggle is on but nothing is stored yet.
-        // The helper persists to the DB, so currentLyrics re-emits and this row disappears.
-        if (peekShowTranslation && currentLyrics?.translatedLyrics.isNullOrEmpty()) {
-            if (translationStatus is LyricsTranslationHelper.TranslationStatus.Translating) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(18.dp),
-                    color = contentColor.copy(alpha = 0.6f),
-                    strokeWidth = 2.dp,
-                )
-            } else {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = {
-                            LyricsTranslationHelper.translateLyrics(
-                                lyrics = entries,
-                                targetLanguage = translateLanguage,
-                                mode = "Literal",
-                                scope = coroutineScope,
-                                context = context,
-                                songId = mediaMetadata?.id ?: "",
-                                database = database,
-                            )
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.translate),
-                            contentDescription = stringResource(R.string.player_lyrics_peek_translate),
-                            tint = contentColor.copy(alpha = 0.6f),
-                        )
-                    }
-                    Text(
-                        text = stringResource(R.string.player_lyrics_peek_translate),
-                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
-                        color = contentColor.copy(alpha = 0.6f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier =
-                            Modifier.clickable(
-                                role = Role.Button,
-                                onClick = {
-                                    LyricsTranslationHelper.translateLyrics(
-                                        lyrics = entries,
-                                        targetLanguage = translateLanguage,
-                                        mode = "Literal",
-                                        scope = coroutineScope,
-                                        context = context,
-                                        songId = mediaMetadata?.id ?: "",
-                                        database = database,
-                                    )
-                                },
-                            ),
-                    )
-                }
-            }
+        if (peekShowTranslation && currentLyrics?.translatedLyrics.isNullOrEmpty() && translationStatus is LyricsTranslationHelper.TranslationStatus.Translating) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(18.dp),
+                color = contentColor.copy(alpha = 0.6f),
+                strokeWidth = 2.dp,
+            )
         }
     }
 }
