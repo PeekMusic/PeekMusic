@@ -3,10 +3,12 @@
     <string name="local_history">Daxili</string>
     <string name="remote_history">Server tərəfi</string>
     <string name="charts">Çartlar</string>
+    <string name="mixes">Qarışıqlar</string>
     <string name="back_button_desc">Geriyə</string>
     <string name="album_cover_desc">Albom üzlüyü</string>
     <string name="top_music_videos">Yüksək reytinqli kliplər</string>
     <string name="trending">Trenddə olanlar</string>
+    <string name="parsed_from_link">Linkdən təhlil edilib</string>
     <string name="weeks">Həftələr</string>
     <string name="months">Aylar</string>
     <string name="years">İllər</string>
@@ -14,13 +16,19 @@
     <string name="liked">Sevimli</string>
     <string name="offline">Yüklənmiş</string>
     <string name="my_top">Mənim ən sevimlilərim</string>
+    <string name="weekly_most_playlist_name">Həftəlik ən məşhurlar</string>
+    <string name="monthly_most_playlist_name">Aylıq ən məşhurlar</string>
     <string name="cached_playlist">Keşə yüklənmiş</string>
+    <string name="uploaded_playlist">Yükləndi</string>
+    <string name="filter_uploaded">Yükləndi</string>
     <string name="sync_playlist">Pleylisti sinxronizasiya et</string>
     <string name="sync_disabled">Sinxronizasiya qeyri-aktivdir</string>
     <string name="allows_for_sync_witch_youtube">QEYD: Bu seçim YouTube Music ilə sinxronizasiyanı aktivləşdirir və sonradan dəyişdirilə bilməz</string>
+    <string name="and">və</string>
     <string name="generating_image">Şəkil yaradılır…</string>
     <string name="please_wait">Zəhmət olmasa gözləyin</string>
     <string name="cancel">Ləğv et</string>
+    <string name="enable">Yandır</string>
     <string name="share_lyrics">Mahnı sözlərini paylaş</string>
     <string name="share_as_text">Mətn kimi paylaş</string>
     <string name="share_as_image">Şəkil kimi paylaş</string>
@@ -31,6 +39,21 @@
     <string name="secondary_text_color">İkinci dərəcəli mətn rəngi</string>
     <string name="background_color">Fon rəngi</string>
     <string name="remove_from_cache">Keşdən sil</string>
+    <!-- Artist about section -->
+    <string name="about_artist">Haqqında</string>
+    <string name="show_more">Daha çoxunu göstər</string>
+    <string name="show_less">Daha az göstər</string>
+    <string name="artist_page_settings">Sənətçinin səhifəsi</string>
+    <string name="show_artist_description">Göstər sənətçinin təsviri</string>
+    <string name="show_artist_subscriber_count">Aböneçi sayın göstər</string>
+    <string name="show_artist_monthly_listeners">Ayqlıq qulaq asanların sayını göstər</string>
+    <!-- Menu descriptions -->
+    <string name="download_playlist_desc">Offline dinləmək üçün hamısın yüklə</string>
+    <string name="remove_download_playlist_desc">Playlistden her mahnını sil</string>
+    <string name="download_in_progress_desc">Yükləmək dəvam edir</string>
+    <string name="share_playlist_desc">Bu playlisti başqalarıyla paylaş</string>
+    <string name="delete_playlist_desc">Bu playlisti həmişəlik sil</string>
+    <string name="sync_playlist_desc">Playlisti YouTube Musicnen sinxronla</string>
     <string name="copy_link">Linki kopyala</string>
     <string name="select">Hamısın seç</string>
     <string name="like_all">Hamısını bəyən</string>
@@ -43,6 +66,8 @@
     <string name="close">Bağla</string>
     <string name="hide_player_thumbnail">Tətbiqin miniatürünü gizlədin</string>
     <string name="hide_player_thumbnail_desc">Albom təsvirini pleyerdə tətbiq loqosu ilə əvəz edin</string>
+    <string name="crop_album_art">Albom şəklini kəs</string>
+    <string name="crop_album_art_desc">Video örtükü kəsərək kvadrat aspekt nisbətini məcburi edin</string>
     <string name="already_in_playlist">Artıq calğı siyahısında olanlar:</string>
     <plurals name="n_time">
         <item quantity="one">%d dəfə</item>
@@ -53,20 +78,8 @@
     <string name="seek_seconds_addup">Proqressiv axtarış</string>
     <string name="seek_seconds_addup_description">Aktivdirsə, hər axtarış atlamasında tədricən 5 əlavə saniyə əlavə edir</string>
     <string name="similar_content">Oxşar kontent</string>
-    <string name="enable">Yandır</string>
-    <string name="about_artist">Haqqında</string>
-    <string name="show_more">Daha çoxunu göstər</string>
-    <string name="show_less">Daha az göstər</string>
-    <string name="show_artist_subscriber_count">Aböneçi sayın göstər</string>
-    <string name="show_artist_monthly_listeners">Ayqlıq qulaq asanların sayını göstər</string>
-    <string name="download_playlist_desc">Offline dinləmək üçün hamısın yüklə</string>
-    <string name="remove_download_playlist_desc">Playlistden her mahnını sil</string>
-    <string name="download_in_progress_desc">Yükləmək dəvam edir</string>
-    <string name="share_playlist_desc">Bu playlisti başqalarıyla paylaş</string>
-    <string name="delete_playlist_desc">Bu playlisti həmişəlik sil</string>
-    <string name="sync_playlist_desc">Playlisti YouTube Musicnen sinxronla</string>
-    <string name="crop_album_art">Albom şəklini kəs</string>
     <string name="player_background_style">Albom şəklini pleyerdə tətbiq loqosu ilə əvəz edin</string>
+    <string name="player_background_solid">Bütöv</string>
     <string name="follow_theme">Temanı izlə</string>
     <string name="gradient">Qradient</string>
     <string name="new_player_design">Təzə pleyer dizaynı</string>
@@ -85,14 +98,31 @@
     <string name="swipe_song_to_add">Mahnını növbəyə əlavə etmək üçün sola, növbəti olaraq səsləndirmək üçün isə sağa sürüşdürün</string>
     <string name="swipe_song_to_remove">Mahnını pleylistdən silmək üçün sürüşdürün</string>
     <string name="lyrics_click_change">Lirikləri bir klikde dəyişdir</string>
+    <string name="lyrics_from_provider">Sözləri %s</string>
     <string name="lyrics_auto_scroll">Mahnı sözlərinin avtomatik sürüşdürülməsi</string>
+    <string name="hide_status_bar_fullscreen">Tam ekranda vəziyyət zolağını gizlət</string>
+    <string name="hide_status_bar_fullscreen_desc">Mahnı sözləri tam ekran rejimində olduqda status panelini gizlədin</string>
+    <string name="show_interval_indicator">İnterval göstəricisini göstər</string>
+    <string name="show_interval_indicator_desc">Uzun instrumental fasilələr zamanı irəliləyiş zolağını göstərir</string>
+    <string name="respect_agent_positioning">Agentin yerləşməsinə riayət edin</string>
+    <string name="respect_agent_positioning_desc">Mahnı sözlərini ifaçı roluna (məsələn, arxa fon vokalları) uyğun olaraq düzün</string>
     <string name="lyrics_glow_effect">Parıldayan lirik effektin yandır</string>
     <string name="lyrics_glow_effect_desc">Aktiv mahnı sətrinə parlaq animasiya və sıçrama effekti əlavə edir</string>
+    <string name="lyrics_animation_style">Mahnı sözləri animasiyası tərzi</string>
+    <string name="lyrics_animation_none">Heç biri</string>
+    <string name="lyrics_animation_fade">Solğun</string>
+    <string name="lyrics_animation_glow">Parıltı</string>
+    <string name="lyrics_animation_slide">Slayd</string>
+    <string name="lyrics_animation_apple">Apple Music tərzi</string>
+    <string name="lyrics_text_size">Mətnin ölçüsü</string>
+    <string name="lyrics_line_spacing">Mahnı sözlərində sətirarası məsafə</string>
     <string name="enable_lrclib_desc">Icma tərəfindən sinxron liriklər databazası</string>
     <string name="enable_kugou_desc">Mahnı sözlərini populyar Çin musiqi platforması olan KuGou-dan əldə edir</string>
     <string name="youtube_music_lyrics_note">QEYD: Başqa mənbə mövcud olmadıqda, YouTube Music mahnı sözləri avtomatik olaraq göstəriləcək. Onlar adətən sinxronlaşdırılmır</string>
     <string name="enable_better_lyrics">Better Lyrics yandır</string>
     <string name="enable_better_lyrics_desc">İstənilən mahnı üçün hecalarla sinxronlaşdırılmış sözlər – karaoke üçün idealdır</string>
+    <string name="enable_paxsenix">Paxsenix-i aktivləşdirin</string>
+    <string name="enable_paxsenix_desc">Paxsenix API-dən yüksək keyfiyyətli sinxronlaşdırılmış mahnı sözləri</string>
     <string name="enable_lyricsplus">LyricsPlus yandır</string>
     <string name="enable_lyricsplus_desc">Bir neçə mövqedən alınmış liriklər</string>
     <string name="lyrics_provider_selection">Provayder seçimi</string>
@@ -105,48 +135,20 @@
     <string name="show_downloaded_playlist">Yüklənmiş pleylistləri göstər</string>
     <string name="show_top_playlist">Ən yaxşı pleylistləri göstər</string>
     <string name="show_cached_playlist">Keşlənmiş pleylisti göstər</string>
-    <string name="show_uploaded_playlist">Yüklənmiş pleylisti göstər</string>
-    <string name="yt_sync">Hesabla avtomatik sinxronizasiya</string>
-    <string name="more_content">Daha çox məzmun</string>
-    <string name="edit_playlist_cover">Pleylist şəklini dəyişdir</string>
-    <string name="edit_playlist_cover_note">Qeyd: Pleylist örtüyünü dəyişmək üçün hesabınız telefon nömrəsinə bağlanmalı və YouTube Music-də təsdiqlənməlidir</string>
-    <string name="parsed_from_link">Linkdən təhlil edilib</string>
-    <string name="weekly_most_playlist_name">Həftəlik ən məşhurlar</string>
-    <string name="monthly_most_playlist_name">Aylıq ən məşhurlar</string>
-    <string name="uploaded_playlist">Yükləndi</string>
-    <string name="filter_uploaded">Yükləndi</string>
-    <string name="artist_page_settings">Sənətçinin səhifəsi</string>
-    <string name="and">və</string>
-    <string name="show_artist_description">Göstər sənətçinin təsviri</string>
-    <string name="crop_album_art_desc">Video örtükü kəsərək kvadrat aspekt nisbətini məcburi edin</string>
-    <string name="player_background_solid">Bütöv</string>
-    <string name="lyrics_from_provider">Sözləri %s</string>
-    <string name="mixes">Qarışıqlar</string>
-    <string name="hide_status_bar_fullscreen">Tam ekranda vəziyyət zolağını gizlət</string>
-    <string name="hide_status_bar_fullscreen_desc">Mahnı sözləri tam ekran rejimində olduqda status panelini gizlədin</string>
-    <string name="show_interval_indicator">İnterval göstəricisini göstər</string>
-    <string name="show_interval_indicator_desc">Uzun instrumental fasilələr zamanı irəliləyiş zolağını göstərir</string>
-    <string name="respect_agent_positioning">Agentin yerləşməsinə riayət edin</string>
-    <string name="respect_agent_positioning_desc">Mahnı sözlərini ifaçı roluna (məsələn, arxa fon vokalları) uyğun olaraq düzün</string>
-    <string name="lyrics_animation_style">Mahnı sözləri animasiyası tərzi</string>
-    <string name="lyrics_animation_none">Heç biri</string>
-    <string name="lyrics_animation_fade">Solğun</string>
-    <string name="lyrics_animation_glow">Parıltı</string>
-    <string name="lyrics_animation_slide">Slayd</string>
-    <string name="lyrics_animation_karaoke">Karaoke</string>
-    <string name="lyrics_animation_apple">Apple Music tərzi</string>
-    <string name="lyrics_text_size">Mətnin ölçüsü</string>
-    <string name="lyrics_line_spacing">Mahnı sözlərində sətirarası məsafə</string>
-    <string name="enable_paxsenix">Paxsenix-i aktivləşdirin</string>
-    <string name="enable_paxsenix_desc">Paxsenix API-dən yüksək keyfiyyətli sinxronlaşdırılmış mahnı sözləri</string>
     <string name="enable_song_cache">Mahnı keşini aktivləşdirin</string>
     <string name="enable_song_cache_desc">Gələcəkdə daha sürətli oxutma üçün mahnıları avtomatik olaraq keşdə saxlayın</string>
+    <string name="show_uploaded_playlist">Yüklənmiş pleylisti göstər</string>
     <string name="show_most_stats_playlists">Ən çox dinlənilən həftəlik və aylıq pleylistləri göstər</string>
     <string name="show_most_stats_playlists_desc">\"Statistika\" və \"Kitabxana\" bölmələrində statistikaya əsaslanan \"Ən çox...\" pleylistləri yaradın və göstərin</string>
     <string name="shuffle_playlist_first">Əvvəlcə pleylist və ya albomu qarışıq qaydada çalın</string>
     <string name="shuffle_playlist_first_desc">Qarışıq çalma rejimində, oxşar məzmuna keçməzdən əvvəl cari pleylist və ya albomdakı bütün mahnıları çalın</string>
     <string name="prevent_duplicate_tracks_in_queue">Növbədə eyni treklərin təkrarlanmasının qarşısını alın</string>
     <string name="prevent_duplicate_tracks_in_queue_desc">Növbədə artıq mövcud olan treki əlavə etdikdə, o, yenidən əlavə edilmək əvəzinə əvvəlki mövqeyindən köçürüləcək</string>
+    <string name="add_to_playlist_position">Pleylist siyahısındakı mövqeyə əlavə et</string>
+    <string name="playlist_position_beginning">Pleylist siyahısının başlanğıcı</string>
+    <string name="playlist_position_beginning_desc">Yeni əlavə edilmiş mahnılar mövcud mahnılardan əvvəl görünür</string>
+    <string name="playlist_position_end">Pleylist siyahısının sonu</string>
+    <string name="playlist_position_end_desc">Yeni əlavə edilmiş mahnılar mövcud mahnılardan sonra görünür</string>
     <string name="show_wrapped_card">Paketlenmiş kartı göstər</string>
     <string name="skip_silence_desc">Mahnıların səssiz hissələrini sürətlə keçin</string>
     <string name="skip_silence_instant">Səssizliyi dərhal keçin</string>
@@ -155,11 +157,17 @@
     <string name="token_hidden">Tokeni göstərmək üçün toxunun</string>
     <string name="token_shown">Kopyalamaq və ya redaktə etmək üçün yenidən toxunun</string>
     <string name="token_adv_login_description">Bu, qabaqcıl giriş üsuludur. Veb-portalından istifadə etmək əvəzinə, giriş tokeninizi birbaşa daxil edə və ya yeniləyə bilərsiniz. Bu üsul bir neçə cihazda sürətlə giriş etmək üçün faydalı ola bilər. Tanınmayan formatdakı tokenlər qəbul edilməyəcək</string>
+    <string name="yt_sync">Hesabla avtomatik sinxronizasiya</string>
+    <string name="more_content">Daha çox məzmun</string>
     <string name="sort_ascending">Artan sıra ilə çeşidlə</string>
     <string name="sort_descending">Azalan sıra ilə çeşidlə</string>
+    <!-- Playlist cover edit -->
+    <string name="edit_playlist_cover">Pleylist şəklini dəyişdir</string>
+    <string name="edit_playlist_cover_note">Qeyd: Pleylist örtüyünü dəyişmək üçün hesabınız telefon nömrəsinə bağlanmalı və YouTube Music-də təsdiqlənməlidir</string>
     <string name="edit_playlist_cover_note_wait">Şəkli seçdikdən sonra, yeni üz qabığının pleylistinizdə görünməsi üçün zəhmət olmasa bir an gözləyin</string>
     <string name="choose_from_library">Kitabxanadan seçin</string>
     <string name="remove_custom_image">Fərdi şəkli silin</string>
+    <!-- General -->
     <string name="general">Ümumi</string>
     <string name="proxy">Proksi</string>
     <string name="default_lib_chips">Defolt kitabxana çipini dəyişdirin</string>
@@ -184,7 +192,6 @@
     <string name="persistent_shuffle_desc">Yeni mahnılara və ya pleylistlərə başlayarkən qarışıq çalma rejimini aktiv saxlayın</string>
     <string name="remember_shuffle_and_repeat">Qarışdırma və təkrarlama funksiyalarını unutmayın</string>
     <string name="remember_shuffle_and_repeat_desc">Tətbiq yenidən başladıldıqda qarışdırma və təkrarlama parametrlərini yadda saxla</string>
-    <string name="percentage_format">%d%%</string>
     <string name="import_online">M3U pleylistini idxal edin</string>
     <string name="import_csv">CSV formatında pleylist idxal edin</string>
     <string name="playlist_unavailable">Pleylist əlçatan deyil</string>
@@ -199,7 +206,6 @@
     <string name="auto_download_on_like">Bəyənərkən avtomatik yükləmə</string>
     <string name="auto_download_on_like_desc">Bəyəndiyiniz mahnıları avtomatik yükləyin</string>
     <string name="swipe_sensitivity">Mini-pleyerin sürüşdürmə həssaslığı</string>
-    <string name="sensitivity_percentage">%1$d%%</string>
     <string name="clear_song_cache_dialog">Bütün keşlənmiş mahnıları silmək istədiyinizə əminsinizmi?</string>
     <string name="clear_image_cache_dialog">Bütün keşlənmiş şəkilləri silmək istədiyinizə əminsinizmi?</string>
     <string name="clear_downloads_dialog">Bütün yükləmələri silmək istədiyinizə əminsinizmi?</string>
@@ -210,8 +216,6 @@
     <string name="release_notes">Buraxılış qeydləri</string>
     <string name="changelog">Dəyişikliklər siyahısı</string>
     <string name="changelog_empty">Dəyişikliklər siyahısı mövcud deyil</string>
-    <string name="github_releases_url">https://github.com/endritlim/PeekMusic/releases</string>
-    <string name="list_bullet">•</string>
     <string name="view_on_github">GitHub-da baxın</string>
     <string name="current_version">Cari versiya</string>
     <string name="version_format">Versiya: %s</string>
@@ -241,6 +245,7 @@
         <item quantity="one">1 saniyə</item>
         <item quantity="other">%d saniyə</item>
     </plurals>
+    <!-- Sleep timer -->
     <string name="set_as_default">Defolt olaraq təyin et</string>
     <string name="sleep_timer_default_set">Yuxu taymeri standart olaraq %d dəqiqəyə təyin edilib</string>
     <string name="enable_automatic_sleeptimer">Avtomatik yuxu taymerini aktivləşdirin</string>
@@ -265,6 +270,7 @@
     <string name="sleep_timer_stop_after_current_song_description">Dayanmazdan əvvəl hazırda səslənən mahnının bitməsini gözləyir</string>
     <string name="sleep_timer_fade_out_title">Tədricən sönmə</string>
     <string name="sleep_timer_fade_out_description">Sonuncu dəqiqədə səsi tədricən azaldır</string>
+    <!-- Alarm -->
     <string name="alarm">Siqnal</string>
     <string name="alarm_enabled">Siqnalı aktivləşdirin</string>
     <string name="alarm_time">Siqnal vaxtı</string>
@@ -294,6 +300,7 @@
     <string name="alarm_exact_permission_desc">Tətbiq fonda işləyərkən etibarlılığı artırmaq məqsədilə dəqiq həyəcan siqnalı vaxtlamasına icazə verir</string>
     <string name="alarm_battery_optimization_title">Batareya optimallaşdırılması</string>
     <string name="alarm_battery_optimization_desc">Daha etibarlı fon siqnalı işləməsi üçün batareya optimallaşdırmasını deaktiv edin</string>
+    <!-- Player Settings -->
     <string name="disable_load_more_when_repeat_all">\"Hamısını təkrarla\" rejimində avtomatik yükləməni deaktiv edin</string>
     <string name="disable_load_more_when_repeat_all_desc">\"Hamısını təkrarla\" funksiyası aktiv olduqda, avtomatik olaraq əlavə mahnılar və ya oxşar məzmun yükləməyin</string>
     <string name="pause_music_when_media_is_muted">Media səsi söndürüldükdə musiqini dayandırın</string>
@@ -304,16 +311,20 @@
     <string name="crossfade_duration">Keçid müddəti</string>
     <string name="crossfade_gapless">Gapless albomlar üçün deaktiv et</string>
     <string name="crossfade_gapless_desc">Fasiləsiz çalınmaq üçün nəzərdə tutulmuş albomlarda keçid effektini (crossfade) atla</string>
+    <!-- Romanization Settings -->
     <string name="lyrics_romanize_title">Romanlaşma</string>
     <string name="lyrics_romanization">Mahnıların romanlaşdırılması</string>
     <string name="line_by_line_option_title">Dili sətir-sətir müəyyən et</string>
     <string name="romanize_current_track">Cari treki latın əlifbasına çevir</string>
+    <!-- Lyrics Offset Settings -->
     <string name="lyrics_offset">Mətnin vaxt sürüşməsi</string>
+    <!-- Material 3 Settings Sections -->
     <string name="settings_section_ui">İnterfeys</string>
     <string name="settings_section_privacy">Məxfilik və Təhlükəsizlik</string>
     <string name="settings_section_player_content">Pleyer və Məzmun</string>
     <string name="settings_section_storage">Yaddaş və məlumatlar</string>
     <string name="settings_section_system">Sistem və məlumat</string>
+    <!-- Updater -->
     <string name="updater">Yeniləyici</string>
     <string name="check_for_updates">Yeniləmələri avtomatik yoxla</string>
     <string name="update_notifications">Yeniləmə bildirişlərini aktivləşdirin</string>
@@ -324,20 +335,24 @@
     <string name="kmp_upgrade_warning">Metrolist KMP ilkin giriş mərhələsindədir. Funksiyalar nasaz və ya natamam ola bilər, yaxud xəbərdarlıq edilmədən dəyişdirilə bilər.</string>
     <string name="kmp_upgrade_action">KMP keçin</string>
     <string name="kmp_upgrade_later">İndi yox</string>
+    <!-- Offload -->
     <string name="audio_offload">Audio yüklənməsinin boşaldılmasını aktivləşdirin</string>
     <string name="audio_offload_description">Səsləndirmə üçün aparat səviyyəli audio emalı yolundan (hardware audio offload path) istifadə edir. Bunun deaktiv edilməsi batareya sərfiyyatını artıra bilər, lakin səsləndirmə və ya səsin sonrakı emalı ilə bağlı problemlər yarandıqda kömək edə bilər</string>
     <string name="audio_offload_disabled_by_crossfade">Crossfade aktiv olduğu üçün deaktiv edilib</string>
+    <!-- Varispeed -->
     <string name="speed">Oxutma sürəti</string>
     <string name="varispeed">Dəyişən sürəti aktivləşdirin</string>
     <string name="varispeed_description">Tonu (pitch) səsləndirmə sürəti ilə əlaqələndirin; nəticədə maqnit lentindəki kimi sürətlənmə və yavaşıma effektləri əldə olunur</string>
+    <!-- AudioTrack Playback Parameters -->
     <string name="audio_track_playback_params">Aparat təminatı səviyyəsində audio emalından istifadə edin</string>
     <string name="audio_track_playback_params_description">Sürət və ya ton (pitch) dəyişiklikləri üçün proqram təminatı səviyyəsində emal əvəzinə Android-in AudioTrack funksiyasından istifadə edin. Bu, həddindən artıq yüksək və ya aşağı ton dəyərləri üçün daha etibarlıdır</string>
-    <string name="google_cast">Google Cast</string>
+    <!-- Google Cast -->
     <string name="google_cast_description">Audionu Chromecast və digər Cast dəstəkli cihazlara ötürün</string>
     <string name="lyrics_romanize_as_main">Romanizasiya olunmuş sözləri əsas olaraq göstər</string>
     <string name="integrations">İnteqrasiyalar</string>
     <string name="username">İstifadəçi adı</string>
     <string name="password">Şifrə</string>
+    <!-- Last.fm -->
     <string name="lastfm_integration">Last.fm inteqrasiyası</string>
     <string name="enable_scrobbling">Skrobblinqi aktivləşdirin</string>
     <string name="lastfm_now_playing">\"Hazırda səslənir\" statusunu göndər</string>
@@ -398,7 +413,6 @@
     <string name="wrapped_intro_subtitle">İndi bütün il boyu nələrə qulaq asdığınıza baxmağın vaxtıdır…</string>
     <string name="wrapped_intro_button">Başlayaq!</string>
     <string name="wrapped_logo_content_description">Metrolist loqosu</string>
-    <string name="wrapped_year">2025</string>
     <string name="wrapped_ready_title">Bağlamanız hazırdır!</string>
     <string name="wrapped_ready_subtitle">İl boyu nələri bəyəndiyinizə baxmağın vaxtıdır…</string>
     <string name="wrapped_thank_you">Dinlədiyiniz üçün təşəkkür edirəm!</string>
@@ -407,6 +421,7 @@
     <string name="wrapped_playlist_title">Sizin %s İcmalınız</string>
     <string name="wrapped_create_playlist">Pleylist siyahısı yarat</string>
     <string name="wrapped_playlist_saved">Pleylist siyahısı yadda saxlanıldı</string>
+    <!-- Equalizer UI -->
     <string name="equalizer_header">Ekvalayzer</string>
     <string name="no_profiles">Ekvalayzer profilləri yoxdur</string>
     <string name="import_profile">İdxal profili</string>
@@ -428,6 +443,7 @@
     <string name="import_error_title">İdxal xətası</string>
     <string name="error_title">Xəta</string>
     <string name="error_eq_apply_failed">Ekvalayzer profili tətbiq edilə bilmədi: %1$s</string>
+    <!-- EQ Wizard -->
     <string name="wizard_select_model">Modeli seçin</string>
     <string name="wizard_select_profiles">Profilləri seçin</string>
     <string name="wizard_search_model_hint">Qulaqlıq modelinizi axtarın</string>
@@ -437,6 +453,7 @@
     <string name="wizard_multiple_variants">Müxtəlif variantlar mövcuddur</string>
     <string name="wizard_select_eq_profiles">%s üçün EQ profillərini seçin</string>
     <string name="wizard_save_profiles">Profiləri yadda saxla</string>
+    <!-- Hardcoded strings -->
     <string name="found_in_settings_content">\"Parametrlər &gt; Məzmun\" bölməsində tapılır</string>
     <string name="your_daily_discover">Gündəlik kəşfiniz</string>
     <string name="plays">dinlənmə</string>
@@ -448,6 +465,7 @@
     <string name="copied_artist">Rəssam kopyaladı</string>
     <string name="error_playing">Oxutma xətası</string>
     <string name="failed_to_parse_proxy">Proksi URL təhlil etmək mümkün olmadı</string>
+    <!-- Playback errors -->
     <string name="error_playback_failed">Oxutma uğursuz oldu</string>
     <string name="error_job_cancelled">Video oxudula bilmir. Yenidən cəhd edin və ya növbəti mahnıya keçin.</string>
     <string name="error_episode_save">Epizod yadda saxlanıla bilmədi</string>
@@ -455,6 +473,7 @@
     <string name="error_podcast_subscribe">Podkasta abunə olmaq mümkün olmadı</string>
     <string name="error_podcast_unsubscribe">Podkast abunəliyindən imtina etmək mümkün olmadı</string>
     <string name="view_channel">Kanala bax</string>
+    <!-- Widget strings -->
     <string name="album_art">Albomun tərtibatı</string>
     <string name="no_song_playing">Heç bir mahnı səslənmir</string>
     <string name="tap_to_open">Metrolist açmaq üçün toxunun</string>
@@ -468,6 +487,7 @@
     <string name="turntable_widget_description">Oxutma və bəyənmə idarəetmələri olan dairəvi musiqi vidceti</string>
     <string name="widget_music_player">Musiqi pleyeri</string>
     <string name="widget_turntable">Patefon</string>
+    <!-- Music Recognizer Widget strings -->
     <string name="widget_recognizer_name">Musiqi Tanıyıcı</string>
     <string name="widget_recognizer_description">Ətrafınızda səslənən mahnıları birbaşa ana ekranınızdan müəyyən edin</string>
     <string name="widget_recognizer_tap_to_search">Mahnını müəyyən etmək üçün toxunun</string>
@@ -482,9 +502,11 @@
     <string name="widget_recognizer_channel_name">Musiqi tanıma</string>
     <string name="widget_recognizer_channel_desc">Vidjet vasitəsilə mahnı müəyyən edilərkən bildiriş göstərir</string>
     <string name="widget_recognizer_notification_text">Mahnını müəyyən etmək üçün səs yazılır…</string>
+    <!-- Player Client Settings -->
+    <!-- Decryption Library Settings -->
+    <!-- Listen Together -->
     <string name="together">Birlikdə</string>
     <string name="listen_together">Birlikdə dinləyin</string>
-    <string name="listen_together_server_url">Server URL</string>
     <string name="listen_together_choose_server">Serveri seçin</string>
     <string name="listen_together_custom_server">Fərdi server</string>
     <string name="listen_together_use_custom_server">Fərdi serverdən istifadə edin</string>
@@ -572,43 +594,17 @@
     <string name="listen_together_no_blocked_users">Bloklanmış istifadəçi yoxdur</string>
     <string name="unblock">Blokdan çıxarın</string>
     <string name="user_blocked_by_host">Host tərəfindən bloklanıb</string>
+    <!-- AI Lyrics Translation -->
     <string name="ai_lyrics_translation">Tərcümə</string>
     <string name="ai_translating_lyrics">Mahnı sözləri tərcümə edilir…</string>
     <string name="ai_lyrics_translated">Mahnı sözlərinin tərcüməsi</string>
-    <string name="ai_provider">Təminatçı</string>
-    <string name="ai_base_url">Əsas URL</string>
-    <string name="ai_api_key">API açarı</string>
-    <string name="ai_model">Model</string>
-    <string name="ai_translation_mode">Tərcümə rejimi</string>
     <string name="ai_target_language">Hədəf dil</string>
-    <string name="ai_setup_guide">API etimadnamələri</string>
-    <string name="ai_translation_literal">Tərcümə</string>
-    <string name="ai_translation_literal_desc">Mənanı hədəf dilə tərcümə edir</string>
-    <string name="ai_translation_transcribed">Transkripsiya</string>
-    <string name="ai_translation_transcribed_desc">Tələffüzü hədəf yazı sisteminə çevirir</string>
-    <string name="ai_api_key_required">API açarı tələb olunur</string>
-    <string name="ai_error_api_key_required">API açarı tələb olunur</string>
     <string name="ai_error_no_lyrics">Tərcümə ediləcək sözlər yoxdur</string>
     <string name="ai_error_lyrics_empty">Mahnı sözləri yoxdur</string>
     <string name="ai_error_language_required">Hədəf dil tələb olunur</string>
     <string name="ai_error_unknown">Naməlum xəta baş verdi</string>
     <string name="ai_error_translation_failed">Tərcümə alınmadı</string>
-    <string name="ai_provider_help">API açarlarını əldə edin</string>
-    <string name="ai_provider_openrouter_help">Pulsuz və ödənişli modellər üçün https://openrouter.ai saytına daxil olun</string>
-    <string name="ai_provider_openai_help">https://platform.openai.com/api-keys səhifəsinə daxil olun</string>
-    <string name="ai_provider_claude_help">https://console.anthropic.com/settings/keys ünvanına daxil olun</string>
-    <string name="ai_provider_gemini_help">https://aistudio.google.com/apikey ünvanına daxil olun</string>
-    <string name="ai_provider_perplexity_help">https://perplexity.ai/settings/api səhifəsinə daxil olun</string>
-    <string name="ai_provider_xai_help">https://console.x.ai ünvanına daxil olun</string>
-    <string name="ai_provider_deepl_help">Pulsuz və ödənişli açarlar üçün https://deepl.com/pro-api səhifəsinə daxil olun</string>
-    <string name="ai_provider_mistral_help">https://console.mistral.ai/api-keys ünvanına daxil olun</string>
-    <string name="ai_deepl_formality">Rəsmilik</string>
-    <string name="ai_deepl_formality_default">Standart</string>
-    <string name="ai_deepl_formality_more">Daha rəsmi</string>
-    <string name="ai_deepl_formality_less">Daha qeyri-rəsmi</string>
-    <string name="ai_system_prompt">Sistem göstərişi</string>
-    <string name="ai_system_prompt_default">Standart</string>
-    <string name="ai_system_prompt_reset">Standart parametrlərə qaytar</string>
+    <!-- Crash Handler -->
     <string name="crash_title">Tətbiq çökdü</string>
     <string name="crash_description">Gözlənilməz xəta baş verdi. Problemi düzəltməyimizə kömək etmək üçün qəza hesabatını paylaşın</string>
     <string name="crash_share_logs">Jurnalları paylaşın</string>
@@ -616,6 +612,7 @@
     <string name="crash_report_subject">Metrolist qəza hesabatı</string>
     <string name="crash_close">Bağla</string>
     <string name="crash_no_log">Qəza qeydi mövcud deyil</string>
+    <!-- Theme Palette Names -->
     <string name="palette_dynamic">Dinamik</string>
     <string name="palette_crimson">Tünd qırmızı</string>
     <string name="palette_rose">Qızılgül</string>
@@ -636,6 +633,7 @@
     <string name="palette_brown">Qəhvəyi</string>
     <string name="palette_grey">Boz</string>
     <string name="palette_blue_grey">Mavi-boz</string>
+    <!-- Theme Content Descriptions -->
     <string name="cd_back">Geri</string>
     <string name="cd_pure_black_mode">Tam qara rejim</string>
     <string name="cd_light_mode">İşıqlı rejim</string>
@@ -647,6 +645,7 @@
     <string name="enable_high_refresh_rate_desc">Ekranın dəstəklənən ən yüksək yeniləmə tezliyində (məsələn, 120 Hz) işləməsini təmin edir</string>
     <string name="enable_landscape_scaling">Landşaft miqyaslandırması</string>
     <string name="enable_landscape_scaling_desc">Daha böyük ekranlar üçün interfeysi landşaft rejimində miqyaslayın</string>
+    <!-- Music Recognition -->
     <string name="recognize_music">Musiqini tanı</string>
     <string name="tap_to_recognize">Tanımaq üçün toxunun</string>
     <string name="listening">Dinlənilir…</string>
@@ -668,6 +667,7 @@
     <string name="recognition_notification_no_match">Uyğunluq tapılmadı</string>
     <string name="recognition_notification_failed">Tanınma uğursuz oldu</string>
     <string name="listen_on_metrolist">Metrolist dinləyin</string>
+    <!-- CSV Import Strings -->
     <string name="map_csv_columns">CSV sütunlarını uyğunlaşdırın</string>
     <string name="first_row_is_header">Birinci sətir başlıqdı</string>
     <string name="artist_name_column">İfaçı adı sütunu</string>
@@ -710,8 +710,6 @@
     <string name="discord_enable_button_1">1 düyməni göstər</string>
     <string name="discord_enable_button_2">2 düyməni göstər</string>
     <string name="discord_button_label">Etiket</string>
-    <string name="discord_button_url">URL</string>
-    <string name="discord_status">Status</string>
     <string name="discord_status_online">Onlayn</string>
     <string name="discord_status_idle">Aktiv deyil</string>
     <string name="discord_status_dnd">Narahat etməyin</string>
@@ -722,16 +720,19 @@
     <string name="unpin">Sancağı çıxarın</string>
     <string name="randomize_home_order">Ana ekranın ardıcıllığını təsadüfi qaydada dəyişdirin</string>
     <string name="randomize_home_order_desc">Çəkili prioritetlərdən istifadə edərək ana ekran bölmələrinin ardıcıllığını təsadüfi qaydada dəyişdirin</string>
+    <!-- Daily Discover -->
     <string name="daily_discover_sounds_like">%1$s kimi səslənir</string>
     <string name="daily_discover_because_you_listen_to">Çünki siz %1$s-i dinləyirsiniz</string>
     <string name="daily_discover_similar_to">%1$s-ə bənzər</string>
     <string name="daily_discover_based_on">%1$s əsasında</string>
     <string name="daily_discover_for_fans_of">%1$s pərəstişkarları üçün</string>
     <string name="from_the_community">İcmadan</string>
+    <!-- Logout dialog -->
     <string name="logout_dialog_title">Kitabxana məlumatları saxlanılsınmı?</string>
     <string name="logout_dialog_message">Pleylistlərinizi və kitabxana məlumatlarınızı saxlamaq istəyirsiniz? Yüklənmiş mahnılar həmişə saxlanılacaq</string>
     <string name="logout_keep">Saxlayın</string>
     <string name="logout_clear">Aydın</string>
+    <!-- Credits / About Screen -->
     <string name="credits_lead_developer">Aparıcı proqramçı</string>
     <string name="credits_collaborator">Əməkdaş</string>
     <string name="credits_collaborators_section">Əməkdaşlar</string>
@@ -742,10 +743,10 @@
     <string name="credits_view_repo">Repozitoriyaya baxın</string>
     <string name="buy_mo_a_coffee">Mənə bir qəhvə al!</string>
     <string name="community_and_info">İcma və Məlumat</string>
-    <string name="metrolist">METROLIST</string>
     <string name="wanna_play_favorite_song">Onların sevimli mahnısını çalmaq istəyirsiniz?</string>
     <string name="yeah">Bəli!</string>
     <string name="stands_with_palestine">Bu layihə Fələstinin yanındadır 🇵🇸</string>
+    <!-- Podcasts -->
     <string name="filter_podcasts">Podkastlar</string>
     <string name="view_podcast">Podkasta baxın</string>
     <string name="podcast_channels">Podkast kanalları</string>
@@ -772,6 +773,7 @@
         <item quantity="one">%d kanal</item>
         <item quantity="other">%d kanal</item>
     </plurals>
+    <!-- Restore confirmation dialog -->
     <string name="restore_confirm_title">Ehtiyat nüsxə bərpa edilsin?</string>
     <string name="restore_confirm_message">Bu, tətbiq məlumatlarınızı seçilmiş ehtiyat nüsxədən bərpa edəcək</string>
     <string name="restore_account_warning">Aşağıdakı hesab məlumatları bərpa ediləcək və qorunub saxlanılacaq:</string>
@@ -779,6 +781,8 @@
     <string name="restore_database_incompatible">Ehtiyat nüsxə bərpa edilə bilmir: verilənlər bazasının versiyası uyğun deyil. Mövcud məlumatlarınız qorunub saxlanılıb.</string>
     <string name="checking_previous_account">Əvvəlki hesabın olub-olmadığı yoxlanılır…</string>
     <string name="no_account_found">Hesab tapılmadı</string>
+    <!-- Cache settings -->
+    <!-- Upload songs -->
     <string name="upload_songs">Mahnıları yükləyin</string>
     <string name="uploading">Yüklənir…</string>
     <string name="upload_progress">%2$d-dən %1$d-i</string>
@@ -794,7 +798,7 @@
     <string name="delete_uploaded_songs_confirm">Yüklənmiş %1$d mahnını silmək istədiyinizə əminsinizmi? Bu əməliyyatı geri qaytarmaq mümkün deyil</string>
     <string name="deleted_n_songs">%1$d mahnı silindi</string>
     <string name="deleting">Silinir…</string>
-    <string name="android_auto">Android Auto</string>
+    <!-- Android Auto settings -->
     <string name="android_auto_visible_sections">Görünən bölmələr</string>
     <string name="android_auto_reorder_hint">Hər hansı bölməni aktivləşdirmək və ya deaktiv etmək üçün ona toxunun. Sıralamanı dəyişdirmək üçün sürüşdürmə işarəsini uzun müddət basıb saxlayın. İlkin olaraq birinci bölmə göstəriləcək</string>
     <string name="android_auto_youtube_playlists">YouTube təklif etdiyi pleylistləri göstər</string>
@@ -805,6 +809,7 @@
     <string name="android_auto_search_options">Axtarış seçimləri</string>
     <string name="android_auto_search_local_songs_limit">Mahnı axtarışı limiti</string>
     <string name="android_auto_search_local_songs_limit_desc">Axtarış nəticələrində göstərilən yerli mahnıların sayını məhdudlaşdırın. Yaddaş çatışmazlığı səbəbindən yaranan çökmələrin qarşısını almaq üçün sayın limitsiz təyin edilməməsi tövsiyə olunur</string>
+    <!-- Stats time transfer -->
     <string name="time_transfer_title">Vaxt ötürülməsi</string>
     <string name="time_transfer_warning">XƏBƏRDARLIQ: Bu əməliyyat tamamlandıqdan sonra geri qaytarıla bilməz. Davam etməzdən əvvəl ehtiyat nüsxə yaradın. Yalnız ən azı bir dəfə dinlənilmiş mahnılar bu proses üçün uyğundur</string>
     <string name="time_transfer_source_song">Mənbə mahnı</string>
@@ -812,14 +817,17 @@
     <string name="time_transfer_listen_time_label">Dinləmə müddəti:</string>
     <string name="time_transfer_convert">Çevir</string>
     <string name="song_dropdown_more_results">Nəticələri dəqiqləşdirmək üçün yazmağa davam edin (daha %d)</string>
+    <!-- Player and Audio Settings -->
     <string name="autoplay">Avtomatik oxutma</string>
     <string name="autoplay_desc">Hazırkı mahnı bitdikdə növbəti mahnını avtomatik oxut</string>
+    <!-- Accessibility -->
     <string name="back">Geri</string>
     <string name="clear_search">Axtarışı təmizlə</string>
     <string name="close_chip">Bağla</string>
     <string name="switch_to_list_view">Siyahı görünüşünə keçin</string>
     <string name="switch_to_grid_view">Tor görünüşünə keçin</string>
     <string name="more_options">Daha çox seçim</string>
+    <!-- Loudness Level -->
     <string name="loudness_level">Səs ucalığı səviyyəsi</string>
     <string name="loudness_level_aggressive">Aqressiv (-7 dB)</string>
     <string name="loudness_level_loud">Yüksək səsli (-11 dB)</string>
@@ -837,7 +845,7 @@
     <string name="stream_client">Yayım müştərisi</string>
     <string name="format_player_hash">Pleyer heşi</string>
     <string name="format_cipher_support_added">Şifrləmə dəstəyi əlavə edildi</string>
-    <string name="not_applicable">N/A</string>
+    <!-- Stream sources -->
     <string name="enable_dynamic_icon">Dinamik ikon rəngləri</string>
     <string name="enable_dynamic_icon_desc">Tətbiq nişanı üçün dinamik mövzu rənglərindən istifadə edin. Bu funksiya deaktiv edildikdə, nişan bütöv rənglərdən istifadə edir.</string>
     <string name="stream_sources">Yayım mənbələri</string>
@@ -845,19 +853,10 @@
     <string name="stream_source_web_clients">Veb-müştərilər</string>
     <string name="stream_source_native_clients">Yerli müştərilər</string>
     <string name="stream_source_creator_clients">Müəllif müştərilər</string>
-    <string name="stream_source_web_remix">WEB_REMIX</string>
     <string name="stream_source_web_remix_desc">Əsas müştəri. Autentifikasiyadan keçib; əksər trekləri əhatə edir.</string>
-    <string name="stream_source_tvhtml5">TVHTML5</string>
     <string name="stream_source_tvhtml5_desc">TV müştərisi. Etibarlı ehtiyat variant.</string>
-    <string name="stream_source_visionos">visionOS</string>
     <string name="stream_source_visionos_desc">Apple Vision. Məhsuldarlığın məhdudlaşdırılması yoxdur; çox etibarlıdır.</string>
-    <string name="stream_source_android_vr">Android VR</string>
     <string name="stream_source_android_vr_desc">Android VR müştəriləri (bütün versiyalar).</string>
-    <string name="stream_source_web_creator">WEB_CREATOR</string>
     <string name="stream_source_web_creator_desc">Creator veb-müştərisi.</string>
-    <string name="add_to_playlist_position">Pleylist siyahısındakı mövqeyə əlavə et</string>
-    <string name="playlist_position_beginning">Pleylist siyahısının başlanğıcı</string>
-    <string name="playlist_position_beginning_desc">Yeni əlavə edilmiş mahnılar mövcud mahnılardan əvvəl görünür</string>
-    <string name="playlist_position_end">Pleylist siyahısının sonu</string>
-    <string name="playlist_position_end_desc">Yeni əlavə edilmiş mahnılar mövcud mahnılardan sonra görünür</string>
+    <!-- Onboarding -->
 </resources>

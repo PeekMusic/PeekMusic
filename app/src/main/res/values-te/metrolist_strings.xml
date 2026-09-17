@@ -31,6 +31,8 @@
     <string name="secondary_text_color">ద్వితీయ వచన రంగు</string>
     <string name="background_color">నేపథ్య రంగు</string>
     <string name="remove_from_cache">తాత్కాలిక నిల్వ నుండి తొలగించు</string>
+    <!-- Artist about section -->
+    <!-- Menu descriptions -->
     <string name="copy_link">లింక్‌ను కాపీ చేయి</string>
     <string name="select">అన్నింటిని ఎంచుకోండి</string>
     <string name="like_all">అన్నింటినీ నచ్చినవిగా గుర్తించు</string>
@@ -39,6 +41,7 @@
     <string name="link_copied">లింక్ క్లిప్‌బోర్డుకు కాపీ చేయబడింది</string>
     <string name="starting_radio">సంగీత కేంద్రం ప్రారంభమవుతోంది…</string>
     <string name="now_playing">ఇప్పుడు వింటున్నది</string>
+    <string name="lyrics">గీతం</string>
     <string name="close">మూసివేయి</string>
     <string name="hide_player_thumbnail">చిత్రపటాన్ని చిన్నచిత్రాన్ని దాచు</string>
     <string name="hide_player_thumbnail_desc">ఆల్బమ్ చిత్రాన్ని యాప్ లోగోతో భర్తీ చేయి</string>
@@ -50,7 +53,7 @@
     <string name="seek_forward_dynamic">+%1$d సెకన్లు ముందుకు</string>
     <string name="seek_backward_dynamic">-%1$d సెకన్లు వెనుకకు</string>
     <string name="seek_seconds_addup">క్రమంగా ముందుకు/వెనక్కి జరగడం</string>
-    <string name="lyrics">గీతం</string>
+    <string name="seek_seconds_addup_description">సక్రియమైనట్లయితే, ప్రతి సీక్ స్కిప్‌కి 5 అదనపు సెకండ్లను క్రమంగా జోడిస్తుంది</string>
     <string name="similar_content">ఇదే విధమైన అంశాలు</string>
     <string name="player_background_style">వాయించే తెర నేపథ్య శైలి</string>
     <string name="follow_theme">రూపకల్పనను అనుసరించు</string>
@@ -60,7 +63,49 @@
     <string name="player_background_blur">మసకబార్చు</string>
     <string name="player_buttons_style">వాయించే తెర మీటల రంగులు</string>
     <string name="default_style">డిఫాల్ట్</string>
-    <string name="seek_seconds_addup_description">సక్రియమైనట్లయితే, ప్రతి సీక్ స్కిప్‌కి 5 అదనపు సెకండ్లను క్రమంగా జోడిస్తుంది</string>
-    <string name="listen_together_room_code">రూమ్ కోడ్</string>
     <string name="lyrics_animation_apple">ఆపిల్ మ్యూజిక్ స్టైల్</string>
+    <!-- Playlist cover edit -->
+    <!-- General -->
+    <!-- Sleep timer -->
+    <!-- Alarm -->
+    <!-- Player Settings -->
+    <!-- Romanization Settings -->
+    <!-- Lyrics Offset Settings -->
+    <!-- Material 3 Settings Sections -->
+    <!-- Updater -->
+    <!-- Offload -->
+    <!-- Varispeed -->
+    <!-- AudioTrack Playback Parameters -->
+    <!-- Google Cast -->
+    <!-- Last.fm -->
+    <!-- Equalizer UI -->
+    <!-- EQ Wizard -->
+    <!-- Hardcoded strings -->
+    <!-- Playback errors -->
+    <!-- Widget strings -->
+    <!-- Music Recognizer Widget strings -->
+    <!-- Player Client Settings -->
+    <!-- Decryption Library Settings -->
+    <!-- Listen Together -->
+    <string name="listen_together_room_code">రూమ్ కోడ్</string>
+    <!-- AI Lyrics Translation -->
+    <!-- Crash Handler -->
+    <!-- Theme Palette Names -->
+    <!-- Theme Content Descriptions -->
+    <!-- Music Recognition -->
+    <!-- CSV Import Strings -->
+    <!-- Daily Discover -->
+    <!-- Logout dialog -->
+    <!-- Credits / About Screen -->
+    <!-- Podcasts -->
+    <!-- Restore confirmation dialog -->
+    <!-- Cache settings -->
+    <!-- Upload songs -->
+    <!-- Android Auto settings -->
+    <!-- Stats time transfer -->
+    <!-- Player and Audio Settings -->
+    <!-- Accessibility -->
+    <!-- Loudness Level -->
+    <!-- Stream sources -->
+    <!-- Onboarding -->
 </resources>
