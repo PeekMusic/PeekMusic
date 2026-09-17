@@ -145,6 +145,8 @@
     <string name="auto_pick_best_lyrics">Auto-pick best lyrics</string>
     <string name="auto_pick_best_lyrics_desc">Prefers word-by-word synced lyrics from any provider before falling back to the first available result. Provider order is fixed while this is on.</string>
     <string name="lyrics_word_synced">Word-by-word</string>
+    <string name="plain_lyrics_peek">Plain lyrics available</string>
+    <string name="tap_to_view">Tap to view</string>
     <string name="enable_paxsenix">Enable Paxsenix</string>
     <string name="enable_paxsenix_desc">High-quality synchronized lyrics from Paxsenix API</string>
     <string name="enable_lyricsplus">Enable LyricsPlus</string>

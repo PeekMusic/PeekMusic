@@ -2238,9 +2238,74 @@ internal fun PlayerLyricsLine(
         return
     }
 
+    val isSynced = remember(lyricsText) { LyricsUtils.isLineSynced(lyricsText) }
+
+    if (!isSynced && lyricsText.isNotBlank()) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = PlayerHorizontalPadding)
+                .clickable(onClick = onShowLyrics),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = stringResource(com.metrolist.music.R.string.plain_lyrics_peek),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = contentColor.copy(alpha = 0.8f),
+                maxLines = 1,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(com.metrolist.music.R.string.tap_to_view),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontSize = 13.sp,
+                ),
+                color = contentColor.copy(alpha = 0.5f),
+                maxLines = 1,
+            )
+        }
+        return
+    }
+
     val entries = remember(lyricsText) { LyricsUtils.parseLyrics(lyricsText) }
     // Only meaningful for synced lyrics; unsynced entries all sit at time 0
     val syncedEntries = entries.filter { !it.isBackground && it.time > 0 && it.text.isNotBlank() }
+
+    // Fallback if it is synced but has no valid entries (e.g. only empty lines)
+    if (syncedEntries.isEmpty() && entries.isNotEmpty()) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = PlayerHorizontalPadding)
+                .clickable(onClick = onShowLyrics),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = stringResource(com.metrolist.music.R.string.plain_lyrics_peek),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = contentColor.copy(alpha = 0.8f),
+                maxLines = 1,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(com.metrolist.music.R.string.tap_to_view),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontSize = 13.sp,
+                ),
+                color = contentColor.copy(alpha = 0.5f),
+                maxLines = 1,
+            )
+        }
+        return
+    }
 
     // Song-specific lyrics offset (ms), same semantics as the full lyrics views
     val offset = (currentSong?.song?.lyricsOffset ?: 0).toLong()
