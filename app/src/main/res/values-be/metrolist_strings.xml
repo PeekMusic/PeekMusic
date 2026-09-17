@@ -1,49 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="local_history">Лакальны</string>
+    <string name="remote_history">Дістанцыйны</string>
+    <string name="charts">Чарты</string>
+    <string name="mixes">Міксы</string>
+    <string name="back_button_desc">Назад</string>
     <string name="album_cover_desc">Вокладка альбома</string>
+    <string name="top_music_videos">Топ музычных відэа</string>
     <string name="trending">У трэндзе</string>
+    <string name="parsed_from_link">Атрымана праз ссылку</string>
     <string name="weeks">Тыдні</string>
     <string name="months">Месяцы</string>
     <string name="years">Гады</string>
-    <string name="charts">Чарты</string>
-    <string name="back_button_desc">Назад</string>
-    <string name="top_music_videos">Топ музычных відэа</string>
+    <string name="continuous">Бесперапынна</string>
     <string name="liked">Упадабаныя</string>
     <string name="offline">Спампоўкі</string>
     <string name="my_top">Мой топ</string>
+    <string name="weekly_most_playlist_name">Топ за тыдзень</string>
+    <string name="monthly_most_playlist_name">Топ за месяц</string>
+    <string name="cached_playlist">Кэшаванае</string>
+    <string name="uploaded_playlist">Загружаны</string>
+    <string name="filter_uploaded">Загружаны</string>
     <string name="sync_playlist">Сінхранізаваць плей-ліст</string>
     <string name="sync_disabled">Сінхранізацыя адключана</string>
     <string name="allows_for_sync_witch_youtube">ЗАЎВАГА: Гэта опцыя ўключае сінхранізацыю з YouTube Music. Гэта НЕЛЬГА змяніць пазней.</string>
+    <string name="and">і</string>
     <string name="generating_image">Генерацыя відарыса…</string>
     <string name="please_wait">Пачакайце, калі ласка</string>
     <string name="cancel">Скасаваць</string>
+    <string name="enable">Уключыць</string>
     <string name="share_lyrics">Падзяліцца тэкстам песні</string>
     <string name="share_as_text">Абагуліць як тэкст</string>
     <string name="share_as_image">Абагуліць як відарыс</string>
-    <string name="cd_dark_mode">Цёмны рэжым</string>
-    <string name="cd_system_mode">Сістэмны рэжым</string>
-    <string name="palette_green">Зялёны</string>
-    <string name="palette_yellow">Жоўты</string>
-    <string name="crash_close">Закрыць</string>
-    <string name="palette_purple">Фіялетавы</string>
-    <string name="palette_blue">Сіні</string>
-    <string name="palette_sky_blue">Небесны сіні</string>
-    <string name="palette_light_green">Светла зялёны</string>
-    <string name="palette_lime">Лайм</string>
-    <string name="palette_orange">Аранжавы</string>
-    <string name="palette_brown">Карычневы</string>
-    <string name="palette_grey">Серы</string>
-    <string name="palette_blue_grey">Сіне серы</string>
-    <string name="cd_pure_black_mode">Вельмі цёмны рэжым</string>
-    <string name="cd_light_mode">Светлы рэжым</string>
-    <string name="local_history">Лакальны</string>
-    <string name="remote_history">Дістанцыйны</string>
-    <string name="uploaded_playlist">Загружаны</string>
-    <string name="filter_uploaded">Загружаны</string>
     <string name="max_selection_limit">Максімальны ліміт выбара дасягнуты</string>
+    <string name="share_selected">Падзяліцца абраным</string>
+    <string name="customize_colors">Наладзіць колеры</string>
+    <string name="text_color">Колер тэксту</string>
+    <string name="secondary_text_color">Колер другаснага тэксту</string>
+    <string name="background_color">Колер фону</string>
+    <string name="remove_from_cache">Выдаліць з кэшу</string>
+    <!-- Artist about section -->
+    <string name="about_artist">Пра артыста</string>
     <string name="show_more">Паказаць больш</string>
     <string name="show_less">Паказаць менш</string>
+    <string name="artist_page_settings">Старонка артыста</string>
+    <string name="show_artist_description">Паказаць апісанне артыста</string>
     <string name="show_artist_subscriber_count">Паказаць колькасць падпісчыкаў</string>
+    <string name="show_artist_monthly_listeners">Паказаць слухачоў за месяц</string>
+    <!-- Menu descriptions -->
     <string name="download_playlist_desc">Спампаваць ўсі песні для слухання афлайн</string>
     <string name="remove_download_playlist_desc">Выдаліць усі песні з гэтага плэйлісту</string>
     <string name="download_in_progress_desc">Ідзе спампаванне</string>
@@ -52,32 +56,14 @@
     <string name="sync_playlist_desc">Сінхранізіраваць гэты плэйліст з YouTube Music</string>
     <string name="copy_link">Скапіраваць спасылку</string>
     <string name="select">Выбраць усё</string>
-    <string name="link_copied">Спасылка скапіравана ў буфер абмену</string>
-    <string name="now_playing">Зараз грае</string>
-    <string name="mixes">Міксы</string>
-    <string name="weekly_most_playlist_name">Топ за тыдзень</string>
-    <string name="monthly_most_playlist_name">Топ за месяц</string>
-    <string name="cached_playlist">Кэшаванае</string>
-    <string name="and">і</string>
-    <string name="enable">Уключыць</string>
-    <string name="share_selected">Падзяліцца абраным</string>
-    <string name="customize_colors">Наладзіць колеры</string>
-    <string name="text_color">Колер тэксту</string>
-    <string name="background_color">Колер фону</string>
-    <string name="remove_from_cache">Выдаліць з кэшу</string>
-    <string name="about_artist">Пра артыста</string>
-    <string name="artist_page_settings">Старонка артыста</string>
-    <string name="show_artist_description">Паказаць апісанне артыста</string>
-    <string name="show_artist_monthly_listeners">Паказаць слухачоў за месяц</string>
-    <string name="lyrics">Тэкст</string>
-    <string name="close">Закрыць</string>
-    <string name="parsed_from_link">Атрымана праз ссылку</string>
-    <string name="continuous">Бесперапынна</string>
-    <string name="secondary_text_color">Колер другаснага тэксту</string>
     <string name="like_all">Адзначыць ўсе як «Падабаецца»</string>
     <string name="dislike_all">Прыбраць усе адзнакі «Падабаецца»</string>
     <string name="sort_by_last_updated">Дата абнаўлення</string>
+    <string name="link_copied">Спасылка скапіравана ў буфер абмену</string>
     <string name="starting_radio">Запускаем радыё…</string>
+    <string name="now_playing">Зараз грае</string>
+    <string name="lyrics">Тэкст</string>
+    <string name="close">Закрыць</string>
     <string name="hide_player_thumbnail">Схаваць мініяцюры плэера</string>
     <string name="hide_player_thumbnail_desc">Заменіць вокладку альбома ў плэере на лагатып прыкладання</string>
     <string name="crop_album_art">Абрэзаць вокладку альбома</string>
@@ -104,18 +90,23 @@
     <string name="player_buttons_style">Каляоровы стыль кнопак плэера</string>
     <string name="default_style">Па змаўчанні</string>
     <string name="primary_color_style">Галоўны колер</string>
+    <string name="tertiary_color_style">Трацічны колер</string>
     <string name="display_density">Шчыльнасць інтэрфейсу</string>
     <string name="restart">Перазапусціць</string>
     <string name="restart_required">Патрабуецца перазапуск!</string>
+    <string name="density_restart_message">Змена шчыльнасці інтэрфейсу набудзе моц пасля перазапуску прыкладання.  Перазапусціць зараз?</string>
     <string name="wavy">Хвалісты</string>
     <string name="enable_swipe_thumbnail">Уключыць пераключэнне трэкаў свайпам</string>
     <string name="swipe_song_to_add">Свайп налева - дадаць трэк у чаргу, свайп направа - прайграць яго наступным</string>
     <string name="swipe_song_to_remove">Свайп - выдаліць трэк з плэйліста</string>
+    <string name="lyrics_click_change">Змяняць тэкст песні па націску</string>
     <string name="lyrics_from_provider">Тэкст песні з %s</string>
     <string name="lyrics_auto_scroll">Аўтапракрутка тэксту</string>
     <string name="hide_status_bar_fullscreen">Хаваць радок стану ў поўнаэкранным рэжыме</string>
     <string name="hide_status_bar_fullscreen_desc">Хаваць радок стану, калі ўключаны поўнаэкранны рэжым тэксту</string>
+    <string name="show_interval_indicator">Паказваць індыкатар паўз</string>
     <string name="show_interval_indicator_desc">Паказвае паласу прагрэсу падчас доўгіх інструментальных паўзаў</string>
+    <string name="respect_agent_positioning">Улічваць пазіцыянаванне артыста</string>
     <string name="respect_agent_positioning_desc">Выраўноўваць тэкст у залежнасці ад ролі артыста (напрыклад, бэк-вакал)</string>
     <string name="lyrics_glow_effect">Уключыць эфект свячэння тэксту</string>
     <string name="lyrics_glow_effect_desc">Дадае свячэнне і эфект падскоквання для актыўнага радка</string>
@@ -128,8 +119,9 @@
     <string name="lyrics_animation_apple">У стыле Apple Music</string>
     <string name="lyrics_text_size">Памер тэксту песні</string>
     <string name="lyrics_line_spacing">Міжрадковы інтэрвал тэксту</string>
+    <string name="enable_lrclib_desc">База сінхранізаваных тэкстаў песень, якая падтрымліваецца супольнасцю</string>
     <string name="enable_kugou_desc">Загружае тэксты песень з KuGou, папулярнай кітайскай музычнай платформы</string>
-    <string name="youtube_music_lyrics_note">"УВАГА: Тэксты з YouTube Music будуць паказвацца аўтаматычна, калі няма іншых крыніц.  Звычайна яны не сінхранізаваныя"</string>
+    <string name="youtube_music_lyrics_note">УВАГА: Тэксты з YouTube Music будуць паказвацца аўтаматычна, калі няма іншых крыніц.  Звычайна яны не сінхранізаваныя</string>
     <string name="enable_better_lyrics">Уключыць Better Lyrics</string>
     <string name="enable_better_lyrics_desc">Сінхранізацыя тэксту па складах для любой песні, ідэальна для караоке</string>
     <string name="enable_paxsenix">Уключыць Paxsenix</string>
@@ -147,7 +139,6 @@
     <string name="show_top_playlist">Паказваць плэйліст «Топ»</string>
     <string name="show_cached_playlist">Паказваць плэйліст «Кэшаваныя»</string>
     <string name="enable_song_cache">Уключыць кэшаванне аўдыё</string>
-    <string name="density_restart_message">"Змена шчыльнасці інтэрфейсу набудзе моц пасля перазапуску прыкладання.  Перазапусціць зараз?"</string>
     <string name="enable_song_cache_desc">Аўтаматычна кэшаваць аўдыё для хутчэйшага наступнага прайгравання</string>
     <string name="show_uploaded_playlist">Паказваць плэйліст «Загружаныя»</string>
     <string name="show_most_stats_playlists">Штотыднёвыя і штомесячныя выпускі плэйлістоў</string>
@@ -160,6 +151,7 @@
     <string name="skip_silence_desc">Паскараць узнаўленне ціхіх участкаў трэкаў</string>
     <string name="skip_silence_instant">Імгненна прапускаць цішыню</string>
     <string name="skip_silence_instant_desc">Прапускаць ціхія фрагменты адразу замест іх паскарэння</string>
+    <string name="advanced_login">Уваход па токену</string>
     <string name="token_hidden">Націсніце, каб паказаць токен</string>
     <string name="token_shown">Націсніце яшчэ раз, каб скапіяваць або змяніць</string>
     <string name="token_adv_login_description">Гэта ПРАСУНУТЫ спосаб ўваходу. Замест вэб-партала можна напрамую ўвесці або абнавіць токен. Зручна для хуткага ўваходу на некалькіх прыладах. Токены з няправільным фарматам не прымаюцца</string>
@@ -167,10 +159,13 @@
     <string name="more_content">Болей кантенту</string>
     <string name="sort_ascending">Сартаваць па ўзрастанні</string>
     <string name="sort_descending">Сартаваць па змяншэнні</string>
+    <!-- Playlist cover edit -->
     <string name="edit_playlist_cover">Рэдагаваць вокладку плэйліста</string>
     <string name="edit_playlist_cover_note">УВАГА: Для змены вокладкі плэйліста акаўнт павінен быць прывязаны да нумара тэлефона і пацверджаны ў YouTube Music</string>
     <string name="edit_playlist_cover_note_wait">Пасля выбару малюнка пачакайце крыху, пакуль новая вокладка з\'явіцца ў вашым плэйлісце</string>
     <string name="choose_from_library">Выбраць з бібліятэкі</string>
+    <string name="remove_custom_image">Выдаліць свой малюнак</string>
+    <!-- General -->
     <string name="general">Агульнае</string>
     <string name="proxy">Проксі</string>
     <string name="default_lib_chips">Змяненне чыпа бібліятэкі (па змаўчанні)</string>
@@ -195,7 +190,6 @@
     <string name="persistent_shuffle_desc">Захоўваць рэжым мяшання пры прайграванні новых трэкаў ці плэйлістоў</string>
     <string name="remember_shuffle_and_repeat">Запамінаць перамешванне і паўтор</string>
     <string name="remember_shuffle_and_repeat_desc">Запамінаць рэжымы мяшання і паўтору пасля перазапуску</string>
-    <string name="percentage_format">%d%%</string>
     <string name="import_online">Імпартаваць плэйліст M3U</string>
     <string name="import_csv">Импортировать плейлист CSV</string>
     <string name="playlist_add_local_to_synced_note">УВАГА: Даданне лакальных трэкаў у сінхранізаваныя або выдаленыя плэйлісты не падтрымліваецца. Любыя іншыя камбінацыі дапушчальныя</string>
@@ -209,7 +203,6 @@
     <string name="auto_download_on_like">Аўтаспампоўванне пры адзнацы «Падабаецца»</string>
     <string name="auto_download_on_like_desc">Аўтаматычна спампоўваць трэкі, якія адзначаюцца як упадабаныя</string>
     <string name="swipe_sensitivity">Адчувальнасць свайпа міні-плэера</string>
-    <string name="sensitivity_percentage">%1$d%%</string>
     <string name="clear_song_cache_dialog">Вы ўпэўненыя, што хочаце ачысціць усе закэшаваныя трэкі?</string>
     <string name="clear_image_cache_dialog">Вы ўпэўненыя, што хочаце ачысціць усе закэшаваныя выявы?</string>
     <string name="clear_downloads_dialog">Вы ўпэўненыя, што хочаце ачысціць усе запампаваныя?</string>
@@ -220,8 +213,6 @@
     <string name="release_notes">Заўвагі да выпуску</string>
     <string name="changelog">Спіс змен</string>
     <string name="changelog_empty">Спіс змен недаступны</string>
-    <string name="github_releases_url">https://github.com/endritlim/PeekMusic/releases</string>
-    <string name="list_bullet">•</string>
     <string name="view_on_github">Адкрыць на GitHub</string>
     <string name="current_version">Бягучая версія</string>
     <string name="version_format">Версія: %s</string>
@@ -253,6 +244,7 @@
         <item quantity="many">секунд</item>
         <item quantity="other">секунд</item>
     </plurals>
+    <!-- Sleep timer -->
     <string name="set_as_default">Устанавіць па змаўчанні</string>
     <string name="sleep_timer_default_set">Таймер сна по умолчанию: %d минут</string>
     <string name="enable_automatic_sleeptimer">Уключыць аўтаматычны таймер сну</string>
@@ -277,6 +269,7 @@
     <string name="sleep_timer_stop_after_current_song_description">Чакае заканчэння бягучага трэка перад прыпынкам</string>
     <string name="sleep_timer_fade_out_title">Плыўнае згасанне</string>
     <string name="sleep_timer_fade_out_description">Плаўна змяншае гучнасць у апошнюю хвіліну</string>
+    <!-- Alarm -->
     <string name="alarm">Будзільнік</string>
     <string name="alarm_enabled">Уключыць будзільнік</string>
     <string name="alarm_time">Час будзільніка</string>
@@ -308,16 +301,10 @@
     <string name="alarm_exact_permission_desc">Дае дазвол на дакладны час будзільніка, падвышаючы надзейнасць пры працы прыкладання ў фонавым рэжыме.</string>
     <string name="alarm_battery_optimization_title">Аптымізацыя батарэі</string>
     <string name="alarm_battery_optimization_desc">Адключыце аптымізацыю батарэі для больш надзейнай працы будзільніка ў фонавым рэжыме</string>
+    <!-- Player Settings -->
     <string name="disable_load_more_when_repeat_all">Адключыць аўтазагрузку ў рэжыме паўтору ўсіх трэкаў</string>
     <string name="disable_load_more_when_repeat_all_desc">Адключыць аўтаматычную падгрузку трэкаў ці падобнага кантэнту, калі ўключаны паўтор усяго</string>
     <string name="pause_music_when_media_is_muted">Спыняць прайграванне пры адключэнні гуку</string>
-    <string name="tertiary_color_style">Трацічны колер</string>
-    <string name="lyrics_click_change">Змяняць тэкст песні па націску</string>
-    <string name="show_interval_indicator">Паказваць індыкатар паўз</string>
-    <string name="respect_agent_positioning">Улічваць пазіцыянаванне артыста</string>
-    <string name="enable_lrclib_desc">База сінхранізаваных тэкстаў песень, якая падтрымліваецца супольнасцю</string>
-    <string name="advanced_login">Уваход па токену</string>
-    <string name="remove_custom_image">Выдаліць свой малюнак</string>
     <string name="resume_on_bluetooth_connect">Працягваць пры падключэнні Bluetooth</string>
     <string name="keep_screen_on_when_player_is_expanded">Не выключаць экран калі плэер разгорнуты</string>
     <string name="crossfade">Кросфэйд</string>
@@ -325,40 +312,93 @@
     <string name="crossfade_duration">Працягласць кроссфейду</string>
     <string name="crossfade_gapless">Адключаць для альбомаў без паўз</string>
     <string name="crossfade_gapless_desc">Адключыць кроссфейд для альбомаў, якія прайграваюцца без паўзаў</string>
+    <!-- Romanization Settings -->
     <string name="lyrics_romanize_title">Раманізацыя</string>
     <string name="lyrics_romanization">Раманізацыя тэксту</string>
     <string name="line_by_line_option_title">Вызначаць мову парадкова</string>
     <string name="romanize_current_track">Раманізаваць бягучы трэк</string>
+    <!-- Lyrics Offset Settings -->
     <string name="lyrics_offset">Зрушэнне тэксту песні</string>
+    <!-- Material 3 Settings Sections -->
     <string name="settings_section_ui">Інтэрфейс</string>
     <string name="settings_section_privacy">Канфідэнцыяльнасць і бяспека</string>
     <string name="settings_section_player_content">Плэер і кантэнт</string>
     <string name="settings_section_storage">Сховішча і дадзеныя</string>
     <string name="settings_section_system">Сістэма і звесткі</string>
+    <!-- Updater -->
     <string name="updater">Абнаўленні</string>
     <string name="check_for_updates">Аўтаматычна правяраць наяўнасць абнаўленняў</string>
     <string name="update_notifications">Уключыць апавяшчэння аб абнаўленнях</string>
     <string name="update_available_title">Даступна абнаўленне</string>
     <string name="update_channel_name">Абнаўленні прыкладання</string>
     <string name="update_channel_desc">Апавяшчэнні аб новых версіях прыкладання</string>
+    <!-- Offload -->
     <string name="audio_offload">Уключыць апаратнае паскарэнне аўдыё</string>
     <string name="audio_offload_description">Выкарыстоўвае апаратны шлях вываду аўдыё для прайгравання. Адключэнне можа павялічыць выдатак батарэі, але можа дапамагчы пры праблемах з прайграваннем ці постапрацоўкай гуку</string>
     <string name="audio_offload_disabled_by_crossfade">Адключана, бо ўключаны кроссфэйд</string>
+    <!-- Varispeed -->
     <string name="speed">Хуткасць прайгравання</string>
     <string name="varispeed">Уключыць Varispeed</string>
     <string name="varispeed_description">Звязаць вышыню тону са хуткасцю прайгравання, ствараючы эфект паскарэння і запаволенні як у магнітнай стужкі</string>
+    <!-- AudioTrack Playback Parameters -->
     <string name="audio_track_playback_params">Выкарыстоўваць апаратную апрацоўку аўдыё</string>
     <string name="audio_track_playback_params_description">Выкарыстоўваць Android AudioTrack для змены хуткасці/тону замест праграмнай апрацоўкі. Больш надзейна пры экстрэмальных значэннях тону</string>
-    <string name="google_cast">Google Cast</string>
+    <!-- Google Cast -->
     <string name="google_cast_description">Трансляцыя гуку на Chromecast і іншыя прылады з падтрымкай Cast</string>
     <string name="lyrics_romanize_as_main">Паказваць раманізаваныя тэксты як асноўныя</string>
     <string name="integrations">Інтэграцыі</string>
     <string name="username">Імя карыстальніка</string>
     <string name="password">Пароль</string>
+    <!-- Last.fm -->
     <string name="lastfm_integration">Інтэграцыя з Last.fm</string>
     <string name="enable_scrobbling">Уключыць скробблінг</string>
     <string name="lastfm_now_playing">Адпраўляць статус \"Зараз іграе\"</string>
     <string name="last_fm_send_likes">Сінхранізаваць адзнакі «Падабаецца»</string>
     <string name="last_fm_send_likes_description">Дадаваць ці прыбіраць адзнаку «Любімае» на Last.fm, калі ставіцца ці здымаецца адзнака «Падабаецца» ў Metrolist</string>
     <string name="logging_in">Выконваецца ўваход…</string>
+    <!-- Equalizer UI -->
+    <!-- EQ Wizard -->
+    <!-- Hardcoded strings -->
+    <!-- Playback errors -->
+    <!-- Widget strings -->
+    <!-- Music Recognizer Widget strings -->
+    <!-- Player Client Settings -->
+    <!-- Decryption Library Settings -->
+    <!-- Listen Together -->
+    <!-- AI Lyrics Translation -->
+    <!-- Crash Handler -->
+    <string name="crash_close">Закрыць</string>
+    <!-- Theme Palette Names -->
+    <string name="palette_purple">Фіялетавы</string>
+    <string name="palette_blue">Сіні</string>
+    <string name="palette_sky_blue">Небесны сіні</string>
+    <string name="palette_green">Зялёны</string>
+    <string name="palette_light_green">Светла зялёны</string>
+    <string name="palette_lime">Лайм</string>
+    <string name="palette_yellow">Жоўты</string>
+    <string name="palette_orange">Аранжавы</string>
+    <string name="palette_brown">Карычневы</string>
+    <string name="palette_grey">Серы</string>
+    <string name="palette_blue_grey">Сіне серы</string>
+    <!-- Theme Content Descriptions -->
+    <string name="cd_pure_black_mode">Вельмі цёмны рэжым</string>
+    <string name="cd_light_mode">Светлы рэжым</string>
+    <string name="cd_dark_mode">Цёмны рэжым</string>
+    <string name="cd_system_mode">Сістэмны рэжым</string>
+    <!-- Music Recognition -->
+    <!-- CSV Import Strings -->
+    <!-- Daily Discover -->
+    <!-- Logout dialog -->
+    <!-- Credits / About Screen -->
+    <!-- Podcasts -->
+    <!-- Restore confirmation dialog -->
+    <!-- Cache settings -->
+    <!-- Upload songs -->
+    <!-- Android Auto settings -->
+    <!-- Stats time transfer -->
+    <!-- Player and Audio Settings -->
+    <!-- Accessibility -->
+    <!-- Loudness Level -->
+    <!-- Stream sources -->
+    <!-- Onboarding -->
 </resources>
