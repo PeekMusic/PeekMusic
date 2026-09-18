@@ -695,6 +695,8 @@ fun HomeScreen(
     val distinctAccountPlaylists = remember(accountPlaylists) { accountPlaylists?.distinctBy { it.id }.orEmpty() }
     val distinctSavedPodcastShows = remember(savedPodcastShows) { savedPodcastShows.distinctBy { it.id } }
     val distinctEpisodesForLater = remember(episodesForLater) { episodesForLater.distinctBy { it.id } }
+
+
     val distinctMoodAndGenres =
         remember(explorePage?.moodAndGenres) {
             explorePage?.moodAndGenres?.distinctBy { "${it.title}_${it.endpoint.browseId}_${it.endpoint.params}" }.orEmpty()
@@ -709,6 +711,10 @@ fun HomeScreen(
 
     val quickPicksLazyGridState = rememberLazyGridState()
     val forgottenFavoritesLazyGridState = rememberLazyGridState()
+
+    LaunchedEffect(distinctQuickPicks) {
+        quickPicksLazyGridState.scrollToItem(0)
+    }
 
     val accountName by viewModel.accountName.collectAsStateWithLifecycle()
     val accountImageUrl by viewModel.accountImageUrl.collectAsStateWithLifecycle()
@@ -1583,7 +1589,8 @@ fun HomeScreen(
                                     val itemsPerPage = columns * rows
                                     val itemWidth = availableWidth / columns
 
-                                    val pagerState = rememberPagerState(pageCount = { (items.size + itemsPerPage - 1) / itemsPerPage })
+                                    val totalItemsWithRandom = items.size + 1
+                                    val pagerState = rememberPagerState(pageCount = { (totalItemsWithRandom + itemsPerPage - 1) / itemsPerPage })
 
                                     Column(
                                         modifier =
@@ -1600,15 +1607,15 @@ fun HomeScreen(
                                                     .height(itemWidth * rows),
                                         ) { page ->
                                             val pageStartIndex = page * itemsPerPage
-                                            val pageItems = items.drop(pageStartIndex).take(itemsPerPage)
 
                                             Column(modifier = Modifier.fillMaxSize()) {
                                                 for (row in 0 until rows) {
                                                     Row(modifier = Modifier.fillMaxWidth()) {
                                                         for (col in 0 until columns) {
                                                             val itemIndex = row * columns + col
+                                                            val globalIndex = pageStartIndex + itemIndex
 
-                                                            val isRandomizeSlot = (page == 0 && itemIndex == itemsPerPage - 1)
+                                                            val isRandomizeSlot = (globalIndex == items.size)
 
                                                             if (isRandomizeSlot) {
                                                                 Box(
@@ -1692,8 +1699,8 @@ fun HomeScreen(
                                                                         },
                                                                     )
                                                                 }
-                                                            } else if (itemIndex < pageItems.size) {
-                                                                val item = pageItems[itemIndex]
+                                                            } else if (globalIndex < items.size) {
+                                                                val item = items[globalIndex]
                                                                 val isPinned = item.id in pinnedSpeedDialIds
 
                                                                 Box(

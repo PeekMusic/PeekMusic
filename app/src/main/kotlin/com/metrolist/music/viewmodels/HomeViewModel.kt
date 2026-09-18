@@ -93,10 +93,28 @@ internal fun buildSpeedDialItems(
     keepListening: List<YTItem>,
     quickPicks: List<YTItem>,
     home: List<YTItem>,
-): List<YTItem> =
-    (pinned + keepListening + quickPicks + home)
-        .distinctBy { it.id }
-        .take(27)
+): List<YTItem> {
+    val availableSpace = 27 - pinned.size
+    if (availableSpace <= 0) return pinned.take(27)
+
+    // Mix sources evenly so the first page (3x3) always has fresh YouTube recommendations
+    // alongside local database items, instead of being 100% dominated by static local items.
+    val mixed = mutableListOf<YTItem>()
+    val iterators = listOf(quickPicks.iterator(), home.iterator(), keepListening.iterator())
+    
+    var added = true
+    while (added && mixed.size < availableSpace * 2) { // Allow buffer for distinctBy
+        added = false
+        for (it in iterators) {
+            if (it.hasNext()) {
+                mixed.add(it.next())
+                added = true
+            }
+        }
+    }
+    
+    return (pinned + mixed).distinctBy { it.id }.take(27)
+}
 
 // Minimum number of YouTube sections to load regardless of settings.
 private const val MIN_HOME_YOUTUBE_SECTIONS = 4
