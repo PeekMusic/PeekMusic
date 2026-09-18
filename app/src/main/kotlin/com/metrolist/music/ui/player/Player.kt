@@ -972,6 +972,7 @@ fun BottomSheetPlayer(
         },
     ) {
         val controlsContent: @Composable ColumnScope.(MediaMetadata) -> Unit = { mediaMetadata ->
+            val translationStatus by com.metrolist.music.lyrics.LyricsTranslationHelper.status.collectAsStateWithLifecycle()
             val playPauseRoundness by animateDpAsState(
                 targetValue = if (isPlaying) 24.dp else 36.dp,
                 animationSpec = tween(durationMillis = 90, easing = LinearEasing),
@@ -1192,11 +1193,24 @@ fun BottomSheetPlayer(
                                 ),
                                 modifier = Modifier.size(42.dp),
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.translate),
-                                    contentDescription = stringResource(R.string.player_lyrics_peek_translate),
-                                    modifier = Modifier.size(24.dp),
-                                )
+                                AnimatedContent(
+                                    targetState = translationStatus is com.metrolist.music.lyrics.LyricsTranslationHelper.TranslationStatus.Translating,
+                                    label = "TranslationLoading"
+                                ) { isTranslating ->
+                                    if (isTranslating) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(20.dp),
+                                            color = if (hasActiveTranslations) iconButtonColor else textButtonColor,
+                                            strokeWidth = 2.dp
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(R.drawable.translate),
+                                            contentDescription = stringResource(R.string.player_lyrics_peek_translate),
+                                            modifier = Modifier.size(24.dp),
+                                        )
+                                    }
+                                }
                             }
                         }
                         
@@ -1343,14 +1357,26 @@ fun BottomSheetPlayer(
                                         }
                                     },
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.translate),
-                                    contentDescription = stringResource(R.string.player_lyrics_peek_translate),
-                                    tint = if (hasActiveTranslations) iconButtonColor else textButtonColor,
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                        .size(24.dp),
-                                )
+                                AnimatedContent(
+                                    targetState = translationStatus is com.metrolist.music.lyrics.LyricsTranslationHelper.TranslationStatus.Translating,
+                                    label = "TranslationLoading",
+                                    modifier = Modifier.align(Alignment.Center)
+                                ) { isTranslating ->
+                                    if (isTranslating) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(18.dp),
+                                            color = if (hasActiveTranslations) iconButtonColor else textButtonColor,
+                                            strokeWidth = 2.dp
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(R.drawable.translate),
+                                            contentDescription = stringResource(R.string.player_lyrics_peek_translate),
+                                            tint = if (hasActiveTranslations) iconButtonColor else textButtonColor,
+                                            modifier = Modifier.size(24.dp),
+                                        )
+                                    }
+                                }
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                         }
@@ -2694,13 +2720,7 @@ internal fun PlayerLyricsLine(
                 }
             }
         }
-        if (peekShowTranslation && currentLyrics?.translatedLyrics.isNullOrEmpty() && translationStatus is LyricsTranslationHelper.TranslationStatus.Translating) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(18.dp),
-                color = contentColor.copy(alpha = 0.6f),
-                strokeWidth = 2.dp,
-            )
-        }
+
     } // End of Column
         
     var lastValidBgIndex by remember { androidx.compose.runtime.mutableIntStateOf(0) }
