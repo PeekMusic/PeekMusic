@@ -1,5 +1,38 @@
 # Changelog
 
+## v1.2.0 — The "Spotlight" Update
+
+This release puts artists and lyrics **center stage**. Block artists you never want to hear again, enjoy Apple-style karaoke animations, and toggle translations without leaving the player.
+
+**🚫 Block Artists**
+- **Never hear them again**: Block any artist directly from the artist page or the player menu. Blocked tracks are automatically filtered from queues, mixes, and radios — no more skipping. Manage your blocklist in Settings → Blocked Artists.
+
+**✨ Apple-Style Karaoke**
+- **Gradient glow**: The lyrics peek and background adlib lines now feature a smooth flowing gradient with a fading glow — just like Apple Music's karaoke mode.
+- **Adlibs in the peek**: Background vocal lines (adlibs) now show up directly in the lyrics peek, alternating with the main lyric line — you won't miss a whisper.
+
+**🌐 Translation at Your Fingertips**
+- **One-tap toggle**: A new translate button sits right in the player — one tap to see the translation, another to dismiss it.
+- **Inline progress**: The loading spinner moved into the button itself so it never blocks the lyrics view.
+
+**📝 Plain Lyrics Hint**
+- When only untimed (plain) lyrics are available, the peek now shows a hint so you know what to expect.
+
+**🐛 Fixes**
+- Seeking no longer causes a massive lyrics jump-and-snap-back.
+- Lyrics line transitions no longer cause layout jumps.
+- Translation state resets correctly when the song changes.
+- SimpMusic word gaps parsed accurately; global LRC offsets now apply correctly.
+- Japanese romanization tokens are properly spaced.
+- Speed dial: randomize button moved to the end, Quick Picks scroll resets on shuffle.
+
+**🔄 Upstream Merges**
+- Cast: guarded empty queue transitions.
+- Sync: remote likes merge into local songs, local liked albums and library songs preserved.
+
+**🌐 Translations**
+- Massive Crowdin update: 40+ languages refreshed.
+
 ## v1.1.0 — The "Less is More" Update
 
 This release is all about **decluttering**. We ripped out a ton of settings that nobody touches (but everybody has to scroll past), polished the lyrics experience, and made the home screen feel fresher every time you open it.

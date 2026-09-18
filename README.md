@@ -24,6 +24,9 @@ screen, lyrics, the player — gets extra polish.
 **🎵 Player & Lyrics**
 - **Advanced Peek Lyrics**: The Peek feature supports offset adjustments, translations, and romanization!
 - **Layout Adaptability**: The player stays open through display changes (folding, unfolding, rotating). In landscape, the peek line and controls sit as one unit; on wide portrait screens, the peek lives in the right-hand column.
+- **Apple-Style Karaoke**: The lyrics peek and background adlib lines feature a smooth flowing gradient with a fading glow — just like Apple Music's karaoke mode.
+- **Adlibs in the Peek**: Background vocal lines (adlibs) show up directly in the lyrics peek, alternating with the main lyric line.
+- **Translation Toggle**: A translate button sits right in the player — one tap to see the translation, another to dismiss it, with inline loading progress.
 - **Karaoke & Translations**: Word-by-word karaoke animations when timings are available. Added a keyless Google Translate backend for free full-song lyrics translation in a single tap!
 - **Robust Romanization**: Correct language detection for Japanese romanization, and identical romanization/translation lines are intelligently merged to prevent duplication.
 
@@ -41,6 +44,9 @@ screen, lyrics, the player — gets extra polish.
 **🔀 Queue & Android Auto**
 - **Exclude Recently Played**: A new option to prevent recently played songs from appearing in generated mixes and radios (configurable window of 1–100 tracks).
 - **Android Auto Choice**: Choose your recommendations source — your YouTube home feed or local suggestions. Selecting a song under "Songs" now seeds an automatic Mix.
+
+**🚫 Block Artists**
+- **Full Control**: Block any artist directly from the artist page or the player menu. Blocked tracks are automatically filtered from queues, mixes, and radios — no more skipping. Manage your blocklist in Settings → Blocked Artists.
 
 **⚙️ Settings & Performance**
 - **Restructured Settings**: The overloaded settings pages were split into focused categories: Player, Audio, Queue, Sleep & Alarm, Lyrics, and Home.

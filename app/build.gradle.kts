@@ -19,7 +19,7 @@ fun keystoreSecret(propertyKey: String, envKey: String): String? =
         ?: System.getenv(envKey)?.takeIf { it.isNotBlank() }
 
 val baseApplicationId = "com.peekmusic.app"
-val peekVersionName = "1.1.0"
+val peekVersionName = "1.2.0"
 val applicationIdOverride = System.getenv("METROLIST_APPLICATION_ID")?.takeIf { it.isNotBlank() }
 val appNameOverride = System.getenv("METROLIST_APP_NAME")?.takeIf { it.isNotBlank() }
 val buildCommit =
@@ -52,7 +52,7 @@ android {
         applicationId = applicationIdOverride ?: baseApplicationId
         minSdk = 26
         targetSdk = 36
-        versionCode = 162
+        versionCode = 163
         versionName = peekVersionName
         val baseVersionName = requireNotNull(versionName)
         buildConfigField("String", "BASE_VERSION_NAME", "\"$baseVersionName\"")
