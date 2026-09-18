@@ -2649,93 +2649,16 @@ internal fun PlayerLyricsLine(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                if (wordSyncActive) {
-                    androidx.compose.foundation.layout.FlowRow(
+                if (wordSyncActive && !target.first.words.isNullOrEmpty()) {
+                    KaraokeWordFlow(
+                        words = target.first.words!!,
+                        position = position,
+                        offset = offset,
+                        contentColor = contentColor,
+                        style = mainLineStyle.copy(fontWeight = FontWeight.Bold),
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
-                    ) {
-                        val words = target.first.words.orEmpty()
-                        words.forEachIndexed { index, word ->
-                            val wordStartMs = (word.startTime * 1000).toLong()
-                            val wordEndMs = (word.endTime * 1000).toLong()
-                            val wordDuration = wordEndMs - wordStartMs
-                            val isWordActive = position + offset >= wordStartMs && position + offset < wordEndMs
-                            val hasWordPassed = position + offset >= wordEndMs
-                            
-                            val timeElapsed = position + offset - wordStartMs
-                            val linearProgress = if (wordDuration > 0) {
-                                (timeElapsed.toFloat() / wordDuration.toFloat()).coerceIn(0f, 1f)
-                            } else {
-                                if (hasWordPassed) 1f else 0f
-                            }
-                            
-                            val fillProgress = linearProgress * linearProgress * (3f - 2f * linearProgress)
-                            val wordBrush = if (isWordActive) {
-                                androidx.compose.ui.graphics.Brush.horizontalGradient(
-                                    0.0f to contentColor,
-                                    fillProgress to contentColor,
-                                    (fillProgress + 0.1f).coerceIn(0f, 1f) to contentColor.copy(alpha = 0.4f),
-                                    1.0f to contentColor.copy(alpha = 0.4f),
-                                )
-                            } else null
-                            
-                            val glowAlpha: Float
-                            val glowRadius: Float
-                            if (isWordActive) {
-                                val eased = fillProgress * fillProgress * (3f - 2f * fillProgress)
-                                glowAlpha = 0.1f + (0.25f * eased)
-                                glowRadius = 4f + (8f * eased)
-                            } else if (hasWordPassed) {
-                                val timeSincePassed = position + offset - wordEndMs
-                                if (timeSincePassed < 400) {
-                                    val fadeOut = 1f - (timeSincePassed / 400f).coerceIn(0f, 1f)
-                                    val eased = fadeOut * fadeOut * (3f - 2f * fadeOut)
-                                    glowAlpha = 0.35f * eased
-                                    glowRadius = 12f * eased
-                                } else {
-                                    glowAlpha = 0f
-                                    glowRadius = 0f
-                                }
-                            } else {
-                                glowAlpha = 0f
-                                glowRadius = 0f
-                            }
-                            
-                            val wordShadow = if (glowAlpha > 0f) {
-                                androidx.compose.ui.graphics.Shadow(
-                                    color = contentColor.copy(alpha = glowAlpha),
-                                    offset = androidx.compose.ui.geometry.Offset.Zero,
-                                    blurRadius = glowRadius
-                                )
-                            } else null
-                            
-                            val wordTextWithSpace = word.text + if (index < words.size - 1) " " else ""
-                            
-                            if (wordBrush != null) {
-                                Text(
-                                    text = wordTextWithSpace,
-                                    style = mainLineStyle.copy(
-                                        brush = wordBrush,
-                                        fontWeight = FontWeight.Bold,
-                                        shadow = wordShadow
-                                    )
-                                )
-                            } else {
-                                val wordAlpha = when {
-                                    hasWordPassed -> 1f
-                                    else -> 0.4f
-                                }
-                                Text(
-                                    text = wordTextWithSpace,
-                                    style = mainLineStyle.copy(
-                                        color = contentColor.copy(alpha = wordAlpha),
-                                        fontWeight = FontWeight.Bold,
-                                        shadow = wordShadow
-                                    )
-                                )
-                            }
-                        }
-                    }
+                    )
                 } else {
                     Text(
                         text = line,
@@ -2806,18 +2729,32 @@ internal fun PlayerLyricsLine(
             label = "adlibText"
         ) { bgLine ->
             bgLine?.let {
-                Text(
-                    text = it.text,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                        fontSize = 15.sp
-                    ),
-                    color = contentColor.copy(alpha = 0.7f),
-                    textAlign = if (isLeftVariant) TextAlign.Start else TextAlign.End,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
+                val isBgWordSyncActive = wordSyncActive
+                val bgStyle = MaterialTheme.typography.bodyMedium.copy(
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    fontSize = 15.sp
                 )
+                if (isBgWordSyncActive && !it.words.isNullOrEmpty()) {
+                    KaraokeWordFlow(
+                        words = it.words!!,
+                        position = position,
+                        offset = offset,
+                        contentColor = contentColor,
+                        style = bgStyle,
+                        horizontalArrangement = if (isLeftVariant) Arrangement.Start else Arrangement.End
+                        // No fillMaxWidth here so the adlib wraps to its content size and stays centered
+                    )
+                } else {
+                    Text(
+                        text = it.text,
+                        style = bgStyle,
+                        color = contentColor.copy(alpha = 0.7f),
+                        textAlign = if (isLeftVariant) TextAlign.Start else TextAlign.End,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }
@@ -3052,5 +2989,102 @@ private fun PlayerMoreMenuButton(
             contentDescription = null,
             colorFilter = ColorFilter.tint(iconButtonColor),
         )
+    }
+}
+
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun KaraokeWordFlow(
+    words: List<com.metrolist.music.lyrics.WordTimestamp>,
+    position: Long,
+    offset: Long,
+    contentColor: Color,
+    style: androidx.compose.ui.text.TextStyle,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
+    modifier: Modifier = Modifier,
+) {
+    androidx.compose.foundation.layout.FlowRow(
+        horizontalArrangement = horizontalArrangement,
+        modifier = modifier
+    ) {
+        words.forEachIndexed { index, word ->
+            val wordStartMs = (word.startTime * 1000).toLong()
+            val wordEndMs = (word.endTime * 1000).toLong()
+            val wordDuration = wordEndMs - wordStartMs
+            val isWordActive = position + offset >= wordStartMs && position + offset < wordEndMs
+            val hasWordPassed = position + offset >= wordEndMs
+            
+            val timeElapsed = position + offset - wordStartMs
+            val linearProgress = if (wordDuration > 0) {
+                (timeElapsed.toFloat() / wordDuration.toFloat()).coerceIn(0f, 1f)
+            } else {
+                if (hasWordPassed) 1f else 0f
+            }
+            
+            val fillProgress = linearProgress * linearProgress * (3f - 2f * linearProgress)
+            val wordBrush = if (isWordActive) {
+                androidx.compose.ui.graphics.Brush.horizontalGradient(
+                    0.0f to contentColor,
+                    fillProgress to contentColor,
+                    (fillProgress + 0.1f).coerceIn(0f, 1f) to contentColor.copy(alpha = 0.4f),
+                    1.0f to contentColor.copy(alpha = 0.4f),
+                )
+            } else null
+            
+            val glowAlpha: Float
+            val glowRadius: Float
+            if (isWordActive) {
+                val eased = fillProgress * fillProgress * (3f - 2f * fillProgress)
+                glowAlpha = 0.1f + (0.25f * eased)
+                glowRadius = 4f + (8f * eased)
+            } else if (hasWordPassed) {
+                val timeSincePassed = position + offset - wordEndMs
+                if (timeSincePassed < 400) {
+                    val fadeOut = 1f - (timeSincePassed / 400f).coerceIn(0f, 1f)
+                    val eased = fadeOut * fadeOut * (3f - 2f * fadeOut)
+                    glowAlpha = 0.35f * eased
+                    glowRadius = 12f * eased
+                } else {
+                    glowAlpha = 0f
+                    glowRadius = 0f
+                }
+            } else {
+                glowAlpha = 0f
+                glowRadius = 0f
+            }
+            
+            val wordShadow = if (glowAlpha > 0f) {
+                androidx.compose.ui.graphics.Shadow(
+                    color = contentColor.copy(alpha = glowAlpha),
+                    offset = androidx.compose.ui.geometry.Offset.Zero,
+                    blurRadius = glowRadius
+                )
+            } else null
+            
+            val wordTextWithSpace = word.text + if (index < words.size - 1) " " else ""
+            
+            if (wordBrush != null) {
+                Text(
+                    text = wordTextWithSpace,
+                    style = style.copy(
+                        brush = wordBrush,
+                        shadow = wordShadow
+                    )
+                )
+            } else {
+                val wordAlpha = when {
+                    hasWordPassed -> 1f
+                    else -> 0.4f
+                }
+                Text(
+                    text = wordTextWithSpace,
+                    style = style.copy(
+                        color = contentColor.copy(alpha = wordAlpha),
+                        shadow = wordShadow
+                    )
+                )
+            }
+        }
     }
 }
