@@ -881,4 +881,5 @@
     <string name="stream_source_web_creator">WEB_CREATOR</string>
     <string name="stream_source_web_creator_desc">Cliente web do Creator.</string>
     <!-- Onboarding -->
+    <!-- Blocked Artists Feature -->
 </resources>
