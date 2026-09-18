@@ -2426,16 +2426,23 @@ internal fun PlayerLyricsLine(
     LaunchedEffect(Unit) {
         var lastPos = positionProvider()
         var lastUpdate = System.currentTimeMillis()
+        var wasPlaying = playerConnection.player.isPlaying
         while (isActive) {
             withFrameMillis {
                 val now = System.currentTimeMillis()
                 val playerPos = positionProvider()
-                if (playerPos != lastPos) {
+                val isPlaying = playerConnection.player.isPlaying
+                
+                // Reset extrapolation if player position changes, OR if playback just resumed
+                if (playerPos != lastPos || (!wasPlaying && isPlaying)) {
                     lastPos = playerPos
                     lastUpdate = now
                 }
-                val elapsed = now - lastUpdate
-                position = lastPos + if (playerConnection.player.isPlaying) elapsed else 0L
+                wasPlaying = isPlaying
+                
+                // Cap elapsed at 250ms to prevent massive jumps if the provider hangs
+                val elapsed = (now - lastUpdate).coerceAtMost(250L)
+                position = lastPos + if (isPlaying) elapsed else 0L
             }
         }
     }
