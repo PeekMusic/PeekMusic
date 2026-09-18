@@ -874,4 +874,5 @@
     <string name="stream_source_android_vr_desc">Klienti Android VR (všechny verze).</string>
     <string name="stream_source_web_creator_desc">Webový klient tvůrce.</string>
     <!-- Onboarding -->
+    <!-- Blocked Artists Feature -->
 </resources>
