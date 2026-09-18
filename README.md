@@ -92,6 +92,13 @@ We manage our translations via Crowdin. Join our project and start translating:
 
 *(If your language isn't listed, request it directly on Crowdin!)*
 
+Many translations were originally contributed by the [Metrolist community](https://github.com/MetrolistGroup/Metrolist) — huge thanks to all the volunteers who made that possible. 🙏
+
+### Top Contributors
+
+<!-- CROWDIN-CONTRIBUTORS-START -->
+<!-- CROWDIN-CONTRIBUTORS-END -->
+
 ## Build
 
 Debug build (for development):

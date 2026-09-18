@@ -1,0 +1,42 @@
+name: Crowdin Contributors
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/src/main/res/values-*/metrolist_strings.xml'
+  schedule:
+    - cron: '0 6 * * 1' # Every Monday at 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  crowdin-contributors:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate Crowdin Contributors table
+        uses: andrii-bodnar/action-crowdin-contributors@v3
+        with:
+          contributors_per_line: 8
+          max_contributors: 32
+          image_size: 64
+          min_words_contributed: 100
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          title: 'docs: update Crowdin contributors table'
+          body: 'Automated update of the translation contributors table from Crowdin.'
+          commit-message: 'docs: update Crowdin contributors table'
+          committer: 'Crowdin Bot <support+bot@crowdin.com>'
+          branch: crowdin-contributors-update
