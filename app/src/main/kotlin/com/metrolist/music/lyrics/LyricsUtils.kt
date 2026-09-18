@@ -452,10 +452,31 @@ object LyricsUtils {
             RICH_SYNC_WORD_REGEX.containsMatchIn(line)
         }
 
-        return if (isRichSync) {
+        val entries = if (isRichSync) {
             parseRichSyncLyrics(lines)
         } else {
             parseStandardLyrics(lines)
+        }
+
+        val offsetMatch = """\[offset:([+-]?\d+)\]""".toRegex(RegexOption.IGNORE_CASE).find(decodedLyrics)
+        val offsetMs = offsetMatch?.groupValues?.get(1)?.toLongOrNull() ?: 0L
+        
+        return if (offsetMs != 0L) {
+            // Positive offset shifts lyrics to appear sooner, negative later.
+            // So actual_time = original_time - offsetMs
+            entries.map { entry ->
+                entry.copy(
+                    time = entry.time - offsetMs,
+                    words = entry.words?.map { word ->
+                        word.copy(
+                            startTime = word.startTime - (offsetMs / 1000.0),
+                            endTime = word.endTime - (offsetMs / 1000.0)
+                        )
+                    }
+                )
+            }
+        } else {
+            entries
         }
     }
 
@@ -614,9 +635,8 @@ object LyricsUtils {
         var bearingStart = Double.NaN
         for (i in wordMatches.lastIndex downTo 0) {
             nextWordStart[i] = bearingStart
-            if (wordMatches[i].groupValues[4].isNotBlank()) {
-                bearingStart = matchStartTimes[i]
-            }
+            // Always update bearingStart so words end exactly when a blank tag (like a gap) starts
+            bearingStart = matchStartTimes[i]
         }
 
         wordMatches.forEachIndexed { index, match ->

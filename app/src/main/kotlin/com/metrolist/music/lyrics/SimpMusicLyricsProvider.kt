@@ -74,8 +74,15 @@ object SimpMusicLyricsProvider : LyricsProvider {
                 return Result.failure(IllegalStateException("SimpMusic: HTTP ${http.status.value}"))
             }
             val body = json.decodeFromString<Response>(http.bodyAsText())
-            val data = body.data.firstOrNull()
-                ?: return Result.failure(IllegalStateException("SimpMusic: empty data"))
+            // Pick the best available lyrics format from all returned sources
+            val data = body.data.maxByOrNull {
+                when {
+                    it.richSyncLyrics.isNotBlank() -> 3
+                    it.syncedLyrics.isNotBlank() -> 2
+                    it.plainLyric.isNotBlank() -> 1
+                    else -> 0
+                }
+            } ?: return Result.failure(IllegalStateException("SimpMusic: empty data"))
             val lyrics = data.richSyncLyrics.ifBlank { data.syncedLyrics.ifBlank { data.plainLyric } }
             if (lyrics.isBlank()) {
                 Result.failure(IllegalStateException("SimpMusic: no lyrics content"))
