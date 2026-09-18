@@ -18,6 +18,11 @@ interface Queue {
      */
     val isRadioMix: Boolean get() = false
 
+    /**
+     * True for album queues. We bypass blocked artist filtering for albums so that explicitly clicked albums play fully.
+     */
+    val isAlbum: Boolean get() = false
+
     suspend fun getInitialStatus(): Status
 
     fun hasNextPage(): Boolean

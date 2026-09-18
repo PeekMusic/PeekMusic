@@ -58,6 +58,7 @@ import com.metrolist.music.ui.screens.settings.LyricsSettings
 import com.metrolist.music.ui.screens.settings.PlayerDesignSettings
 import com.metrolist.music.ui.screens.settings.PrivacySettings
 import com.metrolist.music.ui.screens.settings.QueueSettings
+import com.metrolist.music.ui.screens.settings.BlockedArtistsSettings
 import com.metrolist.music.ui.screens.settings.RomanizationSettings
 import com.metrolist.music.ui.screens.settings.SettingsScreen
 import com.metrolist.music.ui.screens.settings.StorageSettings
@@ -375,6 +376,10 @@ fun NavGraphBuilder.navigationBuilder(
 
     composable("settings/queue") {
         QueueSettings(navController)
+    }
+    
+    composable("settings/blocked_artists") {
+        BlockedArtistsSettings(navController)
     }
 
     composable("settings/alarm") {

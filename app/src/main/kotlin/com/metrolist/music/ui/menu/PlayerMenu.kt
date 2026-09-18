@@ -5,6 +5,16 @@
 
 package com.metrolist.music.ui.menu
 
+import com.metrolist.music.ui.component.BlockArtistDialog
+import com.metrolist.music.constants.BlockedArtistsKey
+import com.metrolist.music.models.BlockedArtist
+import com.metrolist.music.models.BlockedArtistManager
+import com.metrolist.music.utils.dataStore
+import androidx.datastore.preferences.core.edit
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+
+
 import android.content.Context
 import android.content.Intent
 import android.media.audiofx.AudioEffect
@@ -99,6 +109,7 @@ import com.metrolist.music.ui.component.VolumeSlider
 import com.metrolist.music.utils.rememberPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
 import kotlin.math.log2
 import kotlin.math.pow
 import kotlin.math.round
@@ -222,6 +233,7 @@ fun PlayerMenu(
     var showPitchTempoDialog by rememberSaveable {
         mutableStateOf(false)
     }
+    var showBlockDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showPitchTempoDialog) {
         TempoPitchDialog(
@@ -236,6 +248,38 @@ fun PlayerMenu(
     if (showSpeedDialog) {
         SpeedDialog(
             onDismiss = { showSpeedDialog = false },
+        )
+    }
+    
+    val blockedJson by context.dataStore.data.map { it[BlockedArtistsKey] ?: "" }.collectAsStateWithLifecycle(initialValue = "")
+    
+    if (showBlockDialog && mediaMetadata.artists.isNotEmpty()) {
+        val firstArtist = mediaMetadata.artists.first()
+        val artistId = firstArtist.id ?: ""
+        val isBlocked = BlockedArtistManager.isBlocked(artistId, blockedJson)
+        BlockArtistDialog(
+            artistName = firstArtist.name,
+            isBlocked = isBlocked,
+            onDismiss = { showBlockDialog = false },
+            onUnblock = {
+                coroutineScope.launch {
+                    context.dataStore.edit { prefs ->
+                        val current = BlockedArtistManager.parse(prefs[BlockedArtistsKey])
+                        prefs[BlockedArtistsKey] = BlockedArtistManager.encode(current.filterNot { it.id == artistId })
+                    }
+                }
+            },
+            onBlock = { expiry ->
+                coroutineScope.launch {
+                    context.dataStore.edit { prefs ->
+                        val current = BlockedArtistManager.parse(prefs[BlockedArtistsKey])
+                        val newList = current.filterNot { it.id == firstArtist.id } + BlockedArtist(firstArtist.id ?: "", firstArtist.name, expiry)
+                        prefs[BlockedArtistsKey] = BlockedArtistManager.encode(newList)
+                    }
+                }
+                showBlockDialog = false
+                onDismiss()
+            }
         )
     }
 
@@ -670,6 +714,23 @@ fun PlayerMenu(
                                 },
                             ),
                         )
+
+                        mediaMetadata.artists.firstOrNull()?.let { firstArtist ->
+                            add(
+                                Material3MenuItemData(
+                                    title = { Text(text = stringResource(R.string.block_artist)) },
+                                    icon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.block),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(24.dp),
+                                        )
+                                    },
+                                    onClick = { showBlockDialog = true }
+                                )
+                            )
+                        }
+
 
                         if (isQueueTrigger != true) {
                             add(

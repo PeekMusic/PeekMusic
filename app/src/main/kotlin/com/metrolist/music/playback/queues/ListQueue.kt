@@ -14,6 +14,7 @@ class ListQueue(
     val startIndex: Int = 0,
     val position: Long = 0L,
     override val isRadioMix: Boolean = false,
+    override val isAlbum: Boolean = false,
 ) : Queue {
     override val preloadItem: MediaMetadata? = null
 

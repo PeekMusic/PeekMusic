@@ -143,6 +143,8 @@ val ShufflePlaylistFirstKey = booleanPreferencesKey("shufflePlaylistFirst")
 val PreventDuplicateTracksInQueueKey = booleanPreferencesKey("preventDuplicateTracksInQueue")
 val ExcludeRecentlyPlayedFromQueueKey = booleanPreferencesKey("excludeRecentlyPlayedFromQueue")
 val RecentlyPlayedTrackIdsKey = stringPreferencesKey("recentlyPlayedTrackIdsV2")
+
+val BlockedArtistsKey = stringPreferencesKey("blocked_artists")
 val RecentlyPlayedWindowSizeKey = intPreferencesKey("recentlyPlayedWindowSize")
 val CrossfadeEnabledKey = booleanPreferencesKey("crossfadeEnabled")
 val CrossfadeDurationKey = floatPreferencesKey("crossfadeDurationFloat")

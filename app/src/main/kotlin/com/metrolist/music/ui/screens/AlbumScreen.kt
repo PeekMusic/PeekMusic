@@ -373,6 +373,7 @@ fun AlbumScreen(
                                         ListQueue(
                                             title = albumWithSongs.album.title,
                                             items = filteredSongs.shuffled().map { it.toMediaItem() },
+                                            isAlbum = true,
                                         ),
                                     )
                                 }

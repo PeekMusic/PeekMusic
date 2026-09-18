@@ -1142,4 +1142,15 @@
     <string name="onboarding_finish_button">Finish</string>
     <string name="onboarding_check_for_updates">Check for updates</string>
     <string name="onboarding_check_for_updates_desc">Get notified when a new PeekMusic release is available</string>
+
+    <!-- Blocked Artists Feature -->
+    <string name="block_artist">Block artist</string>
+    <string name="block_artist_duration">How long do you want to block %s?</string>
+    <string name="block_1_hour">For 1 hour</string>
+    <string name="block_8_hours">For 8 hours</string>
+    <string name="block_1_day">For 1 day</string>
+    <string name="block_forever">Forever</string>
+    <string name="blocked_artists">Blocked Artists</string>
+    <string name="blocked_artists_desc">Manage artists you have blocked. Blocked artists will be automatically filtered out of your queue and mixes. However, you can still play their songs if you explicitly click on their albums or tracks.</string>
+    <string name="blocked_until">Blocked until: %s</string>
 </resources>

@@ -49,6 +49,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import com.metrolist.music.ui.component.BlockArtistDialog
+import com.metrolist.music.constants.BlockedArtistsKey
+import com.metrolist.music.models.BlockedArtist
+import com.metrolist.music.models.BlockedArtistManager
+import com.metrolist.music.utils.dataStore
+import androidx.datastore.preferences.core.edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -130,6 +136,7 @@ import com.metrolist.music.utils.rememberPreference
 import com.metrolist.music.viewmodels.ArtistViewModel
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -177,6 +184,7 @@ fun ArtistScreen(
             -(systemBarsTopPadding + AppBarHeight).roundToPx()
         }
 
+    var showBlockDialog by rememberSaveable { mutableStateOf(false) }
     val transparentAppBar by remember {
         derivedStateOf {
             lazyListState.firstVisibleItemIndex == 0 && lazyListState.firstVisibleItemScrollOffset < 100
@@ -1012,6 +1020,38 @@ fun ArtistScreen(
         )
     }
 
+    val blockedJson by context.dataStore.data.map { it[BlockedArtistsKey] ?: "" }.collectAsStateWithLifecycle(initialValue = "")
+    
+    if (showBlockDialog) {
+        val artistId = viewModel.artistId
+        val artistName = displayArtistName ?: "Künstler"
+        val isBlocked = BlockedArtistManager.isBlocked(artistId, blockedJson)
+        BlockArtistDialog(
+            artistName = artistName,
+            isBlocked = isBlocked,
+            onDismiss = { showBlockDialog = false },
+            onUnblock = {
+                coroutineScope.launch {
+                    context.dataStore.edit { prefs ->
+                        val current = BlockedArtistManager.parse(prefs[BlockedArtistsKey])
+                        prefs[BlockedArtistsKey] = BlockedArtistManager.encode(current.filterNot { it.id == artistId })
+                    }
+                }
+            },
+            onBlock = { expiry ->
+                coroutineScope.launch {
+                    context.dataStore.edit { prefs ->
+                        val current = BlockedArtistManager.parse(prefs[BlockedArtistsKey])
+                        val newList = current.filterNot { it.id == artistId } + BlockedArtist(artistId, artistName, expiry)
+                        prefs[BlockedArtistsKey] = BlockedArtistManager.encode(newList)
+                    }
+                }
+                showBlockDialog = false
+                navController.navigateUp()
+            }
+        )
+    }
+
     TopAppBar(
         title = { if (!transparentAppBar) Text(displayArtistName.orEmpty()) },
         navigationIcon = {
@@ -1026,6 +1066,14 @@ fun ArtistScreen(
             }
         },
         actions = {
+            IconButton(
+                onClick = { showBlockDialog = true }
+            ) {
+                Icon(
+                    painterResource(R.drawable.block),
+                    contentDescription = null,
+                )
+            }
             IconButton(
                 onClick = {
                     viewModel.artistPage?.artist?.shareLink?.let { link ->

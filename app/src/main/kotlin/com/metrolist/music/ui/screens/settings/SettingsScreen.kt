@@ -126,6 +126,11 @@ fun SettingsScreen(
                     icon = painterResource(R.drawable.bedtime),
                     title = { Text(stringResource(R.string.settings_sleep_alarm)) },
                     onClick = { navController.navigate("settings/alarm") }
+                ),
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.block),
+                    title = { Text(stringResource(R.string.blocked_artists)) },
+                    onClick = { navController.navigate("settings/blocked_artists") }
                 )
             )
         )

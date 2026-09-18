@@ -57,6 +57,11 @@ fun MediaMetadata.withResolvedArtistNameAliases(): MediaMetadata {
     return if (resolvedArtists == artists) this else copy(artists = resolvedArtists)
 }
 
+fun MediaItem.hasBlockedArtist(blockedJson: String?, currentTime: Long = System.currentTimeMillis()): Boolean {
+    val metadata = this.metadata ?: return false
+    return metadata.artists.any { com.metrolist.music.models.BlockedArtistManager.isBlocked(it.id, blockedJson, currentTime) }
+}
+
 fun MediaItem.withUpdatedMetadata(updatedMetadata: MediaMetadata): MediaItem {
     val resolvedMetadata = updatedMetadata.withResolvedArtistNameAliases()
     val artistNames = resolvedMetadata.artists.joinToString { it.name }

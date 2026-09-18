@@ -38,6 +38,15 @@ import com.metrolist.music.db.entities.SpeedDialItem
 import com.metrolist.music.db.entities.Artist
 import com.metrolist.music.extensions.toMediaItem
 import com.metrolist.music.playback.queues.ListQueue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.metrolist.music.utils.dataStore
+import com.metrolist.music.constants.BlockedArtistsKey
+import com.metrolist.music.models.BlockedArtist
+import com.metrolist.music.models.BlockedArtistManager
+import com.metrolist.music.ui.component.BlockArtistDialog
+import androidx.datastore.preferences.core.edit
 import com.metrolist.music.ui.component.ArtistListItem
 import com.metrolist.music.ui.component.Material3MenuGroup
 import com.metrolist.music.ui.component.Material3MenuItemData
@@ -63,6 +72,7 @@ fun ArtistMenu(
     val artistState = database.artist(originalArtist.id).collectAsStateWithLifecycle(initialValue = originalArtist)
     val artist = artistState.value ?: originalArtist
     val isPinned by database.speedDialDao.isPinned(artist.id).collectAsStateWithLifecycle(initialValue = false)
+    var showBlockDialog by remember { mutableStateOf(false) }
 
     ArtistListItem(
         artist = artist,
@@ -238,9 +248,41 @@ fun ArtistMenu(
                                 update(artist.artist.toggleLike())
                             }
                         }
+                    ),
+                    Material3MenuItemData(
+                        title = {
+                            Text(text = stringResource(R.string.block_artist))
+                        },
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.block),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            showBlockDialog = true
+                        }
                     )
                 )
             )
         }
+    }
+    
+    if (showBlockDialog) {
+        BlockArtistDialog(
+            artistName = artist.artist.name,
+            onDismiss = { showBlockDialog = false },
+            onBlock = { expiry ->
+                coroutineScope.launch {
+                    context.dataStore.edit { prefs ->
+                        val current = BlockedArtistManager.parse(prefs[BlockedArtistsKey])
+                        val newList = current.filterNot { it.id == artist.id } + BlockedArtist(artist.id, artist.artist.name, expiry)
+                        prefs[BlockedArtistsKey] = BlockedArtistManager.encode(newList)
+                    }
+                }
+                showBlockDialog = false
+                onDismiss()
+            }
+        )
     }
 }

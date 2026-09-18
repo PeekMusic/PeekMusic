@@ -160,6 +160,7 @@ import com.metrolist.music.extensions.currentMetadata
 import com.metrolist.music.extensions.findNextMediaItemById
 import com.metrolist.music.extensions.mediaItems
 import com.metrolist.music.extensions.metadata
+import com.metrolist.music.extensions.hasBlockedArtist
 import com.metrolist.music.extensions.setOffloadEnabled
 import com.metrolist.music.extensions.toEnum
 import com.metrolist.music.extensions.toMediaItem
@@ -1069,6 +1070,68 @@ class MusicService :
                 }
             }
         }
+        // Listen for blocked artists and remove matching songs from queue immediately
+        scope.launch {
+            dataStore.data.map { it[com.metrolist.music.constants.BlockedArtistsKey] ?: "" }.distinctUntilChanged().collect { blockedJson ->
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    val currentTime = System.currentTimeMillis()
+                    
+                    if (::player.isInitialized) {
+                        val itemsToRemove = mutableSetOf<Int>()
+                        for (i in 0 until player.mediaItemCount) {
+                            if (player.getMediaItemAt(i).hasBlockedArtist(blockedJson, currentTime)) {
+                                itemsToRemove.add(i)
+                            }
+                        }
+                        if (itemsToRemove.isNotEmpty()) {
+                            val newItems = mutableListOf<androidx.media3.common.MediaItem>()
+                            var newIndex = player.currentMediaItemIndex
+                            for (i in 0 until player.mediaItemCount) {
+                                if (i !in itemsToRemove) {
+                                    newItems.add(player.getMediaItemAt(i))
+                                } else if (i <= player.currentMediaItemIndex) {
+                                    newIndex = maxOf(0, newIndex - 1)
+                                }
+                            }
+                            val wasPlaying = player.isPlaying
+                            val position = if (player.currentMediaItemIndex in itemsToRemove) 0L else player.currentPosition
+                            player.setMediaItems(newItems, newIndex, position)
+                            player.prepare()
+                            if (wasPlaying) {
+                                player.play()
+                            }
+                        }
+                    }
+                
+                    secondaryPlayer?.let { secPlayer ->
+                        val itemsToRemove = mutableSetOf<Int>()
+                        for (i in 0 until secPlayer.mediaItemCount) {
+                            if (secPlayer.getMediaItemAt(i).hasBlockedArtist(blockedJson, currentTime)) {
+                                itemsToRemove.add(i)
+                            }
+                        }
+                        if (itemsToRemove.isNotEmpty()) {
+                            val newItems = mutableListOf<androidx.media3.common.MediaItem>()
+                            var newIndex = secPlayer.currentMediaItemIndex
+                            for (i in 0 until secPlayer.mediaItemCount) {
+                                if (i !in itemsToRemove) {
+                                    newItems.add(secPlayer.getMediaItemAt(i))
+                                } else if (i <= secPlayer.currentMediaItemIndex) {
+                                    newIndex = maxOf(0, newIndex - 1)
+                                }
+                            }
+                            val wasPlaying = secPlayer.isPlaying
+                            val position = if (secPlayer.currentMediaItemIndex in itemsToRemove) 0L else secPlayer.currentPosition
+                            secPlayer.setMediaItems(newItems, newIndex, position)
+                            secPlayer.prepare()
+                            if (wasPlaying) {
+                                secPlayer.play()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun createExoPlayer(prefs: Preferences? = null): ExoPlayer {
@@ -1567,13 +1630,27 @@ class MusicService :
             player.playWhenReady = playWhenReady
         }
         scope.launch(SilentHandler) {
-            val initialStatus =
+            var initialStatus =
                 withContext(Dispatchers.IO) {
                     queue
                         .getInitialStatus()
                         .filterExplicit(dataStore.get(HideExplicitKey, false))
                         .filterVideoSongs(dataStore.get(HideVideoSongsKey, false))
                 }
+                
+            val blockedJson = dataStore.get(com.metrolist.music.constants.BlockedArtistsKey, "")
+            val currentTime = System.currentTimeMillis()
+            var cleanItems = initialStatus.items
+            if (!queue.isAlbum) {
+                cleanItems = cleanItems.filter { !it.hasBlockedArtist(blockedJson, currentTime) }
+                
+                while (cleanItems.isEmpty() && queue.hasNextPage()) {
+                    val nextItems = withContext(Dispatchers.IO) { queue.nextPage() }
+                    cleanItems = nextItems.filter { !it.hasBlockedArtist(blockedJson, currentTime) }
+                }
+            }
+            initialStatus = initialStatus.copy(items = cleanItems, mediaItemIndex = 0.coerceAtMost(cleanItems.lastIndex.coerceAtLeast(0)))
+
             val filteredStatus = initialStatus.withRecentlyPlayedFiltered(queue)
             if (queue.preloadItem != null && player.playbackState == STATE_IDLE) return@launch
             if (filteredStatus.title != null) {
@@ -1656,10 +1733,12 @@ class MusicService :
                     queueTitle = initialStatus.title
                 }
 
+                val blockedJson = dataStore.get(com.metrolist.music.constants.BlockedArtistsKey, "")
+                val currentTime = System.currentTimeMillis()
                 val radioItems =
                     initialStatus.items.filter { item ->
                         item.mediaId != currentMediaId
-                    }
+                    }.filter { !it.hasBlockedArtist(blockedJson, currentTime) }
 
                 if (radioItems.isNotEmpty()) {
                     val itemCount = player.mediaItemCount
@@ -1688,12 +1767,15 @@ class MusicService :
                                 YouTube.related(relatedEndpoint).getOrNull()
                             }
                         relatedPage?.songs?.let { songs ->
+                            val blockedJson = dataStore.get(com.metrolist.music.constants.BlockedArtistsKey, "")
+                            val currentTime = System.currentTimeMillis()
                             val radioItems =
                                 songs
                                     .filter { it.id != currentMediaId }
                                     .map { it.toMediaItem() }
                                     .filterExplicit(cachedHideExplicit)
                                     .filterVideoSongs(cachedHideVideoSongs)
+                                    .filter { !it.hasBlockedArtist(blockedJson, currentTime) }
 
                             if (radioItems.isNotEmpty()) {
                                 val itemCount = player.mediaItemCount
@@ -1729,16 +1811,20 @@ class MusicService :
                             YouTube
                                 .next(WatchEndpoint(playlistId = firstResult.endpoint.playlistId))
                                 .onSuccess { secondResult ->
+                                    val blockedJson = dataStore.get(com.metrolist.music.constants.BlockedArtistsKey, "")
+                                    val currentTime = System.currentTimeMillis()
                                     automixItems.value =
                                         secondResult.items.map { song ->
                                             song.toMediaItem()
-                                        }
+                                        }.filter { !it.hasBlockedArtist(blockedJson, currentTime) }
                                 }.onFailure {
                                     if (firstResult.items.isNotEmpty()) {
+                                        val blockedJson = dataStore.get(com.metrolist.music.constants.BlockedArtistsKey, "")
+                                        val currentTime = System.currentTimeMillis()
                                         automixItems.value =
                                             firstResult.items.map { song ->
                                                 song.toMediaItem()
-                                            }
+                                            }.filter { !it.hasBlockedArtist(blockedJson, currentTime) }
                                     }
                                 }
                         }.onFailure {
@@ -1751,10 +1837,13 @@ class MusicService :
                                             videoId = currentSong.id,
                                         ),
                                     ).onSuccess { radioResult ->
+                                        val blockedJson = dataStore.get(com.metrolist.music.constants.BlockedArtistsKey, "")
+                                        val currentTime = System.currentTimeMillis()
                                         val filteredItems =
                                             radioResult.items
                                                 .filter { it.id != currentSong.id }
                                                 .map { it.toMediaItem() }
+                                                .filter { !it.hasBlockedArtist(blockedJson, currentTime) }
                                         if (filteredItems.isNotEmpty()) {
                                             automixItems.value = filteredItems
                                         }
@@ -1765,10 +1854,13 @@ class MusicService :
                                             ?.relatedEndpoint
                                             ?.let { relatedEndpoint ->
                                                 YouTube.related(relatedEndpoint).onSuccess { relatedPage ->
+                                                    val blockedJson = dataStore.get(com.metrolist.music.constants.BlockedArtistsKey, "")
+                                                    val currentTime = System.currentTimeMillis()
                                                     val relatedItems =
                                                         relatedPage.songs
                                                             .filter { it.id != currentSong.id }
                                                             .map { it.toMediaItem() }
+                                                            .filter { !it.hasBlockedArtist(blockedJson, currentTime) }
                                                     if (relatedItems.isNotEmpty()) {
                                                         automixItems.value = relatedItems
                                                     }
@@ -2361,35 +2453,44 @@ class MusicService :
             !(cachedDisableLoadMoreWhenRepeatAll && player.repeatMode == REPEAT_MODE_ALL)
         ) {
             scope.launch(SilentHandler) {
-                val mediaItems =
-                    withContext(Dispatchers.IO) {
-                        currentQueue
-                            .nextPage()
-                            .filterExplicit(cachedHideExplicit)
-                            .filterVideoSongs(cachedHideVideoSongs)
-                    }
+                val blockedJson = dataStore.get(com.metrolist.music.constants.BlockedArtistsKey, "")
+                val currentTime = System.currentTimeMillis()
+                
+                var itemsToAdd = emptyList<androidx.media3.common.MediaItem>()
+                while (itemsToAdd.isEmpty() && currentQueue.hasNextPage()) {
+                    val mediaItems =
+                        withContext(Dispatchers.IO) {
+                            currentQueue
+                                .nextPage()
+                                .filterExplicit(cachedHideExplicit)
+                                .filterVideoSongs(cachedHideVideoSongs)
+                        }
 
-                val preventDuplicates = dataStore.get(PreventDuplicateTracksInQueueKey, true)
-                val excludeRecentlyPlayed = dataStore.get(ExcludeRecentlyPlayedFromQueueKey, true)
-                val existingIds =
-                    if (preventDuplicates || excludeRecentlyPlayed) {
-                        (0 until player.mediaItemCount)
-                            .map { player.getMediaItemAt(it).mediaId }
-                            .toSet()
-                    } else {
-                        emptySet()
-                    }
-                val recentlyPlayedIds = if (excludeRecentlyPlayed) getRecentlyPlayedIds() else emptySet()
+                    val preventDuplicates = dataStore.get(PreventDuplicateTracksInQueueKey, true)
+                    val excludeRecentlyPlayed = dataStore.get(ExcludeRecentlyPlayedFromQueueKey, true)
+                    val existingIds =
+                        if (preventDuplicates || excludeRecentlyPlayed) {
+                            (0 until player.mediaItemCount)
+                                .map { player.getMediaItemAt(it).mediaId }
+                                .toSet()
+                        } else {
+                            emptySet()
+                        }
+                    val recentlyPlayedIds = if (excludeRecentlyPlayed) getRecentlyPlayedIds() else emptySet()
 
-                var itemsToAdd = mediaItems
-                if (preventDuplicates) {
-                    itemsToAdd = itemsToAdd.filter { it.mediaId !in existingIds }
-                }
-                if (excludeRecentlyPlayed) {
-                    val filtered = itemsToAdd.filter { it.mediaId !in recentlyPlayedIds }
-                    // Fallback: keep at least half of the original batch so the queue never starves.
-                    val threshold = mediaItems.size / 2
-                    itemsToAdd = if (filtered.size >= threshold) filtered else itemsToAdd
+                    var tempItems = mediaItems
+                    if (preventDuplicates) {
+                        tempItems = tempItems.filter { it.mediaId !in existingIds }
+                    }
+                    if (excludeRecentlyPlayed) {
+                        val filtered = tempItems.filter { it.mediaId !in recentlyPlayedIds }
+                        val threshold = mediaItems.size / 2
+                        tempItems = if (filtered.size >= threshold) filtered else tempItems
+                    }
+                    if (!currentQueue.isAlbum) {
+                        tempItems = tempItems.filter { !it.hasBlockedArtist(blockedJson, currentTime) }
+                    }
+                    itemsToAdd = itemsToAdd + tempItems
                 }
 
                 if (player.playbackState != STATE_IDLE && itemsToAdd.isNotEmpty()) {
@@ -2710,6 +2811,8 @@ class MusicService :
      * is restored as a fallback.
      */
     private suspend fun Queue.Status.withRecentlyPlayedFiltered(queue: Queue): Queue.Status {
+        val blockedJson = dataStore.get(com.metrolist.music.constants.BlockedArtistsKey, "")
+        val currentTime = System.currentTimeMillis()
         if (!dataStore.get(ExcludeRecentlyPlayedFromQueueKey, true)) return this
         if (!queue.isRadioMix || items.isEmpty()) return this
 
@@ -2719,12 +2822,12 @@ class MusicService :
         val suffix = items.drop(currentIndex + 1)
 
         val minDesired = maxOf(suffix.size / 2, 5)
-        var filteredSuffix = suffix.filter { it.mediaId !in recentlyPlayed }
+        var filteredSuffix = suffix.filter { it.mediaId !in recentlyPlayed && !it.hasBlockedArtist(blockedJson, currentTime) }
 
         while (filteredSuffix.size < minDesired && queue.hasNextPage()) {
             val nextItems = withContext(Dispatchers.IO) { queue.nextPage() }
             val newItems = nextItems.filter {
-                it.mediaId !in recentlyPlayed && it.mediaId !in prefix.map { item -> item.mediaId }
+                it.mediaId !in recentlyPlayed && it.mediaId !in prefix.map { item -> item.mediaId } && !it.hasBlockedArtist(blockedJson, currentTime)
             }
             filteredSuffix = filteredSuffix + newItems
         }
