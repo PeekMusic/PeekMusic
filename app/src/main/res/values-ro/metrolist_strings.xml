@@ -857,4 +857,5 @@
     <string name="stream_source_android_vr_desc">Clienții Android VR (toate versiunile).</string>
     <string name="stream_source_web_creator_desc">Clientul web creator.</string>
     <!-- Onboarding -->
+    <!-- Blocked Artists Feature -->
 </resources>
