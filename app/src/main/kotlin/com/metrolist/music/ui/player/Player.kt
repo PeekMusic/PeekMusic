@@ -2570,6 +2570,18 @@ internal fun PlayerLyricsLine(
     }
     val coroutineScope = rememberCoroutineScope()
 
+    // Sync translation helper state when song/lyrics change
+    LaunchedEffect(currentLyrics, peekShowTranslation, translateLanguage, entries.size) {
+        if (peekShowTranslation && currentLyrics != null && entries.isNotEmpty()) {
+            com.metrolist.music.lyrics.LyricsTranslationHelper.loadTranslationsFromDatabase(
+                lyrics = entries,
+                lyricsEntity = currentLyrics,
+                targetLanguage = translateLanguage,
+                mode = "Literal"
+            )
+        }
+    }
+
     LaunchedEffect(peekShowTranslation, entries.size) {
         com.metrolist.music.lyrics.LyricsTranslationHelper.manualTrigger.collect {
             if (peekShowTranslation && entries.isNotEmpty()) {
