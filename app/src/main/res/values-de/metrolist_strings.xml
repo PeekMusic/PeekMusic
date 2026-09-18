@@ -839,4 +839,5 @@
     <string name="stream_source_android_vr_desc">Android-VR-Clients (alle Versionen).</string>
     <string name="stream_source_web_creator_desc">Creator-Webclient.</string>
     <!-- Onboarding -->
+    <!-- Blocked Artists Feature -->
 </resources>
