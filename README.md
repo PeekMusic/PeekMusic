@@ -97,6 +97,21 @@ Many translations were originally contributed by the [Metrolist community](https
 ### Top Contributors
 
 <!-- CROWDIN-CONTRIBUTORS-START -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top">
+        <a href="https://crowdin.com/profile/elimani0411"><img alt="logo" style="width: 64px" src="https://crowdin-static.cf-downloads.crowdin.com/avatar/12897637/medium/5b1f68860654069044e13cf15e784ac8.jpg" />
+          <br />
+          <sub><b>Endrit Limani</b></sub>
+          <br />
+          <sub><b>(elimani0411)</b></sub></a>
+        <br />
+        <sub><b>112316 words</b></sub>
+      </td>
+    </tr>
+  </tbody>
+</table>
 <!-- CROWDIN-CONTRIBUTORS-END -->
 
 ## Build
