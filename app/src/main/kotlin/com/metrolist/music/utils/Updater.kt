@@ -130,8 +130,18 @@ object Updater {
                     return@runCatching cachedReleaseInfo!!
                 }
 
-                val response = client.get("$GITHUB_API_BASE/releases?per_page=1")
-                    .bodyAsText()
+                val response = client.get("$GITHUB_API_BASE/releases?per_page=1").bodyAsText()
+                if (response.trim().startsWith("{")) {
+                    val jsonObj = org.json.JSONObject(response)
+                    if (jsonObj.has("message")) {
+                        val msg = jsonObj.getString("message")
+                        if (msg.contains("API rate limit exceeded")) {
+                            error("Du hast zu oft nach Updates gesucht. Bitte warte eine Weile, bevor du es erneut versuchst (GitHub API Limit).")
+                        } else {
+                            error("GitHub API Error: $msg")
+                        }
+                    }
+                }
                 val releases = JSONArray(response)
                 if (releases.length() == 0) error("No releases found")
 
@@ -166,8 +176,18 @@ object Updater {
                 var hasMore = true
                 
                 while (hasMore && page <= 10) { // Limit to 10 pages
-                    val response = client.get("$GITHUB_API_BASE/releases?page=$page&per_page=30")
-                        .bodyAsText()
+                    val response = client.get("$GITHUB_API_BASE/releases?page=$page&per_page=30").bodyAsText()
+                    if (response.trim().startsWith("{")) {
+                        val jsonObj = org.json.JSONObject(response)
+                        if (jsonObj.has("message")) {
+                            val msg = jsonObj.getString("message")
+                            if (msg.contains("API rate limit exceeded")) {
+                                error("Du hast zu oft nach Updates gesucht. Bitte warte eine Weile, bevor du es erneut versuchst (GitHub API Limit).")
+                            } else {
+                                error("GitHub API Error: $msg")
+                            }
+                        }
+                    }
                     val json = JSONArray(response)
                     
                     if (json.length() == 0) {
