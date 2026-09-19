@@ -39,11 +39,11 @@ object Updater {
     private var cachedAllReleases: List<ReleaseInfo> = emptyList()
     
     private const val CHECK_INTERVAL_MILLIS = 2 * 60 * 60 * 1000L // 2 hours
-    private const val GITHUB_API_BASE = "https://api.github.com/repos/endritlim/PeekMusic"
+    private const val GITHUB_API_BASE = "https://api.github.com/repos/PeekMusic/PeekMusic"
     // No separate KMP fork exists for PeekMusic; point at our own releases. The plain
     // "PeekMusic.apk" asset name never matches our parseAssets filter, so the KMP prompt
     // never triggers — the normal release path handles updates.
-    private const val KMP_LATEST_RELEASE_URL = "https://api.github.com/repos/endritlim/PeekMusic/releases/latest"
+    private const val KMP_LATEST_RELEASE_URL = "https://api.github.com/repos/PeekMusic/PeekMusic/releases/latest"
     private const val KMP_APK_NAME = "PeekMusic.apk"
 
     /**

@@ -81,8 +81,8 @@ private val leadDeveloper = Contributor(
 )
 
 private val communityLinks = listOf(
-    CommunityLink(R.string.credits_view_repo, R.drawable.github, "https://github.com/endritlim/PeekMusic"),
-    CommunityLink(R.string.credits_license_name, R.drawable.info, "https://github.com/endritlim/PeekMusic/blob/main/LICENSE")
+    CommunityLink(R.string.credits_view_repo, R.drawable.github, "https://github.com/PeekMusic/PeekMusic"),
+    CommunityLink(R.string.credits_license_name, R.drawable.info, "https://github.com/PeekMusic/PeekMusic/blob/main/LICENSE")
 )
 
 @Composable
