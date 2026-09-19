@@ -8,7 +8,6 @@ package com.metrolist.music.lyrics
 object LyricsProviderRegistry {
     private val providerMap = mapOf(
         "BetterLyrics" to BetterLyricsProvider,
-        "Musixmatch" to MusixmatchLyricsProvider,
         "SimpMusic" to SimpMusicLyricsProvider,
         "Paxsenix" to PaxsenixLyricsProvider,
         "LrcLib" to LrcLibLyricsProvider,
@@ -44,7 +43,6 @@ object LyricsProviderRegistry {
     val autoPickOrder: List<String> = listOf(
         "BetterLyrics",
         "Paxsenix",
-        "Musixmatch",
         "LyricsPlus",
         "SimpMusic",
         "LrcLib",
@@ -54,7 +52,6 @@ object LyricsProviderRegistry {
 
     fun getDefaultProviderOrder(): List<String> = listOf(
         "BetterLyrics",
-        "Musixmatch",
         "SimpMusic",
         "LrcLib",
         "KuGou",
