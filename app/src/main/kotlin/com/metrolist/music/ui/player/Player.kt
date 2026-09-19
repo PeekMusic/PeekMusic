@@ -2520,7 +2520,15 @@ internal fun PlayerLyricsLine(
         return
     }
 
-    val currentLine = activeLine ?: return
+    val currentLine = if (gapRange != null && position + offset >= gapRange.second - 650L && position + offset < gapRange.second) {
+        if (activeLine == null) {
+            syncedEntries.firstOrNull()
+        } else {
+            syncedEntries.getOrNull(syncedEntries.indexOf(activeLine) + 1)
+        }
+    } else {
+        activeLine
+    } ?: return
 
     val decodedList =
         if (romanizeLyricsList.value.isEmpty()) {
