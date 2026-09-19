@@ -97,6 +97,9 @@ Many translations were originally contributed by the [Metrolist community](https
 ### Top Contributors
 
 <!-- CROWDIN-CONTRIBUTORS-START -->
+<table>
+  <tbody></tbody>
+</table>
 <!-- CROWDIN-CONTRIBUTORS-END -->
 
 ## Build
