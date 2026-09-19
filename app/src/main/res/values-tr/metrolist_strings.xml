@@ -862,4 +862,5 @@
     <string name="stream_source_android_vr_desc">Android VR istemcileri (tüm sürümler).</string>
     <string name="stream_source_web_creator_desc">Creator web istemcisi.</string>
     <!-- Onboarding -->
+    <!-- Blocked Artists Feature -->
 </resources>
