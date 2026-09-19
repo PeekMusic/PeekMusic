@@ -100,7 +100,12 @@ internal fun buildSpeedDialItems(
     // Mix sources evenly so the first page (3x3) always has fresh YouTube recommendations
     // alongside local database items, instead of being 100% dominated by static local items.
     val mixed = mutableListOf<YTItem>()
-    val iterators = listOf(quickPicks.iterator(), home.iterator(), keepListening.iterator())
+    val iterKeep = keepListening.iterator()
+    val iterHome = home.iterator()
+    val iterQuick = quickPicks.iterator()
+    
+    // Weight: 2 keepListening, 2 home, 1 quickPicks
+    val iterators = listOf(iterKeep, iterKeep, iterHome, iterHome, iterQuick)
     
     var added = true
     while (added && mixed.size < availableSpace * 2) { // Allow buffer for distinctBy
