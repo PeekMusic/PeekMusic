@@ -832,8 +832,8 @@ constructor(
      * queue in the service so it keeps loading more songs near the end. Returns null when the
      * radio could not be started (callers fall back to a plain queue).
      */
-    private suspend fun buildRadioStartPosition(song: Song): MediaItemsWithStartPosition? {
-        val radioQueue = YouTubeQueue.radio(song.toMediaMetadata())
+    private suspend fun buildRadioStartPosition(metadata: com.metrolist.music.models.MediaMetadata): MediaItemsWithStartPosition? {
+        val radioQueue = YouTubeQueue.radio(metadata)
         val radioStatus = runCatching {
             withContext(Dispatchers.IO) {
                 radioQueue
@@ -851,7 +851,7 @@ constructor(
         }
         return MediaItemsWithStartPosition(
             radioStatus.items,
-            radioStatus.items.indexOfFirst { it.mediaId == song.id }.coerceAtLeast(0),
+            radioStatus.items.indexOfFirst { it.mediaId == metadata.id }.coerceAtLeast(0),
             C.TIME_UNSET,
         )
     }
@@ -881,7 +881,7 @@ constructor(
                     // song list when the radio is disabled or fails to load
                     if (context.dataStore.get(AutoRadioQueueKey, true)) {
                         database.song(songId).first()?.let { selectedSong ->
-                            buildRadioStartPosition(selectedSong)?.let { return@future it }
+                            buildRadioStartPosition(selectedSong.toMediaMetadata())?.let { return@future it }
                         }
                     }
 
@@ -996,6 +996,20 @@ constructor(
                             ?.take(100)
                             ?.forEach { ytSongMediaItem(it) }
                     }
+
+                    if (context.dataStore.get(AutoRadioQueueKey, true)) {
+                        ytSongMediaItems[mediaId]?.let { selectedItem ->
+                            val meta = com.metrolist.music.models.MediaMetadata(
+                                id = songId,
+                                title = selectedItem.mediaMetadata.title.toString(),
+                                artists = listOf(com.metrolist.music.models.MediaMetadata.Artist(id = null, name = selectedItem.mediaMetadata.artist.toString())),
+                                duration = -1,
+                                thumbnailUrl = selectedItem.mediaMetadata.artworkUri?.toString() ?: "",
+                            )
+                            buildRadioStartPosition(meta)?.let { return@future it }
+                        }
+                    }
+
                     val songs = ytSongMediaItems.values.toList()
                     val index = songs.indexOfFirst { it.mediaId == mediaId }
                     if (songs.isEmpty() || index == -1) {
@@ -1129,7 +1143,8 @@ constructor(
                         }
 
                     if (context.dataStore.get(AutoRadioQueueKey, true)) {
-                        buildRadioStartPosition(selectedSong ?: return@future defaultResult)
+                        val song = selectedSong ?: return@future defaultResult
+                        buildRadioStartPosition(song.toMediaMetadata())
                             ?.let { return@future it }
                     }
 
