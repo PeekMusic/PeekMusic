@@ -1649,7 +1649,7 @@ class MusicService :
                     cleanItems = nextItems.filter { !it.hasBlockedArtist(blockedJson, currentTime) }
                 }
             }
-            initialStatus = initialStatus.copy(items = cleanItems, mediaItemIndex = 0.coerceAtMost(cleanItems.lastIndex.coerceAtLeast(0)))
+            initialStatus = initialStatus.copy(items = cleanItems, mediaItemIndex = initialStatus.mediaItemIndex.coerceIn(0, cleanItems.lastIndex.coerceAtLeast(0)))
 
             val filteredStatus = initialStatus.withRecentlyPlayedFiltered(queue)
             if (queue.preloadItem != null && player.playbackState == STATE_IDLE) return@launch
