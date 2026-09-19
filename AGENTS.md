@@ -1,6 +1,6 @@
 # Working with PeekMusic as an AI agent
 
-PeekMusic is a performance-focused fork of Metrolist, a 3rd party YouTube Music client written in Kotlin. It follows material 3 design guidelines closely. Repository: `endritlim/PeekMusic` on GitHub (upstream: `MetrolistGroup/Metrolist`).
+PeekMusic is a performance-focused fork of Metrolist, a 3rd party YouTube Music client written in Kotlin. It follows material 3 design guidelines closely. Repository: `PeekMusic/PeekMusic` on GitHub (upstream: `MetrolistGroup/Metrolist`).
 
 ## Rules for working on the project
 
@@ -25,9 +25,9 @@ PeekMusic is a performance-focused fork of Metrolist, a 3rd party YouTube Music 
 
 ## Fork-specific notes
 
-- The in-app updater checks this fork's GitHub releases (`endritlim/PeekMusic`); release APK assets must be named `PeekMusic-<version>-fossRelease.apk` (universal, foss variant).
+- The in-app updater checks this fork's GitHub releases (`PeekMusic/PeekMusic`); release APK assets must be named `PeekMusic-<version>-fossRelease.apk` (universal, foss variant).
 - Update-badge trap (burned us in v0.5.0): the badge compares the app's version against the release **tag** (minus the `v` prefix), never against the GitHub release **title** (`ReleaseInfo.versionName`, e.g. "PeekMusic 0.5.0" ≠ "0.5.0" — a title-based comparison badges permanently). After merging upstream changes to `MainActivity.kt`'s update check, re-verify that `latestVersionName` is only set when `hasUpdate` and from `tagName.removePrefix("v")`. Also re-check `Updater.parseAssets` still matches our `PeekMusic-<version>-fossRelease.apk` naming after upstream updater refactors.
-- `gh` CLI may resolve the upstream repo by default — pass `--repo endritlim/PeekMusic` for release operations.
+- `gh` CLI may resolve the upstream repo by default — pass `--repo PeekMusic/PeekMusic` for release operations.
 - `tap-notes.md` (repo root) contains adb tap coordinates for device testing. It is gitignored on purpose; extend it whenever new screen positions were measured.
 
 ## Building and testing your changes
