@@ -14,44 +14,34 @@ Everything that gets in the way — features nobody asked for, clutter in the se
 janky animations — gets removed or reworked. Everything you touch every day — the home
 screen, lyrics, the player — gets extra polish.
 
-## What's different (and why it's better)
+## Features
 
-**The "Peek" Feature**: The currently active lyric line lives directly between the cover and the title in the player, no more flipping to the lyrics page just to see what's being sung.
+- Stream and download music from YouTube Music
+- Background playback with full media notification controls
+- Lyrics — synced, word-by-word karaoke, romanization, and translation
+- Offline library: local songs, albums, playlists, and artists
+- Android Auto support
+- Material You theming with dynamic color
+- Home feed with YouTube recommendations
+- Smart queue and radio generation
+- Sleep timer and alarm
+- Multiple lyrics providers (SimpMusic, Musixmatch, and more)
+- Widget support (4×2 and 4×3 player widgets)
+- Foldable and large-screen adaptive layout
 
-**✨ First-Launch Onboarding**
-- **7-Step Introduction**: A comprehensive first-launch onboarding flow with live previews for theme, player design, lyrics peek, playback, smart queue/caching, content filters, and update checks.
+## What makes PeekMusic different
 
-**🎵 Player & Lyrics**
-- **Advanced Peek Lyrics**: The Peek feature supports offset adjustments, translations, and romanization!
-- **Layout Adaptability**: The player stays open through display changes (folding, unfolding, rotating). In landscape, the peek line and controls sit as one unit; on wide portrait screens, the peek lives in the right-hand column.
-- **Apple-Style Karaoke**: The lyrics peek and background adlib lines feature a smooth flowing gradient with a fading glow — just like Apple Music's karaoke mode.
-- **Adlibs in the Peek**: Background vocal lines (adlibs) show up directly in the lyrics peek, alternating with the main lyric line.
-- **Translation Toggle**: A translate button sits right in the player — one tap to see the translation, another to dismiss it, with inline loading progress.
-- **Karaoke & Translations**: Word-by-word karaoke animations when timings are available. Added a keyless Google Translate backend for free full-song lyrics translation in a single tap!
-- **Robust Romanization**: Correct language detection for Japanese romanization, and identical romanization/translation lines are intelligently merged to prevent duplication.
+**Lyrics Peek** — The active lyric line lives between the album art and the song title, so you always know what's being sung without switching screens. It does karaoke word-highlighting, shows adlibs, and has an Apple-style flowing gradient.
 
-**📱 Widgets & Playlists**
-- **Unified Playlist Controls**: The Shuffle button has been moved out of submenus and placed consistently between the Play and Menu buttons across all playlist and album views.
-- **Widget Upgrades**: Replaced the "Like" button with Previous/Next track buttons on both the 4x2 and 4x3 player widgets for quicker, more useful playback control.
+**Block Artists** — Block any artist from the artist page or player menu. Blocked tracks are filtered from queues, mixes, and radios automatically. Manage your list under Settings → Blocked Artists.
 
-**🏠 Home Screen & Search**
-- **Always-on Speed Dial**: The speed-dial grid is now always visible, even when logged in.
-- **Clean Feed**: The Home screen strictly focuses on YouTube content.
-- **Category Management**: Home sections are grouped into 19 categories with drag-and-drop reordering, and the ability to hide/restore entire categories.
-- **Snappy Reloads**: Pull-to-refresh loads the full feed (continuation pages) instantly behind a short shimmer, preventing sections from popping in one by one.
-- **Smarter Search**: Search autocomplete shows at most 4 suggestions before jumping straight to music results.
+**Translation in the player** — A translate button sits right in the player. One tap to see the full translation, another to dismiss it — no menus needed.
 
-**🔀 Queue & Android Auto**
-- **Exclude Recently Played**: A new option to prevent recently played songs from appearing in generated mixes and radios (configurable window of 1–100 tracks).
-- **Android Auto Choice**: Choose your recommendations source — your YouTube home feed or local suggestions. Selecting a song under "Songs" now seeds an automatic Mix.
+**Cleaner settings** — Dozens of switches nobody touches were removed and hardcoded to sensible defaults. What's left is reorganized into focused pages: Player, Audio, Queue, Sleep & Alarm, Lyrics, and Home.
 
-**🚫 Block Artists**
-- **Full Control**: Block any artist directly from the artist page or the player menu. Blocked tracks are automatically filtered from queues, mixes, and radios — no more skipping. Manage your blocklist in Settings → Blocked Artists.
+**Fresher home screen** — Quick Picks shuffles its order on every visit and mixes in songs from your forgotten local favorites.
 
-**⚙️ Settings & Performance**
-- **Restructured Settings**: The overloaded settings pages were split into focused categories: Player, Audio, Queue, Sleep & Alarm, Lyrics, and Home.
-- **Audio Quality Dialog**: Audio quality selection now uses an easy-to-use dropdown dialog in Onboarding and Settings.
-- **Smart Caching**: Pre-caching settings visibility now toggles based on the main cache state.
+**First-launch onboarding** — A 7-step introduction walks you through theme, player design, lyrics, playback, and more before you even play your first song.
 
 ## Screenshots
 
