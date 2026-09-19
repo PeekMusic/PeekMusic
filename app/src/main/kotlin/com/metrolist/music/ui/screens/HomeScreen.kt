@@ -716,6 +716,13 @@ fun HomeScreen(
         quickPicksLazyGridState.scrollToItem(0)
     }
 
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            quickPicksLazyGridState.scrollToItem(0)
+            forgottenFavoritesLazyGridState.scrollToItem(0)
+        }
+    }
+
     val accountName by viewModel.accountName.collectAsStateWithLifecycle()
     val accountImageUrl by viewModel.accountImageUrl.collectAsStateWithLifecycle()
     val innerTubeCookie by rememberPreference(InnerTubeCookieKey, "")

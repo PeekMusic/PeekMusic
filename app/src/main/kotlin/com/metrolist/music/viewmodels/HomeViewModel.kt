@@ -589,13 +589,19 @@ class HomeViewModel @Inject constructor(
                 }
 
                 launch(Dispatchers.IO) {
-                    val songs = database.mostPlayedSongs(fromTimeStamp = fromTimeStamp, limit = 15, offset = 5, toTimeStamp = LocalDateTime.now()).first()
-                        .filterVideoSongs(hideVideoSongs).shuffled().take(10)
-                    val albums = database.mostPlayedAlbums(fromTimeStamp, limit = 8, offset = 2).first()
-                        .filter { it.album.thumbnailUrl != null }.shuffled().take(5)
+                    // Use recently played history instead of static all-time most played
+                    val recentHistory = database.recentlyPlayedSongs(60).first()
+                        .filterVideoSongs(hideVideoSongs)
+                        .distinctBy { it.id }
+                        .take(12)
+                        
+                    // Add some albums/artists for variety
+                    val albums = database.mostPlayedAlbums(fromTimeStamp, limit = 8, offset = 0).first()
+                        .filter { it.album.thumbnailUrl != null }.shuffled().take(4)
                     val artists = database.mostPlayedArtists(fromTimeStamp).first()
-                        .filter { it.artist.isYouTubeArtist && it.artist.thumbnailUrl != null }.shuffled().take(5)
-                    keepListening.value = (songs + albums + artists).shuffled()
+                        .filter { it.artist.isYouTubeArtist && it.artist.thumbnailUrl != null }.shuffled().take(4)
+                        
+                    keepListening.value = (recentHistory + albums + artists).shuffled()
                 }
             }
         }

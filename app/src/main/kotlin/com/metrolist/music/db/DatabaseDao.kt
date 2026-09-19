@@ -150,6 +150,19 @@ interface DatabaseDao {
     @Query("SELECT * FROM song WHERE inLibrary IS NOT NULL ORDER BY totalPlayTime")
     fun songsByPlayTimeAsc(): Flow<List<Song>>
 
+    @Transaction
+    @Query(
+        """
+        SELECT song.*
+        FROM event
+        JOIN song ON event.songId = song.id
+        WHERE inLibrary IS NOT NULL
+        ORDER BY event.timestamp DESC
+        LIMIT :limit
+        """
+    )
+    fun recentlyPlayedSongs(limit: Int = 30): Flow<List<Song>>
+
 
     fun songs(
         sortType: SongSortType,
