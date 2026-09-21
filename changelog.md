@@ -8,6 +8,12 @@
 - **Why we removed sorting**: To enable this language-agnostic dynamic hiding, we had to stop forcing YouTube's sections into hardcoded, language-dependent boxes. Because sections are no longer bound to static identifiers, they cannot be manually sorted in the settings. Instead, the feed is now 100% authentically sorted by YouTube's recommendation engine, with our local VIP generators (Quick Picks, Daily Discover) permanently pinned to the top.
 - **Quick Picks Fix**: Fixed a visual glitch where the "Quick Picks" grid would constantly snap back to the first item when data refreshed in the background.
 
+**⚙️ Upstream Updates (Metrolist)**
+- **Performance**: Upstream optimizations for battery usage and memory footprint, especially concerning widget updates and background services.
+- **New UI Options**: Added options for 'Force bottom navigation bar' and 'Display density' in Settings -> Appearance.
+- **Dependency Updates**: Updated to the latest Material 3 UI library.
+
+
 ## v1.2.1
 
 **🚀 Speed Dial Refreshed**

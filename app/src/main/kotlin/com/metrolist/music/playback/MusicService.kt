@@ -517,6 +517,8 @@ class MusicService :
     var castConnectionHandler: CastConnectionHandler? = null
         private set
 
+    @Volatile private var isScreenOff = false
+
     private val screenStateReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(
@@ -527,9 +529,6 @@ class MusicService :
                     Intent.ACTION_SCREEN_OFF -> {
                         isScreenOff = true
                         stopWidgetUpdates()
-                        Timber.tag("DiscordSvc").i("SCREEN_OFF: cancelling pause timeout, delaying disconnect 10m")
-                        screenOffHandler.removeCallbacks(pauseTimeout)
-                        screenOffHandler.postDelayed(screenOffTimeout, 600_000)
                     }
 
                     Intent.ACTION_SCREEN_ON -> {
@@ -537,17 +536,11 @@ class MusicService :
                         if (::player.isInitialized && player.isPlaying) {
                             startWidgetUpdates()
                         }
-                        Timber.tag("DiscordSvc").i("SCREEN_ON: removing disconnect delay")
-                        screenOffHandler.removeCallbacks(screenOffTimeout)
-                        screenOffHandler.removeCallbacks(pauseTimeout)
-                        discordIntentionalDisconnect = false
-                        syncDiscordState()
                     }
                 }
             }
         }
 
->>>>>>> upstream/main
     private val audioDeviceCallback =
         object : AudioDeviceCallback() {
             override fun onAudioDevicesAdded(addedDevices: Array<out AudioDeviceInfo>?) {
