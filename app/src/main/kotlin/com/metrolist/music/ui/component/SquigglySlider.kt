@@ -160,6 +160,7 @@ fun SquigglySlider(
             ),
         contentAlignment = Alignment.Center
     ) {
+        val path = remember { Path() }
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -191,7 +192,7 @@ fun SquigglySlider(
             }
 
             // Build wavy path for played portion
-            val path = Path()
+            path.reset()
             val waveStart = -phaseOffset - waveLength / 2f
             val waveEnd = if (transitionEnabled) totalWidth else waveProgressPx
 

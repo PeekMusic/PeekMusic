@@ -62,7 +62,10 @@ fun VolumeSlider(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val sliderState = rememberSliderState(value = value)
-    sliderState.value = value
+    
+    androidx.compose.runtime.LaunchedEffect(value) {
+        sliderState.value = value
+    }
 
     val volumeOffIcon = painterResource(R.drawable.volume_off)
     val volumeMuteIcon = painterResource(R.drawable.volume_mute)
