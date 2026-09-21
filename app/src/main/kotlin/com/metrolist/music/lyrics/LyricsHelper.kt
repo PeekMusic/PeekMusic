@@ -23,12 +23,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import javax.inject.Inject
 
 private const val MAX_LYRICS_FETCH_MS = 25000L
-private const val PER_PROVIDER_TIMEOUT_MS = 8000L
+private const val PER_PROVIDER_TIMEOUT_MS = 5000L
 private const val PROVIDER_NONE = ""
 
 class LyricsHelper
@@ -81,48 +83,58 @@ constructor(
                     enabledProviders
                 }
 
-            Timber.tag("LyricsHelper").d("Starting sequential fetch for: $cleanedTitle by ${mediaMetadata.artists.joinToString { it.name }}")
+            Timber.tag("LyricsHelper").d("Starting concurrent fetch for: $cleanedTitle by ${mediaMetadata.artists.joinToString { it.name }}")
             Timber.tag("LyricsHelper").d("Enabled providers in order: ${providersToTry.joinToString { it.name }}")
 
-            var firstAvailable: LyricsWithProvider? = null
-            for (provider in providersToTry) {
-                Timber.tag("LyricsHelper").d("Trying provider: ${provider.name}")
-                val providerResult = try {
-                    withTimeoutOrNull(PER_PROVIDER_TIMEOUT_MS) {
-                        provider.getLyrics(
-                            context,
-                            mediaMetadata.id,
-                            cleanedTitle,
-                            mediaMetadata.artists.joinToString { it.name },
-                            mediaMetadata.duration,
-                            mediaMetadata.album?.title,
-                        )
+            val bestMatch = kotlinx.coroutines.coroutineScope {
+                val deferredResults = providersToTry.map { provider ->
+                    provider to async {
+                        try {
+                            kotlinx.coroutines.withTimeoutOrNull(PER_PROVIDER_TIMEOUT_MS) {
+                                provider.getLyrics(
+                                    context,
+                                    mediaMetadata.id,
+                                    cleanedTitle,
+                                    mediaMetadata.artists.joinToString { it.name },
+                                    mediaMetadata.duration,
+                                    mediaMetadata.album?.title,
+                                )
+                            }
+                        } catch (e: kotlinx.coroutines.CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            Timber.tag("LyricsHelper").w("${provider.name} threw: ${e.message}")
+                            null
+                        }
                     }
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    Timber.tag("LyricsHelper").w("${provider.name} threw: ${e.message}")
-                    null
                 }
 
-                if (providerResult != null && providerResult.isSuccess) {
-                    Timber.tag("LyricsHelper").i("Got lyrics from ${provider.name}")
-                    val filtered = LyricsUtils.filterLyricsCreditLines(providerResult.getOrNull()!!)
-                    if (!autoPick || LyricsUtils.isWordSynced(filtered)) {
-                        return@withTimeoutOrNull LyricsWithProvider(filtered, provider.name)
+                var firstAvailable: LyricsWithProvider? = null
+                for ((provider, deferred) in deferredResults) {
+                    Timber.tag("LyricsHelper").d("Waiting for provider: ${provider.name}")
+                    val providerResult = deferred.await()
+                    
+                    if (providerResult != null && providerResult.isSuccess) {
+                        Timber.tag("LyricsHelper").i("Got lyrics from ${provider.name}")
+                        val filtered = LyricsUtils.filterLyricsCreditLines(providerResult.getOrNull()!!)
+                        if (!autoPick || LyricsUtils.isWordSynced(filtered)) {
+                            deferredResults.forEach { it.second.cancel() }
+                            return@coroutineScope LyricsWithProvider(filtered, provider.name)
+                        }
+                        if (firstAvailable == null) {
+                            firstAvailable = LyricsWithProvider(filtered, provider.name)
+                        }
+                    } else {
+                        val errorMsg = providerResult?.exceptionOrNull()?.message ?: "timeout or exception"
+                        Timber.tag("LyricsHelper").w("${provider.name} failed: $errorMsg")
                     }
-                    if (firstAvailable == null) {
-                        firstAvailable = LyricsWithProvider(filtered, provider.name)
-                    }
-                } else {
-                    val errorMsg = providerResult?.exceptionOrNull()?.message ?: "timeout or exception"
-                    Timber.tag("LyricsHelper").w("${provider.name} failed: $errorMsg")
                 }
+                deferredResults.forEach { it.second.cancel() }
+                return@coroutineScope firstAvailable
             }
 
-            if (firstAvailable != null) {
-                Timber.tag("LyricsHelper").i("No word-synced lyrics, using first available from ${firstAvailable.provider}")
-                return@withTimeoutOrNull firstAvailable
+            if (bestMatch != null) {
+                return@withTimeoutOrNull bestMatch
             }
 
             Timber.tag("LyricsHelper").w("No lyrics found after checking all providers")

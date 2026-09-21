@@ -41,6 +41,8 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
+
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -1596,9 +1598,17 @@ fun BottomSheetPlayer(
                     val sliderState = remember(sliderRange) {
                         SliderState(value = sliderValue, trackRange = sliderRange)
                     }
-                    sliderState.value = sliderValue
+                    val sliderInteractionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                    val isDragging by sliderInteractionSource.collectIsDraggedAsState()
+                    
+                    androidx.compose.runtime.LaunchedEffect(sliderValue, isDragging) {
+                        if (!isDragging) {
+                            sliderState.value = sliderValue
+                        }
+                    }
                     Slider(
                         state = sliderState,
+                        interactionSource = sliderInteractionSource,
                         onValueChange = {
                             if (!isListenTogetherGuest) {
                                 sliderPosition = it.toLong()

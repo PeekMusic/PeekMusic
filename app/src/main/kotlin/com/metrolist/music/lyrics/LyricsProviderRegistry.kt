@@ -43,20 +43,20 @@ object LyricsProviderRegistry {
     val autoPickOrder: List<String> = listOf(
         "BetterLyrics",
         "Paxsenix",
-        "LyricsPlus",
         "SimpMusic",
         "LrcLib",
+        "LyricsPlus",
         "KuGou",
         "YouTube",
     )
 
     fun getDefaultProviderOrder(): List<String> = listOf(
         "BetterLyrics",
+        "Paxsenix",
         "SimpMusic",
         "LrcLib",
-        "KuGou",
-        "Paxsenix",
         "LyricsPlus",
+        "KuGou",
         "YouTube",
     )
 
