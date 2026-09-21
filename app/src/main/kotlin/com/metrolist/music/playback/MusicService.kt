@@ -219,6 +219,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -850,6 +851,36 @@ class MusicService :
             }
         }
 
+
+        combine(
+            currentMediaMetadata.distinctUntilChangedBy { it?.id },
+            dataStore.data.map { it[com.metrolist.music.constants.PreloadQueueCountKey] ?: 1 }.distinctUntilChanged(),
+        ) { mediaMetadata, preloadCount ->
+            mediaMetadata to preloadCount
+        }.collectLatest(scope) { (mediaMetadata, preloadCount) ->
+            if (mediaMetadata != null && preloadCount > 0 && ::player.isInitialized) {
+                val currentIndex = player.currentMediaItemIndex
+                val count = minOf(preloadCount, player.mediaItemCount - currentIndex - 1)
+                for (i in 1..count) {
+                    val nextItem = player.getMediaItemAt(currentIndex + i)
+                    val nextMetadata = nextItem.metadata
+                    if (nextMetadata != null && nextMetadata.id.isNotEmpty() && database.lyrics(nextMetadata.id).firstOrNull() == null) {
+                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                            try {
+                                val fetched = lyricsHelper.getLyrics(nextMetadata)
+                                if (fetched.lyrics != com.metrolist.music.db.entities.LyricsEntity.LYRICS_NOT_FOUND) {
+                                    database.query {
+                                        upsert(com.metrolist.music.db.entities.LyricsEntity(nextMetadata.id, fetched.lyrics, fetched.provider))
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                timber.log.Timber.tag(TAG).e(e, "Failed to prefetch lyrics for ${nextMetadata.id}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
         dataStore.data
             .map { false to false }
             .distinctUntilChanged()
