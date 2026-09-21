@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.2.3
+
+# 🚨 LYRICS HOTFIX 🚨
+Hey everyone, my bad for the previous release! The massive dependency update from upstream unexpectedly introduced severe UI stuttering and frame drops (specifically affecting the Seekbar and the Peek player) that hitched exactly every 1 second. 
+
+We've completely isolated and patched the bugs (it was a combination of a Media3 regression and a memory leak in the Squiggly Slider drawing loop). The lyrics animations should be buttery smooth again!
+
+**✨ Enhancements in this hotfix**
+- **Lightning Fast Lyrics**: Totally overhauled how automatic lyrics fetching works. The app now searches ALL your enabled lyric providers concurrently instead of one-by-one!
+- **Zero-Wait Lyrics Prefetching**: When "Cache next songs" is enabled in your Storage settings, PeekMusic will now *silently* prefetch the lyrics for your upcoming songs in the background. By the time you skip to the next track, the lyrics and synced word timestamps will already be waiting for you.
+
+
 ## v1.2.2
 
 **✨ Home Screen Overhaul & Radical UX Simplification**
