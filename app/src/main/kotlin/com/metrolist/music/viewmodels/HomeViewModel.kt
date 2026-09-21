@@ -545,9 +545,8 @@ class HomeViewModel @Inject constructor(
         val loadStartMs = System.currentTimeMillis()
 
         val loggedIn = "SAPISID" in parseCookieString(YouTube.cookie.orEmpty())
-        // App-generated sections are always shown when logged out. When logged in, only
-        // Quick Picks and account-specific sections remain; the rest is hidden.
-        val showInternalSections = !loggedIn
+        // [TEST] Force show in-app generators
+        val showInternalSections = true
 
         // Phase 1: Load essential sections in parallel — local DB (fast) + YouTube home page.
         coroutineScope {
