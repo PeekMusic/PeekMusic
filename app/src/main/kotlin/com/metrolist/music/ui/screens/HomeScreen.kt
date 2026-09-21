@@ -118,9 +118,7 @@ import com.metrolist.music.constants.GridItemSize
 import com.metrolist.music.constants.GridItemsSizeKey
 import com.metrolist.music.constants.GridThumbnailHeight
 import com.metrolist.music.constants.HiddenYouTubeHomeSectionsKey
-import com.metrolist.music.constants.HomeSectionOrderKey
 import com.metrolist.music.constants.DEFAULT_HOME_SECTION_ORDER
-import com.metrolist.music.constants.effectiveHomeSectionOrder
 import com.metrolist.music.constants.InnerTubeCookieKey
 import com.metrolist.music.constants.ListItemHeight
 import com.metrolist.music.constants.ListThumbnailSize
@@ -712,9 +710,6 @@ fun HomeScreen(
     val quickPicksLazyGridState = rememberLazyGridState()
     val forgottenFavoritesLazyGridState = rememberLazyGridState()
 
-    LaunchedEffect(distinctQuickPicks) {
-        quickPicksLazyGridState.scrollToItem(0)
-    }
 
     LaunchedEffect(isRefreshing) {
         if (isRefreshing) {
@@ -729,7 +724,6 @@ fun HomeScreen(
     val (randomizeHomeOrder) = rememberPreference(RandomizeHomeOrderKey, false)
     val hiddenHomeSectionsState = rememberPreference(HiddenYouTubeHomeSectionsKey, emptySet<String>())
     val hiddenHomeSections = hiddenHomeSectionsState.value
-    val (homeSectionOrder) = rememberPreference(HomeSectionOrderKey, DEFAULT_HOME_SECTION_ORDER)
     val autoRadioQueue by rememberPreference(AutoRadioQueueKey, defaultValue = true)
 
     LaunchedEffect(Unit) { viewModel.loadHomeData() }
@@ -1064,71 +1058,50 @@ fun HomeScreen(
     fun categoryOf(section: HomeSection): String =
         when (section) {
             HomeSection.SpeedDial -> "speed_dial"
-            HomeSection.QuickPicks,
-            HomeSection.DailyDiscover,
-            HomeSection.KeepListening,
-            HomeSection.ForgottenFavorites,
-            -> "app_internal"
+            HomeSection.QuickPicks -> "quick_picks"
+            HomeSection.DailyDiscover -> "daily_discover"
+            HomeSection.KeepListening -> "keep_listening"
+            HomeSection.ForgottenFavorites -> "forgotten_favorites"
             is HomeSection.SimilarRecommendation -> "similar_to"
-            HomeSection.AccountPlaylists -> "account_mixes"
-            HomeSection.FromTheCommunity -> "from_the_community"
+            HomeSection.AccountPlaylists -> "recommended_mixes"
+            HomeSection.FromTheCommunity -> "community_playlists"
             HomeSection.MoodAndGenres -> "moods_and_genres"
             is HomeSection.HomePageSection -> {
                 val data = homePage?.sections?.getOrNull(section.index)
-                val title = data?.title?.lowercase().orEmpty()
-                when {
-                    "schnellauswahl" in title || "quick picks" in title -> "quick_picks"
-                    "vergessene favoriten" in title || "forgotten favorites" in title -> "forgotten_favorites"
-                    "mediathek" in title || "from your library" in title -> "from_your_library"
-                    "empfohlene mixe" in title || "recommended mixes" in title -> "recommended_mixes"
-                    "empfohlene playlist" in title || "recommended playlist" in title -> "recommended_playlists"
-                    "neue folgen" in title || "new episodes" in title -> "new_episodes"
-                    "angesagt" in title || "trending" in title -> "trending"
-                    "weiter anhören" in title || "keep listening" in title -> "keep_listening"
-                    "podcast" in title -> "podcasts"
-                    "sendung" in title || "shows for you" in title -> "shows"
-                    "stimmung" in title || "mood" in title -> "moods_and_genres"
-                    "recap" in title -> "recaps"
-                    "liveauftritt" in title || "live performance" in title ||
-                        " live" in title || title.startsWith("live") -> "live_performances"
-                    "musikvideo" in title || "music video" in title -> "music_videos"
-                    "coverversion" in title || "remix" in title || "cover" in title -> "covers_and_remixes"
-                    "gemeinsam" in title || "listen together" in title -> "together"
-                    "lange wiedergaben" in title || "long listens" in title ||
-                        "long plays" in title -> "long_listens"
-                    "ähnlich wie" in title || "similar to" in title -> "similar_to"
-                    "aus der community" in title || "from the community" in title -> "from_the_community"
-                    data?.endpoint?.isArtistEndpoint == true -> "artist"
-                    else -> "other"
-                }
+                data?.title ?: "other"
             }
+            else -> "other"
         }
 
     // Hidden entries are category ids. Unclassified ("other") YouTube sections are never
-    // shown at all — only known categories can appear, everything YouTube invents otherwise
-    // (genre carousels, one-off promotions, …) stays off the home page.
+    // hidden by this check (they stay off the home page by default unless shown explicitly).
     fun isSectionHidden(section: HomeSection): Boolean {
         val category = categoryOf(section)
-        if (category == "other") return true
         // Speed Dial is always visible and not hideable.
         if (category == "speed_dial") return false
-        // Other app-internal sections are only shown when logged out.
-        if (category == "app_internal" && !showInternalSections) return true
         if (category in hiddenHomeSections) return true
         return false
     }
 
-    val sectionOrder =
-        remember(homeSectionOrder) {
-            effectiveHomeSectionOrder(homeSectionOrder)
-        }
+    val sectionOrder = listOf(
+        "speed_dial",
+        "quick_picks",
+        "daily_discover",
+        "keep_listening",
+        "forgotten_favorites",
+        "similar_to",
+        "recommended_mixes",
+        "new_releases",
+        "community_playlists",
+        "moods_and_genres",
+        "other"
+    )
     val homeSections =
         remember(
             randomizeHomeOrder,
             randomSeed,
             selectedChip,
             hiddenHomeSections,
-            sectionOrder,
             showInternalSections,
             accountPlaylists,
             communityPlaylists,
@@ -1167,22 +1140,25 @@ fun HomeScreen(
             }
 
             if (!chipActive) {
+                var internalSimilarAdded = 0
                 similarRecommendations?.forEachIndexed { i, _ ->
-                    if (!isSectionHidden(HomeSection.SimilarRecommendation(i))) {
+                    if (internalSimilarAdded < 2 && !isSectionHidden(HomeSection.SimilarRecommendation(i))) {
                         list.add(HomeSection.SimilarRecommendation(i))
+                        internalSimilarAdded++
                     }
                 }
             }
 
-            // YouTube sometimes returns the same section twice (e.g. two "Quick picks" rows
-            // with identical content) — keep only the first occurrence.
+            // YouTube sometimes returns the exact same section twice in the same request
             val seenSectionKeys = mutableSetOf<String>()
+            
             homePage?.sections?.forEachIndexed { i, section ->
-                if (!isSectionHidden(HomeSection.HomePageSection(i))) {
+                val homeSection = HomeSection.HomePageSection(i)
+                if (!isSectionHidden(homeSection)) {
                     val key = "${section.title}:${section.items.firstOrNull()?.id}"
                     if (key !in seenSectionKeys) {
                         seenSectionKeys.add(key)
-                        list.add(HomeSection.HomePageSection(i))
+                        list.add(homeSection)
                     }
                 }
             }
@@ -1247,20 +1223,24 @@ fun HomeScreen(
                 // Fixed user-defined category order; categories missing from the preference
                 // (or brand-new ones) sort to the end. App-internal sections always come
                 // first. Stable sort keeps YouTube's order within a category.
-                list.sortedBy { section ->
-                    if (categoryOf(section) == "app_internal") {
-                        -1
-                    } else {
-                        val index = sectionOrder.indexOf(categoryOf(section))
-                        if (index == -1) sectionOrder.size else index
+                list.sortedWith(
+                    compareBy<HomeSection> { section ->
+                        // 1. Strict category order first to ensure the layout matches the user's expectations exactly
+                        val category = categoryOf(section)
+                        val index = sectionOrder.indexOf(category)
+                        if (index != -1) index else 999
+                    }.thenBy { section ->
+                        // 2. Fallback for identical categories (e.g. multiple "Similar to" or "Recommended Mixes")
+                        when (section) {
+                            is HomeSection.HomePageSection -> section.index
+                            is HomeSection.SimilarRecommendation -> section.index
+                            else -> 0
+                        }
                     }
-                }
+                )
             }
         }
 
-    LaunchedEffect(quickPicks) {
-        quickPicksLazyGridState.scrollToItem(0)
-    }
 
     // Internal sections load conditionally in load(); when the condition flips (login state
     // change or the content-settings toggle), reload so they appear/disappear immediately.
@@ -1815,8 +1795,31 @@ fun HomeScreen(
                             quickPicks?.takeIf { it.isNotEmpty() }?.let { quickPicks ->
                                 item(key = "quick_picks_title", contentType = "section_title") {
                                     val quickPicksTitle = stringResource(R.string.quick_picks)
+                                    var hideMenuExpanded by remember { mutableStateOf(false) }
                                     NavigationTitle(
                                         title = quickPicksTitle,
+                                        trailingContent = {
+                                            Box {
+                                                IconButton(onClick = { hideMenuExpanded = true }) {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.more_vert),
+                                                        contentDescription = null,
+                                                    )
+                                                }
+                                                DropdownMenu(
+                                                    expanded = hideMenuExpanded,
+                                                    onDismissRequest = { hideMenuExpanded = false },
+                                                ) {
+                                                    DropdownMenuItem(
+                                                        text = { Text(stringResource(R.string.hide_home_section)) },
+                                                        onClick = {
+                                                            hideMenuExpanded = false
+                                                            hiddenHomeSectionsState.value = hiddenHomeSectionsState.value + "quick_picks"
+                                                        },
+                                                    )
+                                                }
+                                            }
+                                        },
                                         onPlayAllClick =
                                             if (!isListenTogetherGuest) {
                                                 {
@@ -1981,8 +1984,31 @@ fun HomeScreen(
                             dailyDiscover?.takeIf { it.isNotEmpty() }?.let { discoverList ->
                                 item(key = "daily_discover_title", contentType = "section_title") {
                                     val title = stringResource(R.string.your_daily_discover)
+                                    var hideMenuExpanded by remember { mutableStateOf(false) }
                                     NavigationTitle(
                                         title = title,
+                                        trailingContent = {
+                                            Box {
+                                                IconButton(onClick = { hideMenuExpanded = true }) {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.more_vert),
+                                                        contentDescription = null,
+                                                    )
+                                                }
+                                                DropdownMenu(
+                                                    expanded = hideMenuExpanded,
+                                                    onDismissRequest = { hideMenuExpanded = false },
+                                                ) {
+                                                    DropdownMenuItem(
+                                                        text = { Text(stringResource(R.string.hide_home_section)) },
+                                                        onClick = {
+                                                            hideMenuExpanded = false
+                                                            hiddenHomeSectionsState.value = hiddenHomeSectionsState.value + "daily_discover"
+                                                        },
+                                                    )
+                                                }
+                                            }
+                                        },
                                         onPlayAllClick = {
                                             val queueItems =
                                                 discoverList.mapNotNull {
@@ -2055,8 +2081,31 @@ fun HomeScreen(
                         HomeSection.KeepListening -> {
                             keepListening?.takeIf { it.isNotEmpty() }?.let { keepListening ->
                                 item(key = "keep_listening_title", contentType = "section_title") {
+                                    var hideMenuExpanded by remember { mutableStateOf(false) }
                                     NavigationTitle(
                                         title = stringResource(R.string.keep_listening),
+                                        trailingContent = {
+                                            Box {
+                                                IconButton(onClick = { hideMenuExpanded = true }) {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.more_vert),
+                                                        contentDescription = null,
+                                                    )
+                                                }
+                                                DropdownMenu(
+                                                    expanded = hideMenuExpanded,
+                                                    onDismissRequest = { hideMenuExpanded = false },
+                                                ) {
+                                                    DropdownMenuItem(
+                                                        text = { Text(stringResource(R.string.hide_home_section)) },
+                                                        onClick = {
+                                                            hideMenuExpanded = false
+                                                            hiddenHomeSectionsState.value = hiddenHomeSectionsState.value + "keep_listening"
+                                                        },
+                                                    )
+                                                }
+                                            }
+                                        }
                                     )
                                 }
 
@@ -2115,7 +2164,7 @@ fun HomeScreen(
                                                         text = { Text(stringResource(R.string.hide_home_section)) },
                                                         onClick = {
                                                             hideMenuExpanded = false
-                                                            hiddenHomeSectionsState.value = hiddenHomeSectionsState.value + "account_mixes"
+                                                            hiddenHomeSectionsState.value = hiddenHomeSectionsState.value + "recommended_mixes"
                                                         },
                                                     )
                                                 }
@@ -2178,8 +2227,31 @@ fun HomeScreen(
                             forgottenFavorites?.takeIf { it.isNotEmpty() }?.let { forgottenFavorites ->
                                 item(key = "forgotten_favorites_title", contentType = "section_title") {
                                     val forgottenFavoritesTitle = stringResource(R.string.forgotten_favorites)
+                                    var hideMenuExpanded by remember { mutableStateOf(false) }
                                     NavigationTitle(
                                         title = forgottenFavoritesTitle,
+                                        trailingContent = {
+                                            Box {
+                                                IconButton(onClick = { hideMenuExpanded = true }) {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.more_vert),
+                                                        contentDescription = null,
+                                                    )
+                                                }
+                                                DropdownMenu(
+                                                    expanded = hideMenuExpanded,
+                                                    onDismissRequest = { hideMenuExpanded = false },
+                                                ) {
+                                                    DropdownMenuItem(
+                                                        text = { Text(stringResource(R.string.hide_home_section)) },
+                                                        onClick = {
+                                                            hideMenuExpanded = false
+                                                            hiddenHomeSectionsState.value = hiddenHomeSectionsState.value + "forgotten_favorites"
+                                                        },
+                                                    )
+                                                }
+                                            }
+                                        },
                                         onPlayAllClick =
                                             if (!isListenTogetherGuest) {
                                                 {
@@ -2411,11 +2483,8 @@ fun HomeScreen(
                                                         text = { Text(stringResource(R.string.hide_home_section)) },
                                                         onClick = {
                                                             hideMenuExpanded = false
-                                                            // Hide the whole category (e.g. all "Similar to" rows); only
-                                                            // unclassified sections are hidden by their exact title.
                                                             val category = categoryOf(section)
-                                                            val key = if (category == "other") sectionData.title else category
-                                                            hiddenHomeSectionsState.value = hiddenHomeSectionsState.value + key
+                                                            hiddenHomeSectionsState.value = hiddenHomeSectionsState.value + category
                                                         },
                                                     )
                                                 }
@@ -2646,6 +2715,16 @@ fun HomeScreen(
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+
+                if (!showInitialLoading && homePage?.continuation != null) {
+                    item(key = "endless_scroll_trigger") {
+                        LaunchedEffect(Unit) {
+                            if (!viewModel.isLoading.value) {
+                                viewModel.loadMoreYouTubeItems(homePage?.continuation)
                             }
                         }
                     }

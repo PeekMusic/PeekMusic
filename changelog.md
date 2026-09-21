@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.2.2
+
+**✨ Home Screen Overhaul & Radical UX Simplification**
+- **Dynamic Hiding**: You can now hide ANY section directly from the Home Screen using the 3-dot menu. It doesn't matter what language you use, or what obscure category YouTube generated for you (Podcasts, Tendencias, Live Performances) — if you don't like it, you can banish it forever.
+- **The Recycle Bin**: The Home Screen Settings menu has been completely simplified. It no longer contains dozens of confusing toggles. It now acts purely as a "Recycle Bin" where you can view and restore the exact sections you've explicitly hidden.
+- **Why we removed sorting**: To enable this language-agnostic dynamic hiding, we had to stop forcing YouTube's sections into hardcoded, language-dependent boxes. Because sections are no longer bound to static identifiers, they cannot be manually sorted in the settings. Instead, the feed is now 100% authentically sorted by YouTube's recommendation engine, with our local VIP generators (Quick Picks, Daily Discover) permanently pinned to the top.
+- **Quick Picks Fix**: Fixed a visual glitch where the "Quick Picks" grid would constantly snap back to the first item when data refreshed in the background.
+
 ## v1.2.1
 
 **🚀 Speed Dial Refreshed**

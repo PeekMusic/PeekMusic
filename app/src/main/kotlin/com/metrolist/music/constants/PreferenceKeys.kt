@@ -228,7 +228,7 @@ val RandomizeHomeOrderKey = booleanPreferencesKey("randomizeHomeOrder")
 val HiddenYouTubeHomeSectionsKey = stringSetPreferencesKey("hidden_youtube_home_sections")
 val HomeSectionOrderKey = stringPreferencesKey("home_section_order")
 val DEFAULT_HOME_SECTION_ORDER =
-    "speed_dial,quick_picks,forgotten_favorites,from_your_library,keep_listening,recommended_mixes,recommended_playlists,account_mixes,podcasts,new_episodes,shows,trending,moods_and_genres,recaps,live_performances,music_videos,covers_and_remixes,together,long_listens,similar_to,from_the_community,artist"
+    "speed_dial,quick_picks,daily_discover,keep_listening,forgotten_favorites,similar_to,recommended_mixes,new_releases,community_playlists,moods_and_genres,other"
 
 /**
  * Merges a stored section order with the default: user-placed categories keep their relative
@@ -238,9 +238,14 @@ val DEFAULT_HOME_SECTION_ORDER =
 fun effectiveHomeSectionOrder(storedOrder: String): List<String> {
     val default = DEFAULT_HOME_SECTION_ORDER.split(",")
     val stored = storedOrder.split(",").map { it.trim() }.filter { it.isNotEmpty() }
-    val storedSet = stored.toSet()
+    
+    // Purge unknown categories that might be left over from older versions
+    val defaultSet = default.toSet()
+    val validStored = stored.filter { it in defaultSet }
+    val storedSet = validStored.toSet()
+    
     val result = mutableListOf<String>()
-    val storedQueue = ArrayDeque(stored)
+    val storedQueue = ArrayDeque(validStored)
     for (category in default) {
         if (category !in storedSet) {
             result.add(category)
