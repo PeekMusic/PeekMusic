@@ -2271,14 +2271,15 @@ internal fun PlayerLyricsLine(
     val (translateLanguage) = rememberPreference(TranslateLanguageKey, "en")
 
     // Fetch lyrics even when the full lyrics pane was never opened (same helper as InlineLyricsView)
-    LaunchedEffect(mediaMetadata?.id, currentLyrics) {
+    LaunchedEffect(mediaMetadata?.id) {
         val metadata = mediaMetadata
         val id = metadata?.id
-        if (id != null && currentLyrics == null) {
+        if (id != null && (currentLyrics == null || currentLyrics?.lyrics == LyricsEntity.LYRICS_NOT_FOUND)) {
             delay(500)
             withContext(Dispatchers.IO) {
                 try {
-                    if (database.lyrics(id).first() != null) return@withContext
+                    val dbLyrics = database.lyrics(id).first()
+                    if (dbLyrics != null && dbLyrics.lyrics != LyricsEntity.LYRICS_NOT_FOUND) return@withContext
                     val entryPoint =
                         EntryPointAccessors.fromApplication(
                             context.applicationContext,

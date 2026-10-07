@@ -1240,6 +1240,13 @@ fun ListenTogetherDialog(
                     clipboard.setPrimaryClip(clip)
                 }
 
+                is ListenTogetherEvent.ServerError -> {
+                    isCreatingRoom = false
+                    isJoiningRoom = false
+                    joinErrorMessage = event.message
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+                }
+
                 else -> { /* ignore other events here */ }
             }
         }

@@ -865,14 +865,13 @@ class MusicService :
                 for (i in 1..count) {
                     val nextItem = player.getMediaItemAt(currentIndex + i)
                     val nextMetadata = nextItem.metadata
-                    if (nextMetadata != null && nextMetadata.id.isNotEmpty() && database.lyrics(nextMetadata.id).firstOrNull() == null) {
+                    val currentLyrics = if (nextMetadata != null && nextMetadata.id.isNotEmpty()) database.lyrics(nextMetadata.id).firstOrNull() else null
+                    if (nextMetadata != null && nextMetadata.id.isNotEmpty() && (currentLyrics == null || currentLyrics.lyrics == com.metrolist.music.db.entities.LyricsEntity.LYRICS_NOT_FOUND)) {
                         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                             try {
                                 val fetched = lyricsHelper.getLyrics(nextMetadata)
-                                if (fetched.lyrics != com.metrolist.music.db.entities.LyricsEntity.LYRICS_NOT_FOUND) {
-                                    database.query {
-                                        upsert(com.metrolist.music.db.entities.LyricsEntity(nextMetadata.id, fetched.lyrics, fetched.provider))
-                                    }
+                                database.query {
+                                    upsert(com.metrolist.music.db.entities.LyricsEntity(nextMetadata.id, fetched.lyrics, fetched.provider))
                                 }
                             } catch (e: Exception) {
                                 timber.log.Timber.tag(TAG).e(e, "Failed to prefetch lyrics for ${nextMetadata.id}")
