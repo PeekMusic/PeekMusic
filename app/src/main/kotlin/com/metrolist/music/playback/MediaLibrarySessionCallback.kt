@@ -16,6 +16,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.exoplayer.offline.Download
 import androidx.media3.session.LibraryResult
+import androidx.media3.session.MediaConstants.EXTRAS_KEY_IS_EXPLICIT
+import androidx.media3.session.MediaConstants.EXTRAS_VALUE_ATTRIBUTE_PRESENT
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaLibraryService.MediaLibrarySession
 import androidx.media3.session.MediaSession
@@ -412,6 +414,9 @@ constructor(
                                             .setMediaMetadata(
                                                 MediaMetadata.Builder()
                                                     .setTitle(songItem.title)
+                                                    .setExtras(Bundle().apply {
+                                                        if (songItem.explicit) putLong(EXTRAS_KEY_IS_EXPLICIT, EXTRAS_VALUE_ATTRIBUTE_PRESENT)
+                                                    })
                                                     .setSubtitle(songItem.artists.joinToArtistString(getArtistSeparator(context)) {
                                                         ArtistNameAliases.resolve(it.id, it.name)
                                                     })
@@ -799,6 +804,9 @@ constructor(
                                 .setMediaMetadata(
                                     MediaMetadata.Builder()
                                         .setTitle(songItem.title)
+                                        .setExtras(Bundle().apply {
+                                            if (songItem.explicit) putLong(EXTRAS_KEY_IS_EXPLICIT, EXTRAS_VALUE_ATTRIBUTE_PRESENT)
+                                        })
                                         .setSubtitle(songItem.artists.joinToArtistString(getArtistSeparator(context)) {
                                             ArtistNameAliases.resolve(it.id, it.name)
                                         })
@@ -1209,6 +1217,9 @@ constructor(
                  MediaMetadata
                      .Builder()
                      .setTitle(song.title)
+                     .setExtras(Bundle().apply {
+                         if (song.explicit) putLong(EXTRAS_KEY_IS_EXPLICIT, EXTRAS_VALUE_ATTRIBUTE_PRESENT)
+                     })
                      .setSubtitle(artists.joinToArtistString(getArtistSeparator(context)) {
                          ArtistNameAliases.resolve(it.id, it.name)
                      })
