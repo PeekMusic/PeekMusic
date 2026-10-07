@@ -170,7 +170,7 @@ object Paxsenix {
                 trackName = attr.name,
                 artistName = attr.artistName,
                 albumName = attr.albumName,
-                duration = attr.durationInMillis?.toInt()?.div(1000),
+                duration = attr.durationInMillis?.toInt(),
                 artwork = attr.artwork?.url?.replace("{w}", "100")?.replace("{h}", "100")?.replace("{f}", "png")
             )
         }.also { results ->

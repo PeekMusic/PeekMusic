@@ -2875,43 +2875,6 @@ fun InlineLyricsView(
         }
     }
 
-    // Prefetch lyrics for the next queue item only while the lyrics pane is visible, the app is in the
-    // foreground, and the current track's lyrics row has finished loading (avoids competing with the
-    // active fetch).
-    LaunchedEffect(
-        nextMetadata?.id,
-        showLyrics,
-        appInForeground,
-        mediaMetadata?.id,
-        currentLyrics,
-    ) {
-        if (!showLyrics || !appInForeground || nextMetadata == null) return@LaunchedEffect
-        val loadedForCurrent =
-            currentLyrics?.let { lyrics ->
-                mediaMetadata == null || lyrics.id == mediaMetadata.id
-            } == true
-        if (mediaMetadata != null && !loadedForCurrent) return@LaunchedEffect
-        val nextId = nextMetadata.id
-        delay(400)
-        if (!showLyrics || !appInForeground || !isActive) return@LaunchedEffect
-        withContext(Dispatchers.IO) {
-            try {
-                val existing = database.lyrics(nextId).first()
-                if (existing != null) return@withContext
-                val entryPoint =
-                    EntryPointAccessors.fromApplication(
-                        context.applicationContext,
-                        com.metrolist.music.di.LyricsHelperEntryPoint::class.java,
-                    )
-                val lyricsHelper = entryPoint.lyricsHelper()
-                val fetched = lyricsHelper.getLyrics(nextMetadata)
-                database.query {
-                    upsert(LyricsEntity(nextId, fetched.lyrics, fetched.provider))
-                }
-            } catch (_: Exception) {
-            }
-        }
-    }
 
     Box(
         modifier =

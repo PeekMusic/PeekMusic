@@ -25,7 +25,7 @@ screen, lyrics, the player — gets extra polish.
 - Home feed with YouTube recommendations
 - Smart queue and radio generation
 - Sleep timer and alarm
-- Multiple lyrics providers (SimpMusic, Musixmatch, and more)
+- Multiple lyrics providers (BetterLyrics, Paxsenix, SimpMusic, and more)
 - Widget support (4×2 and 4×3 player widgets)
 - Foldable and large-screen adaptive layout
 
@@ -71,7 +71,7 @@ Things this fork deliberately doesn't carry:
 - **Discord and Last.fm integrations** — and their settings pages.
 - **YouTube channel switching** — one account at a time; sign out and back in to change.
 - **AI lyric translation behind API keys** — replaced by the free keyless translation above.
-- **Zemer and YouTube Subtitle lyrics providers** — replaced by SimpMusic and Musixmatch.
+- **Zemer and YouTube Subtitle lyrics providers** — replaced by BetterLyrics, Paxsenix, SimpMusic, etc.
 
 ## 🌐 Help Translate PeekMusic
 

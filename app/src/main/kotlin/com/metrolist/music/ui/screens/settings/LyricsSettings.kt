@@ -102,6 +102,8 @@ fun LyricsSettings(
     val (peekShowTranslation, onPeekShowTranslationChange) = rememberPreference(PeekShowTranslationKey, defaultValue = false)
     val (peekShowRomanization, onPeekShowRomanizationChange) = rememberPreference(PeekShowRomanizationKey, defaultValue = false)
     val (peekTranslationHintShown, onPeekTranslationHintShownChange) = rememberPreference(PeekTranslationHintShownKey, defaultValue = false)
+    var translateLanguage by rememberPreference(com.metrolist.music.constants.TranslateLanguageKey, "en")
+    var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
     val (lyricsGlowEffect, onLyricsGlowEffectChange) = rememberPreference(LyricsGlowEffectKey, defaultValue = false)
     val (lyricsAnimationStyle, onLyricsAnimationStyleChange) =
@@ -928,14 +930,34 @@ fun LyricsSettings(
             title = stringResource(R.string.ai_lyrics_translation),
             items = listOf(
                 Material3SettingsItem(
-                    icon = painterResource(R.drawable.translate),
-                    title = { Text(stringResource(R.string.ai_lyrics_translation)) },
-                    onClick = { navController.navigate("settings/ai") }
-                )
+                    icon = painterResource(R.drawable.language),
+                    title = { Text(stringResource(R.string.ai_target_language)) },
+                    description = { Text(com.metrolist.music.constants.LanguageCodeToName[translateLanguage] ?: translateLanguage) },
+                    onClick = { showLanguageDialog = true },
+                ),
+                Material3SettingsItem(
+                    title = {},
+                    description = { Text(stringResource(R.string.lyrics_translation_free_hint)) },
+                    onClick = null,
+                ),
             )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        if (showLanguageDialog) {
+            EnumDialog(
+                onDismiss = { showLanguageDialog = false },
+                onSelect = {
+                    translateLanguage = it
+                    showLanguageDialog = false
+                },
+                title = stringResource(R.string.ai_target_language),
+                current = translateLanguage,
+                values = com.metrolist.music.constants.LanguageCodeToName.keys.sortedBy { com.metrolist.music.constants.LanguageCodeToName[it] },
+                valueText = { com.metrolist.music.constants.LanguageCodeToName[it] ?: it },
+            )
+        }
 
         if (showExperimentalLyricsBetaDialog) {
             DefaultDialog(
