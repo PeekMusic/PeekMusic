@@ -30,7 +30,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 private const val MAX_LYRICS_FETCH_MS = 25000L
-private const val PER_PROVIDER_TIMEOUT_MS = 5000L
+private const val PER_PROVIDER_TIMEOUT_MS = 6000L
 private const val PROVIDER_NONE = ""
 
 class LyricsHelper
