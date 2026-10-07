@@ -248,69 +248,7 @@ fun YouTubePlaylistMenu(
     )
     HorizontalDivider()
 
-    var downloadState by remember {
-        mutableIntStateOf(Download.STATE_STOPPED)
-    }
-    LaunchedEffect(songs) {
-        if (songs.isEmpty()) return@LaunchedEffect
-        downloadUtil.downloads.collect { downloads ->
-            downloadState =
-                if (songs.all { downloads[it.id]?.state == Download.STATE_COMPLETED }) {
-                    Download.STATE_COMPLETED
-                } else if (songs.all {
-                        downloads[it.id]?.state == Download.STATE_QUEUED ||
-                            downloads[it.id]?.state == Download.STATE_DOWNLOADING ||
-                            downloads[it.id]?.state == Download.STATE_COMPLETED
-                    }
-                ) {
-                    Download.STATE_DOWNLOADING
-                } else {
-                    Download.STATE_STOPPED
-                }
-        }
-    }
-    var showRemoveDownloadDialog by remember {
-        mutableStateOf(false)
-    }
     var showExportDialog by remember { mutableStateOf(false) }
-    if (showRemoveDownloadDialog) {
-        DefaultDialog(
-            onDismiss = { showRemoveDownloadDialog = false },
-            content = {
-                Text(
-                    text =
-                        stringResource(
-                            R.string.remove_download_playlist_confirm,
-                            playlist.title,
-                        ),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(horizontal = 18.dp),
-                )
-            },
-            buttons = {
-                TextButton(
-                    onClick = { showRemoveDownloadDialog = false },
-                ) {
-                    Text(text = stringResource(android.R.string.cancel))
-                }
-                TextButton(
-                    onClick = {
-                        showRemoveDownloadDialog = false
-                        songs.forEach { song ->
-                            DownloadService.sendRemoveDownload(
-                                context,
-                                ExoDownloadService::class.java,
-                                song.id,
-                                false,
-                            )
-                        }
-                    },
-                ) {
-                    Text(text = stringResource(android.R.string.ok))
-                }
-            },
-        )
-    }
 
     ImportPlaylistDialog(
         isVisible = showImportPlaylistDialog,
@@ -573,61 +511,6 @@ fun YouTubePlaylistMenu(
             Material3MenuGroup(
                 items =
                     buildList {
-                        if (songs.isNotEmpty()) {
-                            add(
-                                when (downloadState) {
-                                    Download.STATE_COMPLETED -> {
-                                        Material3MenuItemData(
-                                            title = {
-                                                Text(
-                                                    text = stringResource(R.string.remove_download),
-                                                )
-                                            },
-                                            icon = {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.offline),
-                                                    contentDescription = null,
-                                                )
-                                            },
-                                            onClick = {
-                                                showRemoveDownloadDialog = true
-                                            },
-                                        )
-                                    }
-
-                                    Download.STATE_QUEUED, Download.STATE_DOWNLOADING -> {
-                                        Material3MenuItemData(
-                                            title = { Text(text = stringResource(R.string.downloading)) },
-                                            icon = {
-                                                CircularProgressIndicator(
-                                                    modifier = Modifier.size(24.dp),
-                                                    strokeWidth = 2.dp,
-                                                )
-                                            },
-                                            onClick = {
-                                                showRemoveDownloadDialog = true
-                                            },
-                                        )
-                                    }
-
-                                    else -> {
-                                        Material3MenuItemData(
-                                            title = { Text(text = stringResource(R.string.action_download)) },
-                                            description = { Text(text = stringResource(R.string.download_desc)) },
-                                            icon = {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.download),
-                                                    contentDescription = null,
-                                                )
-                                            },
-                                            onClick = {
-                                                songs.forEach { downloadUtil.download(it) }
-                                            },
-                                        )
-                                    }
-                                },
-                            )
-                        }
                         add(
                             Material3MenuItemData(
                                 title = { Text(text = stringResource(R.string.export_playlist)) },

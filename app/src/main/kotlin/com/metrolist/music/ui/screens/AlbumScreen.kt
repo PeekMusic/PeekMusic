@@ -78,6 +78,10 @@ import com.metrolist.music.LocalDownloadUtil
 import com.metrolist.music.LocalListenTogetherManager
 import com.metrolist.music.LocalPlayerAwareWindowInsets
 import com.metrolist.music.LocalPlayerConnection
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.TextButton
+import androidx.media3.exoplayer.offline.DownloadService
+import com.metrolist.music.playback.ExoDownloadService
 import com.metrolist.music.R
 import com.metrolist.music.constants.HideExplicitKey
 import com.metrolist.music.constants.HideVideoSongsKey
@@ -185,6 +189,36 @@ fun AlbumScreen(
                     Download.STATE_STOPPED
                 }
         }
+    }
+
+    var showRemoveDownloadDialog by remember { androidx.compose.runtime.mutableStateOf(false) }
+    if (showRemoveDownloadDialog) {
+        com.metrolist.music.ui.component.DefaultDialog(
+            onDismiss = { showRemoveDownloadDialog = false },
+            content = {
+                androidx.compose.material3.Text(
+                    text = androidx.compose.ui.res.stringResource(R.string.remove_download_playlist_confirm, albumWithSongs?.album?.title ?: ""),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(horizontal = 18.dp),
+                )
+            },
+            buttons = {
+                TextButton(onClick = { showRemoveDownloadDialog = false }) { androidx.compose.material3.Text(text = androidx.compose.ui.res.stringResource(android.R.string.cancel)) }
+                TextButton(
+                    onClick = {
+                        showRemoveDownloadDialog = false
+                        albumWithSongs?.songs?.forEach { song ->
+                            DownloadService.sendRemoveDownload(
+                                context,
+                                ExoDownloadService::class.java,
+                                song.id,
+                                false,
+                            )
+                        }
+                    }
+                ) { androidx.compose.material3.Text(text = androidx.compose.ui.res.stringResource(android.R.string.ok)) }
+            }
+        )
     }
 
     LazyColumn(
@@ -295,7 +329,7 @@ fun AlbumScreen(
                                 .padding(horizontal = 24.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
+            Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End), verticalAlignment = Alignment.CenterVertically) {
                         // Like Button - Smaller secondary button
                         Surface(
                             onClick = {
@@ -331,6 +365,51 @@ fun AlbumScreen(
                                         },
                                     modifier = Modifier.size(24.dp),
                                 )
+                            }
+                        }
+
+                        // Download Button
+                        Surface(
+                            onClick = {
+                                when (downloadState) {
+                                    androidx.media3.exoplayer.offline.Download.STATE_COMPLETED -> showRemoveDownloadDialog = true
+                                    androidx.media3.exoplayer.offline.Download.STATE_QUEUED, androidx.media3.exoplayer.offline.Download.STATE_DOWNLOADING -> showRemoveDownloadDialog = true
+                                    else -> albumWithSongs.songs.forEach { downloadUtil.download(it) }
+                                }
+                            },
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier.size(48.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                when (downloadState) {
+                                    androidx.media3.exoplayer.offline.Download.STATE_QUEUED, androidx.media3.exoplayer.offline.Download.STATE_DOWNLOADING -> {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(24.dp),
+                                            strokeWidth = 2.dp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    androidx.media3.exoplayer.offline.Download.STATE_COMPLETED -> {
+                                        Icon(
+                                            painter = painterResource(R.drawable.offline),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(24.dp),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    else -> {
+                                        Icon(
+                                            painter = painterResource(R.drawable.download),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(24.dp),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
                             }
                         }
 
