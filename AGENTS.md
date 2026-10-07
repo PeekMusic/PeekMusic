@@ -12,7 +12,8 @@ PeekMusic is a performance-focused fork of Metrolist, a 3rd party YouTube Music 
 
 ## AI-only guidelines
 
-1. Changes to markdown files are allowed only for fork-owned documentation: `README.md`, `changelog.md`, `docs/`, `AGENTS.md` (when explicitly requested), and `fastlane/metadata/**.txt`. All other readme/markdown files (e.g. upstream guides) must not be edited, so upstream documentation stays accurate for merges.
+1. **Obsidian Vault als Single-Source-of-Truth:** Das Langzeitgedächtnis dieses Projekts befindet sich in einem Obsidian Vault unter `/home/endrit/Dokumente/Obsidian Vault/PeekMusic/`. LIES DIESEN VAULT (beginnend mit `00 - Index.md`) bei architektonischen Entscheidungen, neuen Features oder Upstream-Merges. DOKUMENTIERE alle neuen Learnings, Bugs (Post-Mortems) und Ideen in den entsprechenden Markdown-Dateien des Vaults. Behandle ihn als heilig!
+2. Changes to markdown files are allowed only for fork-owned documentation: `README.md`, `changelog.md`, `docs/`, `AGENTS.md` (when explicitly requested), and `fastlane/metadata/**.txt`. All other readme/markdown files (e.g. upstream guides) must not be edited, so upstream documentation stays accurate for merges.
 2. Unless explicitly requested, you are not allowed to commit, push, or merge any changes to any branch. If you are explicitly requested and authorized to commit/push/merge, you have the right to do so; the responsibility then lies with the author who requested it.
    - You should absolutely NOT use any commands that would modify the git history, do force pushes (except for rebases on your own branch), or delete branches without explicit instructions from a human.
 3. Always follow the guidelines and instructions provided by human contributors.
