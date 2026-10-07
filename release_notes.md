@@ -1,13 +1,14 @@
-**🚀 Speed Dial Refreshed**
-- The Speed Dial (3x3 grid) now heavily prioritizes your recent listens and fresh new recommendations, offering much more variety than the same static list of favorite songs.
+**✨ UI & Quality of Life**
+- **Quick Download Button**: The download action has been moved out of the 3-dot overflow menu and placed directly into the header of Playlists and Albums next to the Like and Play buttons! You can now download entire playlists with a single tap, track progress with an inline spinner, or tap again to remove downloads.
+- **Persistent Lyrics Search**: Songs that previously couldn't find lyrics are no longer permanently stuck as "Not Found" in the local database. PeekMusic will now automatically retry searching on subsequent plays so you don't miss out on newly synced lyrics.
+- **Listen Together Fixes**: Fixed a bug where creating a room would get stuck infinitely on "Creating room...". Added proper error notifications and restored room creation compatibility with the server.
 
-**🚫 Artist Block Improvements**
-- You can now directly play an album by a blocked artist without it being filtered out.
-- Fixed an ExoPlayer crash that could occur if you blocked an artist while their song was currently playing.
-
-**🚗 Android Auto**
-- Selecting a YouTube song directly from the Android Auto interface will now properly launch an endless Radio Mix, just like it does for local songs.
-
-**🐛 Bug Fixes**
-- Fixed a bug where selecting any song from an album would accidentally start playback from track 1.
-- Fixed a small visual glitch in the Lyrics Peek where the previous line would flash when returning from a long instrumental break.
+**⚡ Performance & Under the Hood**
+- **Widget Hitching Eliminated**: Moved homescreen widget progress updates off the main UI thread to prevent periodic frame drops and micro-stuttering.
+- **Automated Version Tracking**: Replaced static build codes with automated commit-based versioning to ensure seamless in-app updater recognition and installation.
+- **Upstream Sync (Metrolist)**:
+  - Bumped InnerTubeX to v0.7.4 for improved YouTube stream handling and metadata parsing.
+  - Preserved shuffle order across crossfade transitions and player rebuilds.
+  - Restored full media notification controls for Android 17.
+  - Faster, unthrottled range requests for downloads and offline track duration lookups.
+  - Multiple translation additions and minor UI polish.
