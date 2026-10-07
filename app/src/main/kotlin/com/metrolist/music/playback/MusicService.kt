@@ -4491,10 +4491,14 @@ class MusicService :
                 while (isActive) {
                     delay(1.seconds)
                     if (player.isPlaying) {
-                        widgetManager.updateProgress(
-                            duration = if (player.duration != C.TIME_UNSET) player.duration else 0,
-                            currentPosition = player.currentPosition,
-                        )
+                        val duration = if (player.duration != C.TIME_UNSET) player.duration else 0
+                        val currentPosition = player.currentPosition
+                        withContext(Dispatchers.Default) {
+                            widgetManager.updateProgress(
+                                duration = duration,
+                                currentPosition = currentPosition,
+                            )
+                        }
                     }
                 }
             }
