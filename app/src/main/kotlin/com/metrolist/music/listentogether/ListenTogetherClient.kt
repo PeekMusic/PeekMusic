@@ -690,7 +690,7 @@ class ListenTogetherClient
                 Request
                     .Builder()
                     .url(getServerUrl())
-                    .header("User-Agent", "com.metrolist.music")
+                    .header("User-Agent", context.packageName)
                     .build()
 
             webSocket =

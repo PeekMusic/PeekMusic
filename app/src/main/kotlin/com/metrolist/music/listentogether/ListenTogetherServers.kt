@@ -20,10 +20,10 @@ object ListenTogetherServers {
     private const val ServersJson = """
         [
           {
-            "name": "The Meowery",
-            "url": "wss://metroserverx.meowery.eu/ws",
-            "location": "Poland",
-            "operator": "Nyx"
+            "name": "PeekMusic Official",
+            "url": "wss://listen.peekmusic.org/ws",
+            "location": "Germany",
+            "operator": "Endrit"
           }
         ]
     """
