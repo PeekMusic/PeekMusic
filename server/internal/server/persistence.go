@@ -387,6 +387,7 @@ func (s *Server) LoadState() error {
 var (
 	friendsBucket    = []byte("friends")
 	authTokensBucket = []byte("auth_tokens")
+	usernamesBucket  = []byte("usernames")
 )
 
 // ensureBuckets creates the necessary buckets if they don't exist
@@ -399,6 +400,9 @@ func (d *database) ensureFriendBuckets() error {
 			return err
 		}
 		if _, err := tx.CreateBucketIfNotExists(authTokensBucket); err != nil {
+			return err
+		}
+		if _, err := tx.CreateBucketIfNotExists(usernamesBucket); err != nil {
 			return err
 		}
 		return nil
@@ -573,4 +577,30 @@ func (s *Server) removeFriend(code1, code2 string) error {
 
 		return nil
 	})
+}
+
+func (s *Server) saveUsername(code, username string) error {
+	if err := s.database.ensureFriendBuckets(); err != nil {
+		return err
+	}
+	return s.database.db.Update(func(tx *bbolt.Tx) error {
+		bucket := tx.Bucket(usernamesBucket)
+		return bucket.Put([]byte(code), []byte(username))
+	})
+}
+
+func (s *Server) getUsername(code string) string {
+	if err := s.database.ensureFriendBuckets(); err != nil {
+		return ""
+	}
+	var username string
+	s.database.db.View(func(tx *bbolt.Tx) error {
+		bucket := tx.Bucket(usernamesBucket)
+		val := bucket.Get([]byte(code))
+		if val != nil {
+			username = string(val)
+		}
+		return nil
+	})
+	return username
 }

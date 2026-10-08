@@ -368,6 +368,7 @@ func (s *Server) handleAuthenticate(c *Client, payload []byte) {
 	c.setFriendCode(friendCode)
     if p.CurrentUsername != "" {
         c.setUsername(p.CurrentUsername)
+        s.saveUsername(friendCode, p.CurrentUsername)
     }
 	
 	s.friendsMu.Lock()
@@ -502,6 +503,7 @@ func (s *Server) broadcastFriendPresenceOffline(fcode string) {
     }
     
     friends, _ := s.getFriends(fcode)
+    lastUname := s.getUsername(fcode)
     
     s.friendsMu.RLock()
     defer s.friendsMu.RUnlock()
@@ -510,7 +512,7 @@ func (s *Server) broadcastFriendPresenceOffline(fcode string) {
             fc.sendMessage(s.logger, MsgTypeFriendPresenceUpdate, FriendPresenceUpdatePayload{
                 Friend: &FriendInfo{
                     FriendCode:     fcode,
-                    Username:       "",
+                    Username:       lastUname,
                     IsOnline:       false,
                     ActiveRoomCode: "",
                 },
