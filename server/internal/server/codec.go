@@ -464,6 +464,8 @@ func toProtoMessage(payload interface{}) (proto.Message, error) {
 			}
 		}
 		return pbPayload, nil
+	case RemoveFriendPayload:
+		return &pb.RemoveFriendPayload{FriendCode: p.FriendCode}, nil
 	case FriendAddedPayload:
 		return &pb.FriendAddedPayload{
 			FriendCode:   p.FriendCode,

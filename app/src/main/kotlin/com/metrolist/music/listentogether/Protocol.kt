@@ -43,6 +43,7 @@ object MessageTypes {
     const val AUTH_SUCCESS = "auth_success"
     const val ADD_FRIEND = "add_friend"
     const val REMOVE_FRIEND = "remove_friend"
+    const val FRIEND_REMOVED = "friend_removed"
     const val FRIENDS_STATUS = "friends_status"
     const val FRIEND_PRESENCE_UPDATE = "friend_presence_update"
     const val FRIEND_ADDED = "friend_added"

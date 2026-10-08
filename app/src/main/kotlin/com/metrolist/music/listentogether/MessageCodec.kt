@@ -73,6 +73,7 @@ class MessageCodec(
             MessageTypes.SUGGESTION_REJECTED -> SuggestionRejectedPayload.parseFrom(payload)
             MessageTypes.AUTH_SUCCESS -> Listentogether.AuthSuccessPayload.parseFrom(payload)
             MessageTypes.FRIENDS_STATUS -> Listentogether.FriendsStatusPayload.parseFrom(payload)
+            MessageTypes.FRIEND_REMOVED -> Listentogether.RemoveFriendPayload.parseFrom(payloadBytes)
             MessageTypes.FRIEND_PRESENCE_UPDATE -> Listentogether.FriendPresenceUpdatePayload.parseFrom(payload)
             MessageTypes.FRIEND_ADDED -> Listentogether.FriendAddedPayload.parseFrom(payload)
             else -> null

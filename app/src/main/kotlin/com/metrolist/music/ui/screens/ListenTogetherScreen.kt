@@ -97,6 +97,7 @@ import com.metrolist.music.listentogether.RoomRole
 import com.metrolist.music.listentogether.SuggestionReceivedPayload
 import com.metrolist.music.listentogether.UserInfo
 import com.metrolist.music.ui.component.DefaultDialog
+import com.metrolist.music.ui.component.FriendsSection
 import com.metrolist.music.ui.component.IconButton
 import com.metrolist.music.ui.utils.backToMain
 import com.metrolist.music.utils.rememberPreference
@@ -291,14 +292,6 @@ fun ListenTogetherScreen(
         if (isInRoom) {
             // Room status card
             roomState?.let { room ->
-                item {
-                    RoomStatusCard(
-                        roomCode = room.roomCode,
-                        friendCode = friendCode,
-                        isHost = isHost,
-                        context = context,
-                    )
-                }
 
                 // Connected users
                 val connectedUsers = room.usersList.filter { it.isConnected }

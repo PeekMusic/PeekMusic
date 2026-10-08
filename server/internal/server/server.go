@@ -536,27 +536,13 @@ func (s *Server) handleRemoveFriend(c *Client, payload []byte) {
 		return
 	}
 	
-	// Notify the adder that the friend is "offline" (removed)
-	c.sendMessage(s.logger, MsgTypeFriendPresenceUpdate, FriendPresenceUpdatePayload{
-		Friend: &FriendInfo{
-			FriendCode:     p.FriendCode,
-			Username:       "",
-			IsOnline:       false,
-			ActiveRoomCode: "",
-		},
-	})
+	// Notify the adder that the friend is removed
+	c.sendMessage(s.logger, MsgTypeFriendRemoved, RemoveFriendPayload{FriendCode: p.FriendCode})
 	
-	// Notify the removed friend that we are "offline" (removed)
+	// Notify the removed friend that we removed them
 	s.friendsMu.RLock()
 	if targetClient, ok := s.onlineFriends[p.FriendCode]; ok && targetClient != nil {
-		targetClient.sendMessage(s.logger, MsgTypeFriendPresenceUpdate, FriendPresenceUpdatePayload{
-			Friend: &FriendInfo{
-				FriendCode:     myCode,
-				Username:       "",
-				IsOnline:       false,
-				ActiveRoomCode: "",
-			},
-		})
+		targetClient.sendMessage(s.logger, MsgTypeFriendRemoved, RemoveFriendPayload{FriendCode: myCode})
 	}
 	s.friendsMu.RUnlock()
 }

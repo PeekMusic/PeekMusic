@@ -307,6 +307,7 @@ const (
 	MsgTypeAuthSuccess          = "auth_success"
 	MsgTypeAddFriend            = "add_friend"
 	MsgTypeRemoveFriend         = "remove_friend"
+	MsgTypeFriendRemoved        = "friend_removed"
 	MsgTypeFriendsStatus        = "friends_status"
 	MsgTypeFriendPresenceUpdate = "friend_presence_update"
 	MsgTypeFriendAdded          = "friend_added"

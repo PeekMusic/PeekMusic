@@ -1568,6 +1568,10 @@ class ListenTogetherClient
                         _friends.value = payload.friendsList
                         emitEvent(ListenTogetherEvent.FriendsStatus(payload.friendsList))
                     }
+                    MessageTypes.FRIEND_REMOVED -> {
+                        val payload = codec.decodePayload(msgType, payloadBytes) as Listentogether.RemoveFriendPayload
+                        _friends.value = _friends.value.filter { it.friendCode != payload.friendCode }
+                    }
                     MessageTypes.FRIEND_PRESENCE_UPDATE -> {
                         val payload = codec.decodePayload(msgType, payloadBytes) as Listentogether.FriendPresenceUpdatePayload
                         val updatedList = _friends.value.toMutableList()
