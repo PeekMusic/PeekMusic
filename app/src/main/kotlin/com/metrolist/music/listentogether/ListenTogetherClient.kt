@@ -5,6 +5,14 @@
 
 package com.metrolist.music.listentogether
 
+import kotlinx.coroutines.flow.first
+import androidx.datastore.preferences.core.edit
+import com.metrolist.music.constants.ListenTogetherAuthTokenKey
+import com.metrolist.music.constants.ListenTogetherUsernameKey
+
+
+import com.metrolist.music.listentogether.proto.Listentogether
+
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -126,6 +134,13 @@ sealed class ListenTogetherEvent {
     ) : ListenTogetherEvent()
 
     data object Disconnected : ListenTogetherEvent()
+
+    // Friends Events
+    data class AuthSuccess(val friendCode: String) : ListenTogetherEvent()
+    data class FriendsStatus(val friends: List<Listentogether.FriendInfo>) : ListenTogetherEvent()
+    data class FriendPresenceUpdate(val friend: Listentogether.FriendInfo) : ListenTogetherEvent()
+    data class FriendAdded(val friendCode: String, val success: Boolean, val errorMessage: String) : ListenTogetherEvent()
+
 
     data class ConnectionError(
         val error: String,
@@ -274,6 +289,13 @@ class ListenTogetherClient
 
         private val _userId = MutableStateFlow<String?>(null)
         val userId: StateFlow<String?> = _userId.asStateFlow()
+
+        private val _friendCode = MutableStateFlow<String?>(null)
+        val friendCode: StateFlow<String?> = _friendCode.asStateFlow()
+
+        private val _friends = MutableStateFlow<List<Listentogether.FriendInfo>>(emptyList())
+        val friends: StateFlow<List<Listentogether.FriendInfo>> = _friends.asStateFlow()
+
 
         private val _pendingJoinRequests = MutableStateFlow<List<JoinRequestPayload>>(emptyList())
         val pendingJoinRequests: StateFlow<List<JoinRequestPayload>> = _pendingJoinRequests.asStateFlow()
@@ -706,6 +728,19 @@ class ListenTogetherClient
                             reconnectAttempts = 0
                             startPingJob()
                             evaluateBackgroundDisconnectPolicy("socket_open")
+
+                            // Authenticate
+                            scope.launch {
+                                val prefs = context.dataStore.data.first()
+                                var token = prefs[ListenTogetherAuthTokenKey]
+                                if (token.isNullOrBlank()) {
+                                    token = java.util.UUID.randomUUID().toString()
+                                    context.dataStore.edit { it[ListenTogetherAuthTokenKey] = token }
+                                }
+                                val username = prefs[ListenTogetherUsernameKey] ?: ""
+                                authenticate(token, username)
+                            }
+
 
                             // Try to reconnect to previous session if we have a valid token
                             if (sessionToken != null && storedRoomCode != null) {
@@ -1522,6 +1557,34 @@ class ListenTogetherClient
                         log(LogLevel.DEBUG, "Pong received")
                     }
 
+                    
+                    MessageTypes.AUTH_SUCCESS -> {
+                        val payload = codec.decodePayload(msgType, payloadBytes) as Listentogether.AuthSuccessPayload
+                        _friendCode.value = payload.friendCode
+                        emitEvent(ListenTogetherEvent.AuthSuccess(payload.friendCode))
+                    }
+                    MessageTypes.FRIENDS_STATUS -> {
+                        val payload = codec.decodePayload(msgType, payloadBytes) as Listentogether.FriendsStatusPayload
+                        _friends.value = payload.friendsList
+                        emitEvent(ListenTogetherEvent.FriendsStatus(payload.friendsList))
+                    }
+                    MessageTypes.FRIEND_PRESENCE_UPDATE -> {
+                        val payload = codec.decodePayload(msgType, payloadBytes) as Listentogether.FriendPresenceUpdatePayload
+                        val updatedList = _friends.value.toMutableList()
+                        val idx = updatedList.indexOfFirst { it.friendCode == payload.friend.friendCode }
+                        if (idx != -1) {
+                            updatedList[idx] = payload.friend
+                        } else {
+                            updatedList.add(payload.friend)
+                        }
+                        _friends.value = updatedList
+                        emitEvent(ListenTogetherEvent.FriendPresenceUpdate(payload.friend))
+                    }
+                    MessageTypes.FRIEND_ADDED -> {
+                        val payload = codec.decodePayload(msgType, payloadBytes) as Listentogether.FriendAddedPayload
+                        emitEvent(ListenTogetherEvent.FriendAdded(payload.friendCode, payload.success, payload.errorMessage))
+                    }
+
                     MessageTypes.RECONNECTED -> {
                         val payload = codec.decodePayload(msgType, payloadBytes) as? ReconnectedPayload ?: return
                         _userId.value = payload.userId
@@ -1611,6 +1674,15 @@ class ListenTogetherClient
          * Create a new listening room.
          * If not connected, will queue the action and connect first.
          */
+        
+        fun authenticate(authToken: String, username: String) {
+            sendMessage(MessageTypes.AUTHENTICATE, Listentogether.AuthenticatePayload.newBuilder().setAuthToken(authToken).setCurrentUsername(username).build())
+        }
+
+        fun addFriend(friendCode: String) {
+            sendMessage(MessageTypes.ADD_FRIEND, Listentogether.AddFriendPayload.newBuilder().setFriendCode(friendCode).build())
+        }
+
         fun createRoom(username: String) {
             sessionApplyGeneration.incrementAndGet()
             lastPlaybackRevision.set(0L)

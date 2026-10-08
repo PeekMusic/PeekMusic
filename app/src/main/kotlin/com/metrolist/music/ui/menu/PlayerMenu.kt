@@ -1399,6 +1399,18 @@ fun ListenTogetherDialog(
 
         item { Spacer(modifier = Modifier.height(12.dp)) }
 
+        if (connectionState == ConnectionState.CONNECTED) {
+            item {
+                com.metrolist.music.ui.component.FriendsSection(
+                    manager = listenTogetherManager,
+                    onJoinRoom = { code -> 
+                        listenTogetherManager.joinRoom(code, savedUsername)
+                    }
+                )
+            }
+            item { Spacer(modifier = Modifier.height(12.dp)) }
+        }
+
         if (connectionState == ConnectionState.CONNECTED && !isInRoom) {
             item {
                 Text(
@@ -1462,7 +1474,7 @@ fun ListenTogetherDialog(
                                                 context.getSystemService(
                                                     Context.CLIPBOARD_SERVICE,
                                                 ) as android.content.ClipboardManager
-                                            val clip = android.content.ClipData.newPlainText("Listen Together Link", inviteLink)
+                                            val clip = android.content.ClipData.newPlainText("PeekParty Link", inviteLink)
                                             clipboard.setPrimaryClip(clip)
                                             Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
                                         },

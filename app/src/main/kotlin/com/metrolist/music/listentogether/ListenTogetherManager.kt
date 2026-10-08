@@ -5,6 +5,11 @@
 
 package com.metrolist.music.listentogether
 
+import kotlinx.coroutines.flow.first
+import androidx.datastore.preferences.core.edit
+import com.metrolist.music.constants.ListenTogetherAuthTokenKey
+
+
 import android.content.Context
 import android.os.SystemClock
 import androidx.media3.common.MediaItem
@@ -13,6 +18,7 @@ import androidx.media3.common.Player
 import com.metrolist.innertube.YouTube
 import com.metrolist.innertube.models.WatchEndpoint
 import com.metrolist.music.constants.ListenTogetherSyncVolumeKey
+import com.metrolist.music.constants.ListenTogetherUsernameKey
 import com.metrolist.music.extensions.currentMetadata
 import com.metrolist.music.extensions.metadata
 import com.metrolist.music.extensions.toMediaItem
@@ -153,6 +159,8 @@ class ListenTogetherManager
         val events = client.events
         val blockedUsernames = client.blockedUsernames
         val pendingSuggestions = client.pendingSuggestions
+        val friendCode = client.friendCode
+        val friends = client.friends
 
         val isInRoom: Boolean get() = client.isInRoom
         val isHost: Boolean get() = client.isHost
@@ -436,10 +444,28 @@ class ListenTogetherManager
             }
         }
 
+        
+        private suspend fun getOrCreateAuthToken(): String {
+            val prefs = context.dataStore.data.first()
+            var token = prefs[ListenTogetherAuthTokenKey]
+            if (token.isNullOrBlank()) {
+                token = java.util.UUID.randomUUID().toString()
+                context.dataStore.edit { it[ListenTogetherAuthTokenKey] = token }
+            }
+            return token!!
+        }
+
         private fun handleEvent(event: ListenTogetherEvent) {
             when (event) {
                 is ListenTogetherEvent.Connected -> {
+                    
                     Timber.tag(TAG).d("Connected to server with userId: ${event.userId}")
+                    scope.launch {
+                        val token = getOrCreateAuthToken()
+                        val username = context.dataStore.data.first()[ListenTogetherUsernameKey] ?: ""
+                        client.authenticate(token, username)
+                    }
+
                 }
 
                 is ListenTogetherEvent.RoomCreated -> {
@@ -1559,7 +1585,7 @@ class ListenTogetherManager
 
                     // Sync queue title
                     try {
-                        connection.service.queueTitle = queueTitle ?: "Listen Together"
+                        connection.service.queueTitle = queueTitle ?: "PeekParty"
                     } catch (e: Exception) {
                         Timber.tag(TAG).e(e, "Failed to set queue title during applyPlaybackState")
                     }
@@ -1679,7 +1705,7 @@ class ListenTogetherManager
                                         ),
                                     )
                                     try {
-                                        connection.service.queueTitle = "Listen Together" // Set default title
+                                        connection.service.queueTitle = "PeekParty" // Set default title
                                     } catch (e: Exception) {
                                         Timber.tag(TAG).e(e, "Failed to set queue title")
                                     }
@@ -1773,6 +1799,11 @@ class ListenTogetherManager
         /**
          * Create a new room
          */
+        
+        fun addFriend(friendCode: String) {
+            client.addFriend(friendCode)
+        }
+
         fun createRoom(username: String) {
             Timber.tag(TAG).d("Creating room with username: $username")
             client.createRoom(username)
