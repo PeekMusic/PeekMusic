@@ -1804,6 +1804,10 @@ class ListenTogetherManager
             client.addFriend(friendCode)
         }
 
+        fun removeFriend(friendCode: String) {
+            client.removeFriend(friendCode)
+        }
+
         fun createRoom(username: String) {
             Timber.tag(TAG).d("Creating room with username: $username")
             client.createRoom(username)

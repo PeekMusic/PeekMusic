@@ -460,7 +460,7 @@ fun ThumbnailHeader(
             // Listen Together indicator
             if (listenTogetherRoleState?.value != RoomRole.NONE) {
                 Text(
-                    text = if (listenTogetherRoleState?.value == RoomRole.HOST) "Hosting Listen Together" else "Listening Together",
+                    text = if (listenTogetherRoleState?.value == RoomRole.HOST) "Hosting PeekParty" else "In PeekParty",
                     style = MaterialTheme.typography.titleMedium,
                     color = textColor
                 )

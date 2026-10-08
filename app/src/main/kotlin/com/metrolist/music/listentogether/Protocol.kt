@@ -39,6 +39,13 @@ object MessageTypes {
     const val SUGGESTION_RECEIVED = "suggestion_received"
     const val SUGGESTION_APPROVED = "suggestion_approved"
     const val SUGGESTION_REJECTED = "suggestion_rejected"
+    const val AUTHENTICATE = "authenticate"
+    const val AUTH_SUCCESS = "auth_success"
+    const val ADD_FRIEND = "add_friend"
+    const val REMOVE_FRIEND = "remove_friend"
+    const val FRIENDS_STATUS = "friends_status"
+    const val FRIEND_PRESENCE_UPDATE = "friend_presence_update"
+    const val FRIEND_ADDED = "friend_added"
 }
 
 object PlaybackActions {

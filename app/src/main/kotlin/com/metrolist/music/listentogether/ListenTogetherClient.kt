@@ -1683,6 +1683,11 @@ class ListenTogetherClient
             sendMessage(MessageTypes.ADD_FRIEND, Listentogether.AddFriendPayload.newBuilder().setFriendCode(friendCode).build())
         }
 
+        fun removeFriend(friendCode: String) {
+            sendMessage(MessageTypes.REMOVE_FRIEND, Listentogether.RemoveFriendPayload.newBuilder().setFriendCode(friendCode).build())
+            _friends.value = _friends.value.filter { it.friendCode != friendCode }
+        }
+
         fun createRoom(username: String) {
             sessionApplyGeneration.incrementAndGet()
             lastPlaybackRevision.set(0L)

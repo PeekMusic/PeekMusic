@@ -122,6 +122,7 @@ fun ListenTogetherScreen(
     val connectionState by listenTogetherManager.connectionState.collectAsStateWithLifecycle()
     val roomState by listenTogetherManager.roomState.collectAsStateWithLifecycle()
     val userId by listenTogetherManager.userId.collectAsStateWithLifecycle()
+    val friendCode by listenTogetherManager.friendCode.collectAsStateWithLifecycle()
     val pendingJoinRequests by listenTogetherManager.pendingJoinRequests.collectAsStateWithLifecycle()
     val pendingSuggestions by listenTogetherManager.pendingSuggestions.collectAsStateWithLifecycle()
 
@@ -264,6 +265,17 @@ fun ListenTogetherScreen(
             )
         }
 
+        if (connectionState == ConnectionState.CONNECTED) {
+            item {
+                FriendsSection(
+                    manager = listenTogetherManager,
+                    onJoinRoom = { code -> 
+                        listenTogetherManager.joinRoom(code, savedUsername)
+                    }
+                )
+            }
+        }
+
         if (connectionState == ConnectionState.CONNECTED && !isInRoom) {
             item {
                 Text(
@@ -282,6 +294,7 @@ fun ListenTogetherScreen(
                 item {
                     RoomStatusCard(
                         roomCode = room.roomCode,
+                        friendCode = friendCode,
                         isHost = isHost,
                         context = context,
                     )
@@ -353,56 +366,15 @@ fun ListenTogetherScreen(
         } else {
             // Join/Create room section
             item {
-                JoinCreateRoomSection(
-                    usernameInput = usernameInput,
-                    onUsernameChange = { usernameInput = it },
-                    roomCodeInput = roomCodeInput,
-                    onRoomCodeChange = { roomCodeInput = it },
-                    savedUsername = savedUsername,
-                    isJoiningRoom = isJoiningRoom,
-                    joinErrorMessage = joinErrorMessage,
-                    waitingForApprovalText = waitingForApprovalText,
-                    bringIntoViewRequester = bringIntoViewRequester,
+                StartPeekPartySection(
                     onCreateRoom = {
-                        val username = usernameInput.takeIf { it.isNotBlank() } ?: savedUsername
-                        val finalUsername = username.trim()
-                        if (finalUsername.isNotBlank()) {
-                            savedUsername = finalUsername
-                            Toast.makeText(context, R.string.creating_room, Toast.LENGTH_SHORT).show()
-                            isCreatingRoom = true
-                            isJoiningRoom = false
-                            joinErrorMessage = null
-                            listenTogetherManager.connect()
-                            listenTogetherManager.createRoom(finalUsername)
-                        } else {
-                            Toast.makeText(context, R.string.error_username_empty, Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    onJoinRoom = {
-                        val username = usernameInput.takeIf { it.isNotBlank() } ?: savedUsername
-                        val finalUsername = username.trim()
-                        if (finalUsername.isNotBlank()) {
-                            savedUsername = finalUsername
-                            Toast
-                                .makeText(
-                                    context,
-                                    String.format(joiningRoomTemplate, roomCodeInput),
-                                    Toast.LENGTH_SHORT,
-                                ).show()
-                            isJoiningRoom = true
-                            isCreatingRoom = false
-                            joinErrorMessage = null
-                            listenTogetherManager.connect()
-                            listenTogetherManager.joinRoom(roomCodeInput, finalUsername)
-                        } else {
-                            Toast.makeText(context, R.string.error_username_empty, Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    onFieldFocused = {
-                        coroutineScope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    },
+                        Toast.makeText(context, R.string.creating_room, Toast.LENGTH_SHORT).show()
+                        isCreatingRoom = true
+                        isJoiningRoom = false
+                        joinErrorMessage = null
+                        listenTogetherManager.connect()
+                        listenTogetherManager.createRoom(savedUsername)
+                    }
                 )
             }
         }
@@ -646,6 +618,7 @@ private fun ConnectionStatusCard(
 @Composable
 private fun RoomStatusCard(
     roomCode: String,
+    friendCode: String?,
     isHost: Boolean,
     context: Context,
 ) {
@@ -665,14 +638,14 @@ private fun RoomStatusCard(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = stringResource(R.string.room_code),
+                text = "Your Friend Code to Share:",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = roomCode,
+                text = friendCode ?: "Loading...",
                 style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
@@ -694,10 +667,6 @@ private fun RoomStatusCard(
 
             if (isHost) {
                 Spacer(modifier = Modifier.height(16.dp))
-                val inviteLink =
-                    remember(roomCode) {
-                        "https://metrolist.cc/listen?code=$roomCode"
-                    }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
@@ -706,25 +675,7 @@ private fun RoomStatusCard(
                     FilledTonalButton(
                         onClick = {
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                            val clip = android.content.ClipData.newPlainText("Listen Together Link", inviteLink)
-                            clipboard.setPrimaryClip(clip)
-                            Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
-                        },
-                        shape = RoundedCornerShape(12.dp),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.link),
-                            contentDescription = stringResource(R.string.copy_link),
-                            modifier = Modifier.size(18.dp),
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(R.string.copy_link))
-                    }
-
-                    FilledTonalButton(
-                        onClick = {
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                            val clip = android.content.ClipData.newPlainText("Room Code", roomCode)
+                            val clip = android.content.ClipData.newPlainText("Friend Code", friendCode ?: "")
                             clipboard.setPrimaryClip(clip)
                             Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
                         },
@@ -736,7 +687,7 @@ private fun RoomStatusCard(
                             modifier = Modifier.size(18.dp),
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(R.string.copy_code))
+                        Text("Copy Friend Code")
                     }
                 }
             }
@@ -1049,19 +1000,8 @@ private fun PendingSuggestionsSection(
 }
 
 @Composable
-private fun JoinCreateRoomSection(
-    usernameInput: String,
-    onUsernameChange: (String) -> Unit,
-    roomCodeInput: String,
-    onRoomCodeChange: (String) -> Unit,
-    savedUsername: String,
-    isJoiningRoom: Boolean,
-    joinErrorMessage: String?,
-    waitingForApprovalText: String,
-    bringIntoViewRequester: BringIntoViewRequester,
+private fun StartPeekPartySection(
     onCreateRoom: () -> Unit,
-    onJoinRoom: () -> Unit,
-    onFieldFocused: () -> Unit = {},
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -1079,196 +1019,22 @@ private fun JoinCreateRoomSection(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // Username input
-            OutlinedTextField(
-                value = usernameInput,
-                onValueChange = onUsernameChange,
-                label = { Text(stringResource(R.string.username)) },
-                placeholder = { Text(stringResource(R.string.enter_username)) },
-                leadingIcon = {
-                    Icon(
-                        painterResource(R.drawable.person),
-                        null,
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                },
-                trailingIcon = {
-                    if (usernameInput.isNotBlank()) {
-                        MaterialIconButton(onClick = { onUsernameChange("") }) {
-                            Icon(painterResource(R.drawable.close), null)
-                        }
-                    }
-                },
-                singleLine = true,
+            Button(
+                onClick = onCreateRoom,
+                modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
                     ),
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .onFocusChanged { if (it.isFocused) onFieldFocused() },
-            )
-
-            // Room code input
-            OutlinedTextField(
-                value = roomCodeInput,
-                onValueChange = { if (it.length <= 8) onRoomCodeChange(it.uppercase()) },
-                label = { Text(stringResource(R.string.room_code)) },
-                placeholder = { Text(stringResource(R.string.enter_room_code)) },
-                leadingIcon = {
-                    Icon(
-                        painterResource(R.drawable.group),
-                        null,
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                },
-                trailingIcon = {
-                    if (roomCodeInput.isNotBlank()) {
-                        MaterialIconButton(onClick = { onRoomCodeChange("") }) {
-                            Icon(painterResource(R.drawable.close), null)
-                        }
-                    }
-                },
-                singleLine = true,
-                shape = RoundedCornerShape(16.dp),
-                colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                    ),
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .bringIntoViewRequester(bringIntoViewRequester)
-                        .onFocusChanged { if (it.isFocused) onFieldFocused() },
-            )
-
-            // Waiting for approval indicator
-            AnimatedVisibility(
-                visible = isJoiningRoom,
-                enter = fadeIn() + slideInVertically(),
-                exit = fadeOut() + slideOutVertically(),
             ) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = waitingForApprovalText,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-            }
-
-            // Error message
-            AnimatedVisibility(
-                visible = joinErrorMessage != null,
-                enter = fadeIn() + slideInVertically(),
-                exit = fadeOut() + slideOutVertically(),
-            ) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.errorContainer,
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.error),
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = MaterialTheme.colorScheme.onErrorContainer,
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = joinErrorMessage ?: "",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onErrorContainer,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-            }
-
-            // Action buttons
-            val hasUsername = usernameInput.trim().isNotBlank() || savedUsername.isNotBlank()
-            val hasRoomCode = roomCodeInput.length == 8
-
-            // Create Room button - visible when username is provided
-            AnimatedVisibility(visible = hasUsername && !hasRoomCode) {
-                Button(
-                    onClick = onCreateRoom,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = hasUsername,
-                    shape = RoundedCornerShape(16.dp),
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        ),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.add),
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.create_room), fontWeight = FontWeight.SemiBold)
-                }
-            }
-
-            // Join Room button - visible when username and room code are provided
-            AnimatedVisibility(visible = hasUsername && hasRoomCode) {
-                Button(
-                    onClick = onJoinRoom,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = hasUsername && hasRoomCode,
-                    shape = RoundedCornerShape(16.dp),
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.tertiary,
-                        ),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.login),
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.join_room), fontWeight = FontWeight.SemiBold)
-                }
+                Icon(
+                    painter = painterResource(R.drawable.add),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Start PeekParty", fontWeight = FontWeight.SemiBold)
             }
         }
     }
