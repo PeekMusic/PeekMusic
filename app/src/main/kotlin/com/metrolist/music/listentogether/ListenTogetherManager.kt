@@ -87,7 +87,7 @@ class ListenTogetherManager
         companion object {
             private const val TAG = "ListenTogetherManager"
 
-            private const val SOFT_SYNC_THRESHOLD_MS = 50L
+            private const val SOFT_SYNC_THRESHOLD_MS = 15L
             private const val HARD_SYNC_THRESHOLD_MS = 750L
             private const val DRIFT_CORRECTION_SPEED = 0.02f
             private const val DRIFT_CHECK_INTERVAL_MS = 250L
@@ -816,8 +816,13 @@ class ListenTogetherManager
             val player = driftCorrectedPlayer
             val parameters = driftBasePlaybackParameters
             val appliedParameters = driftAppliedPlaybackParameters
-            if (player != null && parameters != null && appliedParameters != null && player.playbackParameters == appliedParameters) {
-                player.setPlaybackParameters(parameters)
+            if (player != null && parameters != null && appliedParameters != null) {
+                // Use a float tolerance because ExoPlayer's PlaybackParameters.equals() fails
+                // when speed floats have tiny precision truncations (e.g. 1.04f vs 1.0399999f)
+                val currentSpeed = player.playbackParameters.speed
+                if (kotlin.math.abs(currentSpeed - appliedParameters.speed) < 0.05f) {
+                    player.setPlaybackParameters(parameters)
+                }
             }
             driftBasePlaybackParameters = null
             driftAppliedPlaybackParameters = null
@@ -927,7 +932,7 @@ class ListenTogetherManager
                         }
 
                         val appliedParameters = driftAppliedPlaybackParameters
-                        if (appliedParameters != null && player.playbackParameters != appliedParameters) break
+                        if (appliedParameters != null && kotlin.math.abs(player.playbackParameters.speed - appliedParameters.speed) > 0.05f) break
                         val multiplier = if (drift > 0L) 1f + DRIFT_CORRECTION_SPEED else 1f - DRIFT_CORRECTION_SPEED
                         val correctedParameters = baseParameters.withSpeed(baseParameters.speed * multiplier)
                         player.setPlaybackParameters(correctedParameters)
