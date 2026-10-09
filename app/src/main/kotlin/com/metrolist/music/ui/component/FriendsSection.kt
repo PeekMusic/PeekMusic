@@ -9,6 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -216,19 +220,40 @@ fun AddFriendDialog(onDismiss: () -> Unit, onAddFriend: (String) -> Unit) {
             OutlinedTextField(
                 value = friendCodeInput,
                 onValueChange = { raw ->
-                    val clean = raw.uppercase().filter { it.isLetterOrDigit() }.take(9)
-                    friendCodeInput = clean.chunked(3).joinToString("-")
+                    friendCodeInput = raw.uppercase().filter { it.isLetterOrDigit() }.take(9)
                 },
                 label = { Text("Friend Code") },
                 placeholder = { Text("XXX-XXX-XXX") },
-                singleLine = true
+                singleLine = true,
+                visualTransformation = { text ->
+                    val trimmed = text.text
+                    var out = ""
+                    for (i in trimmed.indices) {
+                        out += trimmed[i]
+                        if (i == 2 || i == 5) out += "-"
+                    }
+                    val offsetMapping = object : OffsetMapping {
+                        override fun originalToTransformed(offset: Int): Int {
+                            if (offset <= 2) return offset
+                            if (offset <= 5) return offset + 1
+                            return offset + 2
+                        }
+                        override fun transformedToOriginal(offset: Int): Int {
+                            if (offset <= 3) return offset
+                            if (offset <= 7) return offset - 1
+                            return offset - 2
+                        }
+                    }
+                    TransformedText(AnnotatedString(out), offsetMapping)
+                }
             )
         },
         confirmButton = {
             TextButton(
                 onClick = {
-                    if (friendCodeInput.length == 11) {
-                        onAddFriend(friendCodeInput)
+                    val formatted = friendCodeInput.chunked(3).joinToString("-")
+                    if (formatted.length == 11) {
+                        onAddFriend(formatted)
                     }
                 }
             ) {
