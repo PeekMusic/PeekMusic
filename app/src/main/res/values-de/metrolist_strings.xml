@@ -293,7 +293,7 @@
     <string name="persistent_shuffle_title">Permanentes shuffle</string>
     <string name="lyrics_offset">Songtext versatz</string>
     <string name="keep_screen_on_when_player_is_expanded">Display eingeschaltet lassen, wenn der Player erweitert ist</string>
-    <string name="listen_together">Gemeinsam hören</string>
+    <string name="listen_together">PeekParty</string>
     <string name="listen_together_server_url">Server URL</string>
     <string name="listen_together_choose_server">Server auswählen</string>
     <string name="listen_together_custom_server">Benutzerdefinierter Server</string>
@@ -326,13 +326,13 @@
     <string name="listen_together_sync_volume">Lautstärke des Hosts synchronisieren</string>
     <string name="listen_together_sync_volume_desc">Die Gäste passen ihre Lautstärke der des Gastgebers an.</string>
     <string name="listen_together_description">Hör gemeinsam mit deinen Freunden in Echtzeit Musik. Erstelle einen Raum, um Gastgeber zu sein, oder tritt einem bestehenden Raum mit einem Code bei</string>
-    <string name="listen_together_background_disconnect_note">Hinweis: Wenn Sie verbunden sind, aber nicht in einem Raum, wird Listen Together nach 30 Minuten im Hintergrund getrennt, um den Akku zu schonen.</string>
-    <string name="listen_together_not_configured">„Gemeinsam hören“ ist nicht eingerichtet. Bitte konfigurieren Sie die Server-URL unter: Gemeinsam hören &gt; Einstellungen &gt; Server-URL</string>
+    <string name="listen_together_background_disconnect_note">Hinweis: Wenn Sie verbunden sind, aber nicht in einem Raum, wird PeekParty nach 30 Minuten im Hintergrund getrennt, um den Akku zu schonen.</string>
+    <string name="listen_together_not_configured">„PeekParty“ ist nicht eingerichtet. Bitte konfigurieren Sie die Server-URL unter: PeekParty &gt; Einstellungen &gt; Server-URL</string>
     <string name="listen_together_suggestion_received">%1$s hat %2$s vorgeschlagen</string>
     <string name="listen_together_suggestion_sent">Vorschlag an den Host gesendet!</string>
     <string name="listen_together_join_request_notification">%1$s will den Raum beitreten</string>
-    <string name="listen_together_notification_channel_name">Gemeinsam zuhören</string>
-    <string name="listen_together_notification_channel_desc">Benachrichtigungen für Gemeinsam zuhören Ereignisse</string>
+    <string name="listen_together_notification_channel_name">PeekParty</string>
+    <string name="listen_together_notification_channel_desc">Benachrichtigungen für PeekParty Ereignisse</string>
     <string name="listen_together_room_created">Raum erstellt: %s</string>
     <string name="listen_together_cannot_edit_username_in_room">Der Benutzername kann nicht geändert werden, solange man sich in einem Raum befindet</string>
     <string name="waiting_for_approval">Warten auf die Freigabe durch den Gastgeber…</string>
@@ -468,8 +468,8 @@
     <string name="crossfade_gapless_desc">Nicht Überblenden, wenn das Album lückenlos abgespielt werden soll</string>
     <string name="audio_offload_disabled_by_crossfade">Deaktiviert, da Song-Überblendung (Crossfade) aktiv ist</string>
     <string name="hide_youtube_shorts">YouTube Shorts ausblenden</string>
-    <string name="listen_together_in_top_bar">Gemeinsam hören in der oberen Leiste anzeigen</string>
-    <string name="listen_together_in_top_bar_desc">„Gemeinsam hören“ in der oberen App-Leiste anstelle der Navigationsleiste anzeigen</string>
+    <string name="listen_together_in_top_bar">PeekParty in der oberen Leiste anzeigen</string>
+    <string name="listen_together_in_top_bar_desc">„PeekParty“ in der oberen App-Leiste anstelle der Navigationsleiste anzeigen</string>
     <string name="player_background_solid">Einfärbig</string>
     <string name="prevent_duplicate_tracks_in_queue">Doppelte Songs in der Warteschlange vermeiden</string>
     <string name="prevent_duplicate_tracks_in_queue_desc">Wenn ein Titel zur Warteschlange hinzugefügt wird, der bereits in dieser ist, ihn von seiner vorherigen Position verschieben statt erneut hinzuzufügen</string>

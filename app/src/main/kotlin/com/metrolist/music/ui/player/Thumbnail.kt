@@ -119,13 +119,16 @@ private fun calculateThumbnailDimensions(
     containerHeight: Dp = containerWidth,
     horizontalPadding: Dp = PlayerHorizontalPadding,
     cornerRadius: Dp = ThumbnailCornerRadius,
-    isLandscape: Boolean = false
+    isLandscape: Boolean = false,
+    reservedHeight: Dp = 0.dp
 ): ThumbnailDimensions {
     // In landscape, use height as the constraining dimension for a square thumbnail
     val effectiveSize = if (isLandscape) {
         minOf(containerWidth, containerHeight) - (horizontalPadding * 2)
     } else {
-        containerWidth - (horizontalPadding * 2)
+        val widthBased = containerWidth - (horizontalPadding * 2)
+        val heightBased = containerHeight - reservedHeight
+        if (containerHeight > 0.dp && heightBased > 0.dp) minOf(widthBased, heightBased) else widthBased
     }
     return ThumbnailDimensions(
         itemWidth = containerWidth,
@@ -204,6 +207,7 @@ fun Thumbnail(
     isListenTogetherGuest: Boolean = false,
     showHeader: Boolean = true,
     peekOverlay: Boolean = true,
+    peekContent: @Composable () -> Unit = {},
 ) {
     val playerConnection = LocalPlayerConnection.current ?: return
     val context = LocalContext.current
@@ -355,11 +359,14 @@ fun Thumbnail(
                     }
                 ) {
                     // Calculate dimensions once per size change, considering landscape mode
-                    val dimensions = remember(maxWidth, maxHeight, isLandscape) {
+                    val peekPrefForSize by rememberPreference(ShowPlayerLyricsPeekKey, true)
+                    val reservedHeight = if (!isLandscape && peekOverlay && peekPrefForSize) 220.dp else 0.dp
+                    val dimensions = remember(maxWidth, maxHeight, isLandscape, reservedHeight) {
                         calculateThumbnailDimensions(
                             containerWidth = maxWidth,
                             containerHeight = maxHeight,
-                            isLandscape = isLandscape
+                            isLandscape = isLandscape,
+                            reservedHeight = reservedHeight
                         )
                     }
 
@@ -408,6 +415,19 @@ fun Thumbnail(
                                 currentMediaId = mediaMetadata?.id,
                                 currentMediaThumbnail = mediaMetadata?.thumbnailUrl
                             )
+                        }
+                    }
+
+                    if (!isLandscape && peekOverlay) {
+                        val spaceHeight = (maxHeight - 80.dp - dimensions.thumbnailSize).coerceAtLeast(0.dp)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(spaceHeight)
+                                .align(Alignment.BottomCenter),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            peekContent()
                         }
                     }
                 }

@@ -215,15 +215,19 @@ fun AddFriendDialog(onDismiss: () -> Unit, onAddFriend: (String) -> Unit) {
         text = {
             OutlinedTextField(
                 value = friendCodeInput,
-                onValueChange = { friendCodeInput = it.uppercase() },
+                onValueChange = { raw ->
+                    val clean = raw.uppercase().filter { it.isLetterOrDigit() }.take(9)
+                    friendCodeInput = clean.chunked(3).joinToString("-")
+                },
                 label = { Text("Friend Code") },
+                placeholder = { Text("XXX-XXX-XXX") },
                 singleLine = true
             )
         },
         confirmButton = {
             TextButton(
                 onClick = {
-                    if (friendCodeInput.isNotBlank()) {
+                    if (friendCodeInput.length == 11) {
                         onAddFriend(friendCodeInput)
                     }
                 }

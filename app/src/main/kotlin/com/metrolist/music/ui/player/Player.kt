@@ -2094,10 +2094,16 @@ fun BottomSheetPlayer(
                             .padding(bottom = bottomPadding)
                             .animateContentSize(),
                 ) {
-                    Box(
+                    BoxWithConstraints(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.weight(1f),
                     ) {
+                        val maxCoverSize = minOf(maxWidth - 64.dp, maxHeight - 180.dp).coerceAtLeast(0.dp)
+                        // In portrait, cover starts 80dp from the top.
+                        // Empty space at bottom = maxHeight - 80dp - actualCoverSize
+                        // The actual cover size is maxCoverSize, but bounded by the constraints.
+                        val emptySpace = (maxHeight - 80.dp - maxCoverSize).coerceAtLeast(0.dp)
+                        val peekBottomPadding = (emptySpace / 2).coerceAtLeast(16.dp)
                         // Remember lambdas to prevent unnecessary recomposition
                         val currentSliderPosition by rememberUpdatedState(sliderPosition)
                         val sliderPositionProvider = remember { { currentSliderPosition } }
@@ -2129,6 +2135,17 @@ fun BottomSheetPlayer(
                                     modifier = Modifier.nestedScroll(state.preUpPostDownNestedScrollConnection),
                                     isPlayerExpanded = isExpandedProvider,
                                     isListenTogetherGuest = isListenTogetherGuest,
+                                    peekContent = {
+                                        val peekEnabled by rememberPreference(ShowPlayerLyricsPeekKey, true)
+                                        if (peekEnabled && !showInlineLyrics) {
+                                            PlayerLyricsLine(
+                                                positionProvider = { effectivePosition },
+                                                contentColor = lyricsAccentColor,
+                                                onShowLyrics = { showInlineLyrics = true },
+                                                modifier = Modifier.padding(horizontal = 24.dp)
+                                            )
+                                        }
+                                    }
                                 )
                             }
                         }
@@ -2187,16 +2204,6 @@ fun BottomSheetPlayer(
                                     )
                                 }
                             }
-                        } else if (!showInlineLyrics) {
-                            PlayerLyricsLine(
-                                positionProvider = { effectivePosition },
-                                contentColor = lyricsAccentColor,
-                                onShowLyrics = { showInlineLyrics = true },
-                                modifier =
-                                    Modifier
-                                        .align(Alignment.BottomCenter)
-                                        .padding(bottom = 60.dp),
-                            )
                         }
                     }
 

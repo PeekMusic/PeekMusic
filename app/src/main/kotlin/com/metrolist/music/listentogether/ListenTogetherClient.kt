@@ -277,6 +277,20 @@ class ListenTogetherClient
         // Initialize scope early before init block since it's used in observeNetworkChanges()
         private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
+        // Persistent cache of friend names so offline friends keep their last known name across app restarts
+        private val friendNamePrefs by lazy {
+            context.getSharedPreferences("peekparty_friend_names", Context.MODE_PRIVATE)
+        }
+
+        private fun withCachedName(friend: Listentogether.FriendInfo): Listentogether.FriendInfo {
+            if (friend.username.isNotBlank()) {
+                friendNamePrefs.edit().putString(friend.friendCode, friend.username).apply()
+                return friend
+            }
+            val cached = friendNamePrefs.getString(friend.friendCode, null)
+            return if (cached.isNullOrBlank()) friend else friend.toBuilder().setUsername(cached).build()
+        }
+
         // State flows - initialized before init block to avoid NullPointerException when accessing log()
         private val _connectionState = MutableStateFlow(ConnectionState.DISCONNECTED)
         val connectionState: StateFlow<ConnectionState> = _connectionState.asStateFlow()
@@ -1565,24 +1579,27 @@ class ListenTogetherClient
                     }
                     MessageTypes.FRIENDS_STATUS -> {
                         val payload = codec.decodePayload(msgType, payloadBytes) as Listentogether.FriendsStatusPayload
-                        _friends.value = payload.friendsList
-                        emitEvent(ListenTogetherEvent.FriendsStatus(payload.friendsList))
+                        val resolvedFriends = payload.friendsList.map { withCachedName(it) }
+                        _friends.value = resolvedFriends
+                        emitEvent(ListenTogetherEvent.FriendsStatus(resolvedFriends))
                     }
                     MessageTypes.FRIEND_REMOVED -> {
                         val payload = codec.decodePayload(msgType, payloadBytes) as Listentogether.RemoveFriendPayload
+                        friendNamePrefs.edit().remove(payload.friendCode).apply()
                         _friends.value = _friends.value.filter { it.friendCode != payload.friendCode }
                     }
                     MessageTypes.FRIEND_PRESENCE_UPDATE -> {
                         val payload = codec.decodePayload(msgType, payloadBytes) as Listentogether.FriendPresenceUpdatePayload
+                        val resolvedFriend = withCachedName(payload.friend)
                         val updatedList = _friends.value.toMutableList()
-                        val idx = updatedList.indexOfFirst { it.friendCode == payload.friend.friendCode }
+                        val idx = updatedList.indexOfFirst { it.friendCode == resolvedFriend.friendCode }
                         if (idx != -1) {
-                            updatedList[idx] = payload.friend
+                            updatedList[idx] = resolvedFriend
                         } else {
-                            updatedList.add(payload.friend)
+                            updatedList.add(resolvedFriend)
                         }
                         _friends.value = updatedList
-                        emitEvent(ListenTogetherEvent.FriendPresenceUpdate(payload.friend))
+                        emitEvent(ListenTogetherEvent.FriendPresenceUpdate(resolvedFriend))
                     }
                     MessageTypes.FRIEND_ADDED -> {
                         val payload = codec.decodePayload(msgType, payloadBytes) as Listentogether.FriendAddedPayload
@@ -1689,6 +1706,7 @@ class ListenTogetherClient
 
         fun removeFriend(friendCode: String) {
             sendMessage(MessageTypes.REMOVE_FRIEND, Listentogether.RemoveFriendPayload.newBuilder().setFriendCode(friendCode).build())
+            friendNamePrefs.edit().remove(friendCode).apply()
             _friends.value = _friends.value.filter { it.friendCode != friendCode }
         }
 
