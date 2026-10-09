@@ -730,10 +730,12 @@ class MainActivity : FragmentActivity() {
                 val navController = rememberNavController()
 
                 LaunchedEffect(Unit) {
-                    val lastSeenVersion = dataStore.data.first()[LastSeenVersionKey] ?: ""
+                    val prefs = dataStore.data.first()
+                    val lastSeenVersion = prefs[LastSeenVersionKey] ?: ""
+                    val completedOnboarding = prefs[HasCompletedOnboardingKey] == true
                     val currentVersion = BuildConfig.BASE_VERSION_NAME
                     // Don't show the changelog while onboarding is still in progress.
-                    if (hasCompletedOnboarding && lastSeenVersion != currentVersion) {
+                    if (completedOnboarding && lastSeenVersion != currentVersion) {
                         showChangelog.value = true
                     }
                 }
@@ -1533,7 +1535,17 @@ class MainActivity : FragmentActivity() {
                         ChangelogScreen(onDismiss = { showChangelog.value = false })
                     }
 
-                    if (!hasCompletedOnboarding) {
+                    var showOnboarding by remember { mutableStateOf(false) }
+                    LaunchedEffect(hasCompletedOnboarding) {
+                        if (!hasCompletedOnboarding) {
+                            kotlinx.coroutines.delay(100)
+                            if (!hasCompletedOnboarding) showOnboarding = true
+                        } else {
+                            showOnboarding = false
+                        }
+                    }
+
+                    if (showOnboarding) {
                         OnboardingScreen(
                             onLogin = { navController.navigate("login") },
                             onFinish = { },
