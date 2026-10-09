@@ -148,7 +148,17 @@ fun ListenTogetherScreen(
     val joinRequestDeniedText = stringResource(R.string.join_request_denied)
 
 
-    if (savedUsername.isBlank()) {
+    var showUsernameDialog by remember { mutableStateOf(false) }
+    LaunchedEffect(savedUsername) {
+        if (savedUsername.isBlank()) {
+            kotlinx.coroutines.delay(100)
+            if (savedUsername.isBlank()) showUsernameDialog = true
+        } else {
+            showUsernameDialog = false
+        }
+    }
+
+    if (showUsernameDialog) {
         AlertDialog(
             onDismissRequest = { /* Cannot dismiss */ },
             properties = androidx.compose.ui.window.DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
@@ -302,12 +312,13 @@ fun ListenTogetherScreen(
             )
         }
 
-        if (connectionState == ConnectionState.CONNECTED) {
+        if (connectionState == ConnectionState.CONNECTED && !isInRoom) {
             item {
                 FriendsSection(
                     manager = listenTogetherManager,
                     onJoinRoom = { code -> 
                         listenTogetherManager.joinRoom(code, savedUsername)
+                        android.widget.Toast.makeText(context, "Beitrittsanfrage gesendet...", android.widget.Toast.LENGTH_SHORT).show()
                     }
                 )
             }
