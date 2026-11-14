@@ -19,6 +19,7 @@ import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.updates_notification_text
 import com.metrolist.shared.generated.resources.updates_notification_title
 import com.metrolist.shared.network.sharedOkHttpClient
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.update.ReleaseVersion
 import kotlinx.coroutines.Dispatchers
@@ -58,7 +59,8 @@ data class GitHubRelease(
                         BLOCKED_APK_MARKERS.none { marker -> asset.name.contains(marker, ignoreCase = true) }
                 }
             val preferredNames =
-                PREFERRED_APK_NAMES + listOf("metrolist-android-$version.apk", "metrolist-android-$version-universal.apk")
+                listOf(PeekFork.releaseApkName(version)) + PREFERRED_APK_NAMES +
+                    listOf("metrolist-android-$version.apk", "metrolist-android-$version-universal.apk")
             return preferredNames.firstNotNullOfOrNull { preferred ->
                 candidates.singleOrNull { it.name.equals(preferred, ignoreCase = true) }
             }
@@ -108,7 +110,7 @@ enum class UpdateFailure { CHECK, NO_APK, DOWNLOAD, DIGEST, INSTALL }
 
 object AppUpdateManager {
     const val CHANNEL_ID = "updates"
-    private const val RELEASES_URL = "https://api.github.com/repos/MetrolistGroup/Metrolist/releases?per_page=50"
+    private const val RELEASES_URL = "${PeekFork.RELEASES_API_URL}?per_page=50"
     private const val NOTIFICATION_ID = 1400
     private const val MAX_APK_BYTES = 512L * 1024 * 1024
     private const val MIN_FREE_SPACE_BYTES = 16L * 1024 * 1024
@@ -194,7 +196,7 @@ object AppUpdateManager {
                             .url(RELEASES_URL)
                             .header("Accept", "application/vnd.github+json")
                             .header("X-GitHub-Api-Version", "2022-11-28")
-                            .header("User-Agent", "Metrolist/${BuildConfig.VERSION_NAME}")
+                            .header("User-Agent", "${PeekFork.USER_AGENT_PRODUCT}/${BuildConfig.VERSION_NAME}")
                             .build()
                     val publicReleases =
                         client.newCall(request).execute().use { response ->
@@ -248,7 +250,7 @@ object AppUpdateManager {
                     Request
                         .Builder()
                         .url(asset.downloadUrl)
-                        .header("User-Agent", "Metrolist/${BuildConfig.VERSION_NAME}")
+                        .header("User-Agent", "${PeekFork.USER_AGENT_PRODUCT}/${BuildConfig.VERSION_NAME}")
                         .build()
                 var downloaded = 0L
                 val call = client.newCall(request).also { activeDownload = it }
@@ -512,7 +514,7 @@ object AppUpdateManager {
 }
 
 private const val CHECK_INTERVAL_MILLIS = 60 * 60 * 1_000L
-private const val CACHE_SOURCE = "github-releases-metrolist-v1"
+private const val CACHE_SOURCE = "github-releases-peekmusic-v1"
 private val PREFERRED_APK_NAMES =
     listOf(
         "Metrolist.apk",

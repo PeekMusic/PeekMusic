@@ -6,6 +6,7 @@
 package com.metrolist.shared.api.lyrics
 
 import com.metrolist.shared.deviceconnect.DeviceCrypto
+import com.metrolist.shared.peek.PeekFork
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.timeout
 import io.ktor.client.request.get
@@ -154,7 +155,7 @@ class AiModelCatalog(
                 httpClient.get(url) {
                     timeout { requestTimeoutMillis = 20_000 }
                     if (preset.id == "OpenRouter" || url.contains("openrouter.ai")) {
-                        header("HTTP-Referer", "https://github.com/MetrolistGroup/Metrolist")
+                        header("HTTP-Referer", PeekFork.REPOSITORY_URL)
                         header("X-Title", "Metrolist")
                     }
                     if (apiKey.isNotBlank()) {

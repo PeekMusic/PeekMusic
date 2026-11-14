@@ -4,6 +4,7 @@ import com.metrolist.shared.api.lyrics.AiProviderPresets
 import com.metrolist.shared.api.lyrics.LyricsTranslationClient
 import com.metrolist.shared.api.lyrics.LyricsTranslationFailure
 import com.metrolist.shared.api.lyrics.lyricsTranslationFailure
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.settings.Settings
 import com.russhwolf.settings.MapSettings
 import io.ktor.client.HttpClient
@@ -51,7 +52,7 @@ class AiTranslationSetupTest {
                     assertEquals("existing-model", settings.lyricsAiModel)
                     assertEquals("Bearer oauth-key", request.headers["Authorization"])
                     assertEquals("Metrolist", request.headers["X-Title"])
-                    assertEquals("https://github.com/MetrolistGroup/Metrolist", request.headers["HTTP-Referer"])
+                    assertEquals(PeekFork.REPOSITORY_URL, request.headers["HTTP-Referer"])
                     assertEquals("https://openrouter.ai/api/v1/chat/completions", request.url.toString())
                     val body = Json.parseToJsonElement((request.body as TextContent).text).jsonObject
                     assertEquals("128", body["max_tokens"]?.jsonPrimitive?.content)

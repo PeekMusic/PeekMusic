@@ -80,8 +80,9 @@ class LyricsClient(
             }
 
             LyricsProvider.LYPRIO -> {
-                val lyprio = checkNotNull(lyprioLyricsProvider) { "Lyprio is not configured" }
-                lyprio.getLyrics(title, artist, duration, album, videoId)
+                // PeekMusic: builds without upstream's Lyprio key report "no lyrics" instead of a provider failure,
+                // so lookups skip it instantly and misses can still be cached.
+                lyprioLyricsProvider?.getLyrics(title, artist, duration, album, videoId)
             }
 
             LyricsProvider.BETTERLYRICS -> {
@@ -158,8 +159,10 @@ class LyricsClient(
     ): List<LyricsWithProvider> =
         withContext(QuietHttpFailures) {
             if (provider == LyricsProvider.LYPRIO) {
-                val lyprio = checkNotNull(lyprioLyricsProvider) { "Lyprio is not configured" }
-                lyprio.getLyricsResults(title, artist, duration, album, videoId).map { LyricsWithProvider(it, "Lyprio") }
+                lyprioLyricsProvider
+                    ?.getLyricsResults(title, artist, duration, album, videoId)
+                    ?.map { LyricsWithProvider(it, "Lyprio") }
+                    .orEmpty()
             } else {
                 listOfNotNull(fetchLyrics(title, artist, duration, album, videoId, provider, isVideoContext))
             }

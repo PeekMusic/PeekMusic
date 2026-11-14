@@ -58,6 +58,7 @@ import com.metrolist.shared.generated.resources.discord_rpc_title
 import com.metrolist.shared.generated.resources.open_github_profile
 import com.metrolist.shared.generated.resources.open_website
 import com.metrolist.shared.generated.resources.sponsor_developer
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.ui.components.ModalBottomSheet
 import com.metrolist.shared.ui.components.PlayerMenuAction
 import com.metrolist.shared.ui.components.PlayerMenuPrimaryActions
@@ -243,13 +244,11 @@ data class AboutCommunityLink(
 
 val aboutCommunityLinks: List<AboutCommunityLink> =
     listOf(
-        AboutCommunityLink(AboutCommunityLinkKind.DISCORD, "https://discord.com/invite/zrdbeRG2Mt"),
-        AboutCommunityLink(AboutCommunityLinkKind.TELEGRAM, "https://t.me/metrolistapp"),
-        AboutCommunityLink(AboutCommunityLinkKind.REPOSITORY, "https://github.com/MetrolistGroup/Metrolist"),
+        AboutCommunityLink(AboutCommunityLinkKind.REPOSITORY, PeekFork.REPOSITORY_URL),
     )
 
 val aboutLicenseLink: AboutCommunityLink =
-    AboutCommunityLink(AboutCommunityLinkKind.LICENSE, "https://github.com/MetrolistGroup/Metrolist/blob/main/LICENSE")
+    AboutCommunityLink(AboutCommunityLinkKind.LICENSE, "${PeekFork.REPOSITORY_URL}/blob/main/LICENSE")
 
 data class AboutScreenText(
     val title: String,

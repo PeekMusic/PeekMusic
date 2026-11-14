@@ -7,6 +7,7 @@ package com.metrolist.shared.api.lyrics
 
 import com.metrolist.shared.network.ExpectedHttpFailureStatusCodes
 import com.metrolist.shared.network.createHttpClient
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.GlobalYouTube
 import com.metrolist.shared.utils.systemCountryCode
@@ -618,7 +619,7 @@ class LyricsTranslationClient(
             parse = ::extractOpenAiContent,
             applyHeaders = {
                 header("Authorization", "Bearer ${apiKey.trim()}")
-                header("HTTP-Referer", "https://github.com/MetrolistGroup/Metrolist")
+                header("HTTP-Referer", PeekFork.REPOSITORY_URL)
                 header("X-Title", "Metrolist")
             },
         )

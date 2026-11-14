@@ -7,6 +7,7 @@ package com.metrolist.android.utils
 
 import android.app.Application
 import com.metrolist.shared.BuildConfig
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.utils.redactDiagnosticText
 import com.metrolist.shared.utils.redactDiagnosticUrl
@@ -17,7 +18,7 @@ import io.sentry.SentryOptions
 import io.sentry.android.core.SentryAndroid
 import io.sentry.protocol.Request
 
-internal fun androidSentryRelease(version: String): String = "com.metrolist.music.kmp@$version"
+internal fun androidSentryRelease(version: String): String = "com.peekmusic.app@$version"
 
 object SentryManager {
     private lateinit var application: Application
@@ -35,14 +36,14 @@ object SentryManager {
     }
 
     private fun applyEnabled(enabled: Boolean) {
-        if (!enabled) {
+        if (!enabled || !PeekFork.CRASH_REPORTING_AVAILABLE) {
             Sentry.close()
             return
         }
         if (Sentry.isEnabled()) return
 
         SentryAndroid.init(application) { options ->
-            options.dsn = "https://fe4474514a54a507252b26c60e229016@o4511744603193344.ingest.de.sentry.io/4511744608436304"
+            options.dsn = ""
             options.release = androidSentryRelease(BuildConfig.APP_VERSION)
             BuildConfig.SOURCE_REVISION.takeIf(String::isNotBlank)?.let { options.setTag("source_revision", it) }
             options.sampleRate = 1.0

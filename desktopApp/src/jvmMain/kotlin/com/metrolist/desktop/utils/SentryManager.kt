@@ -98,7 +98,7 @@ internal fun configureDesktopSentry(
     environment: String,
     sourceRevision: String = BuildConfig.SOURCE_REVISION,
 ) {
-    options.dsn = "https://fe4474514a54a507252b26c60e229016@o4511744603193344.ingest.de.sentry.io/4511744608436304"
+    options.dsn = ""
     options.sampleRate = 1.0
     options.tracesSampleRate = 0.0
     options.isDebug = System.getenv("SENTRY_DEBUG").toBoolean()

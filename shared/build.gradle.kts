@@ -609,6 +609,13 @@ val prepareComposeResourceAliases =
         mapOf("in" to "id", "iw" to "he").forEach { (legacy, modern) ->
             from(catalog.dir("values-$legacy")) { into("values-$modern") }
         }
+        // PeekMusic: rebrand UI text at build time so upstream catalogs (and Weblate updates) merge without conflicts.
+        // Keep in sync with GenerateAndroidStringsTask in androidApp/build.gradle.kts.
+        filesMatching("**/strings.xml") {
+            filter { line ->
+                if (line.contains("name=\"credits_creator\"")) line else line.replace(Regex("Metrolist(?!Group)"), "PeekMusic")
+            }
+        }
         into(layout.buildDirectory.dir("generated/composeResourceAliases"))
     }
 

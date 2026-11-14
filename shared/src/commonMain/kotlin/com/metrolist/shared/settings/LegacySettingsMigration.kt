@@ -138,6 +138,9 @@ internal val legacyAliases =
         "scrobbleDelaySeconds" to "lastFmMaxDelay",
         "lastfmScrobblingEnable" to "lastFmEnabled",
         "lastfmUseNowPlaying" to "lastFmUseNowPlaying",
+        // PeekMusic legacy (pre-KMP) keys.
+        "blocked_artists" to "blockedArtistsJson",
+        "showPlayerLyricsPeek" to "showLyricsOnPlayer",
     )
 
 private val enumTypes =

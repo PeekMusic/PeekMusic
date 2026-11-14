@@ -50,6 +50,7 @@ import com.metrolist.shared.listentogether.network.createListenTogetherMessageCo
 import com.metrolist.shared.listentogether.network.isAllowedListenTogetherServerUrl
 import com.metrolist.shared.listentogether.network.roomStateHash
 import com.metrolist.shared.model.SongItem
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.utils.ShareUrls
 import com.metrolist.shared.youtube.playback.PlaybackEventKind
@@ -119,7 +120,7 @@ class ListenTogetherManager(
     private val codecDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     private companion object {
-        const val DEFAULT_SERVER_URL = "wss://metroserverx.meowery.eu/ws"
+        const val DEFAULT_SERVER_URL = PeekFork.LISTEN_TOGETHER_SERVER_URL
         const val MAX_RECONNECT_ATTEMPTS = 15
         const val MAX_LOG_ENTRIES = 500
         const val OUTGOING_CAPACITY = 64
@@ -2527,7 +2528,14 @@ class ListenTogetherManager(
 
     private fun buildServers(): List<ListenTogetherServer> {
         val metadata = customServerMetadata()
-        return listOf(ListenTogetherServer("The Meowery", DEFAULT_SERVER_URL, "Poland", "Nyx")) +
+        return listOf(
+            ListenTogetherServer(
+                PeekFork.LISTEN_TOGETHER_SERVER_NAME,
+                DEFAULT_SERVER_URL,
+                PeekFork.LISTEN_TOGETHER_SERVER_LOCATION,
+                PeekFork.LISTEN_TOGETHER_SERVER_OPERATOR,
+            ),
+        ) +
             parseSet(Settings.shared.listenTogetherCustomServers)
                 .filter(::isAllowedListenTogetherServerUrl)
                 .filterNot { it == DEFAULT_SERVER_URL }

@@ -36,6 +36,7 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import com.metrolist.shared.generated.resources.*
 import com.metrolist.shared.model.ArtistTiny
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.settings.BlockedContent
 import com.metrolist.shared.settings.HiddenHomeItems
 import com.metrolist.shared.settings.HiddenLibraryItemKey
@@ -139,13 +140,15 @@ internal fun SettingsUiRegistryBuilder.registerPrivacySettings(host: SharedSetti
             }
         }
         group("diagnostics", stringResource(Res.string.privacy_diagnostics)) {
-            switch(
-                id = "sentry",
-                title = stringResource(Res.string.sentry_reporting),
-                description = stringResource(Res.string.sentry_reporting_desc),
-                checked = settings.sentryEnabled,
-            ) {
-                host.onSettingChanged(SettingsChangeEffect.SENTRY, it)
+            if (PeekFork.CRASH_REPORTING_AVAILABLE) {
+                switch(
+                    id = "sentry",
+                    title = stringResource(Res.string.sentry_reporting),
+                    description = stringResource(Res.string.sentry_reporting_desc),
+                    checked = settings.sentryEnabled,
+                ) {
+                    host.onSettingChanged(SettingsChangeEffect.SENTRY, it)
+                }
             }
             if (host.platform != SettingsPlatform.ANDROID) {
                 switch(

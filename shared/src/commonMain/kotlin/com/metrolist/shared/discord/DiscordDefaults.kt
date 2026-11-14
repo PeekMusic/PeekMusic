@@ -1,5 +1,7 @@
 package com.metrolist.shared.discord
 
+import com.metrolist.shared.peek.PeekFork
+
 fun resolveDiscordButtonLabel(
     configured: String,
     default: String,
@@ -12,8 +14,8 @@ object DiscordDefaults {
     const val BUTTON1_LABEL = "Listen on YouTube Music"
     const val BUTTON1_URL_TEMPLATE = "{song.url}"
 
-    const val BUTTON2_LABEL = "Visit Metrolist"
-    const val BUTTON2_URL = "https://github.com/MetrolistGroup/Metrolist"
+    const val BUTTON2_LABEL = "Visit PeekMusic"
+    const val BUTTON2_URL = PeekFork.REPOSITORY_URL
 
     const val STATE_TEMPLATE = "{artist.name}"
     const val DETAILS_TEMPLATE = "{song.name}"

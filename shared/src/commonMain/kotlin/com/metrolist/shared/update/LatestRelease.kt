@@ -1,11 +1,12 @@
 package com.metrolist.shared.update
 
+import com.metrolist.shared.peek.PeekFork
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 /** The repository's latest stable release; GitHub excludes drafts and prereleases from `releases/latest`. */
-const val LATEST_RELEASE_URL = "https://api.github.com/repos/MetrolistGroup/Metrolist/releases/latest"
+const val LATEST_RELEASE_URL = "${PeekFork.RELEASES_API_URL}/latest"
 
 @Serializable
 data class LatestRelease(

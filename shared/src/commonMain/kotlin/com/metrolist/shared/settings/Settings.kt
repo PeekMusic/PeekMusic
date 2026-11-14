@@ -182,6 +182,7 @@ import com.metrolist.shared.model.LyricsProvider
 import com.metrolist.shared.model.PlaylistPickerSort
 import com.metrolist.shared.model.PlaylistSongSort
 import com.metrolist.shared.model.SortDirection
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.playback.SleepTimerDefaults
 import com.metrolist.shared.youtube.playback.PlaybackNetworkState
 import com.metrolist.shared.youtube.playback.PlaybackNetworkStateStore
@@ -591,8 +592,8 @@ class Settings(
     var discordButton1Text by preference("Listen on YouTube Music")
     var discordButton1Url by preference("{song.url}")
     var discordButton2Enabled by preference(true)
-    var discordButton2Text by preference("Visit Metrolist")
-    var discordButton2Url by preference("https://github.com/MetrolistGroup/Metrolist")
+    var discordButton2Text by preference("Visit PeekMusic")
+    var discordButton2Url by preference(PeekFork.REPOSITORY_URL)
     var discordUsername by preference("")
     var discordName by preference("")
     var discordAvatar by preference("")
@@ -1311,7 +1312,7 @@ class Settings(
                 )
         private val backupExcludedKeys = nonPortableKeys - backupCredentialKeys
         private const val PORTABLE_SETTINGS_VERSION = 1
-        const val DEFAULT_LISTEN_TOGETHER_SERVER_URL = "wss://metroserverx.meowery.eu/ws"
+        const val DEFAULT_LISTEN_TOGETHER_SERVER_URL = PeekFork.LISTEN_TOGETHER_SERVER_URL
         const val DEFAULT_FARADAY_PLAYER_CONFIG_URL =
             "https://raw.githubusercontent.com/MetrolistGroup/faraday/master/registry/player_configs.json"
 

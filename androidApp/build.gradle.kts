@@ -77,6 +77,15 @@ abstract class GenerateAndroidStringsTask : DefaultTask() {
         output.deleteRecursively()
         val transformer = TransformerFactory.newInstance().newTransformer()
 
+        fun rebrandText(node: Node) {
+            if (node.nodeType == Node.TEXT_NODE || node.nodeType == Node.CDATA_SECTION_NODE) {
+                node.nodeValue = node.nodeValue.replace(Regex("Metrolist(?!Group)"), "PeekMusic")
+            }
+            for (index in 0 until node.childNodes.length) {
+                rebrandText(node.childNodes.item(index))
+            }
+        }
+
         fun escapeAndroidText(node: Node) {
             if (node.nodeType == Node.TEXT_NODE || node.nodeType == Node.CDATA_SECTION_NODE) {
                 // Android resources drop bare quotes; the shared catalogs store plain ' and " for Compose.
@@ -92,6 +101,8 @@ abstract class GenerateAndroidStringsTask : DefaultTask() {
             document.appendChild(resources)
             entries(root).filter { key(it) in required }.forEach {
                 val entry = document.importNode(it, true)
+                // PeekMusic: same build-time rebrand as prepareComposeResourceAliases in shared/build.gradle.kts.
+                if (it.getAttribute("name") != "credits_creator") rebrandText(entry)
                 escapeAndroidText(entry)
                 resources.appendChild(entry)
             }
@@ -204,10 +215,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.metrolist.music"
+        applicationId = "com.peekmusic.app"
         minSdk = 24
         targetSdk = 37
-        versionCode = 154
+        // PeekMusic: legacy PeekMusic 1.3.0 shipped versionCode 4140; stay above it so updates install over it.
+        versionCode = 5000
         versionName = appVersion
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -245,7 +257,7 @@ android {
             isShrinkResources = true
             ndk.debugSymbolLevel = "FULL"
             optimization.keepRules { ignoreFrom("com.materialkolor:material-kolor-android:5.0.1") }
-            manifestPlaceholders["appLabel"] = "Metrolist"
+            manifestPlaceholders["appLabel"] = "PeekMusic"
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -262,7 +274,7 @@ android {
         }
         debug {
             applicationIdSuffix = ".debug"
-            manifestPlaceholders["appLabel"] = "Metrolist KMP Debug"
+            manifestPlaceholders["appLabel"] = "PeekMusic Debug"
         }
     }
 
