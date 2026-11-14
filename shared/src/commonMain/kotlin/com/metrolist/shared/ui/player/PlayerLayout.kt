@@ -136,6 +136,7 @@ import com.metrolist.shared.model.RepeatMode
 import com.metrolist.shared.model.lyricsCuratorUrl
 import com.metrolist.shared.model.lyricsProviderUrl
 import com.metrolist.shared.peek.PeekLyricsLine
+import com.metrolist.shared.peek.peekLyricsMatchPlayback
 import com.metrolist.shared.playback.LocalPlayerSession
 import com.metrolist.shared.playback.PlaybackSeekSource
 import com.metrolist.shared.playback.SleepTimerState
@@ -899,7 +900,7 @@ internal fun LandscapePlayerContent(
     val hapticManager = rememberMetrolistHaptics()
     val platform = LocalPlayerPlatform.current
     val controlsVisible = !uiState.isLyricsExpanded || !Settings.shared.lyricsHideStatusBarInFullscreen
-    val showPeek = !isTv && Settings.shared.showLyricsOnPlayer && !uiState.isLyricsVisible
+    val showPeek = !isTv && Settings.shared.showLyricsOnPlayer && !uiState.isLyricsVisible && peekLyricsMatchPlayback(uiState)
     val playerConnection = LocalPlayerSession.current
     val artworkSeekStepMs = Settings.shared.seekDurationSeconds * 1000L
     val isPlaybackLoading by viewModel.isPlaybackLoading.collectWhilePlayerActive()

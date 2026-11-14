@@ -182,6 +182,7 @@ import com.metrolist.shared.generated.resources.unknown
 import com.metrolist.shared.generated.resources.unlike
 import com.metrolist.shared.generated.resources.video
 import com.metrolist.shared.peek.PeekLyricsLine
+import com.metrolist.shared.peek.peekLyricsMatchPlayback
 import com.metrolist.shared.playback.LocalPlayerSession
 import com.metrolist.shared.playback.SleepTimerState
 import com.metrolist.shared.settings.PlayerBackgroundStyle
@@ -1801,6 +1802,7 @@ fun PlayerScreen(
                                                         isCasting = castState.isConnected,
                                                         onShowLyrics = { viewModel.setLyricsVisible(true) },
                                                         onReload = { currentSong?.let { viewModel.loadLyrics(it, skipCache = true) } },
+                                                        matchesPlayback = peekLyricsMatchPlayback(uiState),
                                                         modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
                                                     )
                                                 }

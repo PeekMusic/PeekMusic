@@ -7,9 +7,12 @@ package com.metrolist.shared.peek
 
 import com.metrolist.shared.model.LyricsEntry
 import com.metrolist.shared.model.WordTimestamp
+import com.metrolist.shared.viewmodels.PlayerViewModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class PeekLineIndexTest {
     private val lyrics =
@@ -63,5 +66,12 @@ class PeekLineIndexTest {
     @Test
     fun linesWithoutBackgroundVocalsHaveNoAdlib() {
         assertNull(splitAdlib(lyrics.first()).second)
+    }
+
+    @Test
+    fun peekHidesDuringVideoUntilLyricsAreRetimed() {
+        assertTrue(peekLyricsMatchPlayback(PlayerViewModel.PlayerUiState()))
+        assertFalse(peekLyricsMatchPlayback(PlayerViewModel.PlayerUiState(isVideoModeActive = true)))
+        assertTrue(peekLyricsMatchPlayback(PlayerViewModel.PlayerUiState(isVideoModeActive = true, mvLyricsRetimed = true)))
     }
 }

@@ -120,12 +120,13 @@ internal fun PeekLyricsLine(
     onReload: () -> Unit,
     modifier: Modifier = Modifier,
     compact: Boolean = false,
+    matchesPlayback: Boolean = true,
 ) {
     var searching by remember { mutableStateOf(false) }
     if (searching) PeekLyricsSearch(viewModel, onDismiss = { searching = false })
 
     AnimatedVisibility(
-        visible = Settings.shared.showLyricsOnPlayer,
+        visible = Settings.shared.showLyricsOnPlayer && matchesPlayback,
         enter = expandVertically() + fadeIn(),
         exit = shrinkVertically() + fadeOut(),
         modifier = modifier,
@@ -321,6 +322,13 @@ internal fun splitAdlib(entry: LyricsEntry): Pair<LyricsEntry, LyricsEntry?> {
         )
     return main to adlib
 }
+
+/**
+ * Whether the displayed lyrics follow what is playing. Music videos often add intros, pauses or scenes, so studio
+ * timings only fit a video once upstream's retimer has aligned them; otherwise the Peek stays hidden.
+ */
+internal fun peekLyricsMatchPlayback(uiState: PlayerViewModel.PlayerUiState): Boolean =
+    uiState.mvLyricsRetimed || !(uiState.isVideoModeActive || uiState.currentSong?.isVideoSong == true)
 
 /** Opens the lyrics search straight away: title and artist, then the provider results. */
 @Composable
