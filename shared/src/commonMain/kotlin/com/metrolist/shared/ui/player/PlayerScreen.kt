@@ -181,8 +181,10 @@ import com.metrolist.shared.generated.resources.song
 import com.metrolist.shared.generated.resources.unknown
 import com.metrolist.shared.generated.resources.unlike
 import com.metrolist.shared.generated.resources.video
+import com.metrolist.shared.peek.PeekClassicToggleButtons
 import com.metrolist.shared.peek.PeekLyricsLine
 import com.metrolist.shared.peek.peekLyricsMatchPlayback
+import com.metrolist.shared.peek.rememberPeekPlayerToggles
 import com.metrolist.shared.playback.LocalPlayerSession
 import com.metrolist.shared.playback.SleepTimerState
 import com.metrolist.shared.settings.PlayerBackgroundStyle
@@ -579,6 +581,7 @@ fun PlayerScreen(
     var showSongDetails by remember { mutableStateOf(false) }
     var showSleepTimerDialog by remember { mutableStateOf(false) }
     var showLyricsMenu by remember { mutableStateOf(false) }
+    val peekToggles = rememberPeekPlayerToggles(viewModel)
     var showLyricsOffsetEditor by rememberSaveable(currentSong?.id) { mutableStateOf(false) }
     val hapticManager = rememberMetrolistHaptics()
     var seekFeedback by remember { mutableStateOf<SeekFeedback?>(null) }
@@ -2021,6 +2024,13 @@ fun PlayerScreen(
                                                 },
                                                 buttonColor = textBackgroundColor,
                                                 onButtonColor = vintageOnButtonColor(textBackgroundColor),
+                                                peekActions = {
+                                                    PeekClassicToggleButtons(
+                                                        toggles = peekToggles,
+                                                        buttonColor = textBackgroundColor,
+                                                        onButtonColor = vintageOnButtonColor(textBackgroundColor),
+                                                    )
+                                                },
                                             )
                                         } else {
                                             PlayerActionRow(
@@ -2052,6 +2062,7 @@ fun PlayerScreen(
                                                     hapticManager.perform(HapticEvent.PRESS)
                                                     copyDisplayedSongLink()
                                                 },
+                                                peekToggles = peekToggles,
                                             )
                                         }
                                     }

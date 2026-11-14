@@ -5457,4 +5457,7 @@
     <!-- PeekMusic -->
     <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
     <string name="peek_plain_lyrics_hint">Plain lyrics available</string>
+    <!-- Translators: Player toggle that turns moving artwork (Canvas videos and animated covers) on or off. -->
+    <string name="peek_artwork_motion">Moving artwork</string>
+    <string name="peek_title" translatable="false">Peek</string>
 </resources>

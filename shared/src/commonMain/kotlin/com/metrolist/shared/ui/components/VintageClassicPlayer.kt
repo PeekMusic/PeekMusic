@@ -236,6 +236,7 @@ fun VintageClassicActionButtons(
     onButtonColor: Color,
     modifier: Modifier = Modifier,
     showExpandButton: Boolean = true,
+    peekActions: (@Composable () -> Unit)? = null,
 ) {
     val isTv = LocalIsTv.current
     Row(
@@ -254,6 +255,9 @@ fun VintageClassicActionButtons(
                         onButtonColor = onButtonColor,
                     )
                 }
+            } else if (!isTv && peekActions != null) {
+                // PeekMusic: translation, romanization and artwork toggles replace the share button.
+                peekActions()
             } else if (!isTv) {
                 VintageCircleButton(
                     icon = MetrolistIcons.Default.Share,

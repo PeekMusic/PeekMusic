@@ -135,8 +135,11 @@ import com.metrolist.shared.model.LyricsEntry
 import com.metrolist.shared.model.RepeatMode
 import com.metrolist.shared.model.lyricsCuratorUrl
 import com.metrolist.shared.model.lyricsProviderUrl
+import com.metrolist.shared.peek.PeekActionButtonGroup
 import com.metrolist.shared.peek.PeekLyricsLine
+import com.metrolist.shared.peek.PeekPlayerToggles
 import com.metrolist.shared.peek.peekLyricsMatchPlayback
+import com.metrolist.shared.peek.rememberPeekPlayerToggles
 import com.metrolist.shared.playback.LocalPlayerSession
 import com.metrolist.shared.playback.PlaybackSeekSource
 import com.metrolist.shared.playback.SleepTimerState
@@ -1463,6 +1466,7 @@ internal fun LandscapePlayerContent(
                                         onAltShareSong = onAltShareSong,
                                         onToggleLike = onToggleLike,
                                         onShowLyricsMenu = onShowLyricsMenu,
+                                        peekToggles = rememberPeekPlayerToggles(viewModel),
                                     )
                                 }
                             }
@@ -1636,6 +1640,7 @@ private fun PlayerActionButtons(
     onToggleLike: () -> Unit,
     onShowLyricsMenu: () -> Unit,
     onAltShareSong: (() -> Unit)? = null,
+    peekToggles: PeekPlayerToggles? = null,
 ) {
     val hapticManager = rememberMetrolistHaptics()
 
@@ -1654,6 +1659,19 @@ private fun PlayerActionButtons(
                     modifier = Modifier.size(24.dp),
                 )
             }
+        } else if (peekToggles != null) {
+            // PeekMusic: translation, romanization and artwork toggles replace the share button.
+            PeekActionButtonGroup(
+                toggles = peekToggles,
+                isLiked = isLiked,
+                onLikeClick = {
+                    hapticManager.perform(HapticEvent.PRESS)
+                    onToggleLike()
+                },
+                groupHeight = 40.dp,
+                buttonWidth = 48.dp,
+                iconSize = 20.dp,
+            )
         } else {
             PlayerLikeShareButtons(
                 isLiked = isLiked,
@@ -1715,6 +1733,7 @@ internal fun PlayerActionRow(
     onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
     onAltShareClick: (() -> Unit)? = null,
+    peekToggles: PeekPlayerToggles? = null,
 ) {
     if (isLyricsVisible) {
         val colors =
@@ -1817,6 +1836,17 @@ internal fun PlayerActionRow(
                 },
             )
         }
+    } else if (peekToggles != null) {
+        // PeekMusic: translation, romanization and artwork toggles replace the share button.
+        PeekActionButtonGroup(
+            toggles = peekToggles,
+            isLiked = isLiked,
+            onLikeClick = onLikeClick,
+            groupHeight = 40.dp,
+            buttonWidth = 48.dp,
+            iconSize = 20.dp,
+            modifier = modifier,
+        )
     } else {
         PlayerLikeShareButtons(
             isLiked = isLiked,
