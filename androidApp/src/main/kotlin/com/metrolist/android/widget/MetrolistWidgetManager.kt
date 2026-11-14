@@ -34,6 +34,7 @@ import coil3.toBitmap
 import com.metrolist.android.R
 import com.metrolist.android.ui.theme.extractThemeColor
 import com.metrolist.android.ui.theme.systemDynamicColorScheme
+import com.metrolist.android.ui.theme.systemPaletteSeed
 import com.metrolist.shared.settings.ThemePaletteStyle
 import com.metrolist.shared.ui.theme.DefaultThemeColor
 import com.metrolist.shared.ui.theme.orIfIllegible
@@ -268,7 +269,7 @@ class MetrolistWidgetManager(
             musicWidgetColorScheme(seed, dark) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     systemDynamicColorScheme(context, dark).orIfIllegible(dark) {
-                        themeColorScheme(Color(context.getColor(android.R.color.system_accent1_500)), dark, ThemePaletteStyle.TONAL_SPOT)
+                        themeColorScheme(systemPaletteSeed(context), dark, ThemePaletteStyle.TONAL_SPOT)
                     }
                 } else {
                     themeColorScheme(DefaultThemeColor, dark, ThemePaletteStyle.TONAL_SPOT)

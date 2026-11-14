@@ -105,15 +105,33 @@ private fun systemRoleColorScheme(
     )
 }
 
-/** True when the user picked one of the system's preset palettes instead of wallpaper colors. */
-private fun usesPresetPalette(context: Context): Boolean =
+/**
+ * The seed the system palette was generated from. For a preset palette that is the stored seed:
+ * Samsung's `system_accent1_500` does not belong to the preset (a monochrome theme gives teal).
+ */
+internal fun systemPaletteSeed(context: Context): Color =
+    presetPaletteSeed(context) ?: Color(context.getColor(android.R.color.system_accent1_500))
+
+/** The overlay settings, when the user picked one of the system's preset palettes instead of wallpaper colors. */
+private fun presetPalette(context: Context): JSONObject? =
     runCatching {
-        val overlays = Settings.Secure.getString(context.contentResolver, THEME_CUSTOMIZATION_KEY) ?: return false
-        JSONObject(overlays).optString(COLOR_SOURCE_KEY) == PRESET_COLOR_SOURCE
-    }.getOrDefault(false)
+        Settings.Secure
+            .getString(context.contentResolver, THEME_CUSTOMIZATION_KEY)
+            ?.let(::JSONObject)
+            ?.takeIf { it.optString(COLOR_SOURCE_KEY) == PRESET_COLOR_SOURCE }
+    }.getOrNull()
+
+private fun usesPresetPalette(context: Context): Boolean = presetPalette(context) != null
+
+private fun presetPaletteSeed(context: Context): Color? =
+    presetPalette(context)
+        ?.optString(SYSTEM_PALETTE_KEY)
+        ?.toLongOrNull(radix = 16)
+        ?.let { Color(it.toInt()) }
 
 private const val THEME_CUSTOMIZATION_KEY = "theme_customization_overlay_packages"
 private const val COLOR_SOURCE_KEY = "android.theme.customization.color_source"
+private const val SYSTEM_PALETTE_KEY = "android.theme.customization.system_palette"
 private const val PRESET_COLOR_SOURCE = "preset"
 
 /** True when the accent roles carry no color, which only a monochrome system theme produces. */

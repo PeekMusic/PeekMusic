@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.colorResource
 import androidx.core.view.WindowCompat
 import com.metrolist.android.extensions.findActivity
 import com.metrolist.android.utils.isAndroidTv
@@ -81,7 +80,7 @@ fun MetrolistTheme(
     val baseColorScheme =
         if (useSystemDynamicColor) {
             val configuration = LocalConfiguration.current
-            val wallpaperSeed = colorResource(android.R.color.system_accent1_500)
+            val wallpaperSeed = remember(context, configuration) { systemPaletteSeed(context) }
             remember(context, configuration, darkTheme, contrast, paletteStyle, wallpaperSeed) {
                 val generated = { themeColorScheme(wallpaperSeed, darkTheme, paletteStyle, contrast.toDouble()) }
                 if (paletteStyle == ThemePaletteStyle.TONAL_SPOT) {
