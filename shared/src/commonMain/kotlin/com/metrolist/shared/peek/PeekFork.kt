@@ -5,6 +5,8 @@
 
 package com.metrolist.shared.peek
 
+import com.metrolist.shared.BuildConfig
+
 /** Values where the PeekMusic fork differs from upstream Metrolist. Upstream files reference these instead of hardcoding them. */
 object PeekFork {
     const val GITHUB_REPOSITORY = "PeekMusic/PeekMusic"
@@ -18,6 +20,9 @@ object PeekFork {
 
     /** Release APK name the legacy (pre-KMP) PeekMusic updater recognizes: prefix `PeekMusic-`, suffix `Release.apk`. */
     fun releaseApkName(version: String): String = "PeekMusic-$version-fossRelease.apk"
+
+    /** Lyprio needs upstream's private signing key; builds without it skip the provider and hide it from settings. */
+    val LYPRIO_AVAILABLE: Boolean get() = BuildConfig.LYPRIO_BASE_URL.isNotBlank()
 
     /** Upstream's Sentry project is not ours, so crash reporting stays off until PeekMusic has its own DSN. */
     const val CRASH_REPORTING_AVAILABLE = false

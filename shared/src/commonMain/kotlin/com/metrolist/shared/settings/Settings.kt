@@ -407,6 +407,13 @@ class Settings(
 
     /** False until a volume is saved, so Android keeps full volume instead of the desktop default. */
     val hasSavedVolume: Boolean get() = settings.hasKey("volume")
+
+    // PeekMusic: fork-only preferences and the stored-key check PeekDefaults uses to respect user and migrated values.
+    var peekDefaultsVersion by preference(0)
+    var peekParallelLyricsLookup by preference(false)
+
+    fun hasStoredValue(key: String): Boolean = settings.hasKey(key)
+
     var previousVolume by preference(0.7f)
     var persistentQueue by preference(true)
     var persistentPlaybackPosition by blobPreference(PersistentPlaybackPositionKey)

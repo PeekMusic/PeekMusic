@@ -73,6 +73,7 @@ import com.metrolist.shared.api.artwork.CanvasContentSource
 import com.metrolist.shared.api.artwork.isEnabled
 import com.metrolist.shared.generated.resources.*
 import com.metrolist.shared.model.LyricsProvider
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.settings.SliderStyle
 import com.metrolist.shared.settings.ThemeMode
@@ -199,7 +200,10 @@ private fun canvasContentSourceLabel(source: CanvasContentSource): String =
 internal fun LyricsProviderOrderSetting() {
     val settings = Settings.shared
     val haptics = rememberMetrolistHaptics()
-    val providerOrder = LyricsProvider.parseUserOrderFromStoredCsv(settings.lyricsProviderOrder)
+    val providerOrder =
+        LyricsProvider
+            .parseUserOrderFromStoredCsv(settings.lyricsProviderOrder)
+            .filter { it != LyricsProvider.LYPRIO || PeekFork.LYPRIO_AVAILABLE }
     val enabledProviders = LyricsProvider.parseEnabledFromStoredCsv(settings.lyricsEnabledProviders)
 
     fun move(

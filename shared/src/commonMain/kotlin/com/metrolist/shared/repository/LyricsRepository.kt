@@ -29,6 +29,8 @@ import com.metrolist.shared.model.MlxDocument
 import com.metrolist.shared.model.MlxSong
 import com.metrolist.shared.model.WordTimestamp
 import com.metrolist.shared.model.lyricsProviderLabel
+import com.metrolist.shared.peek.HedgedFetches
+import com.metrolist.shared.peek.PEEK_LYRICS_HEDGE_DELAY_MS
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.GlobalYouTube
 import com.metrolist.shared.utils.getSystemLanguage
@@ -39,6 +41,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
@@ -444,16 +447,44 @@ class LyricsRepository(
             }
         }
 
-        for ((fetchIndex, provider) in fetchOrder.withIndex()) {
-            val index = providers.indexOf(provider).takeIf { it >= 0 } ?: Int.MAX_VALUE
-            currentCoroutineContext().ensureActive()
-            if (bestTimingKind >= preferredTiming && index >= bestProviderIndex) continue
-            val fetch = fetchProviderLyrics(lookupVideoId, title, artist, duration, album, provider, isVideoContext = isVideoContext)
-            acceptFetch(fetch, index)
-            if (bestTimingKind >= preferredTiming &&
-                fetchOrder.drop(fetchIndex + 1).none { providerPriority(it.name, providers) < bestProviderIndex }
-            ) {
-                break
+        // PeekMusic: with peekParallelLyricsLookup a slow provider no longer blocks the next; priority order still decides (see HedgedFetches).
+        coroutineScope {
+            val fetches =
+                HedgedFetches(
+                    this,
+                    fetchOrder.size,
+                    hedgeDelayMs = PEEK_LYRICS_HEDGE_DELAY_MS.takeIf { Settings.shared.peekParallelLyricsLookup },
+                ) { fetchIndex ->
+                    fetchProviderLyrics(
+                        lookupVideoId,
+                        title,
+                        artist,
+                        duration,
+                        album,
+                        fetchOrder[fetchIndex],
+                        isVideoContext = isVideoContext,
+                    )
+                }
+            try {
+                for ((fetchIndex, provider) in fetchOrder.withIndex()) {
+                    val index = providers.indexOf(provider).takeIf { it >= 0 } ?: Int.MAX_VALUE
+                    currentCoroutineContext().ensureActive()
+                    if (bestTimingKind >= preferredTiming && index >= bestProviderIndex) continue
+                    val fetch =
+                        fetches.await(fetchIndex) { aheadIndex, aheadFetch ->
+                            val aheadProvider = fetchOrder[aheadIndex]
+                            acceptFetch(aheadFetch, providers.indexOf(aheadProvider).takeIf { it >= 0 } ?: Int.MAX_VALUE)
+                            bestTimingKind >= preferredTiming
+                        }
+                    acceptFetch(fetch, index)
+                    if (bestTimingKind >= preferredTiming &&
+                        fetchOrder.drop(fetchIndex + 1).none { providerPriority(it.name, providers) < bestProviderIndex }
+                    ) {
+                        break
+                    }
+                }
+            } finally {
+                fetches.cancelRemaining()
             }
         }
 

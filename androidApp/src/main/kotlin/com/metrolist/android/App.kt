@@ -57,6 +57,7 @@ import com.metrolist.shared.discord.DiscordTokenStore
 import com.metrolist.shared.discord.observeDiscordInitialization
 import com.metrolist.shared.equalizer.EqualizerProfiles
 import com.metrolist.shared.listentogether.network.isAllowedListenTogetherServerUrl
+import com.metrolist.shared.peek.PeekDefaults
 import com.metrolist.shared.settings.BlockedContent
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.GlobalYouTube
@@ -153,6 +154,7 @@ class App :
         val processName = currentProcessName()
         if (processName == packageName) {
             Settings.shared.hasCanvasToggle = true
+            PeekDefaults.apply()
             recovery.run { initializeMainProcess() }
             return
         }
