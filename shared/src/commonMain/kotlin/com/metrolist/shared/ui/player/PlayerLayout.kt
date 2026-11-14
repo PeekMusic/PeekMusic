@@ -135,6 +135,7 @@ import com.metrolist.shared.model.LyricsEntry
 import com.metrolist.shared.model.RepeatMode
 import com.metrolist.shared.model.lyricsCuratorUrl
 import com.metrolist.shared.model.lyricsProviderUrl
+import com.metrolist.shared.peek.PeekLyricsLine
 import com.metrolist.shared.playback.LocalPlayerSession
 import com.metrolist.shared.playback.PlaybackSeekSource
 import com.metrolist.shared.playback.SleepTimerState
@@ -898,6 +899,7 @@ internal fun LandscapePlayerContent(
     val hapticManager = rememberMetrolistHaptics()
     val platform = LocalPlayerPlatform.current
     val controlsVisible = !uiState.isLyricsExpanded || !Settings.shared.lyricsHideStatusBarInFullscreen
+    val showPeek = !isTv && Settings.shared.showLyricsOnPlayer && !uiState.isLyricsVisible
     val playerConnection = LocalPlayerSession.current
     val artworkSeekStepMs = Settings.shared.seekDurationSeconds * 1000L
     val isPlaybackLoading by viewModel.isPlaybackLoading.collectWhilePlayerActive()
@@ -1325,10 +1327,30 @@ internal fun LandscapePlayerContent(
                         verticalArrangement =
                             if (isTv) {
                                 Arrangement.spacedBy(if (compactHeight) 4.dp else 16.dp, Alignment.CenterVertically)
+                            } else if (showPeek) {
+                                // PeekMusic: Peek, title, progress and controls stay together as one centered block.
+                                Arrangement.Center
                             } else {
                                 Arrangement.Top
                             },
                     ) {
+                        if (showPeek) {
+                            // PeekMusic: in landscape the Peek sits above title, progress and controls.
+                            PeekLyricsLine(
+                                viewModel = viewModel,
+                                lyrics = uiState.lyrics,
+                                songId = currentSong?.id,
+                                timingOffsetMs = uiState.lyricsOffsetMs,
+                                isPlaying = isPlaying,
+                                isLoading = uiState.isLyricsLoading,
+                                textColor = controlsColor,
+                                isCasting = castState.isConnected,
+                                onShowLyrics = { onIsLyricsVisibleChange(true) },
+                                onReload = { currentSong?.let { viewModel.loadLyrics(it, skipCache = true) } },
+                                compact = compactHeight,
+                                modifier = Modifier.padding(bottom = if (compactHeight) 4.dp else 16.dp),
+                            )
+                        }
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -1461,7 +1483,9 @@ internal fun LandscapePlayerContent(
                                 isLive = uiState.isLive,
                             )
 
-                            if (!isTv) Spacer(Modifier.weight(1f))
+                            if (!isTv && !showPeek) {
+                                Spacer(Modifier.weight(1f))
+                            }
                             if (isTv) Spacer(modifier = Modifier.height(2.dp))
 
                             AnimatedVisibility(
@@ -1587,7 +1611,7 @@ internal fun LandscapePlayerContent(
                                     }
                                 }
                             }
-                            if (!isTv) Spacer(Modifier.weight(1f))
+                            if (!isTv && !showPeek) Spacer(Modifier.weight(1f))
                         }
                         if (isTv) {
                             Column(Modifier.fillMaxWidth()) { progressAndControls() }

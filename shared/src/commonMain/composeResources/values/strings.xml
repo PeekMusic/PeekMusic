@@ -5454,4 +5454,7 @@
     <string name="ai_setup_privacy_settings">Open privacy settings</string>
     <string name="ai_setup_sign_in_again">Sign in again</string>
     <string name="ai_setup_key_limits">Review key limits</string>
+    <!-- PeekMusic -->
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Plain lyrics available</string>
 </resources>

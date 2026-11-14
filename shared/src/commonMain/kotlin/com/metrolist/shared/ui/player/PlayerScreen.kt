@@ -181,6 +181,7 @@ import com.metrolist.shared.generated.resources.song
 import com.metrolist.shared.generated.resources.unknown
 import com.metrolist.shared.generated.resources.unlike
 import com.metrolist.shared.generated.resources.video
+import com.metrolist.shared.peek.PeekLyricsLine
 import com.metrolist.shared.playback.LocalPlayerSession
 import com.metrolist.shared.playback.SleepTimerState
 import com.metrolist.shared.settings.PlayerBackgroundStyle
@@ -783,8 +784,10 @@ fun PlayerScreen(
     }
 
     val nextSong = queueItems.getOrNull(currentQueueIndex + 1)
-    LaunchedEffect(currentSong?.id, nextSong?.id, shouldFetchLyrics) {
-        if (shouldFetchLyrics && nextSong != null) {
+    // PeekMusic: also prefetch for the Peek, so its line is ready right after a track change.
+    val shouldPrefetchLyrics = shouldFetchLyrics || (playerContentState.isActive && Settings.shared.showLyricsOnPlayer)
+    LaunchedEffect(currentSong?.id, nextSong?.id, shouldPrefetchLyrics) {
+        if (shouldPrefetchLyrics && nextSong != null) {
             viewModel.currentPosition
                 .map { it >= 30_000L }
                 .distinctUntilChanged()
@@ -1673,6 +1676,9 @@ fun PlayerScreen(
                                                 verticalArrangement =
                                                     if (usesFullscreenThumbnail) {
                                                         Arrangement.Bottom
+                                                    } else if (Settings.shared.showLyricsOnPlayer && !canvasMinimalUi) {
+                                                        // PeekMusic: equal gaps above the artwork, between artwork and Peek, and below the Peek.
+                                                        Arrangement.SpaceEvenly
                                                     } else {
                                                         Arrangement.Center
                                                     },
@@ -1769,23 +1775,35 @@ fun PlayerScreen(
                                                     )
                                                 }
 
-                                                ActiveLyricsLine(
-                                                    viewModel = viewModel,
-                                                    lyrics = uiState.lyrics,
-                                                    songId = currentSong?.id,
-                                                    timingOffsetMs = uiState.lyricsOffsetMs,
-                                                    isPlaying = isPlaying,
-                                                    showLyrics = Settings.shared.showLyricsOnPlayer || canvasMinimalUi,
-                                                    textColor =
-                                                        if (usesFullscreenThumbnail || canvasMinimalUi) {
-                                                            Color.White
-                                                        } else {
-                                                            textBackgroundColor
-                                                        },
-                                                    isCasting = castState.isConnected,
-                                                    hasBackground = usesFullscreenThumbnail || canvasMinimalUi,
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                )
+                                                if (usesFullscreenThumbnail || canvasMinimalUi) {
+                                                    ActiveLyricsLine(
+                                                        viewModel = viewModel,
+                                                        lyrics = uiState.lyrics,
+                                                        songId = currentSong?.id,
+                                                        timingOffsetMs = uiState.lyricsOffsetMs,
+                                                        isPlaying = isPlaying,
+                                                        showLyrics = Settings.shared.showLyricsOnPlayer || canvasMinimalUi,
+                                                        textColor = Color.White,
+                                                        isCasting = castState.isConnected,
+                                                        hasBackground = true,
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                    )
+                                                } else {
+                                                    // PeekMusic: the Peek replaces upstream's caption line in the standard layout.
+                                                    PeekLyricsLine(
+                                                        viewModel = viewModel,
+                                                        lyrics = uiState.lyrics,
+                                                        songId = currentSong?.id,
+                                                        timingOffsetMs = uiState.lyricsOffsetMs,
+                                                        isPlaying = isPlaying,
+                                                        isLoading = uiState.isLyricsLoading,
+                                                        textColor = textBackgroundColor,
+                                                        isCasting = castState.isConnected,
+                                                        onShowLyrics = { viewModel.setLyricsVisible(true) },
+                                                        onReload = { currentSong?.let { viewModel.loadLyrics(it, skipCache = true) } },
+                                                        modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
+                                                    )
+                                                }
                                             }
                                         }
                                     }
