@@ -13,6 +13,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preload" href="/fonts/roboto-flex-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/style.css">
+<script>try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
 <header class="topbar">
@@ -22,6 +23,7 @@
       <a href="https://github.com/PeekMusic/PeekMusic">GitHub</a>
       <a href="/privacy/" aria-current="page">Privacy</a>
     </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch between light and dark mode" title="Light / dark"><svg class="moon" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-120q-151 0-255.5-104.5T120-480q0-138 90-239.5T440-838q13-2 23 3.5t16 14.5q6 9 6.5 21t-7.5 23q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q11-7 22.5-6.5T819-479q10 5 15.5 15t3.5 24q-14 138-117.5 229T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg><svg class="sun" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM80-440q-17 0-28.5-11.5T40-480q0-17 11.5-28.5T80-520h80q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440H80Zm720 0q-17 0-28.5-11.5T760-480q0-17 11.5-28.5T800-520h80q17 0 28.5 11.5T920-480q0 17-11.5 28.5T880-440h-80ZM480-760q-17 0-28.5-11.5T440-800v-80q0-17 11.5-28.5T480-920q17 0 28.5 11.5T520-880v80q0 17-11.5 28.5T480-760Zm0 720q-17 0-28.5-11.5T440-80v-80q0-17 11.5-28.5T480-200q17 0 28.5 11.5T520-160v80q0 17-11.5 28.5T480-40ZM226-678l-43-42q-12-11-11.5-28t11.5-29q12-12 29-12t28 12l42 43q11 12 11 28t-11 28q-11 12-27.5 11.5T226-678Zm494 495-42-43q-11-12-11-28.5t11-27.5q11-12 27.5-11.5T734-282l43 42q12 11 11.5 28T777-183q-12 12-29 12t-28-12Zm-42-495q-12-11-11.5-27.5T678-734l42-43q11-12 28-11.5t29 11.5q12 12 12 29t-12 28l-43 42q-12 11-28 11t-28-11ZM183-183q-12-12-12-29t12-28l43-42q12-11 28.5-11t27.5 11q12 11 11.5 27.5T282-226l-42 43q-11 12-28 11.5T183-183Zm297-297Z"/></svg></button>
   </div>
 </header>
 <main class="wrap">
@@ -69,6 +71,9 @@
     </ul>
     <p>Zur Fehlersuche protokolliert der Server, wann sich Geräte verbinden und trennen, mit Nutzer-ID, Name und Raum-Code, bei Song-Vorschlägen auch die Song-ID. Der Webserver davor speichert keine Zugriffe, nur bei Verbindungsfehlern die IP-Adresse. Alle Protokolle werden nach 14 Tagen automatisch gelöscht. Parties werden gelöscht, wenn sie enden. Freundesliste und Name bleiben, bis du die Löschung verlangst.</p>
     <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (du nutzt die Funktion) bzw. lit. f für die Fehlersuche.</p>
+
+    <h2>Diese Website</h2>
+    <p>peekmusic.org setzt keine Cookies und lädt nichts von fremden Servern, auch die Schrift liegt hier. Der Webserver speichert keine Zugriffe, nur bei Verbindungsfehlern die IP-Adresse (nach 14 Tagen gelöscht). Wählst du oben hell oder dunkel, merkt sich dein Browser das lokal (localStorage); diese Angabe verlässt dein Gerät nicht.</p>
 
     <h2>Deine Rechte</h2>
     <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch. Für PeekParty-Daten schreib an die E-Mail oben und nenn deinen Friend Code. Du kannst dich außerdem bei einer Datenschutz-Aufsichtsbehörde beschweren.</p>
@@ -118,6 +123,9 @@
     <p>For troubleshooting, the server logs when devices connect and disconnect, with user ID, name and room code, and the song ID for song suggestions. The web server in front of it does not log requests, only the IP address when a connection fails. All logs are deleted automatically after 14 days. Parties are deleted when they end. Your friend list and name stay until you ask us to delete them.</p>
     <p>The legal basis is Art. 6(1)(b) GDPR (you use the feature) and Art. 6(1)(f) for troubleshooting.</p>
 
+    <h2>This website</h2>
+    <p>peekmusic.org sets no cookies and loads nothing from other servers; the font is hosted here too. The web server does not log requests, only the IP address when a connection fails (deleted after 14 days). If you pick light or dark mode at the top, your browser remembers it locally (localStorage); it never leaves your device.</p>
+
     <h2>Your rights</h2>
     <p>You have the right to access, rectification, erasure, restriction of processing, data portability and to object. For PeekParty data, write to the email above and include your friend code. You can also lodge a complaint with a data protection authority.</p>
 
@@ -137,5 +145,6 @@
     </nav>
   </div>
 </footer>
+<script>document.querySelector(".theme-toggle").addEventListener("click",function(){var d=document.documentElement,cur=d.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),next=cur==="dark"?"light":"dark";d.dataset.theme=next;try{localStorage.setItem("theme",next)}catch(e){}});</script>
 </body>
 </html>
