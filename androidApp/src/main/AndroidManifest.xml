@@ -489,6 +489,11 @@
             android:name="com.metrolist.android.listentogether.ListenTogetherNotificationReceiver"
             android:exported="false" />
 
+        <!-- PeekMusic: "Decline" on a PeekParty invite notification -->
+        <receiver
+            android:name="com.metrolist.android.listentogether.PeekFriendInviteReceiver"
+            android:exported="false" />
+
         <receiver
             android:name="com.metrolist.android.playback.DownloadNotificationReceiver"
             android:exported="false" />

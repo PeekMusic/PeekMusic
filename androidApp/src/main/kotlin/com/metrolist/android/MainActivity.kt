@@ -48,6 +48,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import com.metrolist.android.deviceconnect.AndroidDeviceConnect
 import com.metrolist.android.listentogether.AndroidListenTogetherManager
+import com.metrolist.android.listentogether.AndroidPeekFriends
 import com.metrolist.android.locale.AppLocale
 import com.metrolist.android.onboarding.OnboardingDestination
 import com.metrolist.android.onboarding.OnboardingScreen
@@ -161,6 +162,7 @@ class MainActivity : ComponentActivity() {
             recovery.capture(error)
         }
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) AndroidPeekFriends.consumeJoinIntent(this, intent) // PeekMusic
         lifecycleScope.launch {
             recovery.report.collect { id -> if (id != null) showStartupRecovery() }
         }
@@ -378,6 +380,7 @@ class MainActivity : ComponentActivity() {
         incomingPlaybackSong?.cancel()
         incomingPlaybackSong = null
         setIntent(intent)
+        if (AndroidPeekFriends.consumeJoinIntent(this, intent)) return // PeekMusic: Join on a PeekParty invite
         incomingIntentState.value = intent
         lifecycleScope.launch {
             if (!awaitStartup()) return@launch

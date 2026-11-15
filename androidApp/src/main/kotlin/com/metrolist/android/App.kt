@@ -24,6 +24,7 @@ import coil3.SingletonImageLoader
 import com.metrolist.android.backup.BackupRestoreManager
 import com.metrolist.android.deviceconnect.AndroidDeviceConnect
 import com.metrolist.android.di.appModule
+import com.metrolist.android.listentogether.AndroidPeekFriends
 import com.metrolist.android.locale.AppLocale
 import com.metrolist.android.onboarding.LegacyInstallMigration
 import com.metrolist.android.onboarding.OnboardingManager
@@ -156,6 +157,7 @@ class App :
             Settings.shared.hasCanvasToggle = true
             PeekDefaults.apply()
             PeekDefaults.pinHidden()
+            AndroidPeekFriends.start(this) // PeekMusic: PeekParty friends online while the app is open or music plays
             recovery.run { initializeMainProcess() }
             return
         }

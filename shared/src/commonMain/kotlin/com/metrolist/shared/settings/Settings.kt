@@ -639,6 +639,10 @@ class Settings(
     var listenTogetherEnabled by preference(ListenTogetherEnabledKey, true)
     var listenTogetherDesktopSession by preference("")
     var listenTogetherUsername by preference("")
+
+    // PeekMusic: PeekParty friends. The token key is PeekMusic 1.3.0's, so friend codes survive the update.
+    var listenTogetherAuthToken by preference("")
+    var peekFriendsCache by preference("")
     var listenTogetherServerUrl by preference(DEFAULT_LISTEN_TOGETHER_SERVER_URL)
     var listenTogetherCustomServers by preference("")
     var listenTogetherServerMetadata by preference(ListenTogetherServerMetadataKey, "{}")

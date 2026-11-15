@@ -167,6 +167,7 @@ import com.metrolist.android.MainActivity
 import com.metrolist.android.deviceconnect.AndroidDeviceConnect
 import com.metrolist.android.extensions.findActivity
 import com.metrolist.android.listentogether.AndroidListenTogetherManager
+import com.metrolist.android.listentogether.AndroidPeekFriends
 import com.metrolist.android.locale.AppLocale
 import com.metrolist.android.playback.AndroidPlaybackController
 import com.metrolist.android.playback.ListenTogetherPlaybackRequest
@@ -322,6 +323,8 @@ import com.metrolist.shared.ui.haptics.HapticEvent
 import com.metrolist.shared.ui.haptics.rememberMetrolistHaptics
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import com.metrolist.shared.ui.listentogether.ListenTogetherGlobalEvents
+import com.metrolist.shared.ui.listentogether.LocalPeekFriends
+import com.metrolist.shared.ui.listentogether.PeekFriendsGlobalEvents
 import com.metrolist.shared.ui.menu.HiddenHomeItemsSnackbar
 import com.metrolist.shared.ui.menu.LocalContextMenuAnchor
 import com.metrolist.shared.ui.menu.contextMenuAnchor
@@ -374,6 +377,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -670,6 +674,30 @@ fun MetrolistApp(
         LyricsTranslationSnackbar(snackbarHostState, playerViewModel.lyricsTranslationFailures)
         listenTogetherManager?.let { manager ->
             ListenTogetherGlobalEvents(manager) { snackbarHostState.showSnackbar(it) }
+            // PeekMusic: PeekParty friends see a new name right away.
+            LaunchedEffect(manager) { manager.username.drop(1).collect { AndroidPeekFriends.manager.refreshName() } }
+        }
+        // PeekMusic: PeekParty friend requests and party invites, anywhere in the app.
+        val joinFriendParty: (String) -> Unit = { roomCode ->
+            // Join right away; in another party already, the screen asks whether to leave it first.
+            val manager =
+                listenTogetherManager
+                    ?: AndroidListenTogetherManager.initialize(context, playerConnection).also { listenTogetherManager = it }
+            if (!manager.joinRoom(roomCode)) pendingRoomCode = roomCode
+            navigator.navigate(Screen.ListenTogether)
+        }
+        PeekFriendsGlobalEvents(
+            friends = AndroidPeekFriends.manager,
+            onMessage = { snackbarHostState.showSnackbar(it) },
+            onJoinInvite = joinFriendParty,
+        )
+        // Join from the invite notification's button.
+        val notificationJoin by AndroidPeekFriends.pendingJoin.collectAsState()
+        LaunchedEffect(notificationJoin) {
+            notificationJoin?.let {
+                AndroidPeekFriends.pendingJoin.value = null
+                joinFriendParty(it)
+            }
         }
         val addToPlaylist =
             rememberSongsPlaylistAdder(database) { completion ->
@@ -904,6 +932,7 @@ fun MetrolistApp(
             LocalPlayerSession provides playerConnection,
             LocalPlayerPlatform provides playerPlatform,
             LocalListenTogetherManager provides listenTogetherManager,
+            LocalPeekFriends provides AndroidPeekFriends.manager,
             LocalIsTv provides isAndroidTv,
             LocalMenuState provides menuState,
             LocalUseDesktopUi provides useDesktopUi,
@@ -2667,6 +2696,9 @@ fun getEntryProvider(
                 initialRoomCode = pendingRoomCode,
                 onNavigateBack = { navigator.goBack() },
                 onNavigateToSettings = { navigator.navigate(Screen.ListenTogetherSettings) },
+                onNavigateToServer = { navigator.navigate(Screen.ListenTogetherServer) },
+                onNavigateToBlockedUsers = { navigator.navigate(Screen.ListenTogetherBlockedUsers) },
+                onNavigateToLogs = { navigator.navigate(Screen.ListenTogetherLogs) },
             )
         }
 

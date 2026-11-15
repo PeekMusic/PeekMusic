@@ -48,6 +48,9 @@ internal fun MobileListenTogetherScreen(
                 bottomInset = bottomInset,
                 initialRoomCode = initialRoomCode,
                 onShareText = onShareText,
+                onNavigateToServer = { page = ListenTogetherPage.SERVER },
+                onNavigateToBlockedUsers = { page = ListenTogetherPage.BLOCKED_USERS },
+                onNavigateToLogs = { page = ListenTogetherPage.LOGS },
             )
         }
 

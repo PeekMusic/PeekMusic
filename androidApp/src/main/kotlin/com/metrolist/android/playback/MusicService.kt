@@ -49,6 +49,7 @@ import com.metrolist.android.constants.MediaSessionConstants
 import com.metrolist.android.data.PlayHistoryRepository
 import com.metrolist.android.deviceconnect.AndroidDeviceConnect
 import com.metrolist.android.listentogether.AndroidListenTogetherManager
+import com.metrolist.android.listentogether.AndroidPeekFriends
 import com.metrolist.android.models.PersistPlayerState
 import com.metrolist.android.models.PlaybackPersistenceWriter
 import com.metrolist.android.models.decodePersistPlayerState
@@ -574,6 +575,8 @@ class MusicService :
                 if (state.isAtLeast(Lifecycle.State.STARTED)) taskRemoved.value = false
             }
         }
+        // PeekMusic: PeekParty friends stay online while music plays.
+        serviceScope.launch { player.isPlaying.collect(AndroidPeekFriends::setPlaying) }
         serviceScope.launch {
             awaitPlaybackRestore()
             val localPlaybackRequired =
@@ -2917,6 +2920,7 @@ class MusicService :
     }
 
     override fun onDestroy() {
+        AndroidPeekFriends.setPlaying(false) // PeekMusic
         playbackBenchmark.cancel()
         if (!::player.isInitialized) {
             podcastWriterScope.cancel()

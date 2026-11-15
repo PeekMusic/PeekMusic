@@ -87,6 +87,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -216,6 +217,10 @@ import com.metrolist.shared.generated.resources.listen_together_waiting_for_appr
 import com.metrolist.shared.generated.resources.listen_together_you_are_blocked
 import com.metrolist.shared.generated.resources.not_set
 import com.metrolist.shared.generated.resources.ok
+import com.metrolist.shared.generated.resources.peek_friends_delete
+import com.metrolist.shared.generated.resources.peek_friends_delete_desc
+import com.metrolist.shared.generated.resources.peek_friends_title
+import com.metrolist.shared.generated.resources.peek_party_rooms
 import com.metrolist.shared.generated.resources.reject
 import com.metrolist.shared.generated.resources.remove_server
 import com.metrolist.shared.generated.resources.replace
@@ -258,6 +263,7 @@ import com.metrolist.shared.ui.components.PopupVisibility
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import com.metrolist.shared.ui.navigation.navigationPopupSource
 import com.metrolist.shared.ui.settings.SettingsChoice
+import com.metrolist.shared.ui.settings.SettingsPageEmbedded
 import com.metrolist.shared.ui.settings.SettingsPageId
 import com.metrolist.shared.ui.settings.SettingsPageRegistration
 import com.metrolist.shared.ui.settings.SettingsPageScreen
@@ -296,6 +302,10 @@ fun ListenTogetherScreen(
     onDebugUpload: (() -> Unit)? = null,
     initialRoomCode: String? = null,
     onShareText: ((String) -> Unit)? = null, // PeekMusic: the room link opens the system share sheet
+    // PeekMusic: the settings tab opens these pages; without them it falls back to the settings screen.
+    onNavigateToServer: () -> Unit = onNavigateToSettings,
+    onNavigateToBlockedUsers: () -> Unit = onNavigateToSettings,
+    onNavigateToLogs: () -> Unit = onNavigateToSettings,
 ) {
     if (!Settings.shared.listenTogetherEnabled) {
         LaunchedEffect(Unit) { onNavigateBack?.invoke() }
@@ -380,6 +390,15 @@ fun ListenTogetherScreen(
             onNavigateToSettings = onNavigateToSettings,
             bottomInset = bottomInset,
             onDebugUpload = onDebugUpload,
+            // PeekMusic: PeekParty friends
+            onJoinFriendRoom = { code ->
+                if (username.isBlank()) usernameError = usernameRequired else manager.joinRoom(code)
+            },
+            onCopyText = onCopyText,
+            onShareText = onShareText,
+            settingsContent = { padding ->
+                ListenTogetherSettingsTab(manager, onNavigateToServer, onNavigateToBlockedUsers, onNavigateToLogs, padding)
+            },
         )
     }
 
@@ -469,15 +488,40 @@ fun ListenTogetherSettingsScreen(
     }
 
     var showHelp by remember { mutableStateOf(false) }
-    val page = listenTogetherSettingsPage(manager, onNavigateToServer, onNavigateToBlockedUsers, onNavigateToLogs) { showHelp = true }
+    // PeekMusic: delete PeekParty friends data
+    val peekFriends = LocalPeekFriends.current
+    var confirmDeleteFriends by remember { mutableStateOf(false) }
+    val page =
+        listenTogetherSettingsPage(
+            manager,
+            onNavigateToServer,
+            onNavigateToBlockedUsers,
+            onNavigateToLogs,
+            onShowHelp = { showHelp = true },
+            onDeleteFriendsData = peekFriends?.let { { confirmDeleteFriends = true } },
+        )
+    if (peekFriends != null) {
+        PeekDeleteFriendsDialog(visible = confirmDeleteFriends, onDismiss = { confirmDeleteFriends = false }) {
+            confirmDeleteFriends = false
+            peekFriends.deleteAccount()
+        }
+    }
     SettingsPageScreen(
         page = page,
         onNavigateBack = onNavigateBack,
         bottomContentPadding = bottomInset,
     )
-    PopupVisibility(visible = showHelp && Settings.shared.listenTogetherEnabled) {
+    ListenTogetherHelpDialog(visible = showHelp) { showHelp = false }
+}
+
+@Composable
+private fun ListenTogetherHelpDialog(
+    visible: Boolean,
+    onDismiss: () -> Unit,
+) {
+    PopupVisibility(visible = visible && Settings.shared.listenTogetherEnabled) {
         AlertDialog(
-            onDismissRequest = { showHelp = false },
+            onDismissRequest = onDismiss,
             title = { Text(stringResource(Res.string.listen_together_how_it_works)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -486,11 +530,43 @@ fun ListenTogetherSettingsScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showHelp = false }, shapes = ButtonDefaults.shapes()) {
+                TextButton(onClick = onDismiss, shapes = ButtonDefaults.shapes()) {
                     Text(stringResource(Res.string.ok))
                 }
             },
         )
+    }
+}
+
+/** PeekMusic: the Listen Together settings as the third tab of the PeekParty start page. */
+@Composable
+private fun ListenTogetherSettingsTab(
+    manager: ListenTogetherManager,
+    onNavigateToServer: () -> Unit,
+    onNavigateToBlockedUsers: () -> Unit,
+    onNavigateToLogs: () -> Unit,
+    contentPadding: PaddingValues,
+) {
+    var showHelp by remember { mutableStateOf(false) }
+    val peekFriends = LocalPeekFriends.current
+    var confirmDeleteFriends by remember { mutableStateOf(false) }
+    val page =
+        listenTogetherSettingsPage(
+            manager,
+            onNavigateToServer,
+            onNavigateToBlockedUsers,
+            onNavigateToLogs,
+            onShowHelp = { showHelp = true },
+            onDeleteFriendsData = peekFriends?.let { { confirmDeleteFriends = true } },
+            includeMainSwitch = false,
+        )
+    SettingsPageEmbedded(page, contentPadding)
+    ListenTogetherHelpDialog(visible = showHelp) { showHelp = false }
+    if (peekFriends != null) {
+        PeekDeleteFriendsDialog(visible = confirmDeleteFriends, onDismiss = { confirmDeleteFriends = false }) {
+            confirmDeleteFriends = false
+            peekFriends.deleteAccount()
+        }
     }
 }
 
@@ -501,6 +577,8 @@ internal fun listenTogetherSettingsPage(
     onNavigateToBlockedUsers: () -> Unit = {},
     onNavigateToLogs: () -> Unit = {},
     onShowHelp: () -> Unit = {},
+    onDeleteFriendsData: (() -> Unit)? = null,
+    includeMainSwitch: Boolean = true,
 ): SettingsPageRegistration {
     val username = manager.username.collectAsState().value
     val serverUrl = manager.serverUrl.collectAsState().value
@@ -521,14 +599,17 @@ internal fun listenTogetherSettingsPage(
         icon = MetrolistIcons.Outlined.Headphones,
         tone = SettingsTone.BLUE,
     ) {
-        group("listenTogetherMaster", "") {
-            mainSwitch(
-                id = "listenTogetherEnabled",
-                title = stringResource(Res.string.listen_together),
-                checked = enabled,
-                description = stringResource(Res.string.listen_together_description),
-                onCheckedChange = manager::setEnabled,
-            )
+        // PeekMusic: the PeekParty settings tab leaves the off switch to Settings > Integrations, where it can be turned on again.
+        if (includeMainSwitch) {
+            group("listenTogetherMaster", "") {
+                mainSwitch(
+                    id = "listenTogetherEnabled",
+                    title = stringResource(Res.string.listen_together),
+                    checked = enabled,
+                    description = stringResource(Res.string.listen_together_description),
+                    onCheckedChange = manager::setEnabled,
+                )
+            }
         }
         group("listenTogetherAccount", stringResource(Res.string.account), enabled = enabled) {
             text(
@@ -553,6 +634,14 @@ internal fun listenTogetherSettingsPage(
                 onChoiceSelected = manager::setServerUrl,
                 description = stringResource(Res.string.settings_room_server_summary),
             )
+            onDeleteFriendsData?.let { onDelete ->
+                action(
+                    id = "peekFriendsDelete",
+                    title = stringResource(Res.string.peek_friends_delete),
+                    description = stringResource(Res.string.peek_friends_delete_desc),
+                    onClick = onDelete,
+                )
+            }
         }
         group("listenTogetherSettings", stringResource(Res.string.settings), enabled = settingsEnabled) {
             switch(
@@ -896,7 +985,12 @@ private fun ListenTogetherCreateJoinScreen(
     onNavigateToSettings: () -> Unit,
     bottomInset: Dp,
     onDebugUpload: (() -> Unit)?,
+    onJoinFriendRoom: (String) -> Unit = {},
+    onCopyText: (label: String, text: String) -> Unit = { _, _ -> },
+    onShareText: ((String) -> Unit)? = null,
+    settingsContent: (@Composable (PaddingValues) -> Unit)? = null,
 ) {
+    val peekFriends = LocalPeekFriends.current // PeekMusic: PeekParty friends
     val isConnecting =
         connectionState == ListenTogetherConnectionState.CONNECTING ||
             connectionState == ListenTogetherConnectionState.RECONNECTING
@@ -941,9 +1035,6 @@ private fun ListenTogetherCreateJoinScreen(
                 )
 
             val headerItems: LazyListScope.() -> Unit = {
-                item {
-                    HeroHeader(compact = compact, onIconDoubleTap = onDebugUpload)
-                }
                 item {
                     HostJoinTabs(
                         joinSelected = joinMode,
@@ -1018,32 +1109,77 @@ private fun ListenTogetherCreateJoinScreen(
                         }
                     }
                 }
-                item {
-                    SettingsNavigationCard(onClick = onNavigateToSettings)
+                if (settingsContent == null) {
+                    item {
+                        SettingsNavigationCard(onClick = onNavigateToSettings)
+                    }
                 }
             }
 
-            if (twoPane) {
-                Row(modifier = Modifier.fillMaxSize()) {
-                    DragScrollableColumn(
-                        modifier = Modifier.weight(1f).fillMaxHeight(),
-                        contentPadding = listPadding,
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) { headerItems() }
-                    DragScrollableColumn(
-                        modifier = Modifier.weight(1f).fillMaxHeight().imePadding(),
-                        contentPadding = listPadding,
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) { formItems() }
+            // PeekMusic: Friends, Rooms (host or join) and Settings as tabs.
+            val sections =
+                listOfNotNull(
+                    PeekPartySection.FRIENDS.takeIf { peekFriends != null },
+                    PeekPartySection.ROOMS,
+                    PeekPartySection.SETTINGS.takeIf { settingsContent != null },
+                )
+            var section by rememberSaveable(initialJoinMode, roomCode.takeIf { initialJoinMode }) {
+                mutableStateOf(if (initialJoinMode || peekFriends == null) PeekPartySection.ROOMS else PeekPartySection.FRIENDS)
+            }
+            Column(Modifier.fillMaxSize()) {
+                Box(Modifier.padding(start = ListenTogetherScreenPadding, end = ListenTogetherScreenPadding, top = 8.dp)) {
+                    HeroHeader(compact = compact, onIconDoubleTap = onDebugUpload)
                 }
-            } else {
-                DragScrollableColumn(
-                    modifier = Modifier.fillMaxSize().imePadding(),
-                    contentPadding = listPadding,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    headerItems()
-                    formItems()
+                if (sections.size > 1) {
+                    PeekPartySectionTabs(
+                        sections = sections,
+                        selected = section,
+                        onSelect = { section = it },
+                        modifier = Modifier.padding(horizontal = ListenTogetherScreenPadding, vertical = 8.dp),
+                    )
+                }
+                Box(Modifier.weight(1f).fillMaxWidth()) {
+                    when (section) {
+                        PeekPartySection.FRIENDS -> {
+                            DragScrollableColumn(
+                                modifier = Modifier.fillMaxSize().imePadding(),
+                                contentPadding = listPadding,
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                peekFriends?.let { peekFriendsItems(it, onJoinFriendRoom, onCopyText, onShareText) }
+                            }
+                        }
+
+                        PeekPartySection.SETTINGS -> {
+                            settingsContent?.invoke(PaddingValues(top = 4.dp, bottom = 24.dp + bottomInset))
+                        }
+
+                        PeekPartySection.ROOMS -> {
+                            if (twoPane) {
+                                Row(modifier = Modifier.fillMaxSize()) {
+                                    DragScrollableColumn(
+                                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                                        contentPadding = listPadding,
+                                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                                    ) { headerItems() }
+                                    DragScrollableColumn(
+                                        modifier = Modifier.weight(1f).fillMaxHeight().imePadding(),
+                                        contentPadding = listPadding,
+                                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                                    ) { formItems() }
+                                }
+                            } else {
+                                DragScrollableColumn(
+                                    modifier = Modifier.fillMaxSize().imePadding(),
+                                    contentPadding = listPadding,
+                                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                                ) {
+                                    headerItems()
+                                    formItems()
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1276,6 +1412,43 @@ private fun JoinStatusText(
     }
 }
 
+/** PeekMusic: the PeekParty start page's sections. */
+private enum class PeekPartySection { FRIENDS, ROOMS, SETTINGS }
+
+@Composable
+private fun PeekPartySectionTabs(
+    sections: List<PeekPartySection>,
+    selected: PeekPartySection,
+    onSelect: (PeekPartySection) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(32.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .padding(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        sections.forEach { section ->
+            ExpressiveTab(
+                text =
+                    stringResource(
+                        when (section) {
+                            PeekPartySection.FRIENDS -> Res.string.peek_friends_title
+                            PeekPartySection.ROOMS -> Res.string.peek_party_rooms
+                            PeekPartySection.SETTINGS -> Res.string.settings
+                        },
+                    ),
+                selected = section == selected,
+                onClick = { onSelect(section) },
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
 @Composable
 private fun HostJoinTabs(
     joinSelected: Boolean,
@@ -1494,6 +1667,7 @@ private fun ListenTogetherRoomScreen(
     bottomInset: Dp,
 ) {
     val isHost = listenTogetherControls(Settings.shared.listenTogetherEnabled, role, inRoom = true).canModerate
+    val peekFriends = LocalPeekFriends.current
     val authenticated by manager.roomAuthenticated.collectAsState()
     val failedTrack by manager.failedRoomTrack.collectAsState()
     val submittedSuggestions by manager.submittedSuggestions.collectAsState()
@@ -1611,6 +1785,8 @@ private fun ListenTogetherRoomScreen(
                         )
                     }
                 }
+                // PeekMusic: invite PeekParty friends
+                peekFriends?.let { friends -> item(key = "peek_invite_friends") { PeekInviteFriendsCard(friends, roomState.roomCode) } }
                 if (isHost && pendingJoinRequests.isNotEmpty()) {
                     item {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -1989,7 +2165,9 @@ private fun ConnectedUserAvatar(
                 Modifier
                     .widthIn(min = 64.dp, max = 80.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .clickable(enabled = hasMenu) { menuExpanded = true },
+                    .clickable(enabled = hasMenu) { menuExpanded = true }
+                    // PeekMusic: keep the name clear of the rounded clip, which cut off its first letter.
+                    .padding(horizontal = 4.dp, vertical = 2.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {

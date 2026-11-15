@@ -514,9 +514,10 @@ class PortableMessageCodec(
         )
 }
 
-private fun message(block: ProtoWriter.() -> Unit): ByteArray = ProtoWriter().apply(block).buffer.readByteArray()
+// PeekMusic: internal (was private) so PeekParty friends reuse the protobuf helpers.
+internal fun message(block: ProtoWriter.() -> Unit): ByteArray = ProtoWriter().apply(block).buffer.readByteArray()
 
-private class ProtoWriter {
+internal class ProtoWriter {
     val buffer = Buffer()
 
     fun long(
@@ -575,7 +576,7 @@ private class ProtoWriter {
     }
 }
 
-private class ProtoFields(
+internal class ProtoFields(
     data: ByteArray,
 ) {
     private data class Field(
@@ -655,7 +656,7 @@ private class ProtoFields(
         }
 }
 
-private fun ProtoFields?.orEmpty(): ProtoFields = this ?: ProtoFields(byteArrayOf())
+internal fun ProtoFields?.orEmpty(): ProtoFields = this ?: ProtoFields(byteArrayOf())
 
 private fun Buffer.varint(): Long {
     var value = 0L

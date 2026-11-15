@@ -431,6 +431,23 @@ private fun CompactSettingsHome(
     }
 }
 
+/** PeekMusic: a settings page's list without its own top bar, e.g. as the PeekParty settings tab. */
+@Composable
+internal fun SettingsPageEmbedded(
+    page: SettingsPageRegistration,
+    contentPadding: PaddingValues,
+) {
+    SettingsPageList(
+        page = page,
+        lyricsPreview = { LyricsSettingsPreview(it) },
+        listState = rememberLazyListState(),
+        highlightedItemId = null,
+        onNavigate = {},
+        onSettingValueChanged = {},
+        contentPadding = contentPadding,
+    )
+}
+
 @Composable
 internal fun SettingsPageScreen(
     page: SettingsPageRegistration,

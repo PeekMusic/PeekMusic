@@ -51,6 +51,9 @@ import com.metrolist.shared.listentogether.network.isAllowedListenTogetherServer
 import com.metrolist.shared.listentogether.network.roomStateHash
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.peek.PeekFork
+import com.metrolist.shared.peek.friends.PeekFriendMessages
+import com.metrolist.shared.peek.friends.PeekFriendsCodec
+import com.metrolist.shared.peek.friends.PeekFriendsManager
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.utils.ShareUrls
 import com.metrolist.shared.youtube.playback.PlaybackEventKind
@@ -138,7 +141,8 @@ class ListenTogetherManager(
         const val MAX_TRACKED_REQUESTS = 128
         const val SYNC_RETRY_DELAY_MS = 1_100L
         val BACKGROUND_REQUEST_TYPES =
-            setOf(MessageTypes.PLAYBACK_ACTION, MessageTypes.BUFFER_READY, MessageTypes.REQUEST_SYNC, MessageTypes.PING)
+            setOf(MessageTypes.PLAYBACK_ACTION, MessageTypes.BUFFER_READY, MessageTypes.REQUEST_SYNC, MessageTypes.PING) +
+                PeekFriendMessages.AUTHENTICATE // PeekMusic: a failed party sign-in for friends never interrupts the party
         const val SESSION_SEPARATOR = "\n---\n"
         const val LIST_SEPARATOR = "\n"
     }
@@ -191,7 +195,7 @@ class ListenTogetherManager(
 
     private val managerJob = SupervisorJob(callerScope.coroutineContext[Job])
     private val scope = CoroutineScope(callerScope.coroutineContext + managerJob)
-    private val codec = createListenTogetherMessageCodec()
+    private val codec = PeekFriendsCodec(createListenTogetherMessageCodec()) // PeekMusic: also carries PeekParty friends
     private val serverClock = ServerClock(monotonicClockMs)
     private val revisionFilter = PlaybackRevisionFilter()
     private val outgoing = Channel<OutgoingMessage>(OUTGOING_CAPACITY)
@@ -453,6 +457,8 @@ class ListenTogetherManager(
                     synchronized(participationLock) { outstandingPings.clear() }
                     log(ListenTogetherLogLevel.INFO, "Transport connected")
                     startPing(session)
+                    // PeekMusic: let PeekParty friends see which party this connection is in.
+                    PeekFriendsManager.partySignIn()?.let { send(PeekFriendMessages.AUTHENTICATE, it) }
                     sendPendingAction()
                     for (frame in session.incoming) {
                         if (generation != connectionGeneration || socket !== session) break
@@ -2369,7 +2375,10 @@ class ListenTogetherManager(
         compressionEnabled: Boolean = codec.compressionEnabled,
     ): ByteArray =
         withContext(codecDispatcher) {
-            createListenTogetherMessageCodec().apply { this.compressionEnabled = compressionEnabled }.encode(type, payload, requestId)
+            // PeekMusic: the wrapper also encodes PeekParty friend messages
+            PeekFriendsCodec(
+                createListenTogetherMessageCodec(),
+            ).apply { this.compressionEnabled = compressionEnabled }.encode(type, payload, requestId)
         }
 
     private suspend fun send(

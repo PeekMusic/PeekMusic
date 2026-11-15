@@ -39,6 +39,10 @@ fun ListenTogetherScreen(
     onNavigateBack: () -> Unit,
     onNavigateToSettings: () -> Unit,
     initialRoomCode: String? = null,
+    // PeekMusic: pages the settings tab opens
+    onNavigateToServer: () -> Unit = onNavigateToSettings,
+    onNavigateToBlockedUsers: () -> Unit = onNavigateToSettings,
+    onNavigateToLogs: () -> Unit = onNavigateToSettings,
 ) {
     val context = LocalContext.current
     val manager = LocalListenTogetherManager.current
@@ -54,6 +58,9 @@ fun ListenTogetherScreen(
         manager = manager,
         onNavigateBack = onNavigateBack,
         onNavigateToSettings = onNavigateToSettings,
+        onNavigateToServer = onNavigateToServer,
+        onNavigateToBlockedUsers = onNavigateToBlockedUsers,
+        onNavigateToLogs = onNavigateToLogs,
         onCopyText = { label, text -> context.copyToClipboard(label, text, copiedMessage) },
         // PeekMusic: the room link opens the system share sheet instead of only copying it.
         onShareText = { link ->
