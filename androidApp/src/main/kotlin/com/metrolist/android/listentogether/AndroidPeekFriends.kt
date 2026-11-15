@@ -54,11 +54,16 @@ object AndroidPeekFriends {
     private const val EXTRA_ROOM = "room_code"
     internal const val EXTRA_INVITER = "inviter_code"
 
-    /** MainActivity hands every intent here; true when it was a Join from an invite notification. */
+    /** MainActivity hands every intent here; true when it was a Join from an invite notification or a friend link. */
     fun consumeJoinIntent(
         context: Context,
         intent: Intent?,
     ): Boolean {
+        if (intent?.action == Intent.ACTION_VIEW) {
+            val code = intent.dataString?.let(PeekLinks::parseFriendLink) ?: return false
+            manager.openFriendLink(code)
+            return true
+        }
         if (intent?.action != ACTION_JOIN) return false
         intent.getStringExtra(EXTRA_ROOM)?.let { pendingJoin.value = it }
         manager.clearInvite()

@@ -111,4 +111,21 @@ class PeekFriendsManagerTest {
             val fresh = PeekFriendsManager.authToken()
             assertTrue(fresh.length == 32 && fresh != "legacy-1-3-0-token-uuid", "a fresh token after deletion")
         }
+
+    @Test
+    fun actionsWaitForTheConnectionBeforeFailing() =
+        runTest {
+            val manager = PeekFriendsManager(backgroundScope, HttpClient(MockEngine { error("Server unreachable") }))
+            val events = mutableListOf<PeekFriendsEvent>()
+            backgroundScope.launch { manager.events.collect { events += it } }
+            testScheduler.runCurrent()
+            manager.addFriend("ABC-123-XYZ")
+            testScheduler.advanceTimeBy(9_000)
+            testScheduler.runCurrent()
+            assertTrue(events.isEmpty(), "still waiting for the connection")
+            testScheduler.advanceTimeBy(2_000)
+            testScheduler.runCurrent()
+            assertEquals(listOf<PeekFriendsEvent>(PeekFriendsEvent.Failed("")), events)
+            manager.setActive(false)
+        }
 }

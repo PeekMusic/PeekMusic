@@ -78,6 +78,8 @@ import com.metrolist.shared.generated.resources.peek_friends_invite_text
 import com.metrolist.shared.generated.resources.peek_friends_invite_title
 import com.metrolist.shared.generated.resources.peek_friends_invited
 import com.metrolist.shared.generated.resources.peek_friends_join
+import com.metrolist.shared.generated.resources.peek_friends_link_text
+import com.metrolist.shared.generated.resources.peek_friends_link_title
 import com.metrolist.shared.generated.resources.peek_friends_offline
 import com.metrolist.shared.generated.resources.peek_friends_online
 import com.metrolist.shared.generated.resources.peek_friends_remove
@@ -86,11 +88,12 @@ import com.metrolist.shared.generated.resources.peek_friends_request_received
 import com.metrolist.shared.generated.resources.peek_friends_request_sent
 import com.metrolist.shared.generated.resources.peek_friends_requests
 import com.metrolist.shared.generated.resources.peek_friends_sent
-import com.metrolist.shared.generated.resources.peek_friends_share_code
+import com.metrolist.shared.generated.resources.peek_friends_share_link
 import com.metrolist.shared.generated.resources.peek_friends_title
 import com.metrolist.shared.generated.resources.peek_friends_waiting
 import com.metrolist.shared.generated.resources.peek_friends_withdraw
 import com.metrolist.shared.generated.resources.peek_friends_your_code
+import com.metrolist.shared.peek.PeekLinks
 import com.metrolist.shared.peek.friends.PeekFriend
 import com.metrolist.shared.peek.friends.PeekFriendsEvent
 import com.metrolist.shared.peek.friends.PeekFriendsManager
@@ -152,8 +155,8 @@ private fun PeekFriendCodeCard(
                     Icon(MetrolistIcons.Outlined.ContentCopy, contentDescription = copyLabel)
                 }
                 if (onShareText != null) {
-                    IconButton(onClick = { onShareText(current) }) {
-                        Icon(MetrolistIcons.Outlined.Share, contentDescription = stringResource(Res.string.peek_friends_share_code))
+                    IconButton(onClick = { onShareText(PeekLinks.friendLink(current)) }) {
+                        Icon(MetrolistIcons.Outlined.Share, contentDescription = stringResource(Res.string.peek_friends_share_link))
                     }
                 }
             }
@@ -426,6 +429,23 @@ fun PeekFriendsGlobalEvents(
     onJoinInvite: (roomCode: String) -> Unit,
 ) {
     val invite by friends.activeInvite.collectAsState()
+    val linkCode by friends.friendLink.collectAsState()
+    linkCode?.let { code ->
+        PopupVisibility(visible = true) {
+            AlertDialog(
+                onDismissRequest = friends::clearFriendLink,
+                title = { Text(stringResource(Res.string.peek_friends_link_title)) },
+                text = { Text(stringResource(Res.string.peek_friends_link_text, code)) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        friends.clearFriendLink()
+                        friends.addFriend(code)
+                    }) { Text(stringResource(Res.string.peek_friends_add)) }
+                },
+                dismissButton = { TextButton(onClick = friends::clearFriendLink) { Text(stringResource(Res.string.cancel)) } },
+            )
+        }
+    }
     val currentOnMessage by rememberUpdatedState(onMessage)
     LaunchedEffect(friends) {
         friends.events.collect { event ->

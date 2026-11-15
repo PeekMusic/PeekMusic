@@ -11,6 +11,7 @@ import com.metrolist.shared.utils.extractListenTogetherRoomCode
 import com.metrolist.shared.utils.normalizeMetrolistShareUrl
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class PeekLinksTest {
     @Test
@@ -30,5 +31,16 @@ class PeekLinksTest {
     @Test
     fun peekMusicSchemeOpensYouTubeMusicPages() {
         assertEquals("https://music.youtube.com/channel/UC123", normalizeMetrolistShareUrl("peekmusic://artist/UC123"))
+    }
+
+    @Test
+    fun friendLinksCarryTheFriendCode() {
+        assertEquals("https://listen.peekmusic.org/friend?c=ABC-123-XYZ", PeekLinks.friendLink("ABC-123-XYZ"))
+        assertEquals("ABC-123-XYZ", PeekLinks.parseFriendLink("https://listen.peekmusic.org/friend?c=ABC-123-XYZ"))
+        assertEquals("ABC-123-XYZ", PeekLinks.parseFriendLink("https://listen.peekmusic.org/friend/?utm=x&c=abc123xyz"))
+        assertEquals("ABC-123-XYZ", PeekLinks.parseFriendLink("peekmusic://friend/abc-123-xyz"))
+        assertNull(PeekLinks.parseFriendLink("https://listen.peekmusic.org/friend?c=ABC-123"))
+        assertNull(PeekLinks.parseFriendLink("https://listen.peekmusic.org/party?r=ABCD1234"))
+        assertNull(PeekLinks.parseFriendLink("https://evil.example/friend?c=ABC-123-XYZ"))
     }
 }

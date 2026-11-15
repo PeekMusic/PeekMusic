@@ -2523,7 +2523,6 @@
     <string name="peek_friends_code_hint">Damit fügen dich Freunde hinzu.</string>
     <string name="peek_friends_connecting">Verbinde…</string>
     <string name="peek_friends_copy_code">Code kopieren</string>
-    <string name="peek_friends_share_code">Code teilen</string>
     <string name="peek_friends_add_label">Freundescode</string>
     <string name="peek_friends_add">Hinzufügen</string>
     <string name="peek_friends_requests">Freundschaftsanfragen</string>
@@ -2561,4 +2560,7 @@
     <string name="peek_friends_invite_decline">Ablehnen</string>
     <string name="peek_friends_invite_declined">%1$s hat deine Einladung abgelehnt</string>
     <string name="peek_party_based_on">Basiert auf Listen Together von Metrolist</string>
+    <string name="peek_friends_share_link">Link teilen</string>
+    <string name="peek_friends_link_title">Freund hinzufügen?</string>
+    <string name="peek_friends_link_text">Freundschaftsanfrage an %1$s schicken?</string>
 </resources>

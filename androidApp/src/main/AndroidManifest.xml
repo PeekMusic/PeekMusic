@@ -163,6 +163,7 @@
                 <data android:host="listen.peekmusic.org" />
                 <data android:pathPrefix="/party" />
                 <data android:pathPrefix="/listen" />
+                <data android:pathPrefix="/friend" />
             </intent-filter>
 
             <intent-filter android:autoVerify="true">

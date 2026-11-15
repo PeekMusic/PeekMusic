@@ -23,6 +23,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -112,6 +114,10 @@ class PeekFriendsManager(
 
     /** The party invite waiting for an answer; the app shows it until it is joined, declined or cleared. */
     val activeInvite: StateFlow<PeekFriendsEvent.InviteReceived?> = _activeInvite.asStateFlow()
+    private val _friendLink = MutableStateFlow<String?>(null)
+
+    /** A friend code from an opened friend link, waiting for the user to confirm the request. */
+    val friendLink: StateFlow<String?> = _friendLink.asStateFlow()
     private val _events = MutableSharedFlow<PeekFriendsEvent>(extraBufferCapacity = 16)
     val events: SharedFlow<PeekFriendsEvent> = _events.asSharedFlow()
 
@@ -120,10 +126,14 @@ class PeekFriendsManager(
     private var idleJob: Job? = null
     private var session: DefaultClientWebSocketSession? = null
 
+    /** Cuts a reconnect wait short, e.g. when the app comes back to the front. */
+    private val wake = Channel<Unit>(Channel.CONFLATED)
+
     /** Online while true; after it turns false the connection stays a minute, so quick app switches don't flicker. */
     fun setActive(value: Boolean) {
         active = value
         if (value) {
+            wake.trySend(Unit)
             idleJob?.cancel()
             idleJob = null
             if (connectionJob?.isActive != true) connectionJob = scope.launch { runConnection() }
@@ -161,6 +171,14 @@ class PeekFriendsManager(
 
     fun inviteToParty(code: String) = request(PeekFriendMessages.INVITE_FRIEND, code)
 
+    fun openFriendLink(code: String) {
+        _friendLink.value = code
+    }
+
+    fun clearFriendLink() {
+        _friendLink.value = null
+    }
+
     /** The invite was answered elsewhere (e.g. joined from the notification). */
     fun clearInvite() {
         _activeInvite.value = null
@@ -169,13 +187,13 @@ class PeekFriendsManager(
     /** Turns the open invite down; the inviter can invite again right away. */
     fun declineInvite(inviterCode: String) {
         if (_activeInvite.value?.from?.code == inviterCode) _activeInvite.value = null
-        scope.launch { send(PeekFriendMessages.DECLINE_INVITE, PeekFriendCode(inviterCode)) }
+        scope.launch { sendWhenConnected(PeekFriendMessages.DECLINE_INVITE, PeekFriendCode(inviterCode)) }
     }
 
     /** Forgets your friend code, friends and requests on the server, and starts over with a fresh token. */
     fun deleteAccount() {
         scope.launch {
-            if (!send(PeekFriendMessages.DELETE_FRIEND_ACCOUNT, null)) {
+            if (!sendWhenConnected(PeekFriendMessages.DELETE_FRIEND_ACCOUNT, null)) {
                 _events.tryEmit(PeekFriendsEvent.Failed(""))
             }
         }
@@ -186,7 +204,7 @@ class PeekFriendsManager(
         code: String,
     ) {
         scope.launch {
-            if (!send(type, PeekFriendCode(code))) _events.tryEmit(PeekFriendsEvent.Failed(""))
+            if (!sendWhenConnected(type, PeekFriendCode(code))) _events.tryEmit(PeekFriendsEvent.Failed(""))
         }
     }
 
@@ -233,7 +251,7 @@ class PeekFriendsManager(
                 if (capabilities == null || PeekFriendMessages.FEATURE !in capabilities.features) {
                     ws.close()
                     session = null
-                    delay(reconnectDelayMs(++attempt).milliseconds)
+                    waitBeforeRetry(++attempt)
                     continue
                 }
                 send(PeekFriendMessages.AUTHENTICATE, PeekAuthenticate(authToken(), Settings.shared.listenTogetherUsername))
@@ -256,7 +274,32 @@ class PeekFriendsManager(
                 markAllOffline()
             }
             if (!active && idleJob == null) break
-            delay(reconnectDelayMs(++attempt).milliseconds)
+            waitBeforeRetry(++attempt)
+        }
+    }
+
+    private suspend fun waitBeforeRetry(attempt: Int) {
+        withTimeoutOrNull(reconnectDelayMs(attempt).milliseconds) { wake.receive() }
+    }
+
+    /**
+     * Sends once the friends connection is up. A tap right after opening the app (e.g. on a friend link) would
+     * otherwise fail while it still connects; with the app in the back, the connection opens just for this.
+     */
+    private suspend fun sendWhenConnected(
+        type: String,
+        payload: Any?,
+    ): Boolean {
+        val wasActive = active
+        if (!wasActive) setActive(true)
+        try {
+            if (!_connected.value) {
+                wake.trySend(Unit)
+                withTimeoutOrNull(CONNECT_WAIT) { connected.first { it } }
+            }
+            return send(type, payload)
+        } finally {
+            if (!wasActive) setActive(false)
         }
     }
 
@@ -372,6 +415,8 @@ class PeekFriendsManager(
     }
 
     companion object {
+        private val CONNECT_WAIT = 10.seconds
+
         /** The app's PeekParty account token; created on first use, PeekMusic 1.3.0's is kept. */
         fun authToken(): String =
             Settings.shared.listenTogetherAuthToken.ifBlank {

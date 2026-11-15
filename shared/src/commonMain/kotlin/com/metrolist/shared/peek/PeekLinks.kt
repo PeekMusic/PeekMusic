@@ -29,4 +29,20 @@ object PeekLinks {
         } else {
             "https://${PeekFork.INVITE_HOST}/listen?code=$roomCode"
         }
+
+    /** A link that asks to add [friendCode] as a PeekParty friend. */
+    fun friendLink(friendCode: String): String = "https://${PeekFork.INVITE_HOST}/friend?c=$friendCode"
+
+    /** The friend code in a friend link (https or peekmusic://friend/CODE), as ABC-123-XYZ, or null. */
+    fun parseFriendLink(link: String): String? {
+        val raw =
+            Regex("^https?://${Regex.escape(PeekFork.INVITE_HOST)}/friend/?\\?(?:.*&)?c=([^&#]+)", RegexOption.IGNORE_CASE)
+                .find(link)
+                ?.groupValues
+                ?.get(1)
+                ?: Regex("^${Regex.escape(SCHEME_PREFIX)}friend/([^/?#]+)", RegexOption.IGNORE_CASE).find(link)?.groupValues?.get(1)
+                ?: return null
+        val clean = raw.filter { it.isLetterOrDigit() }.uppercase()
+        return clean.takeIf { it.length == 9 && it.all { c -> c in 'A'..'Z' || c in '0'..'9' } }?.chunked(3)?.joinToString("-")
+    }
 }

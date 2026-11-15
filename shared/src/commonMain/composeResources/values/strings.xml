@@ -5535,7 +5535,6 @@
     <string name="peek_friends_code_hint">Friends add you with this code.</string>
     <string name="peek_friends_connecting">Connecting…</string>
     <string name="peek_friends_copy_code">Copy code</string>
-    <string name="peek_friends_share_code">Share code</string>
     <string name="peek_friends_add_label">Friend code</string>
     <string name="peek_friends_add">Add</string>
     <string name="peek_friends_requests">Friend requests</string>
@@ -5573,4 +5572,7 @@
     <string name="peek_friends_invite_decline">Decline</string>
     <string name="peek_friends_invite_declined">%1$s declined your invite</string>
     <string name="peek_party_based_on">Based on Listen Together from Metrolist</string>
+    <string name="peek_friends_share_link">Share link</string>
+    <string name="peek_friends_link_title">Add friend?</string>
+    <string name="peek_friends_link_text">Send a friend request to %1$s?</string>
 </resources>
