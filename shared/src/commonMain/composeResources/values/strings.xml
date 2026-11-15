@@ -5486,4 +5486,48 @@
     <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
     <string name="peek_translation_source_builtin">Included with the lyrics from %1$s</string>
     <string name="peek_translation_source_google" translatable="false">Google Translate</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Your PeekMusic 1.x library is here</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">We found your library from PeekMusic 1.x. Move your playlists, history, likes, and library data into this version. You can recover the original database if migration fails.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Your account, playlists, history, likes, and library data are ready in PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Your playlists, history, likes, and library data are ready in PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Open Settings from the menu in the top right to customize PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">New</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">A few quick choices, then PeekMusic looks and sounds the way you like.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Language and region</string>
+    <string name="peek_onboarding_language_description">Choose the app language and where your recommendations come from.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Make it yours</string>
+    <string name="peek_onboarding_look_description">Light, dark or pure black, with colors from your wallpaper or from the cover that is playing.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Player</string>
+    <string name="peek_onboarding_player_description">Pick a player design, its background and how the mini player looks.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Lyrics and Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek shows the line being sung right in the player. Translations and Latin script appear below it.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas and videos</string>
+    <string name="peek_onboarding_artwork_description">Moving covers, canvas loops and music videos, in the quality you want.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Sound</string>
+    <string name="peek_onboarding_sound_description">Audio quality, even volume between songs and smooth transitions.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">What you see</string>
+    <string name="peek_onboarding_content_description">Hide what you never want in search, recommendations and radio.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">High quality</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, animated covers, artist videos and music videos in 1080p. Uses more data. Each one can be set separately in Settings.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Off</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Not found. Signing in to Spotify finds more.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Not available for this song</string>
 </resources>

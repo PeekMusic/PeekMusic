@@ -47,8 +47,9 @@ import com.metrolist.shared.generated.resources.migrated
 import com.metrolist.shared.generated.resources.onboarding_account_picture
 import com.metrolist.shared.generated.resources.onboarding_no_saved_accounts
 import com.metrolist.shared.generated.resources.onboarding_restore_backup
-import com.metrolist.shared.generated.resources.onboarding_settings_hint
+import com.metrolist.shared.generated.resources.peek_onboarding_settings_hint
 import com.metrolist.shared.generated.resources.ready_to_migrate
+import com.metrolist.shared.peek.PeekOnboarding
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.GlobalYouTube
 import com.metrolist.shared.state.GlobalYouTubeRepository
@@ -101,7 +102,11 @@ internal fun OnboardingContent(
             )
         },
         featureContent = { page ->
-            if (page == OnboardingPage.LANGUAGE_LYRICS || page == OnboardingPage.PLAYBACK) preferences(page)
+            if (page == OnboardingPage.LANGUAGE_LYRICS || page == OnboardingPage.PLAYBACK ||
+                page in PeekOnboarding.featurePages
+            ) {
+                preferences(page)
+            }
             EditorialFeature(page, accounts, onLogin, onRestore)
             if (content.isWorking) {
                 ContainedLoadingIndicator(Modifier.padding(top = 28.dp).size(48.dp))
@@ -135,6 +140,8 @@ private fun EditorialFeature(
         OnboardingPage.NOTIFICATIONS,
         -> {
         }
+
+        else -> {}
     }
 }
 
@@ -164,7 +171,7 @@ private fun FinishActions(
             Text(stringResource(Res.string.onboarding_restore_backup), modifier = Modifier.padding(start = 10.dp))
         }
         Text(
-            stringResource(Res.string.onboarding_settings_hint),
+            stringResource(Res.string.peek_onboarding_settings_hint),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 12.dp),
         )

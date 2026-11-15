@@ -37,25 +37,31 @@ import com.metrolist.shared.generated.resources.onboarding_crash_reports_title
 import com.metrolist.shared.generated.resources.onboarding_finish_description
 import com.metrolist.shared.generated.resources.onboarding_finish_title
 import com.metrolist.shared.generated.resources.onboarding_language_lyrics_description
-import com.metrolist.shared.generated.resources.onboarding_library_migrated_description
 import com.metrolist.shared.generated.resources.onboarding_library_migrated_title
 import com.metrolist.shared.generated.resources.onboarding_migrate_library
-import com.metrolist.shared.generated.resources.onboarding_migration_complete_description
 import com.metrolist.shared.generated.resources.onboarding_migration_complete_title
-import com.metrolist.shared.generated.resources.onboarding_migration_description
 import com.metrolist.shared.generated.resources.onboarding_migration_failed
 import com.metrolist.shared.generated.resources.onboarding_migration_recovery_description
-import com.metrolist.shared.generated.resources.onboarding_migration_title
 import com.metrolist.shared.generated.resources.onboarding_notifications_denied
 import com.metrolist.shared.generated.resources.onboarding_notifications_description
 import com.metrolist.shared.generated.resources.onboarding_notifications_title
 import com.metrolist.shared.generated.resources.onboarding_playback_description
-import com.metrolist.shared.generated.resources.onboarding_welcome_description
+import com.metrolist.shared.generated.resources.peek_onboarding_library_migrated_description
+import com.metrolist.shared.generated.resources.peek_onboarding_migration_complete_description
+import com.metrolist.shared.generated.resources.peek_onboarding_migration_description
+import com.metrolist.shared.generated.resources.peek_onboarding_migration_title
+import com.metrolist.shared.generated.resources.peek_onboarding_welcome_description
 import com.metrolist.shared.generated.resources.settings_localization
 import com.metrolist.shared.generated.resources.settings_playback
 import com.metrolist.shared.generated.resources.side_menu_welcome
+import com.metrolist.shared.generated.resources.skip
 import com.metrolist.shared.generated.resources.yes
 import com.metrolist.shared.peek.PeekFork
+import com.metrolist.shared.peek.PeekOnboarding
+import com.metrolist.shared.peek.PeekOnboardingFeature
+import com.metrolist.shared.peek.peekDescription
+import com.metrolist.shared.peek.peekIcon
+import com.metrolist.shared.peek.peekTitle
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import com.metrolist.shared.ui.icons.MetrolistIconsBrand
@@ -90,8 +96,7 @@ internal fun OnboardingScreen(
                 if (hasLegacyInstallation && !libraryStartedFresh) add(OnboardingPage.MIGRATION_COMPLETE)
                 if (PeekFork.CRASH_REPORTING_AVAILABLE) add(OnboardingPage.CRASH_REPORTS)
                 add(OnboardingPage.NOTIFICATIONS)
-                add(OnboardingPage.LANGUAGE_LYRICS)
-                add(OnboardingPage.PLAYBACK)
+                addAll(PeekOnboarding.featurePages)
                 add(OnboardingPage.FINISH)
             }
         }
@@ -140,19 +145,47 @@ internal fun OnboardingScreen(
                 if (startingFresh) {
                     libraryStartedFresh = true
                     error = null
-                    currentPageName = OnboardingPage.CRASH_REPORTS.name
+                    currentPageName =
+                        (if (PeekFork.CRASH_REPORTING_AVAILABLE) OnboardingPage.CRASH_REPORTS else PeekOnboarding.featurePages.first()).name
                 } else {
                     nextPage()
                 }
             }.onFailure { error = migrationFailed }
     }
     val accounts = savedAccounts()
+    val showNewBadges = hasLegacyInstallation && !libraryStartedFresh
+    val peekHost = rememberPeekOnboardingHost()
+    val peekArtworkColors = rememberPeekSampleArtworkColors()
     BackHandler(enabled = working) {}
 
     @Composable
     fun pageContent(index: Int): OnboardingPageContent {
         val page = pages[index]
         val pageError = error.takeIf { index == safePageIndex }
+        if (page in PeekOnboarding.featurePages) {
+            return OnboardingPageContent(
+                page = page,
+                title = page.peekTitle(),
+                description = page.peekDescription(),
+                icon = page.peekIcon(),
+                step = index + 1,
+                stepCount = pages.size,
+                primaryLabel = stringResource(Res.string.continue_action),
+                secondaryLabel = stringResource(Res.string.skip),
+                isWorking = working,
+                error = pageError,
+                backLabel = stringResource(Res.string.back),
+                onPrimary = { nextPage() },
+                onSecondary = {
+                    error = null
+                    currentPageName = OnboardingPage.NOTIFICATIONS.name
+                },
+                onBack = {
+                    error = null
+                    currentPageName = pages[index - 1].name
+                },
+            )
+        }
         return OnboardingPageContent(
             page = page,
             title =
@@ -165,7 +198,7 @@ internal fun OnboardingScreen(
                 if (page == OnboardingPage.MIGRATION && pageError != null) {
                     stringResource(Res.string.onboarding_migration_recovery_description)
                 } else if (page == OnboardingPage.MIGRATION_COMPLETE && accounts.isEmpty()) {
-                    stringResource(Res.string.onboarding_library_migrated_description)
+                    stringResource(Res.string.peek_onboarding_library_migrated_description)
                 } else {
                     page.description()
                 },
@@ -179,6 +212,7 @@ internal fun OnboardingScreen(
                     OnboardingPage.LANGUAGE_LYRICS -> MetrolistIcons.Outlined.Language
                     OnboardingPage.PLAYBACK -> MetrolistIcons.Outlined.PlayArrow
                     OnboardingPage.FINISH -> MetrolistIcons.Filled.Check
+                    else -> page.peekIcon()
                 },
             step = index + 1,
             stepCount = pages.size,
@@ -211,6 +245,10 @@ internal fun OnboardingScreen(
                     OnboardingPage.FINISH -> {
                         stringResource(Res.string.finish)
                     }
+
+                    else -> {
+                        stringResource(Res.string.continue_action)
+                    }
                 },
             secondaryLabel =
                 when (page) {
@@ -239,6 +277,10 @@ internal fun OnboardingScreen(
                     }
 
                     OnboardingPage.FINISH -> {
+                        null
+                    }
+
+                    else -> {
                         null
                     }
                 },
@@ -279,6 +321,10 @@ internal fun OnboardingScreen(
 
                     OnboardingPage.FINISH -> {
                         onComplete(sendCrashReports, OnboardingDestination.HOME)
+                    }
+
+                    else -> {
+                        nextPage()
                     }
                 }
             },
@@ -330,6 +376,10 @@ internal fun OnboardingScreen(
                     OnboardingPage.FINISH -> {
                         null
                     }
+
+                    else -> {
+                        null
+                    }
                 },
             onBack =
                 when {
@@ -352,6 +402,17 @@ internal fun OnboardingScreen(
             content = content,
             previousContent = previousContent,
             preferences = { targetPage ->
+                if (targetPage in PeekOnboarding.featurePages) {
+                    PeekOnboardingFeature(
+                        targetPage,
+                        peekHost,
+                        showNewBadges,
+                        peekArtworkColors?.gradient.orEmpty(),
+                        playerPreviewTheme = { content -> PeekSampleArtworkTheme(peekArtworkColors, content) },
+                        artworkPreview = { PeekCanvasPreview() },
+                    )
+                    return@OnboardingContent
+                }
                 OnboardingPreferences(
                     page = targetPage,
                     host =
@@ -385,13 +446,14 @@ private fun OnboardingPage.title(): String =
     stringResource(
         when (this) {
             OnboardingPage.WELCOME -> Res.string.side_menu_welcome
-            OnboardingPage.MIGRATION -> Res.string.onboarding_migration_title
+            OnboardingPage.MIGRATION -> Res.string.peek_onboarding_migration_title
             OnboardingPage.MIGRATION_COMPLETE -> Res.string.onboarding_migration_complete_title
             OnboardingPage.CRASH_REPORTS -> Res.string.onboarding_crash_reports_title
             OnboardingPage.NOTIFICATIONS -> Res.string.onboarding_notifications_title
             OnboardingPage.LANGUAGE_LYRICS -> Res.string.settings_localization
             OnboardingPage.PLAYBACK -> Res.string.settings_playback
             OnboardingPage.FINISH -> Res.string.onboarding_finish_title
+            else -> Res.string.onboarding_finish_title
         },
     )
 
@@ -399,14 +461,15 @@ private fun OnboardingPage.title(): String =
 private fun OnboardingPage.description(): String =
     stringResource(
         when (this) {
-            OnboardingPage.WELCOME -> Res.string.onboarding_welcome_description
-            OnboardingPage.MIGRATION -> Res.string.onboarding_migration_description
-            OnboardingPage.MIGRATION_COMPLETE -> Res.string.onboarding_migration_complete_description
+            OnboardingPage.WELCOME -> Res.string.peek_onboarding_welcome_description
+            OnboardingPage.MIGRATION -> Res.string.peek_onboarding_migration_description
+            OnboardingPage.MIGRATION_COMPLETE -> Res.string.peek_onboarding_migration_complete_description
             OnboardingPage.CRASH_REPORTS -> Res.string.onboarding_crash_reports_description
             OnboardingPage.NOTIFICATIONS -> Res.string.onboarding_notifications_description
             OnboardingPage.LANGUAGE_LYRICS -> Res.string.onboarding_language_lyrics_description
             OnboardingPage.PLAYBACK -> Res.string.onboarding_playback_description
             OnboardingPage.FINISH -> Res.string.onboarding_finish_description
+            else -> Res.string.onboarding_finish_description
         },
     )
 

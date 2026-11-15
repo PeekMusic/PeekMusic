@@ -88,6 +88,7 @@ import com.metrolist.shared.generated.resources.onboarding_sentry_private
 import com.metrolist.shared.generated.resources.onboarding_step_of
 import com.metrolist.shared.generated.resources.pause
 import com.metrolist.shared.generated.resources.play
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.ui.components.GroupedListItem
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import com.metrolist.shared.ui.navigation.PredictiveNavigationContent
@@ -103,6 +104,15 @@ enum class OnboardingPage {
     LANGUAGE_LYRICS,
     PLAYBACK,
     FINISH,
+
+    // PeekMusic feature pages, see peek/PeekOnboarding.kt
+    PEEK_LANGUAGE,
+    PEEK_LOOK,
+    PEEK_PLAYER,
+    PEEK_LYRICS,
+    PEEK_ARTWORK,
+    PEEK_SOUND,
+    PEEK_CONTENT,
 }
 
 data class OnboardingPageContent(
@@ -328,7 +338,7 @@ private fun OnboardingPageLayout(
 @Composable
 private fun PrivacyLink() {
     val uriHandler = LocalUriHandler.current
-    val privacyUrl = "https://metrolist.cc/privacy"
+    val privacyUrl = PeekFork.PRIVACY_URL
     var openFailed by remember { mutableStateOf(false) }
     Column {
         TextButton(

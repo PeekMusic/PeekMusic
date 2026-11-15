@@ -51,6 +51,7 @@ import com.metrolist.android.listentogether.AndroidListenTogetherManager
 import com.metrolist.android.locale.AppLocale
 import com.metrolist.android.onboarding.OnboardingDestination
 import com.metrolist.android.onboarding.OnboardingScreen
+import com.metrolist.android.onboarding.PeekOnboardingTheme
 import com.metrolist.android.playback.PlayerConnection
 import com.metrolist.android.playback.playbackAudioQuality
 import com.metrolist.android.playback.prefetchIncomingAudio
@@ -59,7 +60,6 @@ import com.metrolist.android.playback.toAndroidContentHints
 import com.metrolist.android.ui.IncomingDestination
 import com.metrolist.android.ui.MetrolistApp
 import com.metrolist.android.ui.screens.settings.DiscordLoginFlow
-import com.metrolist.android.ui.theme.MetrolistTheme
 import com.metrolist.android.ui.toIncomingDestination
 import com.metrolist.android.utils.CrashHandler
 import com.metrolist.android.utils.isAndroidTv
@@ -324,7 +324,7 @@ class MainActivity : ComponentActivity() {
                     } else {
                         val tvDevice = remember { isAndroidTv() }
                         CompositionLocalProvider(LocalIsTv provides tvDevice) {
-                            MetrolistTheme {
+                            PeekOnboardingTheme {
                                 OnboardingScreen(
                                     migration = app.legacyInstallMigration,
                                     hasLegacyInstallationOverride = app.hadLegacyInstallationAtStartup,

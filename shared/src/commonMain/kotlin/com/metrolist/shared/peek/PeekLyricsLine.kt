@@ -231,6 +231,77 @@ internal fun PeekLyricsLine(
     }
 }
 
+/**
+ * The Peek for previews without a player (onboarding): the same line, adlibs and gap ring as [PeekLyricsLine], driven by
+ * [position]. Shown only while the Peek setting is on, so switching it shows or hides the line like in the player.
+ */
+@Composable
+internal fun PeekPreviewLine(
+    lyrics: List<LyricsEntry>,
+    position: () -> Long,
+    textColor: Color,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedVisibility(
+        visible = Settings.shared.showLyricsOnPlayer,
+        enter = expandVertically() + fadeIn(),
+        exit = shrinkVertically() + fadeOut(),
+        modifier = modifier,
+    ) {
+        val gaps = remember(lyrics) { buildLyricsListItems(lyrics).filterIsInstance<LyricsListItem.Indicator>() }
+        val content by remember(lyrics, gaps) {
+            derivedStateOf(structuralEqualityPolicy()) {
+                if (lyrics.isEmpty()) {
+                    PeekContent.Loading
+                } else {
+                    val now = position()
+                    gaps
+                        .firstOrNull { now in (it.gapStartMs - LYRICS_GAP_START_LAG_MS) until it.gapEndMs }
+                        ?.let(PeekContent::Gap)
+                        ?: peekLine(lyrics, peekLineIndex(lyrics, now))
+                }
+            }
+        }
+        val color = resolveLyricsTextColor(textColor)
+        Box(Modifier.fillMaxWidth().heightIn(min = PeekMinHeight), contentAlignment = Alignment.Center) {
+            AnimatedContent(
+                targetState = content,
+                transitionSpec = { fadeIn(tween(400)) togetherWith fadeOut(tween(400)) },
+                contentAlignment = Alignment.Center,
+                label = "peekPreviewLine",
+            ) { shown ->
+                when (shown) {
+                    is PeekContent.Gap -> {
+                        IntervalIndicator(
+                            gapStartMs = shown.item.gapStartMs,
+                            gapEndMs = shown.item.gapEndMs,
+                            currentPositionMs = { position().coerceIn(shown.item.gapStartMs, shown.item.gapEndMs) },
+                            visible = true,
+                            isPlaying = true,
+                            color = color,
+                        )
+                    }
+
+                    is PeekContent.Line -> {
+                        PeekLine(
+                            line = shown,
+                            position = position,
+                            isPlaying = true,
+                            color = color,
+                            textSizeSp = PEEK_TEXT_SIZE_SP,
+                            onShowLyrics = {},
+                        )
+                    }
+
+                    else -> {
+                        CircularProgressIndicator(color = color, modifier = Modifier.size(28.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 private fun PeekLine(
     line: PeekContent.Line,

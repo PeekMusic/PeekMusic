@@ -25,6 +25,9 @@ object PeekFork {
     const val APP_SCHEME = "peekmusic"
     const val INVITE_HOST = "listen.peekmusic.org"
 
+    /** PeekMusic's own privacy policy, linked from onboarding. */
+    const val PRIVACY_URL = "https://peekmusic.org/privacy"
+
     /** Release APK name the legacy (pre-KMP) PeekMusic updater recognizes: prefix `PeekMusic-`, suffix `Release.apk`. */
     fun releaseApkName(version: String): String = "PeekMusic-$version-fossRelease.apk"
 
