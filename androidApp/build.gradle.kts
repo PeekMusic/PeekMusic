@@ -155,7 +155,8 @@ java {
 }
 
 val sentryAuthToken = providers.environmentVariable("SENTRY_AUTH_TOKEN").filter(String::isNotBlank)
-val appVersion = providers.gradleProperty("appVersion").get()
+// PeekMusic: ship our own version (peekVersion), not upstream's.
+val appVersion = providers.gradleProperty("peekVersion").orElse(providers.gradleProperty("appVersion")).get()
 val bundledLanguageTags =
     rootProject
         .file("shared/src/commonMain/composeResources")

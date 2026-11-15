@@ -3,7 +3,8 @@ import org.gradle.api.tasks.bundling.Zip
 import java.io.File
 import java.nio.file.Files
 
-val appVersion = providers.gradleProperty("appVersion").get()
+// PeekMusic: ship our own version (peekVersion), not upstream's.
+val appVersion = providers.gradleProperty("peekVersion").orElse(providers.gradleProperty("appVersion")).get()
 
 tasks.register("createAppImageLocal") {
     group = "distribution"

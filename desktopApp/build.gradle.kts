@@ -92,7 +92,8 @@ configurations.matching { it.name.startsWith("jvm") }.configureEach {
 }
 
 group = "com.metrolist"
-val appVersion = providers.gradleProperty("appVersion").get()
+// PeekMusic: ship our own version (peekVersion), not upstream's.
+val appVersion = providers.gradleProperty("peekVersion").orElse(providers.gradleProperty("appVersion")).get()
 version = appVersion
 
 val desktopMemoryJvmArgs =
