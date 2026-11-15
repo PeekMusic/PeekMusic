@@ -8,6 +8,7 @@ package com.metrolist.shared.api.lyrics
 import com.metrolist.shared.network.ExpectedHttpFailureStatusCodes
 import com.metrolist.shared.network.createHttpClient
 import com.metrolist.shared.peek.PeekFork
+import com.metrolist.shared.peek.PeekTranslationBackfill
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.GlobalYouTube
 import com.metrolist.shared.utils.systemCountryCode
@@ -933,6 +934,26 @@ class LyricsTranslationClient(
                     allRomanized.addAll(splitRomanized)
                 }
                 splitTranslated
+            }
+            if (!isRomanizedOnly) {
+                // PeekMusic: lines a mixed-language request left untranslated get a second, per-script request.
+                allTranslated =
+                    PeekTranslationBackfill
+                        .backfill(lines.filter(String::isNotBlank), allTranslated) { group ->
+                            translateInBatches(group, maxBatchCharacters = 1_200) { batch ->
+                                val markers = List((batch.size - 1).coerceAtLeast(0)) { "__METROLIST_LINE_${it + 1}__" }
+                                val input =
+                                    batch
+                                        .mapIndexed {
+                                            index,
+                                            line,
+                                            ->
+                                            line + markers.getOrNull(index)?.let { "\n$it\n" }.orEmpty()
+                                        }.joinToString("")
+                                splitByMarkers(translateGoogleText(input, targetLanguage).first, markers)
+                                    ?: batch.map { translateGoogleText(it, targetLanguage).first }
+                            }
+                        }.toMutableList()
             }
             if (isRomanizedOnly) {
                 LyricsAiResult(romanizedLines = allRomanized.ifEmpty { allTranslated })
