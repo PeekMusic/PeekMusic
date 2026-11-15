@@ -232,6 +232,19 @@ fun PeekOnboardingFeature(
         }
     }
     available[PeekQuality.ITEM_ID] = peekHighQualityItem()
+    // Translating and showing translations are two settings; in onboarding one switch turns both on, like the player's.
+    available["translationEnabled"]?.let { item ->
+        val settings = Settings.shared
+        available["translationEnabled"] =
+            item.copy(
+                checked = settings.lyricsAiTranslationEnabled && settings.lyricsShowTranslations,
+                onCheckedChange = { on ->
+                    settings.lyricsAiTranslationEnabled = on
+                    settings.lyricsShowTranslations = on
+                    settingsRevision++
+                },
+            )
+    }
     val newLabel = stringResource(Res.string.peek_onboarding_new)
     val accent = MaterialTheme.colorScheme.primary
     val items =
@@ -254,7 +267,7 @@ fun PeekOnboardingFeature(
 
             OnboardingPage.PEEK_LYRICS -> {
                 // The preview is a lazy list, so it needs a bounded height inside the scrolling page.
-                PeekSampleLyricsPreview(Modifier.fillMaxWidth().height(280.dp))
+                PeekSampleLyricsPreview(Modifier.fillMaxWidth())
             }
 
             else -> {}

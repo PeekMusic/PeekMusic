@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,8 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.metrolist.shared.api.lyrics.LyricsUtils
@@ -336,6 +339,30 @@ internal fun rememberPeekSampleClock(entries: List<LyricsEntry>): MutableStateFl
 internal fun PeekSampleLyricsPreview(modifier: Modifier) {
     val sample = rememberPeekSampleLyrics()
     val position = rememberPeekSampleClock(sample.entries)
+    // Latin script and translation each add a line under every lyric; with the player's text size only half a
+    // lyric would fit, so the preview shrinks its text and grows a little per extra line.
+    val settings = Settings.shared
+    val extraLines =
+        (if (settings.lyricsRomanizationEnabled) 1 else 0) +
+            (if (settings.lyricsAiTranslationEnabled && settings.lyricsShowTranslations) 1 else 0)
+    val density = LocalDensity.current
+    val scale =
+        when (extraLines) {
+            0 -> 1f
+            1 -> 0.82f
+            else -> 0.7f
+        }
+    CompositionLocalProvider(LocalDensity provides Density(density.density, density.fontScale * scale)) {
+        PeekSampleLyricsView(modifier.height(280.dp + 40.dp * extraLines), sample, position)
+    }
+}
+
+@Composable
+private fun PeekSampleLyricsView(
+    modifier: Modifier,
+    sample: PeekSampleLyrics,
+    position: MutableStateFlow<Long>,
+) {
     LyricsSettingsPreview(
         modifier = modifier,
         songId = PeekSampleSong.VIDEO_ID,
