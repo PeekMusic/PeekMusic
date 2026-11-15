@@ -2,38 +2,37 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Datenschutz – PeekMusic</title>
-<meta name="description" content="Datenschutzerklärung der Android-App PeekMusic und des PeekParty-Servers.">
-<style>
-  :root { --bg:#f6f6f8; --fg:#18181c; --muted:#5e5e6a; --card:#ffffff; --line:#e0e0e6; --accent:#3b3a8f; color-scheme: light dark; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#111114; --fg:#ececf1; --muted:#a0a0ad; --card:#1a1a20; --line:#2d2d36; --accent:#a9a7ff; } }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  main { max-width: 760px; margin: 0 auto; padding: 40px 20px 80px; }
-  h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 4px; }
-  h2 { font-size: 1.2rem; margin: 36px 0 8px; }
-  h3 { font-size: 1rem; margin: 20px 0 4px; }
-  p, li { max-width: 68ch; }
-  .meta { color: var(--muted); margin: 0 0 24px; }
-  .lang { display:flex; gap:12px; margin: 0 0 24px; font-size:.9rem; }
-  a { color: var(--accent); }
-  .box { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; }
-  table { width:100%; border-collapse: collapse; font-size: .92rem; }
-  th, td { text-align:left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
-  th { color: var(--muted); font-weight: 600; }
-  .wrap { overflow-x: auto; }
-  hr { border: 0; border-top: 1px solid var(--line); margin: 56px 0; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Datenschutz · Privacy – PeekMusic</title>
+<meta name="description" content="Datenschutzerklärung der Android-App PeekMusic und des PeekParty-Servers / Privacy policy of the PeekMusic app and the PeekParty server.">
+<meta name="theme-color" content="#fcf8ff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131318" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/roboto-flex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<main>
-  <h1>Datenschutz</h1>
-  <p class="meta">PeekMusic für Android · Stand: 15. November 2026</p>
-  <nav class="lang"><a href="#de">Deutsch</a><a href="#en">English</a></nav>
-
-  <section id="de">
-    <div class="box">
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/icons/icon-192.png" alt="" width="40" height="40"><span>PeekMusic</span></a>
+    <nav aria-label="Main">
+      <a href="https://github.com/PeekMusic/PeekMusic">GitHub</a>
+      <a href="/privacy/" aria-current="page">Privacy</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="doc-head">
+    <h1>Datenschutz</h1>
+    <p class="meta">PeekMusic für Android · Stand: 15. November 2026</p>
+    <nav class="seg" aria-label="Sprache / Language"><a href="#de" lang="de">Deutsch</a><a href="#en" lang="en">English</a></nav>
+  </div>
+  <div class="doc">
+    <section id="de">
+    <div class="summary">
       <p><strong>Kurz gesagt:</strong> PeekMusic hat kein eigenes Konto, keine Werbung, kein Tracking und schickt keine Absturzberichte. Deine Bibliothek, dein Verlauf und deine Einstellungen bleiben auf deinem Gerät. Um Musik, Lyrics und Cover zu laden, fragt die App direkt bei den unten genannten Diensten an. Nur für PeekParty (gemeinsames Hören) gibt es einen eigenen Server.</p>
     </div>
 
@@ -45,7 +44,7 @@
 
     <h2>Dienste, mit denen die App direkt spricht</h2>
     <p>Bei jeder dieser Anfragen sieht der jeweilige Dienst deine IP-Adresse und den Inhalt der Anfrage. Es gelten die Datenschutzbestimmungen des Dienstes. PeekMusic gibt keine Daten an uns weiter, außer bei PeekParty.</p>
-    <div class="wrap">
+    <div class="table-wrap">
     <table>
       <tr><th>Dienst</th><th>Wofür</th><th>Was übertragen wird</th></tr>
       <tr><td>YouTube / YouTube Music (Google)</td><td>Suche, Wiedergabe, Startseite, Bibliothek; mit Anmeldung auch dein Konto</td><td>Suchanfragen, abgespielte Titel, bei Anmeldung deine Sitzungs-Cookies</td></tr>
@@ -77,13 +76,11 @@
     <h2>Änderungen</h2>
     <p>Wenn sich ändert, welche Dienste PeekMusic nutzt, passen wir diese Seite an. Das Datum oben zeigt den aktuellen Stand.</p>
   </section>
-
-  <hr>
-
-  <section id="en" lang="en">
-    <h1>Privacy</h1>
+    <div class="divider"></div>
+    <section id="en" lang="en">
+    <h1 class="doc-title">Privacy</h1>
     <p class="meta">PeekMusic for Android · Last updated: November 15, 2026</p>
-    <div class="box">
+    <div class="summary">
       <p><strong>In short:</strong> PeekMusic has no account of its own, no ads, no tracking and sends no crash reports. Your library, history and settings stay on your device. To load music, lyrics and artwork the app talks directly to the services listed below. Only PeekParty (listening together) uses a server of our own.</p>
     </div>
 
@@ -95,7 +92,7 @@
 
     <h2>Services the app talks to directly</h2>
     <p>Each of these services sees your IP address and the content of the request, and its own privacy policy applies. PeekMusic does not send data to us, except for PeekParty.</p>
-    <div class="wrap">
+    <div class="table-wrap">
     <table>
       <tr><th>Service</th><th>Purpose</th><th>What is sent</th></tr>
       <tr><td>YouTube / YouTube Music (Google)</td><td>Search, playback, home, library; your account if you sign in</td><td>Searches, played tracks, your session cookies if signed in</td></tr>
@@ -127,6 +124,18 @@
     <h2>Changes</h2>
     <p>If the services PeekMusic uses change, we update this page. The date above shows when it was last changed.</p>
   </section>
+  </div>
 </main>
+
+<footer>
+  <div class="wrap">
+    <span>PeekMusic is a fork of <a href="https://github.com/MetrolistGroup/Metrolist">Metrolist</a>, licensed under GPL-3.0. Not affiliated with YouTube or Google.</span>
+    <nav aria-label="Footer">
+      <a href="/privacy/">Privacy / Datenschutz</a>
+      <a href="https://github.com/PeekMusic/PeekMusic">GitHub</a>
+      <a href="mailto:contact@peekmusic.org">contact@peekmusic.org</a>
+    </nav>
+  </div>
+</footer>
 </body>
 </html>
