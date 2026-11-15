@@ -53,6 +53,7 @@ type peekState struct {
 
 type peekClient struct {
 	code     string
+	silent   bool   // presence_only: counts for presence, gets no friend messages
 	presence string // last presence sent to friends: name + room
 	adds     []time.Time
 	invites  []time.Time
@@ -106,12 +107,19 @@ func (s *Server) peekCode(c *Client) string {
 	return ""
 }
 
+// peekOnline returns code's connections that take friend messages.
 func (s *Server) peekOnline(code string) []*Client {
+	return s.peekConnections(code, false)
+}
+
+func (s *Server) peekConnections(code string, includeSilent bool) []*Client {
 	s.peek.mu.Lock()
 	defer s.peek.mu.Unlock()
 	out := make([]*Client, 0, len(s.peek.byCode[code]))
 	for c := range s.peek.byCode[code] {
-		out = append(out, c)
+		if pc := s.peek.clients[c]; includeSilent || (pc != nil && !pc.silent) {
+			out = append(out, c)
+		}
 	}
 	return out
 }
@@ -120,7 +128,7 @@ func (s *Server) peekOnline(code string) []*Client {
 // party of the first device that is in one.
 func (s *Server) peekInfo(store *peekStore, code string) *pb.FriendInfo {
 	info := &pb.FriendInfo{FriendCode: code}
-	for _, c := range s.peekOnline(code) {
+	for _, c := range s.peekConnections(code, true) {
 		info.IsOnline = true
 		if name := c.userName(); name != "" {
 			info.Username = name
@@ -193,6 +201,7 @@ func (s *Server) peekAuthenticate(c *Client, payload []byte) {
 	if previous == nil || previous.code != code {
 		s.peek.clients[c] = &peekClient{code: code}
 	}
+	s.peek.clients[c].silent = p.PresenceOnly
 	if s.peek.byCode[code] == nil {
 		s.peek.byCode[code] = map[*Client]struct{}{}
 	}
@@ -202,8 +211,10 @@ func (s *Server) peekAuthenticate(c *Client, payload []byte) {
 		s.peekBroadcastPresence(store, previous.code)
 	}
 
-	c.reply(s.logger, MsgTypeAuthSuccess, &pb.AuthSuccessPayload{FriendCode: code})
-	s.peekSendStatus(store, c, code)
+	if !p.PresenceOnly {
+		c.reply(s.logger, MsgTypeAuthSuccess, &pb.AuthSuccessPayload{FriendCode: code})
+		s.peekSendStatus(store, c, code)
+	}
 	s.peekBroadcastPresence(store, code)
 	s.logger.Info("PeekParty friends signed in", zap.String("client_id", c.clientID()), zap.Bool("v2", v2))
 }
@@ -307,7 +318,10 @@ func (s *Server) peekClientGone(c *Client) {
 func (s *Server) peekRequireCode(c *Client) (*peekStore, string, bool) {
 	store, ok := s.peekReady()
 	code := s.peekCode(c)
-	if !ok || code == "" {
+	s.peek.mu.Lock()
+	silent := s.peek.clients[c] != nil && s.peek.clients[c].silent
+	s.peek.mu.Unlock()
+	if !ok || code == "" || silent {
 		c.sendError(s.logger, peekFriendNotAuthenticated, "Must authenticate first")
 		return nil, "", false
 	}
@@ -477,7 +491,8 @@ func (s *Server) peekDeleteAccount(c *Client) {
 		c.sendError(s.logger, peekFriendErrorCode, "Could not delete your friends data")
 		return
 	}
-	own := s.peekOnline(me)
+	own := s.peekConnections(me, true)
+	loud := s.peekOnline(me)
 	s.peek.mu.Lock()
 	for _, oc := range own {
 		delete(s.peek.clients, oc)
@@ -488,7 +503,7 @@ func (s *Server) peekDeleteAccount(c *Client) {
 		sendToAll(s, s.peekOnline(other), MsgTypeFriendRemoved, &pb.FriendCodePayload{FriendCode: me})
 	}
 	c.reply(s.logger, MsgTypeFriendAccountDeleted, &pb.DeleteFriendAccountPayload{})
-	for _, oc := range own {
+	for _, oc := range loud {
 		if oc != c {
 			oc.sendMessage(s.logger, MsgTypeFriendAccountDeleted, &pb.DeleteFriendAccountPayload{})
 		}

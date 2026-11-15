@@ -398,3 +398,37 @@ func TestPeekDeleteAccount(t *testing.T) {
 		t.Fatal("the deleted friend code came back")
 	}
 }
+
+func TestPeekPresenceOnlyConnection(t *testing.T) {
+	server := peekTestServer(t)
+	friends := withFeatures(newClient("friends", nil), FeaturePeekFriends)
+	party := withFeatures(newClient("party", nil), FeaturePeekFriends)
+	bob := withFeatures(newClient("bob", nil), FeaturePeekFriends)
+	aliceCode := peekAuth(t, server, friends, "alice-token-0123456789", "Alice")
+	bobCode := peekAuth(t, server, bob, "bob-token-01234567890", "Bob")
+	befriend(t, server, aliceCode, bobCode)
+
+	peekSend(t, server, party, MsgTypeAuthenticate, &pb.AuthenticatePayload{AuthToken: "alice-token-0123456789", PresenceOnly: true})
+	if len(party.Send) != 0 {
+		t.Fatal("the party connection got friend messages")
+	}
+	peekDrain(bob)
+	party.setRoom(&Room{Code: "ROOM1234"})
+	store, _ := server.peekStore()
+	server.peekRefreshPresence(store)
+	var presence pb.FriendPresenceUpdatePayload
+	peekNext(t, bob, MsgTypeFriendPresenceUpdate, &presence)
+	if presence.Friend.GetActiveRoomCode() != "ROOM1234" {
+		t.Fatalf("presence = %v, want the party from the presence-only connection", &presence)
+	}
+
+	peekSend(t, server, party, MsgTypeAddFriend, &pb.FriendCodePayload{FriendCode: bobCode})
+	receiveLifecycleError(t, party, peekFriendNotAuthenticated)
+
+	// Bob's request reaches the friends connection, never the party one.
+	peekSend(t, server, bob, MsgTypeRemoveFriend, &pb.FriendCodePayload{FriendCode: aliceCode})
+	peekNext(t, friends, MsgTypeFriendRemoved, nil)
+	if len(party.Send) != 0 {
+		t.Fatal("the party connection got friend_removed")
+	}
+}

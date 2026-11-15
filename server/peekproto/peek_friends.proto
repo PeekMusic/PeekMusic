@@ -12,6 +12,9 @@ option go_package = "github.com/MetrolistGroup/metroserver/proto/peek";
 message AuthenticatePayload {
   string auth_token = 1;
   string current_username = 2;
+  // The party connection signs in with this so friends see which party you are in. The server sends it no
+  // friend messages; the app's separate friends connection gets those.
+  bool presence_only = 3;
 }
 
 // Client -> server: "add_friend", "remove_friend", "accept_friend_request", "decline_friend_request",

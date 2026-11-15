@@ -11,6 +11,8 @@ top. It runs at `wss://listen.peekmusic.org/ws` (see `website/README.md` for the
   friend requests, presence, party invites and account deletion. Upstream code only calls into it from five
   marked places (`// PeekMusic:`): the message switch, client removal, the feature list, the codec fallback for
   generated payloads, and startup.
+- `authenticate` with `presence_only`: the party connection signs in so friends see which party you are in, but
+  gets no friend messages; the app keeps a separate friends connection for those.
 - Feature `peek_friends_v2`: clients that announce it get friend requests, invites and deletion. Apps without it
   (PeekMusic 1.3.0) keep working: adding them befriends at once, as before, because they cannot accept requests.
 
