@@ -2487,7 +2487,7 @@
     <string name="peek_translation_failed">Übersetzung fehlgeschlagen, versuch es später nochmal</string>
     <string name="peek_about_developer_role">Entwickler von PeekMusic</string>
     <string name="peek_video_filter">Videos</string>
-    <string name="peek_video_filter_description">Welche Videos in Suche und Playlists erscheinen</string>
+    <string name="peek_video_filter_description">Welche Videos in Suche, Playlists und Empfehlungen erscheinen. Der Audio/Video-Umschalter im Player bleibt</string>
     <string name="peek_video_filter_all">Alle Videos</string>
     <string name="peek_video_filter_music">Nur Musikvideos</string>
     <string name="peek_video_filter_none">Keine Videos</string>

@@ -307,6 +307,7 @@ internal fun PlayerVolumeControl() {
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 internal fun shouldShowVideoButton(
     isListenTogetherGuest: Boolean,
     hideVideoSongs: Boolean,
@@ -315,7 +316,8 @@ internal fun shouldShowVideoButton(
     musicVideoType: String?,
 ): Boolean {
     if (isListenTogetherGuest) return false
-    if (hideVideoSongs || !videoPlaybackEnabled) return false
+    // PeekMusic: hiding video songs only filters search and lists; the player's own switches decide on this button.
+    if (!videoPlaybackEnabled) return false
     if (songId == null) return false
     if (songId.startsWith("local_")) return false
     return true

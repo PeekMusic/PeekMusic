@@ -5473,7 +5473,7 @@
     <string name="peek_about_developer_role">Developer of PeekMusic</string>
     <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
     <string name="peek_video_filter">Videos</string>
-    <string name="peek_video_filter_description">Which videos appear in search and playlists</string>
+    <string name="peek_video_filter_description">Which videos appear in search, playlists and recommendations. The audio/video switch in the player stays</string>
     <string name="peek_video_filter_all">All videos</string>
     <string name="peek_video_filter_music">Music videos only</string>
     <string name="peek_video_filter_none">No videos</string>
