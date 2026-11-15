@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datenschutz – PeekMusic</title>
+<meta name="description" content="Datenschutzerklärung der Android-App PeekMusic und des PeekParty-Servers.">
+<style>
+  :root { --bg:#f6f6f8; --fg:#18181c; --muted:#5e5e6a; --card:#ffffff; --line:#e0e0e6; --accent:#3b3a8f; color-scheme: light dark; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111114; --fg:#ececf1; --muted:#a0a0ad; --card:#1a1a20; --line:#2d2d36; --accent:#a9a7ff; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 20px 80px; }
+  h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 4px; }
+  h2 { font-size: 1.2rem; margin: 36px 0 8px; }
+  h3 { font-size: 1rem; margin: 20px 0 4px; }
+  p, li { max-width: 68ch; }
+  .meta { color: var(--muted); margin: 0 0 24px; }
+  .lang { display:flex; gap:12px; margin: 0 0 24px; font-size:.9rem; }
+  a { color: var(--accent); }
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; }
+  table { width:100%; border-collapse: collapse; font-size: .92rem; }
+  th, td { text-align:left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  .wrap { overflow-x: auto; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 56px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Datenschutz</h1>
+  <p class="meta">PeekMusic für Android · Stand: 15. November 2026</p>
+  <nav class="lang"><a href="#de">Deutsch</a><a href="#en">English</a></nav>
+
+  <section id="de">
+    <div class="box">
+      <p><strong>Kurz gesagt:</strong> PeekMusic hat kein eigenes Konto, keine Werbung, kein Tracking und schickt keine Absturzberichte. Deine Bibliothek, dein Verlauf und deine Einstellungen bleiben auf deinem Gerät. Um Musik, Lyrics und Cover zu laden, fragt die App direkt bei den unten genannten Diensten an. Nur für PeekParty (gemeinsames Hören) gibt es einen eigenen Server.</p>
+    </div>
+
+    <h2>Verantwortlich</h2>
+    <p>Endrit Limani, Deutschland<br>E-Mail: <a href="mailto:contact@peekmusic.org">contact@peekmusic.org</a></p>
+
+    <h2>Was auf deinem Gerät bleibt</h2>
+    <p>Bibliothek, Playlists, Likes, Hör- und Suchverlauf, Downloads, Einstellungen und deine Anmeldungen (YouTube, und falls du sie nutzt Spotify, Last.fm, ListenBrainz, Discord) speichert PeekMusic nur lokal. Backups erstellst du selbst und legst fest, wo sie landen. Wenn du die App deinstallierst, sind diese Daten weg.</p>
+
+    <h2>Dienste, mit denen die App direkt spricht</h2>
+    <p>Bei jeder dieser Anfragen sieht der jeweilige Dienst deine IP-Adresse und den Inhalt der Anfrage. Es gelten die Datenschutzbestimmungen des Dienstes. PeekMusic gibt keine Daten an uns weiter, außer bei PeekParty.</p>
+    <div class="wrap">
+    <table>
+      <tr><th>Dienst</th><th>Wofür</th><th>Was übertragen wird</th></tr>
+      <tr><td>YouTube / YouTube Music (Google)</td><td>Suche, Wiedergabe, Startseite, Bibliothek; mit Anmeldung auch dein Konto</td><td>Suchanfragen, abgespielte Titel, bei Anmeldung deine Sitzungs-Cookies</td></tr>
+      <tr><td>Lyrics-Anbieter (BetterLyrics, lrc.red, Unison, LrcLib, KuGou, Paxsenix)</td><td>Lyrics zum laufenden Song</td><td>Titel, Interpret, Album, Dauer</td></tr>
+      <tr><td>Google Übersetzer</td><td>Lyrics übersetzen, nur wenn eingeschaltet</td><td>Text der Lyrics, Zielsprache</td></tr>
+      <tr><td>Apple Music</td><td>Animierte Cover, Künstlerbilder und -videos, nur wenn eingeschaltet</td><td>Titel, Interpret, Album</td></tr>
+      <tr><td>Spotify und spotify-canva.vercel.app</td><td>Canvas-Videos, nur wenn eingeschaltet. Ohne Spotify-Anmeldung über den öffentlichen Dienst spotify-canva.vercel.app</td><td>Titel, Interpret, Spotify-Track-ID; mit Anmeldung deine Spotify-Sitzung</td></tr>
+      <tr><td>GitHub</td><td>Prüfen, ob es eine neue Version gibt</td><td>Anfrage an die Release-Liste von PeekMusic</td></tr>
+      <tr><td>SponsorBlock</td><td>Werbeblöcke in Podcasts überspringen, nur wenn eingeschaltet</td><td>Video-ID</td></tr>
+      <tr><td>Last.fm, ListenBrainz, Discord</td><td>Scrobbeln bzw. „Hört gerade“, nur wenn du dich dort anmeldest</td><td>Gehörte Titel, Interpret, Zeitpunkt</td></tr>
+      <tr><td>Deezer, Spotify</td><td>Playlist-Import, nur wenn du ihn startest</td><td>Link oder Name der Playlist</td></tr>
+      <tr><td>paste.crdroid.net</td><td>Absturzprotokoll teilen, nur wenn du nach einem Absturz auf „Hochladen“ tippst</td><td>Das Absturzprotokoll (Gerät, Android-Version, Fehlermeldung)</td></tr>
+    </table>
+    </div>
+
+    <h2>PeekParty (gemeinsames Hören)</h2>
+    <p>PeekParty läuft über unseren eigenen Server <code>listen.peekmusic.org</code> (gehostet bei Hetzner in Deutschland). Die Verbindung ist verschlüsselt (TLS). Nur wenn du PeekParty nutzt, speichert der Server:</p>
+    <ul>
+      <li>ein zufälliges Geräte-Token, das deine App selbst erzeugt, und deinen Friend Code,</li>
+      <li>den Namen, den du dir in PeekParty gibst, und deine Freundesliste,</li>
+      <li>während einer Party: Raum-Code, den laufenden Titel, die Warteschlange und Song-Vorschläge der Teilnehmenden.</li>
+    </ul>
+    <p>Zur Fehlersuche protokolliert der Server, wann sich Geräte verbinden und trennen, mit Nutzer-ID, Name und Raum-Code, bei Song-Vorschlägen auch die Song-ID. Der Webserver davor speichert keine Zugriffe, nur bei Verbindungsfehlern die IP-Adresse. Alle Protokolle werden nach 14 Tagen automatisch gelöscht. Parties werden gelöscht, wenn sie enden. Freundesliste und Name bleiben, bis du die Löschung verlangst.</p>
+    <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (du nutzt die Funktion) bzw. lit. f für die Fehlersuche.</p>
+
+    <h2>Deine Rechte</h2>
+    <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch. Für PeekParty-Daten schreib an die E-Mail oben und nenn deinen Friend Code. Du kannst dich außerdem bei einer Datenschutz-Aufsichtsbehörde beschweren.</p>
+
+    <h2>Änderungen</h2>
+    <p>Wenn sich ändert, welche Dienste PeekMusic nutzt, passen wir diese Seite an. Das Datum oben zeigt den aktuellen Stand.</p>
+  </section>
+
+  <hr>
+
+  <section id="en" lang="en">
+    <h1>Privacy</h1>
+    <p class="meta">PeekMusic for Android · Last updated: November 15, 2026</p>
+    <div class="box">
+      <p><strong>In short:</strong> PeekMusic has no account of its own, no ads, no tracking and sends no crash reports. Your library, history and settings stay on your device. To load music, lyrics and artwork the app talks directly to the services listed below. Only PeekParty (listening together) uses a server of our own.</p>
+    </div>
+
+    <h2>Controller</h2>
+    <p>Endrit Limani, Germany<br>Email: <a href="mailto:contact@peekmusic.org">contact@peekmusic.org</a></p>
+
+    <h2>What stays on your device</h2>
+    <p>Library, playlists, likes, listening and search history, downloads, settings and your sign-ins (YouTube and, if you use them, Spotify, Last.fm, ListenBrainz, Discord) are stored only on your device. You create backups yourself and decide where they go. Uninstalling the app removes this data.</p>
+
+    <h2>Services the app talks to directly</h2>
+    <p>Each of these services sees your IP address and the content of the request, and its own privacy policy applies. PeekMusic does not send data to us, except for PeekParty.</p>
+    <div class="wrap">
+    <table>
+      <tr><th>Service</th><th>Purpose</th><th>What is sent</th></tr>
+      <tr><td>YouTube / YouTube Music (Google)</td><td>Search, playback, home, library; your account if you sign in</td><td>Searches, played tracks, your session cookies if signed in</td></tr>
+      <tr><td>Lyrics providers (BetterLyrics, lrc.red, Unison, LrcLib, KuGou, Paxsenix)</td><td>Lyrics for the current song</td><td>Title, artist, album, duration</td></tr>
+      <tr><td>Google Translate</td><td>Translating lyrics, only when turned on</td><td>Lyrics text, target language</td></tr>
+      <tr><td>Apple Music</td><td>Animated covers, artist images and videos, only when turned on</td><td>Title, artist, album</td></tr>
+      <tr><td>Spotify and spotify-canva.vercel.app</td><td>Canvas videos, only when turned on. Without a Spotify sign-in through the public service spotify-canva.vercel.app</td><td>Title, artist, Spotify track ID; your Spotify session if signed in</td></tr>
+      <tr><td>GitHub</td><td>Checking for a new version</td><td>A request for PeekMusic's release list</td></tr>
+      <tr><td>SponsorBlock</td><td>Skipping sponsor segments in podcasts, only when turned on</td><td>Video ID</td></tr>
+      <tr><td>Last.fm, ListenBrainz, Discord</td><td>Scrobbling or "listening to", only if you sign in there</td><td>Played tracks, artist, time</td></tr>
+      <tr><td>Deezer, Spotify</td><td>Playlist import, only when you start it</td><td>Playlist link or name</td></tr>
+      <tr><td>paste.crdroid.net</td><td>Sharing a crash log, only when you tap "Upload" after a crash</td><td>The crash log (device, Android version, error)</td></tr>
+    </table>
+    </div>
+
+    <h2>PeekParty (listening together)</h2>
+    <p>PeekParty uses our own server <code>listen.peekmusic.org</code> (hosted by Hetzner in Germany) over an encrypted connection (TLS). Only if you use PeekParty, the server stores:</p>
+    <ul>
+      <li>a random device token your app creates, and your friend code,</li>
+      <li>the name you choose in PeekParty and your friend list,</li>
+      <li>during a party: the room code, the current track, the queue and song suggestions from participants.</li>
+    </ul>
+    <p>For troubleshooting, the server logs when devices connect and disconnect, with user ID, name and room code, and the song ID for song suggestions. The web server in front of it does not log requests, only the IP address when a connection fails. All logs are deleted automatically after 14 days. Parties are deleted when they end. Your friend list and name stay until you ask us to delete them.</p>
+    <p>The legal basis is Art. 6(1)(b) GDPR (you use the feature) and Art. 6(1)(f) for troubleshooting.</p>
+
+    <h2>Your rights</h2>
+    <p>You have the right to access, rectification, erasure, restriction of processing, data portability and to object. For PeekParty data, write to the email above and include your friend code. You can also lodge a complaint with a data protection authority.</p>
+
+    <h2>Changes</h2>
+    <p>If the services PeekMusic uses change, we update this page. The date above shows when it was last changed.</p>
+  </section>
+</main>
+</body>
+</html>
