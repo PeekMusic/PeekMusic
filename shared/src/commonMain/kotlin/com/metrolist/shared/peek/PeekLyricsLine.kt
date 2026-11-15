@@ -65,6 +65,7 @@ import com.metrolist.shared.ui.components.lyrics.LYRICS_GAP_START_LAG_MS
 import com.metrolist.shared.ui.components.lyrics.LyricsListItem
 import com.metrolist.shared.ui.components.lyrics.buildLyricsListItems
 import com.metrolist.shared.ui.components.lyrics.rememberCaptionLyricsPositionState
+import com.metrolist.shared.ui.components.lyrics.rememberSmoothLyricsPositionState
 import com.metrolist.shared.ui.components.lyrics.resolveLyricsTextColor
 import com.metrolist.shared.ui.menu.LyricsProviderDialog
 import com.metrolist.shared.ui.menu.LyricsSearchDialog
@@ -145,8 +146,25 @@ internal fun PeekLyricsLine(
                 isCasting = isCasting,
                 finalLineDurationMs = LyricsUtils.FINAL_DYNAMIC_LINE_DURATION_MS,
             )
+        // The line clock above only ticks at line boundaries when lyrics have no word timing, which froze the gap ring
+        // and let it overshoot its end. Like the full lyrics view, gaps get their own smooth clock with the same offset.
+        val smoothPosition =
+            rememberSmoothLyricsPositionState(
+                positionFlow = viewModel.currentPosition,
+                playbackSpeed = viewModel.playbackSpeed.collectAsState().value,
+                positionReader = viewModel::currentPositionMs,
+                isPlaying = isPlaying,
+                songId = songId,
+                isCasting = isCasting,
+                enabled = LocalPlayerPositionActive.current && hasTiming,
+            )
+        val offsetMs = LyricsUtils.combinedLyricsOffsetMs(timingOffsetMs, Settings.shared.globalLyricsOffsetMs)
+        val gapPosition =
+            remember(smoothPosition, offsetMs) {
+                derivedStateOf { LyricsUtils.lyricsPositionForOffset(smoothPosition.longValue, offsetMs) }
+            }
         val gaps = remember(lyrics) { buildLyricsListItems(lyrics).filterIsInstance<LyricsListItem.Indicator>() }
-        val content by remember(lyrics, isLoading, hasTiming, gaps, positionState) {
+        val content by remember(lyrics, isLoading, hasTiming, gaps, positionState, gapPosition) {
             derivedStateOf(structuralEqualityPolicy()) {
                 when {
                     lyrics.isEmpty() && isLoading -> {
@@ -162,12 +180,12 @@ internal fun PeekLyricsLine(
                     }
 
                     else -> {
-                        val position = positionState.value
+                        val gapNow = gapPosition.value
                         // Start the ring as soon as the line before the gap ends, so the next line never shows first.
                         gaps
-                            .firstOrNull { position in (it.gapStartMs - LYRICS_GAP_START_LAG_MS) until it.gapEndMs }
+                            .firstOrNull { gapNow in (it.gapStartMs - LYRICS_GAP_START_LAG_MS) until it.gapEndMs }
                             ?.let(PeekContent::Gap)
-                            ?: peekLine(lyrics, peekLineIndex(lyrics, position))
+                            ?: peekLine(lyrics, peekLineIndex(lyrics, positionState.value))
                     }
                 }
             }
@@ -207,7 +225,7 @@ internal fun PeekLyricsLine(
                         IntervalIndicator(
                             gapStartMs = shown.item.gapStartMs,
                             gapEndMs = shown.item.gapEndMs,
-                            currentPositionMs = { positionState.value.coerceIn(shown.item.gapStartMs, shown.item.gapEndMs) },
+                            currentPositionMs = { gapPosition.value.coerceIn(shown.item.gapStartMs, shown.item.gapEndMs) },
                             visible = true,
                             isPlaying = isPlaying,
                             color = color,
