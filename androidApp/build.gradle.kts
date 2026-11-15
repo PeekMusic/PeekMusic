@@ -79,7 +79,11 @@ abstract class GenerateAndroidStringsTask : DefaultTask() {
 
         fun rebrandText(node: Node) {
             if (node.nodeType == Node.TEXT_NODE || node.nodeType == Node.CDATA_SECTION_NODE) {
-                node.nodeValue = node.nodeValue.replace(Regex("Metrolist(?!Group)"), "PeekMusic")
+                node.nodeValue =
+                    node.nodeValue
+                        .replace(Regex("Metrolist(?!Group)"), "PeekMusic")
+                        .replace("Listen Together", "PeekParty")
+                        .replace(Regex("Gemeinsam(es)? Hören"), "PeekParty")
             }
             for (index in 0 until node.childNodes.length) {
                 rebrandText(node.childNodes.item(index))
@@ -102,7 +106,11 @@ abstract class GenerateAndroidStringsTask : DefaultTask() {
             entries(root).filter { key(it) in required }.forEach {
                 val entry = document.importNode(it, true)
                 // PeekMusic: same build-time rebrand as prepareComposeResourceAliases in shared/build.gradle.kts.
-                if (it.getAttribute("name") != "credits_creator") rebrandText(entry)
+                when (it.getAttribute("name")) {
+                    "credits_creator", "peek_party_based_on" -> Unit
+                    "listen_together", "listen_together_guest_choice_title" -> entry.textContent = "PeekParty"
+                    else -> rebrandText(entry)
+                }
                 escapeAndroidText(entry)
                 resources.appendChild(entry)
             }

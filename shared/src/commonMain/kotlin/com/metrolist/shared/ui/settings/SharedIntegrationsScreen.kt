@@ -675,7 +675,7 @@ private fun buildIntegrationsRegistry(
             SettingsPageId.LISTEN_TOGETHER,
             stringResource(Res.string.listen_together),
             settingsPageSubtitle(
-                stringResource(Res.string.settings_listen_together_overview),
+                stringResource(Res.string.peek_party_based_on), // PeekMusic: PeekParty credits Listen Together
                 integrationStatus(settings.listenTogetherEnabled, settings.listenTogetherUsername, requiresAccount = true),
             ),
             MetrolistIcons.Outlined.Headphones,

@@ -617,9 +617,26 @@ val prepareComposeResourceAliases =
         }
         // PeekMusic: rebrand UI text at build time so upstream catalogs (and Weblate updates) merge without conflicts.
         // Keep in sync with GenerateAndroidStringsTask in androidApp/build.gradle.kts.
+        // Listen Together is called PeekParty here; its title becomes PeekParty in every language.
         filesMatching("**/strings.xml") {
             filter { line ->
-                if (line.contains("name=\"credits_creator\"")) line else line.replace(Regex("Metrolist(?!Group)"), "PeekMusic")
+                val name = Regex("name=\"([^\"]+)\"").find(line)?.groupValues?.get(1)
+                when (name) {
+                    "credits_creator", "peek_party_based_on" -> {
+                        line
+                    }
+
+                    "listen_together", "listen_together_guest_choice_title" -> {
+                        line.replaceFirst(Regex(">[^<]*<"), ">PeekParty<")
+                    }
+
+                    else -> {
+                        line
+                            .replace(Regex("Metrolist(?!Group)"), "PeekMusic")
+                            .replace("Listen Together", "PeekParty")
+                            .replace(Regex("Gemeinsam(es)? Hören"), "PeekParty")
+                    }
+                }
             }
         }
         into(layout.buildDirectory.dir("generated/composeResourceAliases"))
