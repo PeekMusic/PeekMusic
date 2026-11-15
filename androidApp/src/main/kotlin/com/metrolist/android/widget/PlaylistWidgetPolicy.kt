@@ -12,9 +12,13 @@ internal fun playlistWidgetQuickPickCapacity(
     minHeight: Int,
 ): Int =
     when {
-        minWidth < PLAYLIST_WIDGET_COMPACT_MAX_WIDTH_DP -> 1
+        // PeekMusic: narrow widgets show a 2x2 grid of playlists.
+        minWidth < PLAYLIST_WIDGET_COMPACT_MAX_WIDTH_DP -> 4
+
         minHeight < 330 -> 4
+
         minWidth >= 360 -> 8
+
         else -> 4
     }
 

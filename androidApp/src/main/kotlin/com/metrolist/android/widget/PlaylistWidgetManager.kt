@@ -246,11 +246,10 @@ class PlaylistWidgetManager(
         currentPosition: Long,
         quickPicks: List<QuickPick>,
     ): RemoteViews {
-        if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) < PLAYLIST_WIDGET_COMPACT_MAX_WIDTH_DP) {
-            return createCompactRemoteViews(title, artist, albumArt, isPlaying, quickPicks.firstOrNull())
-        }
-
-        val views = RemoteViews(context.packageName, R.layout.widget_playlist)
+        // PeekMusic: playlists only; narrow widgets show a 2x2 grid instead of a player with one playlist.
+        val compact = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) < PLAYLIST_WIDGET_COMPACT_MAX_WIDTH_DP
+        val views = RemoteViews(context.packageName, if (compact) R.layout.widget_playlist_grid2 else R.layout.widget_playlist)
+        bindPeekPlaylistColors(context, views, cardSlots.map { it.titleId })
         views.setTextViewText(R.id.widget_playlist_song_title, title)
         views.setTextViewText(R.id.widget_playlist_artist_name, artist)
         views.setImageViewBitmap(R.id.widget_playlist_album_art, albumArt?.let { getRoundedAlbumArt(it) } ?: getRoundedAppIcon())

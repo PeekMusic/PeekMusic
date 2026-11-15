@@ -1,22 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- PeekMusic playlist widget: quick start for playlists only, no player (decision 2026-11-15).
+     The hidden player section keeps the ids the widget manager still binds. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:targetApi="s"
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_vertical"
     android:background="@drawable/widget_background"
     android:clipToOutline="true"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp"
-    android:theme="@style/Theme.Widget.Metrolist">
+    android:theme="@style/Theme.Widget.Metrolist"
+    tools:ignore="UseAppTint"
+    tools:targetApi="s">
+
+    <ImageView
+        android:id="@+id/widget_playlist_surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_background" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
 
     <LinearLayout
         android:id="@+id/widget_playlist_player_section"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -149,190 +161,184 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/widget_playlist_quick_picks_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/widget_playlist_quick_picks_section"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/widget_playlist_row_1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="start">
-
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:orientation="horizontal">
             <LinearLayout
                 android:id="@+id/widget_playlist_card_1"
-                style="@style/MetrolistPlaylistWidgetCard">
-                <FrameLayout style="@style/MetrolistPlaylistWidgetArtworkFrame">
+                style="@style/PeekPlaylistWidgetCard">
+                <FrameLayout style="@style/PeekPlaylistWidgetArtworkFrame">
                     <ImageView
                         android:id="@+id/widget_playlist_card_1_art"
-                        style="@style/MetrolistPlaylistWidgetArtwork"
+                        style="@style/PeekPlaylistWidgetArtwork"
                         android:contentDescription="@null" />
                     <FrameLayout
                         android:id="@+id/widget_playlist_card_1_play_container"
-                        style="@style/MetrolistPlaylistWidgetCardPlayButton">
+                        style="@style/PeekPlaylistWidgetCardPlayButton">
                         <ImageView
                             android:id="@+id/widget_playlist_card_1_play"
-                            style="@style/MetrolistPlaylistWidgetCardPlayIcon"
+                            style="@style/PeekPlaylistWidgetCardPlayIcon"
                             android:contentDescription="@null" />
                     </FrameLayout>
                 </FrameLayout>
-                <TextView android:id="@+id/widget_playlist_card_1_title" style="@style/MetrolistPlaylistWidgetCardTitle" />
+                <TextView android:id="@+id/widget_playlist_card_1_title" style="@style/PeekPlaylistWidgetCardTitle" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/widget_playlist_card_2"
-                style="@style/MetrolistPlaylistWidgetCard">
-                <FrameLayout style="@style/MetrolistPlaylistWidgetArtworkFrame">
+                style="@style/PeekPlaylistWidgetCard">
+                <FrameLayout style="@style/PeekPlaylistWidgetArtworkFrame">
                     <ImageView
                         android:id="@+id/widget_playlist_card_2_art"
-                        style="@style/MetrolistPlaylistWidgetArtwork"
+                        style="@style/PeekPlaylistWidgetArtwork"
                         android:contentDescription="@null" />
                     <FrameLayout
                         android:id="@+id/widget_playlist_card_2_play_container"
-                        style="@style/MetrolistPlaylistWidgetCardPlayButton">
+                        style="@style/PeekPlaylistWidgetCardPlayButton">
                         <ImageView
                             android:id="@+id/widget_playlist_card_2_play"
-                            style="@style/MetrolistPlaylistWidgetCardPlayIcon"
+                            style="@style/PeekPlaylistWidgetCardPlayIcon"
                             android:contentDescription="@null" />
                     </FrameLayout>
                 </FrameLayout>
-                <TextView android:id="@+id/widget_playlist_card_2_title" style="@style/MetrolistPlaylistWidgetCardTitle" />
+                <TextView android:id="@+id/widget_playlist_card_2_title" style="@style/PeekPlaylistWidgetCardTitle" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/widget_playlist_card_3"
-                style="@style/MetrolistPlaylistWidgetCard">
-                <FrameLayout style="@style/MetrolistPlaylistWidgetArtworkFrame">
+                style="@style/PeekPlaylistWidgetCard">
+                <FrameLayout style="@style/PeekPlaylistWidgetArtworkFrame">
                     <ImageView
                         android:id="@+id/widget_playlist_card_3_art"
-                        style="@style/MetrolistPlaylistWidgetArtwork"
+                        style="@style/PeekPlaylistWidgetArtwork"
                         android:contentDescription="@null" />
                     <FrameLayout
                         android:id="@+id/widget_playlist_card_3_play_container"
-                        style="@style/MetrolistPlaylistWidgetCardPlayButton">
+                        style="@style/PeekPlaylistWidgetCardPlayButton">
                         <ImageView
                             android:id="@+id/widget_playlist_card_3_play"
-                            style="@style/MetrolistPlaylistWidgetCardPlayIcon"
+                            style="@style/PeekPlaylistWidgetCardPlayIcon"
                             android:contentDescription="@null" />
                     </FrameLayout>
                 </FrameLayout>
-                <TextView android:id="@+id/widget_playlist_card_3_title" style="@style/MetrolistPlaylistWidgetCardTitle" />
+                <TextView android:id="@+id/widget_playlist_card_3_title" style="@style/PeekPlaylistWidgetCardTitle" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/widget_playlist_card_4"
-                style="@style/MetrolistPlaylistWidgetCard">
-                <FrameLayout style="@style/MetrolistPlaylistWidgetArtworkFrame">
+                style="@style/PeekPlaylistWidgetCard">
+                <FrameLayout style="@style/PeekPlaylistWidgetArtworkFrame">
                     <ImageView
                         android:id="@+id/widget_playlist_card_4_art"
-                        style="@style/MetrolistPlaylistWidgetArtwork"
+                        style="@style/PeekPlaylistWidgetArtwork"
                         android:contentDescription="@null" />
                     <FrameLayout
                         android:id="@+id/widget_playlist_card_4_play_container"
-                        style="@style/MetrolistPlaylistWidgetCardPlayButton">
+                        style="@style/PeekPlaylistWidgetCardPlayButton">
                         <ImageView
                             android:id="@+id/widget_playlist_card_4_play"
-                            style="@style/MetrolistPlaylistWidgetCardPlayIcon"
+                            style="@style/PeekPlaylistWidgetCardPlayIcon"
                             android:contentDescription="@null" />
                     </FrameLayout>
                 </FrameLayout>
-                <TextView android:id="@+id/widget_playlist_card_4_title" style="@style/MetrolistPlaylistWidgetCardTitle" />
+                <TextView android:id="@+id/widget_playlist_card_4_title" style="@style/PeekPlaylistWidgetCardTitle" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/widget_playlist_row_2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            android:gravity="start"
-            android:visibility="gone">
-
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:orientation="horizontal">
             <LinearLayout
                 android:id="@+id/widget_playlist_card_5"
-                style="@style/MetrolistPlaylistWidgetCard">
-                <FrameLayout style="@style/MetrolistPlaylistWidgetArtworkFrame">
+                style="@style/PeekPlaylistWidgetCard">
+                <FrameLayout style="@style/PeekPlaylistWidgetArtworkFrame">
                     <ImageView
                         android:id="@+id/widget_playlist_card_5_art"
-                        style="@style/MetrolistPlaylistWidgetArtwork"
+                        style="@style/PeekPlaylistWidgetArtwork"
                         android:contentDescription="@null" />
                     <FrameLayout
                         android:id="@+id/widget_playlist_card_5_play_container"
-                        style="@style/MetrolistPlaylistWidgetCardPlayButton">
+                        style="@style/PeekPlaylistWidgetCardPlayButton">
                         <ImageView
                             android:id="@+id/widget_playlist_card_5_play"
-                            style="@style/MetrolistPlaylistWidgetCardPlayIcon"
+                            style="@style/PeekPlaylistWidgetCardPlayIcon"
                             android:contentDescription="@null" />
                     </FrameLayout>
                 </FrameLayout>
-                <TextView android:id="@+id/widget_playlist_card_5_title" style="@style/MetrolistPlaylistWidgetCardTitle" />
+                <TextView android:id="@+id/widget_playlist_card_5_title" style="@style/PeekPlaylistWidgetCardTitle" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/widget_playlist_card_6"
-                style="@style/MetrolistPlaylistWidgetCard">
-                <FrameLayout style="@style/MetrolistPlaylistWidgetArtworkFrame">
+                style="@style/PeekPlaylistWidgetCard">
+                <FrameLayout style="@style/PeekPlaylistWidgetArtworkFrame">
                     <ImageView
                         android:id="@+id/widget_playlist_card_6_art"
-                        style="@style/MetrolistPlaylistWidgetArtwork"
+                        style="@style/PeekPlaylistWidgetArtwork"
                         android:contentDescription="@null" />
                     <FrameLayout
                         android:id="@+id/widget_playlist_card_6_play_container"
-                        style="@style/MetrolistPlaylistWidgetCardPlayButton">
+                        style="@style/PeekPlaylistWidgetCardPlayButton">
                         <ImageView
                             android:id="@+id/widget_playlist_card_6_play"
-                            style="@style/MetrolistPlaylistWidgetCardPlayIcon"
+                            style="@style/PeekPlaylistWidgetCardPlayIcon"
                             android:contentDescription="@null" />
                     </FrameLayout>
                 </FrameLayout>
-                <TextView android:id="@+id/widget_playlist_card_6_title" style="@style/MetrolistPlaylistWidgetCardTitle" />
+                <TextView android:id="@+id/widget_playlist_card_6_title" style="@style/PeekPlaylistWidgetCardTitle" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/widget_playlist_card_7"
-                style="@style/MetrolistPlaylistWidgetCard">
-                <FrameLayout style="@style/MetrolistPlaylistWidgetArtworkFrame">
+                style="@style/PeekPlaylistWidgetCard">
+                <FrameLayout style="@style/PeekPlaylistWidgetArtworkFrame">
                     <ImageView
                         android:id="@+id/widget_playlist_card_7_art"
-                        style="@style/MetrolistPlaylistWidgetArtwork"
+                        style="@style/PeekPlaylistWidgetArtwork"
                         android:contentDescription="@null" />
                     <FrameLayout
                         android:id="@+id/widget_playlist_card_7_play_container"
-                        style="@style/MetrolistPlaylistWidgetCardPlayButton">
+                        style="@style/PeekPlaylistWidgetCardPlayButton">
                         <ImageView
                             android:id="@+id/widget_playlist_card_7_play"
-                            style="@style/MetrolistPlaylistWidgetCardPlayIcon"
+                            style="@style/PeekPlaylistWidgetCardPlayIcon"
                             android:contentDescription="@null" />
                     </FrameLayout>
                 </FrameLayout>
-                <TextView android:id="@+id/widget_playlist_card_7_title" style="@style/MetrolistPlaylistWidgetCardTitle" />
+                <TextView android:id="@+id/widget_playlist_card_7_title" style="@style/PeekPlaylistWidgetCardTitle" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/widget_playlist_card_8"
-                style="@style/MetrolistPlaylistWidgetCard">
-                <FrameLayout style="@style/MetrolistPlaylistWidgetArtworkFrame">
+                style="@style/PeekPlaylistWidgetCard">
+                <FrameLayout style="@style/PeekPlaylistWidgetArtworkFrame">
                     <ImageView
                         android:id="@+id/widget_playlist_card_8_art"
-                        style="@style/MetrolistPlaylistWidgetArtwork"
+                        style="@style/PeekPlaylistWidgetArtwork"
                         android:contentDescription="@null" />
                     <FrameLayout
                         android:id="@+id/widget_playlist_card_8_play_container"
-                        style="@style/MetrolistPlaylistWidgetCardPlayButton">
+                        style="@style/PeekPlaylistWidgetCardPlayButton">
                         <ImageView
                             android:id="@+id/widget_playlist_card_8_play"
-                            style="@style/MetrolistPlaylistWidgetCardPlayIcon"
+                            style="@style/PeekPlaylistWidgetCardPlayIcon"
                             android:contentDescription="@null" />
                     </FrameLayout>
                 </FrameLayout>
-                <TextView android:id="@+id/widget_playlist_card_8_title" style="@style/MetrolistPlaylistWidgetCardTitle" />
+                <TextView android:id="@+id/widget_playlist_card_8_title" style="@style/PeekPlaylistWidgetCardTitle" />
             </LinearLayout>
         </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</FrameLayout>

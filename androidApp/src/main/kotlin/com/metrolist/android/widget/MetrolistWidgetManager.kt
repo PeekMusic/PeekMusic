@@ -67,25 +67,23 @@ class MetrolistWidgetManager(
     internal fun refreshProgressDemand() {
         val manager = AppWidgetManager.getInstance(context)
         val music = manager.getAppWidgetIds(ComponentName(context, MusicWidgetReceiver::class.java))
-        val playlists = manager.getAppWidgetIds(ComponentName(context, PlaylistWidgetReceiver::class.java))
-        progressDemand.value = music.any { id ->
-            val options = manager.getAppWidgetOptions(id)
-            val landscape = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-            val width =
-                options.getInt(
-                    if (landscape) AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH else AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH,
-                    options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH),
-                )
-            val height =
-                options.getInt(
-                    if (landscape) AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT else AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT,
-                    options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT),
-                )
-            musicWidgetSizePolicy(width, height, context.resources.configuration.fontScale).layout == MusicWidgetLayout.PLAYER
-        } ||
-            playlists.any { id ->
-                manager.getAppWidgetOptions(id).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) >= PLAYLIST_WIDGET_COMPACT_MAX_WIDTH_DP
+        progressDemand.value =
+            music.any { id ->
+                val options = manager.getAppWidgetOptions(id)
+                val landscape = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                val width =
+                    options.getInt(
+                        if (landscape) AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH else AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH,
+                        options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH),
+                    )
+                val height =
+                    options.getInt(
+                        if (landscape) AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT else AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT,
+                        options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT),
+                    )
+                musicWidgetSizePolicy(width, height, context.resources.configuration.fontScale).layout == MusicWidgetLayout.PLAYER
             }
+        // PeekMusic: the playlist widget has no progress bar any more, so it never asks for progress updates.
     }
 
     internal suspend fun updateProgress(
