@@ -263,7 +263,8 @@ class MetrolistWidgetManager(
         currentPosition: Long,
         controls: WidgetControls = WidgetControls(),
     ): MusicWidgetRemoteViews {
-        val seed = cachedArtworkSeed ?: albumArt?.extractThemeColor()?.also { cachedArtworkSeed = it }
+        // PeekMusic: widget colors follow the app color settings.
+        val seed = peekWidgetSeed { cachedArtworkSeed ?: albumArt?.extractThemeColor()?.also { cachedArtworkSeed = it } }
 
         fun scheme(dark: Boolean) =
             musicWidgetColorScheme(seed, dark) {
@@ -306,7 +307,7 @@ class MetrolistWidgetManager(
                         createRemoteViews(title, artist, albumArt, duration, currentPosition)
                     }
                 }
-            bindMusicControls(views, controls, isLiked, policy.layout != MusicWidgetLayout.PLAYER)
+            bindMusicControls(views, controls, isLiked, inGroup = false)
             if (lightColors != null && darkColors != null) {
                 bindMusicColors(views, policy.layout, isLiked, lightColors, darkColors)
             }
@@ -408,18 +409,19 @@ class MetrolistWidgetManager(
             role: (ColorScheme) -> Color,
         ) = color(id, "setTextColor", role)
 
+        // PeekMusic: one tonal surface, filled play button, tonal skip buttons, like as a quiet icon button.
         text(R.id.widget_play_pause_label) { it.onPrimary }
-        tint(R.id.widget_surface_background) { it.surface }
+        tint(R.id.widget_surface_background) { it.surfaceContainer }
         tint(R.id.widget_play_background) { it.primary }
         tint(R.id.widget_play_pause) { it.onPrimary }
         for (id in intArrayOf(R.id.widget_prev_background, R.id.widget_next_background)) {
-            tint(id) { it.secondary }
+            tint(id) { it.secondaryContainer }
         }
         for (id in intArrayOf(R.id.widget_prev, R.id.widget_next)) {
-            tint(id) { it.onSecondary }
+            tint(id) { it.onSecondaryContainer }
         }
-        tint(R.id.widget_like_background) { if (isLiked) it.tertiary else it.secondary }
-        tint(R.id.widget_like_button) { if (isLiked) it.onTertiary else it.onSecondary }
+        tint(R.id.widget_like_background) { if (isLiked) it.primaryContainer else it.surfaceContainerHighest }
+        tint(R.id.widget_like_button) { if (isLiked) it.onPrimaryContainer else it.onSurfaceVariant }
         val textIds =
             when (layout) {
                 MusicWidgetLayout.PLAYER -> R.id.widget_song_title to R.id.widget_artist_name

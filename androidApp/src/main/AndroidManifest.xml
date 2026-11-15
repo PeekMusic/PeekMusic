@@ -541,6 +541,7 @@
 
         <receiver
             android:name="com.metrolist.android.widget.RecognizerWidgetReceiver"
+            android:enabled="false"
             android:exported="true"
             android:label="@string/widget_recognizer_name">
             <intent-filter>

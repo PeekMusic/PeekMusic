@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/widget_background"
     android:clipToOutline="true"
-    android:theme="@style/Theme.Widget.Metrolist">
+    android:theme="@style/Theme.Widget.Metrolist"
+    tools:ignore="UseAppTint"
+    tools:targetApi="s">
 
     <ImageView
         android:id="@+id/widget_surface_background"
@@ -15,18 +18,45 @@
         android:scaleType="fitXY"
         android:src="@drawable/widget_background" />
 
-    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
-        tools:targetApi="s"
-        android:layoutDirection="ltr"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="6dp">
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
 
         <include
             layout="@layout/widget_music_controls"
-            android:layout_width="match_parent"
-            android:layout_height="48dp" />
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:id="@+id/widget_like_container"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:contentDescription="@string/action_like"
+            android:focusable="true"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/widget_like_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:src="@drawable/widget_like_button_bg" />
+
+            <ImageView
+                android:id="@+id/widget_like_button"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_widget_heart_outline_nav" />
+        </FrameLayout>
     </LinearLayout>
 </FrameLayout>
