@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	ltpb "github.com/MetrolistGroup/metroserver/proto"
 	pb "github.com/MetrolistGroup/metroserver/proto/peek"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -45,11 +46,19 @@ const (
 // peekState is the in-memory side: who is online under which friend code. The zero value is ready to use.
 type peekState struct {
 	mu      sync.Mutex
+	invites map[string]peekInvite // room code, invitee and inviter friend codes, joined by "\x00"
 	byCode  map[string]map[*Client]struct{}
 	clients map[*Client]*peekClient
 	once    sync.Once
 	migrate sync.Once
 }
+
+type peekInvite struct {
+	inviter string
+	expires time.Time
+}
+
+const peekInviteLifetime = 10 * time.Minute
 
 type peekClient struct {
 	code     string
@@ -473,6 +482,18 @@ func (s *Server) peekInvite(c *Client, payload []byte) {
 		c.sendError(s.logger, peekFriendErrorCode, "Your friend is offline")
 		return
 	}
+	s.peek.mu.Lock()
+	if s.peek.invites == nil {
+		s.peek.invites = map[string]peekInvite{}
+	}
+	now := time.Now()
+	for key, inv := range s.peek.invites {
+		if now.After(inv.expires) {
+			delete(s.peek.invites, key)
+		}
+	}
+	s.peek.invites[roomCode+"\x00"+friend+"\x00"+me] = peekInvite{inviter: me, expires: now.Add(peekInviteLifetime)}
+	s.peek.mu.Unlock()
 	invite := &pb.FriendInvitePayload{From: s.peekInfo(store, me), RoomCode: roomCode}
 	for _, t := range targets {
 		if t.hasFeature(FeaturePeekFriends) {
@@ -511,4 +532,31 @@ func (s *Server) peekDeleteAccount(c *Client) {
 		}
 	}
 	s.logger.Info("PeekParty friends account deleted", zap.String("client_id", c.clientID()))
+}
+
+// peekAdmitInvited approves joiner's request right away when the room's host invited them, so the host is not
+// asked twice. It reports whether it did.
+func (s *Server) peekAdmitInvited(room *Room, host, joiner *Client) bool {
+	s.peek.mu.Lock()
+	joinerInfo, hostInfo := s.peek.clients[joiner], s.peek.clients[host]
+	if joinerInfo == nil || hostInfo == nil {
+		s.peek.mu.Unlock()
+		return false
+	}
+	key := room.Code + "\x00" + joinerInfo.code + "\x00" + hostInfo.code
+	inv, ok := s.peek.invites[key]
+	if !ok || time.Now().After(inv.expires) || inv.inviter != hostInfo.code {
+		s.peek.mu.Unlock()
+		return false
+	}
+	delete(s.peek.invites, key)
+	s.peek.mu.Unlock()
+
+	approval, err := proto.Marshal(&ltpb.ApproveJoinPayload{UserId: joiner.clientID()})
+	if err != nil {
+		return false
+	}
+	s.handleApproveJoin(host, approval)
+	s.logger.Info("PeekParty invited friend admitted", zap.String("room_code", room.Code), zap.String("user_id", joiner.clientID()))
+	return true
 }

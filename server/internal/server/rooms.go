@@ -492,6 +492,11 @@ func (s *Server) handleJoinRoom(c *Client, payload []byte) {
 	room.mu.Unlock()
 	s.mu.RUnlock()
 
+	// PeekMusic: a friend the host invited to this party gets in without asking again.
+	if hostConnected && s.peekAdmitInvited(room, host, c) {
+		return
+	}
+
 	// Notify host of join request if host is currently connected.
 	if hostConnected {
 		host.sendMessage(s.logger, MsgTypeJoinRequest, JoinRequestPayload{

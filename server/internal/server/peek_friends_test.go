@@ -441,3 +441,61 @@ func TestPeekPresenceOnlyConnection(t *testing.T) {
 		t.Fatal("the party connection got friend_removed")
 	}
 }
+
+func TestPeekHostInviteSkipsApproval(t *testing.T) {
+	server, room, host, guest := roomTestFixture()
+	var err error
+	server.database, err = openDatabase(filepath.Join(t.TempDir(), DefaultDatabaseFile))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		server.Close()
+		_ = server.database.Close()
+	})
+
+	hostFriends := withFeatures(newClient("host-friends", nil), FeaturePeekFriends)
+	hostCode := peekAuth(t, server, hostFriends, "host-token-0123456789", "Host")
+	peekSend(t, server, host, MsgTypeAuthenticate, &pb.AuthenticatePayload{AuthToken: "host-token-0123456789", PresenceOnly: true})
+	guestFriends := withFeatures(newClient("guest-friends", nil), FeaturePeekFriends)
+	guestCode := peekAuth(t, server, guestFriends, "guest-token-012345678", "Guest")
+	peekSend(t, server, guest, MsgTypeAuthenticate, &pb.AuthenticatePayload{AuthToken: "guest-token-012345678", PresenceOnly: true})
+
+	newcomerFriends := withFeatures(newClient("newcomer-friends", nil), FeaturePeekFriends)
+	newcomerCode := peekAuth(t, server, newcomerFriends, "newcomer-token-012345", "Newcomer")
+	befriend(t, server, hostCode, newcomerCode)
+	befriend(t, server, guestCode, newcomerCode)
+	drainTypes(t, host)
+
+	join := func(id string) *Client {
+		party := withFeatures(newClient(id, nil), FeaturePeekFriends)
+		peekSend(t, server, party, MsgTypeAuthenticate, &pb.AuthenticatePayload{AuthToken: "newcomer-token-012345", PresenceOnly: true})
+		server.handleJoinRoom(party, encodeTestPayload(t, MsgTypeJoinRoom, &JoinRoomPayload{RoomCode: room.Code, Username: "Newcomer"}))
+		return party
+	}
+
+	// A guest's invite still needs the host.
+	peekSend(t, server, guestFriends, MsgTypeInviteFriend, &pb.FriendCodePayload{FriendCode: newcomerCode})
+	first := join("newcomer-1")
+	if !hasType(drainTypes(t, host), MsgTypeJoinRequest) {
+		t.Fatal("host was not asked about a guest's invitee")
+	}
+	server.removeClient(first)
+	drainTypes(t, host)
+
+	// The host's invite lets them straight in, once.
+	peekSend(t, server, hostFriends, MsgTypeInviteFriend, &pb.FriendCodePayload{FriendCode: newcomerCode})
+	second := join("newcomer-2")
+	if types := drainTypes(t, host); hasType(types, MsgTypeJoinRequest) {
+		t.Fatalf("host was asked although they invited: %v", types)
+	}
+	if !hasType(drainTypes(t, second), MsgTypeJoinApproved) {
+		t.Fatal("the invited friend was not admitted")
+	}
+	server.peek.mu.Lock()
+	left := len(server.peek.invites)
+	server.peek.mu.Unlock()
+	if left != 1 { // only the guest's unused invite is left
+		t.Fatalf("invites left = %d, want the host's used up", left)
+	}
+}
