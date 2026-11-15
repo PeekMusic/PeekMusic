@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PeekParty friend</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Add a friend on PeekParty in PeekMusic and listen to music together in sync.">
+<meta name="theme-color" content="#fcf8ff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131318" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/roboto-flex-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/style.css">
+<script>try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/icons/icon-192.png" alt="" width="40" height="40"><span>PeekMusic</span></a>
+    <nav aria-label="Main">
+      <a href="https://github.com/PeekMusic/PeekMusic">GitHub</a>
+      <a href="/privacy/">Privacy</a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch between light and dark mode" title="Light / dark"><svg class="moon" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-120q-151 0-255.5-104.5T120-480q0-138 90-239.5T440-838q13-2 23 3.5t16 14.5q6 9 6.5 21t-7.5 23q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q11-7 22.5-6.5T819-479q10 5 15.5 15t3.5 24q-14 138-117.5 229T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg><svg class="sun" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM80-440q-17 0-28.5-11.5T40-480q0-17 11.5-28.5T80-520h80q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440H80Zm720 0q-17 0-28.5-11.5T760-480q0-17 11.5-28.5T800-520h80q17 0 28.5 11.5T920-480q0 17-11.5 28.5T880-440h-80ZM480-760q-17 0-28.5-11.5T440-800v-80q0-17 11.5-28.5T480-920q17 0 28.5 11.5T520-880v80q0 17-11.5 28.5T480-760Zm0 720q-17 0-28.5-11.5T440-80v-80q0-17 11.5-28.5T480-200q17 0 28.5 11.5T520-160v80q0 17-11.5 28.5T480-40ZM226-678l-43-42q-12-11-11.5-28t11.5-29q12-12 29-12t28 12l42 43q11 12 11 28t-11 28q-11 12-27.5 11.5T226-678Zm494 495-42-43q-11-12-11-28.5t11-27.5q11-12 27.5-11.5T734-282l43 42q12 11 11.5 28T777-183q-12 12-29 12t-28-12Zm-42-495q-12-11-11.5-27.5T678-734l42-43q11-12 28-11.5t29 11.5q12 12 12 29t-12 28l-43 42q-12 11-28 11t-28-11ZM183-183q-12-12-12-29t12-28l43-42q12-11 28.5-11t27.5 11q12 11 11.5 27.5T282-226l-42 43q-11 12-28 11.5T183-183Zm297-297Z"/></svg></button>
+  </div>
+</header>
+<main>
+  <section class="hero party">
+    <div class="wrap">
+      <div class="rise">
+        <span class="chip">PeekParty</span>
+        <h1 data-t="title">Add me as a <em>friend.</em></h1>
+        <p class="lead" data-t="lead">Open this link in PeekMusic to send a friend request. Then you see when the other one is online and can join each other’s parties.</p>
+        <p class="room" hidden><span data-t="room">Friend code</span> <code id="code"></code></p>
+        <div class="actions">
+          <a class="btn btn-filled btn-large" id="open" href="#"><svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h240q17 0 28.5 11.5T480-800q0 17-11.5 28.5T440-760H200v560h560v-240q0-17 11.5-28.5T800-480q17 0 28.5 11.5T840-440v240q0 33-23.5 56.5T760-120H200Zm560-584L416-360q-11 11-28 11t-28-11q-11-11-11-28t11-28l344-344H600q-17 0-28.5-11.5T560-800q0-17 11.5-28.5T600-840h200q17 0 28.5 11.5T840-800v200q0 17-11.5 28.5T800-560q-17 0-28.5-11.5T760-600v-104Z"/></svg><span data-t="open">Open in PeekMusic</span></a>
+          <a class="btn btn-tonal btn-large" href="https://github.com/PeekMusic/PeekMusic/releases/latest"><svg class="" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-337q-8 0-15-2.5t-13-8.5L308-492q-12-12-11.5-28t11.5-28q12-12 28.5-12.5T365-549l75 75v-286q0-17 11.5-28.5T480-800q17 0 28.5 11.5T520-760v286l75-75q12-12 28.5-11.5T652-548q11 12 11.5 28T652-492L508-348q-6 6-13 8.5t-15 2.5ZM240-160q-33 0-56.5-23.5T160-240v-80q0-17 11.5-28.5T200-360q17 0 28.5 11.5T240-320v80h480v-80q0-17 11.5-28.5T760-360q17 0 28.5 11.5T800-320v80q0 33-23.5 56.5T720-160H240Z"/></svg><span data-t="get">Get PeekMusic</span></a>
+        </div>
+        <p class="hint" data-t="hint">Nothing happens? Install PeekMusic for Android first, then tap the link again.</p>
+      </div>
+      <div class="hero-art rise d2" aria-hidden="true">
+        <svg class="cookie" viewBox="0 0 100 100"><path d="M50.00,0.00 L51.31,0.09 L52.60,0.34 L53.88,0.75 L55.12,1.30 L56.32,1.96 L57.49,2.70 L58.62,3.49 L59.72,4.29 L60.78,5.08 L61.84,5.83 L62.89,6.50 L63.94,7.09 L65.02,7.57 L66.14,7.96 L67.29,8.25 L68.50,8.45 L69.75,8.59 L71.05,8.69 L72.39,8.77 L73.75,8.86 L75.12,9.00 L76.49,9.21 L77.82,9.52 L79.11,9.94 L80.32,10.48 L81.45,11.17 L82.47,11.99 L83.37,12.93 L84.16,14.00 L84.84,15.16 L85.40,16.40 L85.87,17.70 L86.27,19.02 L86.61,20.35 L86.93,21.67 L87.24,22.94 L87.58,24.17 L87.97,25.34 L88.43,26.45 L88.97,27.50 L89.61,28.49 L90.34,29.45 L91.16,30.37 L92.05,31.28 L93.00,32.19 L93.98,33.12 L94.96,34.08 L95.91,35.08 L96.80,36.14 L97.59,37.25 L98.26,38.41 L98.79,39.63 L99.16,40.89 L99.35,42.18 L99.38,43.50 L99.25,44.82 L98.97,46.15 L98.57,47.45 L98.07,48.74 L97.50,50.00 L96.90,51.23 L96.30,52.43 L95.73,53.60 L95.23,54.75 L94.80,55.90 L94.48,57.04 L94.25,58.20 L94.14,59.38 L94.11,60.59 L94.17,61.84 L94.29,63.12 L94.44,64.44 L94.59,65.79 L94.71,67.16 L94.77,68.54 L94.74,69.92 L94.59,71.27 L94.31,72.58 L93.88,73.82 L93.30,75.00 L92.57,76.09 L91.71,77.08 L90.71,77.98 L89.62,78.78 L88.44,79.50 L87.22,80.14 L85.97,80.72 L84.73,81.27 L83.51,81.80 L82.34,82.34 L81.23,82.91 L80.19,83.53 L79.23,84.22 L78.34,85.00 L77.51,85.85 L76.73,86.79 L75.98,87.81 L75.25,88.88 L74.51,90.00 L73.75,91.14 L72.94,92.26 L72.08,93.33 L71.15,94.34 L70.14,95.24 L69.06,96.02 L67.91,96.65 L66.69,97.12 L65.41,97.44 L64.10,97.59 L62.75,97.59 L61.39,97.46 L60.04,97.22 L58.69,96.90 L57.37,96.53 L56.08,96.15 L54.81,95.78 L53.58,95.46 L52.37,95.21 L51.18,95.05 L50.00,95.00 L48.82,95.05 L47.63,95.21 L46.42,95.46 L45.19,95.78 L43.92,96.15 L42.63,96.53 L41.31,96.90 L39.96,97.22 L38.61,97.46 L37.25,97.59 L35.90,97.59 L34.59,97.44 L33.31,97.12 L32.09,96.65 L30.94,96.02 L29.86,95.24 L28.85,94.34 L27.92,93.33 L27.06,92.26 L26.25,91.14 L25.49,90.00 L24.75,88.88 L24.02,87.81 L23.27,86.79 L22.49,85.85 L21.66,85.00 L20.77,84.22 L19.81,83.53 L18.77,82.91 L17.66,82.34 L16.49,81.80 L15.27,81.27 L14.03,80.72 L12.78,80.14 L11.56,79.50 L10.38,78.78 L9.29,77.98 L8.29,77.08 L7.43,76.09 L6.70,75.00 L6.12,73.82 L5.69,72.58 L5.41,71.27 L5.26,69.92 L5.23,68.54 L5.29,67.16 L5.41,65.79 L5.56,64.44 L5.71,63.12 L5.83,61.84 L5.89,60.59 L5.86,59.38 L5.75,58.20 L5.52,57.04 L5.20,55.90 L4.77,54.75 L4.27,53.60 L3.70,52.43 L3.10,51.23 L2.50,50.00 L1.93,48.74 L1.43,47.45 L1.03,46.15 L0.75,44.82 L0.62,43.50 L0.65,42.18 L0.84,40.89 L1.21,39.63 L1.74,38.41 L2.41,37.25 L3.20,36.14 L4.09,35.08 L5.04,34.08 L6.02,33.12 L7.00,32.19 L7.95,31.28 L8.84,30.37 L9.66,29.45 L10.39,28.49 L11.03,27.50 L11.57,26.45 L12.03,25.34 L12.42,24.17 L12.76,22.94 L13.07,21.67 L13.39,20.35 L13.73,19.02 L14.13,17.70 L14.60,16.40 L15.16,15.16 L15.84,14.00 L16.63,12.93 L17.53,11.99 L18.55,11.17 L19.68,10.48 L20.89,9.94 L22.18,9.52 L23.51,9.21 L24.88,9.00 L26.25,8.86 L27.61,8.77 L28.95,8.69 L30.25,8.59 L31.50,8.45 L32.71,8.25 L33.86,7.96 L34.98,7.57 L36.06,7.09 L37.11,6.50 L38.16,5.83 L39.22,5.08 L40.28,4.29 L41.38,3.49 L42.51,2.70 L43.68,1.96 L44.88,1.30 L46.12,0.75 L47.40,0.34 L48.69,0.09Z"/></svg>
+        <img class="icon" src="/icons/icon-512.png" alt="" width="512" height="512">
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>PeekMusic is a fork of <a href="https://github.com/MetrolistGroup/Metrolist">Metrolist</a>, licensed under GPL-3.0. Not affiliated with YouTube or Google.</span>
+    <nav aria-label="Footer">
+      <a href="/privacy/">Privacy / Datenschutz</a>
+      <a href="https://github.com/PeekMusic/PeekMusic">GitHub</a>
+      <a href="mailto:contact@peekmusic.org">contact@peekmusic.org</a>
+    </nav>
+  </div>
+</footer>
+<script>document.querySelector(".theme-toggle").addEventListener("click",function(){var d=document.documentElement,cur=d.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),next=cur==="dark"?"light":"dark";d.dataset.theme=next;try{localStorage.setItem("theme",next)}catch(e){}});</script>
+<script>(function(){
+var q=new URLSearchParams(location.search),raw=(q.get("c")||"").replace(/[^A-Za-z0-9]/g,"").toUpperCase(),ok=/^[A-Z0-9]{9}$/.test(raw),c=ok?raw.match(/.{3}/g).join("-"):"";
+var de=(navigator.language||"").toLowerCase().indexOf("de")===0;
+var T={de:{title:"Füg mich als <em>Freund</em> hinzu.",lead:"Öffne diesen Link in PeekMusic, um eine Freundschaftsanfrage zu schicken. Dann seht ihr, wann der andere online ist, und könnt gegenseitig euren Partys beitreten.",room:"Freundescode",open:"In PeekMusic öffnen",get:"PeekMusic holen",hint:"Passiert nichts? Installier zuerst PeekMusic für Android und tipp dann nochmal auf den Link.",bad:"Dieser Link ist unvollständig. Frag nach einem neuen Link.",title2:"PeekParty-Freund"},
+en:{bad:"This link is incomplete. Ask for a new one."}};
+var t=de?T.de:T.en;
+if(de){document.documentElement.lang="de";document.title=t.title2;document.querySelectorAll("[data-t]").forEach(function(e){var k=e.dataset.t;if(t[k])e.innerHTML=t[k]})}
+var open=document.getElementById("open");
+if(ok){document.getElementById("code").textContent=c;document.querySelector(".room").hidden=false;open.href="peekmusic://friend/"+c}
+else{open.remove();document.querySelector("[data-t=lead]").textContent=t.bad;document.querySelector(".hint").remove()}
+})();</script>
+</body>
+</html>
