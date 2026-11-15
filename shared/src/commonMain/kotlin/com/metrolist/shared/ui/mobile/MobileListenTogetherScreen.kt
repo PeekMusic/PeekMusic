@@ -47,6 +47,7 @@ internal fun MobileListenTogetherScreen(
                 onEventMessage = { message, _ -> onMessage(message) },
                 bottomInset = bottomInset,
                 initialRoomCode = initialRoomCode,
+                onShareText = onShareText,
             )
         }
 

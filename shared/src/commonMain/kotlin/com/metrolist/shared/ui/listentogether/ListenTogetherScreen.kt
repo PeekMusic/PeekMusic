@@ -232,6 +232,7 @@ import com.metrolist.shared.generated.resources.settings_room_address_summary
 import com.metrolist.shared.generated.resources.settings_room_blocks_summary
 import com.metrolist.shared.generated.resources.settings_room_help_summary
 import com.metrolist.shared.generated.resources.settings_room_server_summary
+import com.metrolist.shared.generated.resources.share
 import com.metrolist.shared.generated.resources.suggest
 import com.metrolist.shared.generated.resources.unblock
 import com.metrolist.shared.generated.resources.username
@@ -294,6 +295,7 @@ fun ListenTogetherScreen(
     bottomInset: Dp = 0.dp,
     onDebugUpload: (() -> Unit)? = null,
     initialRoomCode: String? = null,
+    onShareText: ((String) -> Unit)? = null, // PeekMusic: the room link opens the system share sheet
 ) {
     if (!Settings.shared.listenTogetherEnabled) {
         LaunchedEffect(Unit) { onNavigateBack?.invoke() }
@@ -336,6 +338,7 @@ fun ListenTogetherScreen(
             onNavigateBack = onNavigateBack,
             onNavigateToSettings = onNavigateToSettings,
             onCopyText = onCopyText,
+            onShareText = onShareText,
             bottomInset = bottomInset,
         )
     } else {
@@ -1487,6 +1490,7 @@ private fun ListenTogetherRoomScreen(
     onNavigateBack: (() -> Unit)?,
     onNavigateToSettings: () -> Unit,
     onCopyText: (label: String, text: String) -> Unit,
+    onShareText: ((String) -> Unit)?,
     bottomInset: Dp,
 ) {
     val isHost = listenTogetherControls(Settings.shared.listenTogetherEnabled, role, inRoom = true).canModerate
@@ -1494,6 +1498,8 @@ private fun ListenTogetherRoomScreen(
     val failedTrack by manager.failedRoomTrack.collectAsState()
     val submittedSuggestions by manager.submittedSuggestions.collectAsState()
     val copyLinkLabel = stringResource(Res.string.listen_together_copy_link)
+    val shareLinkLabel = if (onShareText != null) stringResource(Res.string.share) else copyLinkLabel
+    val shareLink: (String) -> Unit = { link -> onShareText?.invoke(link) ?: onCopyText(copyLinkLabel, link) }
     val copyCodeLabel = stringResource(Res.string.listen_together_copy_code)
     val hostLabel = stringResource(Res.string.listen_together_host)
     val users = roomState.users.ifEmpty { listOf(UserInfo(roomState.hostId, hostLabel, true)) }
@@ -1512,12 +1518,10 @@ private fun ListenTogetherRoomScreen(
         actions = {
             var isShiftPressed by remember { mutableStateOf(false) }
             val shareParty = {
-                val link = manager.roomLink(useParty = true) ?: ShareUrls.party(roomState.roomCode, true)
-                onCopyText(copyLinkLabel, link)
+                shareLink(manager.roomLink(useParty = true) ?: ShareUrls.party(roomState.roomCode, true))
             }
             val shareNormal = {
-                val link = manager.roomLink(useParty = false) ?: ShareUrls.party(roomState.roomCode, false)
-                onCopyText(copyLinkLabel, link)
+                shareLink(manager.roomLink(useParty = false) ?: ShareUrls.party(roomState.roomCode, false))
             }
             IconButton(
                 onClick = {
@@ -1553,7 +1557,7 @@ private fun ListenTogetherRoomScreen(
                             )
                         },
             ) {
-                Icon(MetrolistIcons.Outlined.Share, contentDescription = copyLinkLabel)
+                Icon(MetrolistIcons.Outlined.Share, contentDescription = shareLinkLabel)
             }
         },
     ) { paddingValues ->

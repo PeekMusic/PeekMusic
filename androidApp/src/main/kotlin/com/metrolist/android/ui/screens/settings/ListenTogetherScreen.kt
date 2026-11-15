@@ -55,6 +55,15 @@ fun ListenTogetherScreen(
         onNavigateBack = onNavigateBack,
         onNavigateToSettings = onNavigateToSettings,
         onCopyText = { label, text -> context.copyToClipboard(label, text, copiedMessage) },
+        // PeekMusic: the room link opens the system share sheet instead of only copying it.
+        onShareText = { link ->
+            val shareIntent =
+                Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, link)
+                }
+            context.startActivitySafely(Intent.createChooser(shareIntent, null))
+        },
         onEventMessage = { message, isFailure ->
             Toast.makeText(context, message, if (isFailure) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
         },
