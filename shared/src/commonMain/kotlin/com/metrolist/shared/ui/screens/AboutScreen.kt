@@ -82,8 +82,10 @@ import com.metrolist.shared.generated.resources.build_type_debug
 import com.metrolist.shared.generated.resources.build_type_release
 import com.metrolist.shared.generated.resources.devmode_already_active
 import com.metrolist.shared.generated.resources.devtools_enabled
+import com.metrolist.shared.generated.resources.peek_about_section
 import com.metrolist.shared.generated.resources.play
 import com.metrolist.shared.generated.resources.stands_with_palestine
+import com.metrolist.shared.peek.PeekAbout
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.components.images.AsyncImage
 import com.metrolist.shared.ui.icons.MetrolistIcons
@@ -208,6 +210,17 @@ fun AboutScreen(
                 isDebug = isDebug,
                 colorScheme = colorScheme,
                 onLogoClick = ::handleLogoClick,
+            )
+
+            // PeekMusic: its developer first, Metrolist's team below.
+            CollaboratorsList(
+                contributors = listOf(PeekAbout.developer),
+                text = text,
+                title = stringResource(Res.string.peek_about_section),
+                avatarSize = 64.dp,
+                colorScheme = colorScheme,
+                onContributorClick = { selectedContributor = it },
+                onContributorLongClick = onContributorLongClick,
             )
 
             CommunitySection(

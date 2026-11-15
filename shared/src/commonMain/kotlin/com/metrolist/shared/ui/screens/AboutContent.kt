@@ -57,6 +57,7 @@ import com.metrolist.shared.generated.resources.credits_windows_developer
 import com.metrolist.shared.generated.resources.discord_rpc_title
 import com.metrolist.shared.generated.resources.open_github_profile
 import com.metrolist.shared.generated.resources.open_website
+import com.metrolist.shared.generated.resources.peek_about_developer_role
 import com.metrolist.shared.generated.resources.sponsor_developer
 import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.ui.components.ModalBottomSheet
@@ -86,6 +87,7 @@ fun rememberAboutScreenText(): AboutScreenText =
         lyricsUiServicesRole = sharedStringResource(Res.string.credits_lyrics_ui_services),
         androidDesignerRole = sharedStringResource(Res.string.credits_android_designer),
         wearOsDesignerRole = sharedStringResource(Res.string.credits_wearos_designer),
+        peekDeveloperRole = sharedStringResource(Res.string.peek_about_developer_role),
         discord = sharedStringResource(Res.string.brand_discord),
         telegram = sharedStringResource(Res.string.brand_telegram),
         github = sharedStringResource(Res.string.brand_github),
@@ -106,6 +108,9 @@ enum class AboutContributorRole {
     LYRICS_UI_SERVICES,
     ANDROID_DESIGNER,
     WEAROS_DESIGNER,
+
+    // PeekMusic
+    PEEKMUSIC_DEVELOPER,
 }
 
 enum class AboutAvatarShape {
@@ -267,6 +272,7 @@ data class AboutScreenText(
     val lyricsUiServicesRole: String,
     val androidDesignerRole: String,
     val wearOsDesignerRole: String,
+    val peekDeveloperRole: String,
     val discord: String,
     val telegram: String,
     val github: String,
@@ -287,6 +293,7 @@ data class AboutScreenText(
             AboutContributorRole.LYRICS_UI_SERVICES -> lyricsUiServicesRole
             AboutContributorRole.ANDROID_DESIGNER -> androidDesignerRole
             AboutContributorRole.WEAROS_DESIGNER -> wearOsDesignerRole
+            AboutContributorRole.PEEKMUSIC_DEVELOPER -> peekDeveloperRole
         }
 
     fun communityLabel(kind: AboutCommunityLinkKind): String =
@@ -343,6 +350,7 @@ fun AuthorInfoSheet(
             AboutContributorRole.LYRICS_UI_SERVICES -> sharedStringResource(Res.string.credits_lyrics_ui_services)
             AboutContributorRole.ANDROID_DESIGNER -> sharedStringResource(Res.string.credits_android_designer)
             AboutContributorRole.WEAROS_DESIGNER -> sharedStringResource(Res.string.credits_wearos_designer)
+            AboutContributorRole.PEEKMUSIC_DEVELOPER -> sharedStringResource(Res.string.peek_about_developer_role)
         }
 
     ModalBottomSheet(
