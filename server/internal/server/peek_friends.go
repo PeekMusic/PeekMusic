@@ -185,7 +185,8 @@ func (s *Server) peekAuthenticate(c *Client, payload []byte) {
 		c.sendError(s.logger, "auth_error", "Could not sign in to friends")
 		return
 	}
-	if username != "" && c.userName() == "" {
+	// The friends connection takes every new name; a party connection keeps the name its room knows.
+	if username != "" && (!p.PresenceOnly || c.userName() == "") {
 		c.setUsername(username)
 	}
 
