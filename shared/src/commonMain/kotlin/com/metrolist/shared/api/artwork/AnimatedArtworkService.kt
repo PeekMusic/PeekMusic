@@ -3,6 +3,7 @@ package com.metrolist.shared.api.artwork
 import com.metrolist.shared.network.readTextLimited
 import com.metrolist.shared.settings.AnimatedCoverResolution
 import com.metrolist.shared.settings.Settings
+import com.metrolist.shared.utils.systemCountryCode
 import com.metrolist.shared.youtube.logging.YtLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
@@ -275,7 +276,7 @@ class AnimatedArtworkService internal constructor(
         cacheLoadJob.join()
 
         val country =
-            Settings.shared.lastResolvedContentCountry
+            appleStorefrontCountry()
                 .lowercase()
                 .takeIf(String::isNotBlank) ?: return ArtistArtworkFetchResult.Unavailable
         val language =
@@ -408,7 +409,7 @@ class AnimatedArtworkService internal constructor(
                 return null
             }
 
-            val country = Settings.shared.lastResolvedContentCountry
+            val country = appleStorefrontCountry()
             val token = getDevToken(country)
             if (token == null) {
                 YtLogger.w(TAG, "[FAIL] Cannot get Apple Music dev token")
@@ -539,7 +540,7 @@ class AnimatedArtworkService internal constructor(
             }
         val explicitKey = explicit?.let { if (it) "|E" else "|C" }.orEmpty()
         return "$CACHE_KEY_VERSION|$key$explicitKey|R${Settings.shared.animatedCoverResolution.name}" +
-            "|C${Settings.shared.lastResolvedContentCountry}"
+            "|C${appleStorefrontCountry()}"
     }
 
     private fun escapeCacheComponent(component: String): String = component.replace("%", "%25").replace("|", "%7c")
@@ -675,7 +676,7 @@ class AnimatedArtworkService internal constructor(
                             parameter("term", query)
                             parameter("entity", "song")
                             parameter("limit", 50)
-                            parameter("country", Settings.shared.lastResolvedContentCountry)
+                            parameter("country", appleStorefrontCountry())
                         }.readTextLimited(MAX_JSON_RESPONSE_BYTES)
                 }
             val body = response.body
@@ -710,7 +711,7 @@ class AnimatedArtworkService internal constructor(
                             parameter("id", artistId)
                             parameter("entity", "song")
                             parameter("limit", 200)
-                            parameter("country", Settings.shared.lastResolvedContentCountry)
+                            parameter("country", appleStorefrontCountry())
                         }.readTextLimited(MAX_JSON_RESPONSE_BYTES)
                 }
             val body = response.body
@@ -736,7 +737,7 @@ class AnimatedArtworkService internal constructor(
     private suspend fun resolveArtistId(
         artistName: String,
         preserveFullName: Boolean = false,
-        country: String = Settings.shared.lastResolvedContentCountry,
+        country: String = appleStorefrontCountry(),
         propagateFailures: Boolean = false,
     ): Long? {
         try {
@@ -1371,3 +1372,13 @@ private data class AniTunesArtistResult(
     val artistName: String = "",
     val artistId: Long = 0,
 )
+
+/**
+ * PeekMusic: the Apple Music storefront. Until the app made its first YouTube request (e.g. in onboarding on a fresh
+ * install) the resolved content country is still empty, which made every Apple lookup fail; the device's country,
+ * else the US storefront, stands in.
+ */
+private fun appleStorefrontCountry(): String =
+    Settings.shared.lastResolvedContentCountry
+        .ifBlank { runCatching { systemCountryCode() }.getOrDefault("") }
+        .ifBlank { "US" }
