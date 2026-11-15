@@ -149,7 +149,9 @@ internal class AndroidQueueTransitions(
                         durationMs = duration,
                         crossfadeDurationMs = crossfadeDurationMs,
                         isPlaying = isPlaying,
-                        crossfadeEnabled = Settings.shared.crossfadeEnabled,
+                        // PeekMusic: no crossfade in a PeekParty; guests would hear the old song while the host already plays the next.
+                        crossfadeEnabled =
+                            Settings.shared.crossfadeEnabled && AndroidListenTogetherManager.currentManager?.isInRoom?.value != true,
                         isCrossfading = isCrossfading,
                         repeatMode = queue.repeatMode.value,
                         isGapless = isGapless,
