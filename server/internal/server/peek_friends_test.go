@@ -425,6 +425,15 @@ func TestPeekPresenceOnlyConnection(t *testing.T) {
 	peekSend(t, server, party, MsgTypeAddFriend, &pb.FriendCodePayload{FriendCode: bobCode})
 	receiveLifecycleError(t, party, peekFriendNotAuthenticated)
 
+	// Inviting from the friends connection uses the party the presence-only connection is in.
+	peekDrain(bob)
+	peekSend(t, server, friends, MsgTypeInviteFriend, &pb.FriendCodePayload{FriendCode: bobCode})
+	var invite pb.FriendInvitePayload
+	peekNext(t, bob, MsgTypeFriendInvite, &invite)
+	if invite.RoomCode != "ROOM1234" {
+		t.Fatalf("invite room = %q, want the party connection's", invite.RoomCode)
+	}
+
 	// Bob's request reaches the friends connection, never the party one.
 	peekSend(t, server, bob, MsgTypeRemoveFriend, &pb.FriendCodePayload{FriendCode: aliceCode})
 	peekNext(t, friends, MsgTypeFriendRemoved, nil)

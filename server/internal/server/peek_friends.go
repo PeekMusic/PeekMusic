@@ -452,8 +452,9 @@ func (s *Server) peekInvite(c *Client, payload []byte) {
 		c.sendError(s.logger, peekFriendErrorCode, "You can only invite friends")
 		return
 	}
-	room := c.currentRoom()
-	if room == nil {
+	// The party usually runs on the app's other (presence-only) connection.
+	roomCode := s.peekInfo(store, me).ActiveRoomCode
+	if roomCode == "" {
 		c.sendError(s.logger, peekFriendErrorCode, "Start or join a party first")
 		return
 	}
@@ -472,7 +473,7 @@ func (s *Server) peekInvite(c *Client, payload []byte) {
 		c.sendError(s.logger, peekFriendErrorCode, "Your friend is offline")
 		return
 	}
-	invite := &pb.FriendInvitePayload{From: s.peekInfo(store, me), RoomCode: room.Code}
+	invite := &pb.FriendInvitePayload{From: s.peekInfo(store, me), RoomCode: roomCode}
 	for _, t := range targets {
 		if t.hasFeature(FeaturePeekFriends) {
 			t.sendMessage(s.logger, MsgTypeFriendInvite, invite)
