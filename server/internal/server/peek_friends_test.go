@@ -499,3 +499,35 @@ func TestPeekHostInviteSkipsApproval(t *testing.T) {
 		t.Fatalf("invites left = %d, want the host's used up", left)
 	}
 }
+
+func TestPeekDeclineInviteFreesTheInviter(t *testing.T) {
+	server := peekTestServer(t)
+	alice := withFeatures(newClient("alice", nil), FeaturePeekFriends)
+	bob := withFeatures(newClient("bob", nil), FeaturePeekFriends)
+	aliceCode := peekAuth(t, server, alice, "alice-token-0123456789", "Alice")
+	bobCode := peekAuth(t, server, bob, "bob-token-01234567890", "Bob")
+	befriend(t, server, aliceCode, bobCode)
+	alice.setRoom(&Room{Code: "ROOM1234"})
+	peekSend(t, server, alice, MsgTypeInviteFriend, &pb.FriendCodePayload{FriendCode: bobCode})
+	peekNext(t, bob, MsgTypeFriendInvite, nil)
+
+	peekSend(t, server, bob, MsgTypeDeclineInvite, &pb.FriendCodePayload{FriendCode: aliceCode})
+	var declined pb.FriendCodePayload
+	peekNext(t, alice, MsgTypeFriendInviteDeclined, &declined)
+	if declined.FriendCode != bobCode {
+		t.Fatalf("declined = %q", declined.FriendCode)
+	}
+	server.peek.mu.Lock()
+	left := len(server.peek.invites)
+	server.peek.mu.Unlock()
+	if left != 0 {
+		t.Fatalf("invite kept after declining")
+	}
+
+	// Declining again, or without an invite, tells nobody anything.
+	peekDrain(alice)
+	peekSend(t, server, bob, MsgTypeDeclineInvite, &pb.FriendCodePayload{FriendCode: aliceCode})
+	if len(alice.Send) != 0 {
+		t.Fatal("a second decline reached the inviter")
+	}
+}

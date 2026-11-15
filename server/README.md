@@ -16,10 +16,10 @@ top. It runs at `wss://listen.peekmusic.org/ws` (see `website/README.md` for the
 - Feature `peek_friends_v2`: clients that announce it get friend requests, invites and deletion. Apps without it
   (PeekMusic 1.3.0) keep working: adding them befriends at once, as before, because they cannot accept requests.
 
-Message types: `authenticate`, `add_friend`, `remove_friend` (also withdraws or declines a request),
+Message types: `authenticate`, `add_friend`, `remove_friend` (also withdraws or declines a request), `decline_invite`,
 `accept_friend_request`, `decline_friend_request`, `invite_friend`, `delete_friend_account` from the app;
 `auth_success`, `friends_status`, `friend_presence_update`, `friend_added`, `friend_removed`, `friend_request`,
-`friend_invite`, `friend_account_deleted` from the server.
+`friend_invite`, `friend_invite_declined`, `friend_account_deleted` from the server.
 
 ## Updating from upstream
 

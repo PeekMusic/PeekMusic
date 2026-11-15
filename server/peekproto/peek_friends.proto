@@ -18,7 +18,8 @@ message AuthenticatePayload {
 }
 
 // Client -> server: "add_friend", "remove_friend", "accept_friend_request", "decline_friend_request",
-// "invite_friend". Server -> client: "friend_removed" (a friendship or request is gone).
+// "invite_friend", "decline_invite" (the inviter's code). Server -> client: "friend_removed" (a friendship or request
+// is gone), "friend_invite_declined" (the invited friend's code).
 message FriendCodePayload {
   string friend_code = 1;
 }

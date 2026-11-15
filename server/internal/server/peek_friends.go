@@ -8,6 +8,7 @@ package server
 
 import (
 	"errors"
+	"strings"
 	"sync"
 	"time"
 
@@ -31,6 +32,8 @@ const (
 	MsgTypeFriendRequest         = "friend_request"
 	MsgTypeInviteFriend          = "invite_friend"
 	MsgTypeFriendInvite          = "friend_invite"
+	MsgTypeDeclineInvite         = "decline_invite"
+	MsgTypeFriendInviteDeclined  = "friend_invite_declined"
 	MsgTypeDeleteFriendAccount   = "delete_friend_account"
 	MsgTypeFriendAccountDeleted  = "friend_account_deleted"
 	FeaturePeekFriends           = "peek_friends_v2" // friend requests, invites, account deletion
@@ -80,6 +83,8 @@ func (s *Server) handlePeekMessage(c *Client, msgType string, payload []byte) bo
 		s.peekAccept(c, payload)
 	case MsgTypeInviteFriend:
 		s.peekInvite(c, payload)
+	case MsgTypeDeclineInvite:
+		s.peekDeclineInvite(c, payload)
 	case MsgTypeDeleteFriendAccount:
 		s.peekDeleteAccount(c)
 	default:
@@ -559,4 +564,29 @@ func (s *Server) peekAdmitInvited(room *Room, host, joiner *Client) bool {
 	s.handleApproveJoin(host, approval)
 	s.logger.Info("PeekParty invited friend admitted", zap.String("room_code", room.Code), zap.String("user_id", joiner.clientID()))
 	return true
+}
+
+// peekDeclineInvite tells the inviter their invite was turned down, so they can invite again, and forgets it.
+func (s *Server) peekDeclineInvite(c *Client, payload []byte) {
+	_, me, ok := s.peekRequireCode(c)
+	if !ok {
+		return
+	}
+	inviter, valid := decodeFriendCode(payload)
+	if !valid {
+		c.sendError(s.logger, peekFriendInvalidPayloadCode, "Invalid friend code")
+		return
+	}
+	s.peek.mu.Lock()
+	found := false
+	for key := range s.peek.invites {
+		if strings.HasSuffix(key, "\x00"+me+"\x00"+inviter) {
+			delete(s.peek.invites, key)
+			found = true
+		}
+	}
+	s.peek.mu.Unlock()
+	if found {
+		sendToAll(s, s.peekOnline(inviter), MsgTypeFriendInviteDeclined, &pb.FriendCodePayload{FriendCode: me})
+	}
 }
