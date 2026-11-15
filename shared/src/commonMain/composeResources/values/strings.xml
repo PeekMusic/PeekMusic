@@ -5460,4 +5460,26 @@
     <!-- Translators: Player toggle that turns moving artwork (Canvas videos and animated covers) on or off. -->
     <string name="peek_artwork_motion">Moving artwork</string>
     <string name="peek_title" translatable="false">Peek</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Audio</string>
+    <string name="peek_settings_audio_description">Quality, sound, crossfade and cast</string>
+    <string name="peek_settings_player_description">Design, artwork, canvas and mini player</string>
+    <string name="peek_settings_home_library_description">Home sections, automatic playlists and hidden items</string>
+    <string name="peek_settings_translation">Lyrics translation</string>
+    <string name="peek_settings_translation_description">Translate lyrics automatically with Google Translate</string>
+    <string name="peek_settings_appearance_description">Theme, colors, fonts and density</string>
+    <string name="peek_settings_queue_description">Shuffle, similar songs, duplicates and downloads</string>
+    <string name="peek_settings_privacy_description">Listening and search history</string>
+    <string name="peek_translation_failed">Translation failed, try again later</string>
+    <string name="peek_about_section" translatable="false">PeekMusic</string>
+    <string name="peek_about_developer_role">Developer of PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Videos</string>
+    <string name="peek_video_filter_description">Which videos appear in search and playlists</string>
+    <string name="peek_video_filter_all">All videos</string>
+    <string name="peek_video_filter_music">Music videos only</string>
+    <string name="peek_video_filter_none">No videos</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Included with the lyrics from %1$s</string>
+    <string name="peek_translation_source_google" translatable="false">Google Translate</string>
 </resources>

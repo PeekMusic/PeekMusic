@@ -155,6 +155,7 @@ class App :
         if (processName == packageName) {
             Settings.shared.hasCanvasToggle = true
             PeekDefaults.apply()
+            PeekDefaults.pinHidden()
             recovery.run { initializeMainProcess() }
             return
         }

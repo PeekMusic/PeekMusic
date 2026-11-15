@@ -2473,4 +2473,24 @@
     <string name="lyrics_editor_invalid_timestamp">Ungültiger Zeitstempel bei Zeile %1$d. Verwende [mm:ss.cc]. Dein Entwurf wird gespeichert, bis du es korrigierst.</string>
     <string name="lyrics_editor_save_error">Konnte deine Lyrics nicht speichern. Versuche es erneut, bevor du den Editor verlässt.</string>
     <string name="lyrics_editor_limit_error">Diese Lyrics überschreiten die unterstützte Länge. Dein Entwurf wird gespeichert. Kürze ihn, bevor du ihn exportiertst oder synchronisierst.</string>
+    <!-- PeekMusic -->
+    <string name="peek_plain_lyrics_hint">Nur Lyrics ohne Zeitstempel</string>
+    <string name="peek_artwork_motion">Bewegte Cover</string>
+    <string name="peek_settings_audio">Audio</string>
+    <string name="peek_settings_audio_description">Qualität, Klang, Crossfade und Cast</string>
+    <string name="peek_settings_player_description">Design, Cover, Canvas und Mini-Player</string>
+    <string name="peek_settings_home_library_description">Home-Bereiche, automatische Playlists und ausgeblendete Elemente</string>
+    <string name="peek_settings_translation">Lyrics-Übersetzung</string>
+    <string name="peek_settings_translation_description">Lyrics automatisch mit Google Translate übersetzen</string>
+    <string name="peek_settings_appearance_description">Design, Farben, Schriften und Dichte</string>
+    <string name="peek_settings_queue_description">Shuffle, ähnliche Songs, Duplikate und Downloads</string>
+    <string name="peek_settings_privacy_description">Hör- und Suchverlauf</string>
+    <string name="peek_translation_failed">Übersetzung fehlgeschlagen, versuch es später nochmal</string>
+    <string name="peek_about_developer_role">Entwickler von PeekMusic</string>
+    <string name="peek_video_filter">Videos</string>
+    <string name="peek_video_filter_description">Welche Videos in Suche und Playlists erscheinen</string>
+    <string name="peek_video_filter_all">Alle Videos</string>
+    <string name="peek_video_filter_music">Nur Musikvideos</string>
+    <string name="peek_video_filter_none">Keine Videos</string>
+    <string name="peek_translation_source_builtin">Mitgeliefert von %1$s</string>
 </resources>

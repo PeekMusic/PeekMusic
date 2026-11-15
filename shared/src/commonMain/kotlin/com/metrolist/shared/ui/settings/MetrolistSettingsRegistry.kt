@@ -16,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.metrolist.shared.generated.resources.*
+import com.metrolist.shared.peek.peekLayout
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import org.jetbrains.compose.resources.stringResource
@@ -259,5 +260,6 @@ fun rememberMetrolistSettingsRegistry(
         ).filter { it in host.availablePages }
             .toTypedArray(),
     )
-    return organizeSettingsRegistry(builder.build())
+    // PeekMusic: fewer switches and the legacy app's page layout.
+    return organizeSettingsRegistry(builder.build()).peekLayout()
 }

@@ -12,7 +12,9 @@ import com.metrolist.shared.api.lyrics.MlxWord
 import com.metrolist.shared.model.LyricsProvider
 import com.metrolist.shared.model.LyricsWithProvider
 import com.metrolist.shared.repository.LyricsRepository
+import com.metrolist.shared.settings.PlayerBackgroundStyle
 import com.metrolist.shared.settings.Settings
+import com.metrolist.shared.settings.SliderStyle
 import com.russhwolf.settings.MapSettings
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -47,11 +49,27 @@ class PeekLookupTest {
         assertTrue(settings.preventDuplicateTracksInQueue)
         assertEquals("Google Translate", settings.lyricsAiProvider)
         assertTrue(settings.peekParallelLyricsLookup)
+        assertEquals(PlayerBackgroundStyle.GRADIENT, settings.playerBackgroundStyle)
+        assertEquals(SliderStyle.SQUIGGLY, settings.sliderStyle)
+        assertTrue(settings.floatingTopBar)
+        assertFalse(settings.useLegacyShuffle)
         assertEquals(PeekDefaults.VERSION, settings.peekDefaultsVersion)
 
         settings.showLyricsOnPlayer = false
         PeekDefaults.apply(settings)
         assertFalse(settings.showLyricsOnPlayer)
+    }
+
+    @Test
+    fun hiddenSettingsArePinnedEvenWhenTheUserChangedThemBefore() {
+        val settings = Settings(MapSettings("skipSilence" to true, "lyricsAiProvider" to "OpenRouter"))
+        settings.swipeToSong = false
+        PeekDefaults.pinHidden(settings)
+        assertFalse(settings.skipSilence)
+        assertTrue(settings.swipeToSong)
+        assertEquals("Google Translate", settings.lyricsAiProvider)
+        assertEquals("Automatic", settings.lyricsAiActivationMode)
+        assertTrue(settings.queueYouTubeHistoryWhenOffline)
     }
 
     @Test
