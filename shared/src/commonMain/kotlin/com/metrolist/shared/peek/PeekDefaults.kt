@@ -71,6 +71,7 @@ object PeekDefaults {
             pin(preferWordSyncedLyrics, true) { preferWordSyncedLyrics = it }
             pin(lyricsAiProvider, GOOGLE_TRANSLATE) { lyricsAiProvider = it }
             pin(lyricsAiActivationMode, "Automatic") { lyricsAiActivationMode = it }
+            pin(lyricsAiTranslationMode, "Literal") { lyricsAiTranslationMode = it }
             pin(lyricsRomanizeCyrillicByLine, true) { lyricsRomanizeCyrillicByLine = it }
             pin(explicitOnly, false) { explicitOnly = it }
             pin(blockScreenshots, false) { blockScreenshots = it }

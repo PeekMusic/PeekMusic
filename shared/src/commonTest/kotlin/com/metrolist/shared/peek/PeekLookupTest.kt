@@ -62,13 +62,21 @@ class PeekLookupTest {
 
     @Test
     fun hiddenSettingsArePinnedEvenWhenTheUserChangedThemBefore() {
-        val settings = Settings(MapSettings("skipSilence" to true, "lyricsAiProvider" to "OpenRouter"))
+        val settings =
+            Settings(
+                MapSettings(
+                    "skipSilence" to true,
+                    "lyricsAiProvider" to "OpenRouter",
+                    "lyricsAiTranslationMode" to "Transcribed",
+                ),
+            )
         settings.swipeToSong = false
         PeekDefaults.pinHidden(settings)
         assertFalse(settings.skipSilence)
         assertTrue(settings.swipeToSong)
         assertEquals("Google Translate", settings.lyricsAiProvider)
         assertEquals("Automatic", settings.lyricsAiActivationMode)
+        assertEquals("Literal", settings.lyricsAiTranslationMode)
         assertTrue(settings.queueYouTubeHistoryWhenOffline)
     }
 

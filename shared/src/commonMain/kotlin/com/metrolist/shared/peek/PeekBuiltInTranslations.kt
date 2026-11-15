@@ -13,11 +13,15 @@ import com.metrolist.shared.model.MlxDocument
 
 /**
  * Lyrics translations that ship with the lyrics. Upstream reads them from BetterLyrics' TTML (Apple's) since
- * eba449f9a and keeps only the one in the translation target language. PeekMusic adds two things on top: lyrics cached
- * before a change of the target language don't show a translation in the old language, and the lyrics menu names
- * the translation's source.
+ * eba449f9a and keeps only the one in the translation target language and mode. PeekMusic adds three things on top: a
+ * shipped translation that matches keeps priority over the machine translation (upstream lets machine output win since
+ * 50819e359), lyrics cached before a change of the target language don't show a translation in the old language, and
+ * the lyrics menu names the translation's source.
  */
 object PeekBuiltInTranslations {
+    /** Read by LyricsRepository.enrichLyricsEntries: machine translation only fills lines without a shipped one. */
+    const val PREFER_SHIPPED = true
+
     /** The lines of [document], without its built-in translation when that is not in the translation target language. */
     internal fun linesForTarget(document: MlxDocument): List<LyricsEntry> {
         val language = document.song.translationLanguage ?: return document.lines
