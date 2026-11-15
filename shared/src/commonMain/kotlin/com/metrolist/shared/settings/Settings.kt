@@ -411,7 +411,6 @@ class Settings(
     // PeekMusic: fork-only preferences and the stored-key check PeekDefaults uses to respect user and migrated values.
     var peekDefaultsVersion by preference(0)
     var peekParallelLyricsLookup by preference(false)
-    var peekArtworkMotionRestore by preference("")
 
     fun hasStoredValue(key: String): Boolean = settings.hasKey(key)
 

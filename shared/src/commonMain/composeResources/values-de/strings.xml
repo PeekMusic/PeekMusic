@@ -2475,7 +2475,6 @@
     <string name="lyrics_editor_limit_error">Diese Lyrics überschreiten die unterstützte Länge. Dein Entwurf wird gespeichert. Kürze ihn, bevor du ihn exportiertst oder synchronisierst.</string>
     <!-- PeekMusic -->
     <string name="peek_plain_lyrics_hint">Nur Lyrics ohne Zeitstempel</string>
-    <string name="peek_artwork_motion">Bewegte Cover</string>
     <string name="peek_settings_audio">Audio</string>
     <string name="peek_settings_audio_description">Qualität, Klang, Crossfade und Cast</string>
     <string name="peek_settings_player_description">Design, Cover, Canvas und Mini-Player</string>

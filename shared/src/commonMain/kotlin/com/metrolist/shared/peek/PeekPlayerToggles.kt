@@ -35,8 +35,8 @@ class PeekPlayerToggles internal constructor(
     val romanizationOn: Boolean
         get() = Settings.shared.lyricsRomanizationEnabled
 
-    val artworkMotionOn: Boolean
-        get() = Settings.shared.isCanvasEnabled || Settings.shared.enableAnimatedCovers
+    val canvasOn: Boolean
+        get() = Settings.shared.playerCanvasEnabled
 
     fun toggleTranslation() {
         val settings = Settings.shared
@@ -56,26 +56,10 @@ class PeekPlayerToggles internal constructor(
         Settings.shared.lyricsRomanizationEnabled = !romanizationOn
     }
 
-    /** Turns all moving artwork off and later restores exactly the sources that were on (canvas, animated covers). */
-    fun toggleArtworkMotion() {
-        val settings = Settings.shared
-        if (artworkMotionOn) {
-            settings.peekArtworkMotionRestore = "${settings.playerCanvasEnabled},${settings.enableAnimatedCovers}"
-            settings.playerCanvasEnabled = false
-            settings.enableAnimatedCovers = false
-        } else {
-            val (canvas, animatedCovers) = restoredArtworkMotion(settings.peekArtworkMotionRestore)
-            settings.playerCanvasEnabled = canvas
-            settings.enableAnimatedCovers = animatedCovers
-        }
+    /** Switches only the canvas; animated covers keep their own setting. */
+    fun toggleCanvas() {
+        Settings.shared.playerCanvasEnabled = !canvasOn
     }
-}
-
-/** Saved "canvas,animatedCovers" flags; with nothing saved, turning motion on enables the player canvas. */
-internal fun restoredArtworkMotion(saved: String): Pair<Boolean, Boolean> {
-    val flags = saved.split(',').mapNotNull { it.trim().toBooleanStrictOrNull() }
-    if (flags.size != 2 || flags.none { it }) return true to false
-    return flags[0] to flags[1]
 }
 
 @Composable

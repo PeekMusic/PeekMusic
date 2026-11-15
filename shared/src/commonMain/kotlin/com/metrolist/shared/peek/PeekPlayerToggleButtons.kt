@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.action_like
-import com.metrolist.shared.generated.resources.peek_artwork_motion
+import com.metrolist.shared.generated.resources.canvas
 import com.metrolist.shared.generated.resources.peek_title
 import com.metrolist.shared.ui.components.playerInactiveControlContainerColor
 import com.metrolist.shared.ui.haptics.HapticEvent
@@ -59,16 +59,16 @@ private data class PeekButton(
     val onClick: () -> Unit,
 )
 
-/** Peek (opens the lyrics menu) and moving artwork, the two buttons every player design gets. */
+/** Peek (opens the lyrics menu) and Canvas, the two buttons every player design gets. */
 @Composable
 private fun peekButtons(toggles: PeekPlayerToggles): List<PeekButton> =
     listOf(
         PeekButton(MetrolistIcons.Outlined.Lyrics, stringResource(Res.string.peek_title), toggles.peekOn, toggles::openLyricsMenu),
         PeekButton(
             PeekIcons.Animation,
-            stringResource(Res.string.peek_artwork_motion),
-            toggles.artworkMotionOn,
-            toggles::toggleArtworkMotion,
+            stringResource(Res.string.canvas),
+            toggles.canvasOn,
+            toggles::toggleCanvas,
         ),
     )
 
