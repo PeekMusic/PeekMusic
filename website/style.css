@@ -347,3 +347,20 @@ td:first-child { font-weight: 600; min-width: 11em; }
 }
 :root[data-theme="dark"] .theme-toggle .sun { display: block; }
 :root[data-theme="dark"] .theme-toggle .moon { display: none; }
+
+/* PeekParty invite (/party, /listen) */
+.party .room { margin: -12px 0 28px; font-size: 1.125rem; color: var(--on-surface-variant); }
+.party .room code {
+  margin-left: 6px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+  font: 700 1.25rem/1.4 ui-monospace, "Roboto Mono", monospace;
+  letter-spacing: 0.12em;
+}
+.party .hint { margin: 20px 0 0; max-width: 42ch; color: var(--on-surface-variant); font-size: 0.9375rem; }
+@media (max-width: 880px) {
+  .party.hero { padding-block: 24px 40px; }
+  .party .hero-art { max-width: 180px; }
+}

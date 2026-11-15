@@ -1,0 +1,18 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.peekmusic.app",
+      "sha256_cert_fingerprints": ["39:43:A5:CC:0E:F0:2E:F0:53:1C:05:9A:BE:37:AC:F1:89:04:DF:58:67:E1:97:97:7B:AE:AA:83:1C:8B:11:65"]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.peekmusic.app.debug",
+      "sha256_cert_fingerprints": ["95:31:27:C7:78:CD:F3:2A:7C:93:E2:58:CC:A4:55:F2:69:82:F3:98:41:AE:0F:0C:CE:BB:D3:3A:F3:5B:29:8A"]
+    }
+  }
+]

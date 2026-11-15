@@ -153,8 +153,9 @@
                 <data android:scheme="peekmusic" android:host="listen-together" />
             </intent-filter>
 
-            <!-- PeekMusic: Listen Together invitations on PeekMusic's own server. -->
-            <intent-filter>
+            <!-- PeekMusic: Listen Together invitations on PeekMusic's own server, verified through
+                 https://listen.peekmusic.org/.well-known/assetlinks.json (source: website/.well-known). -->
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
