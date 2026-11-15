@@ -42,6 +42,8 @@ Mobile API library shelves show saved music albums while podcast shelves remain 
 
 Home cache identity respects account, locale and browse policy. Visitor publication must pass InnerTubeX's session compatibility check before accepting an in-flight response.
 
+Legacy settings migration and backup imports convert `SYSTEM_DEFAULT` and lowercase `system` to `SYSTEM` for app language, content language and content country. Invalid saved content languages and countries return to the system locale before requests, including settings already migrated to v14. Language validation uses the platform locale catalog and bundled resource tags. Imports also clear v13's literal `null` visitor data without discarding valid session values. Failed restores keep their exact settings snapshot.
+
 ## History and uploads
 
 Imported history keeps localized absolute date-bucket labels and server row order. Refresh repairs matched remote rows without overwriting measured local timestamps. Date buckets count in daily/total statistics, not hourly charts. Preserve offline labels and cancellation during synchronization.
@@ -67,6 +69,10 @@ Playback validates overlapping ranges against emitted bytes. Identical repeats a
 `shareCachedDataFrom` requires an unopened replacement with the same encoded representation. Reference-counted storage is shared, but each stream owns its cursor, producer and failure state. Gaps are incomplete streams, not EOF. Normal producer completion must cover the expected duration when timestamps are available.
 
 Android closes storage off the playback thread. Video hiding must wait until the initial container probe completes. Reattachment resumes from the audio clock with seek preroll and retained bytes. See [cache transfer rules](audio-cache.md#formats), [iOS preparation](ios-opus.md#capture-limits) and [error policy](playback.md#error-policy).
+
+## Live stream classification
+
+Player metadata uses current-live flags or an HLS-only response without a finite duration. `isLiveContent` alone does not mark an active stream. Recordings with a finite duration keep seeking and the normal client fallback, including saved songs with a live performance type. Confirmed live playback clears the song duration so extraction and player controls use the same classification.
 
 ## Live tests
 

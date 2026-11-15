@@ -13,7 +13,6 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -43,35 +42,27 @@ class PeekBuiltInTranslationsTest {
     }
 
     @Test
-    fun ttmlTranslationIsKeptWithItsLanguage() {
-        val document = LyricsUtils.parseMlxDocument(parseTtmlToMlx(ttml, "Song", "Artist", "BetterLyrics"))!!
-        assertEquals("en-US", document.song.translationLanguage)
-        assertEquals("그냥", document.lines[0].text)
+    fun theMenuNamesTheProviderOfAShippedTranslation() {
         Settings.shared.lyricsAiTargetLanguage = "en"
-        val lines = LyricsUtils.parseLyrics(parseTtmlToMlx(ttml, "Song", "Artist", "BetterLyrics"))
-        assertEquals(listOf("Just sit and talk", "Follow me"), lines.map { it.translatedText })
+        val mlx = parseTtmlToMlx(ttml, "Song", "Artist", "BetterLyrics")
+        assertEquals(listOf("Just sit and talk (oh)", "Follow me"), LyricsUtils.parseLyrics(mlx).map { it.translatedText })
+        assertEquals("BetterLyrics", PeekBuiltInTranslations.builtInSource(mlx))
     }
 
     @Test
-    fun translationInAnotherLanguageIsLeftToTheTranslator() {
+    fun cachedTranslationInAnOldTargetLanguageIsHidden() {
+        Settings.shared.lyricsAiTargetLanguage = "en"
+        val mlx = parseTtmlToMlx(ttml, "Song", "Artist", "BetterLyrics")
         Settings.shared.lyricsAiTargetLanguage = "de"
-        val lines = LyricsUtils.parseLyrics(parseTtmlToMlx(ttml, "Song", "Artist", "BetterLyrics"))
+        val lines = LyricsUtils.parseLyrics(mlx)
         assertEquals(2, lines.size)
         assertTrue(lines.all { it.translatedText == null })
+        assertNull(PeekBuiltInTranslations.builtInSource(mlx))
     }
 
     @Test
-    fun lyricsWithoutTranslationStayUnchanged() {
+    fun lyricsWithoutTranslationHaveNoBuiltInSource() {
         val plain = ttml.replace(Regex("<iTunesMetadata.*</iTunesMetadata>", RegexOption.DOT_MATCHES_ALL), "")
-        val document = LyricsUtils.parseMlxDocument(parseTtmlToMlx(plain, "Song", "Artist", "BetterLyrics"))!!
-        assertNull(document.song.translationLanguage)
-        assertFalse(document.lines.any { it.translatedText != null })
-    }
-
-    @Test
-    fun languagesMatchOnTheirPrimarySubtag() {
-        assertTrue(PeekBuiltInTranslations.sameLanguage("en-US", "en"))
-        assertTrue(PeekBuiltInTranslations.sameLanguage("pt_BR", "pt-PT"))
-        assertFalse(PeekBuiltInTranslations.sameLanguage("en-US", "de"))
+        assertNull(PeekBuiltInTranslations.builtInSource(parseTtmlToMlx(plain, "Song", "Artist", "BetterLyrics")))
     }
 }

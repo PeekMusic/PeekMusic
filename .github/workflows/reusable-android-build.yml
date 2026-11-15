@@ -8,6 +8,11 @@ on:
         required: false
         default: true
         type: boolean
+      assemble:
+        description: Assemble the APK, disabled for push checks covered by Nightly
+        required: false
+        default: true
+        type: boolean
       variant:
         description: Android build variant
         required: false
@@ -43,6 +48,11 @@ on:
         required: false
         default: false
         type: boolean
+      app-version:
+        description: Override gradle.properties appVersion, such as a nightly build with commit metadata
+        required: false
+        default: ''
+        type: string
     secrets:
       GRADLE_ENCRYPTION_KEY:
         required: false
@@ -87,6 +97,7 @@ jobs:
         id: config
         shell: bash
         env:
+          APP_VERSION_OVERRIDE: ${{ inputs.app-version }}
           BUILD_VARIANT: ${{ inputs.variant }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           UPLOAD_SENTRY: ${{ inputs.upload-sentry }}
@@ -101,17 +112,22 @@ jobs:
             exit 1
           fi
 
-          version=""
-          while IFS='=' read -r key value; do
-            if [[ "$key" == "appVersion" ]]; then
-              version="$value"
-              break
-            fi
-          done < gradle.properties
-          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9][A-Za-z0-9._-]*)?$ ]] || {
+          version="$APP_VERSION_OVERRIDE"
+          if [[ -z "$version" ]]; then
+            while IFS='=' read -r key value; do
+              if [[ "$key" == "appVersion" ]]; then
+                version="$value"
+                break
+              fi
+            done < gradle.properties
+          fi
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9][A-Za-z0-9._-]*)?(\+[0-9A-Za-z.-]+)?$ ]] || {
             echo "Invalid appVersion: $version" >&2
             exit 1
           }
+          if [[ -n "$APP_VERSION_OVERRIDE" ]]; then
+            echo "ORG_GRADLE_PROJECT_appVersion=$version" >> "$GITHUB_ENV"
+          fi
 
           if [[ "$UPLOAD_SENTRY" == "true" ]]; then
             test -n "$SENTRY_AUTH_TOKEN" || { echo "SENTRY_AUTH_TOKEN is required when Sentry upload is enabled" >&2; exit 1; }
@@ -129,7 +145,7 @@ jobs:
         uses: ./.github/actions/prepare-ci-gradle
         with:
           # Separate task graphs need separate configuration-cache entries.
-          cache-scope: android-${{ inputs.variant }}
+          cache-scope: android-${{ inputs.variant }}-${{ inputs.assemble }}
           cache-read-only: ${{ inputs.cache-read-only }}
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
           persist-configuration-cache: 'false'
@@ -164,6 +180,7 @@ jobs:
         shell: bash
         env:
           BUILD_VARIANT: ${{ inputs.variant }}
+          ASSEMBLE: ${{ inputs.assemble }}
           VERIFICATION_ONLY: ${{ inputs.variant == 'debug' && !inputs.upload-artifact && inputs.staging-release-tag == '' }}
           KEYSTORE_PATH: ${{ steps.signing.outputs.keystore_path }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -188,12 +205,14 @@ jobs:
             extra_args+=(-x :androidApp:lintVitalRelease)
           else
             tasks=(
-              ":androidApp:assembleDebug"
               ":androidApp:lintDebug"
               ":androidApp:testDebugUnitTest"
               ":shared:testAndroidHostTest"
               ":androidApp:ktlintCheck"
             )
+            if [[ "$ASSEMBLE" == "true" ]]; then
+              tasks+=(':androidApp:assembleDebug')
+            fi
           fi
           ./gradlew "${tasks[@]}" --no-daemon "${extra_args[@]}"
 
@@ -207,6 +226,7 @@ jobs:
           retention-days: 4
 
       - name: Collect APK
+        if: inputs.assemble
         id: apk
         shell: bash
         env:

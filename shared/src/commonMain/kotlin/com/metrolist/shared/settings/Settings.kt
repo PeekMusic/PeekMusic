@@ -45,6 +45,7 @@ import com.metrolist.shared.constants.CanvasContentOrderKey
 import com.metrolist.shared.constants.CanvasEnabledSourcesKey
 import com.metrolist.shared.constants.CastEnabledKey
 import com.metrolist.shared.constants.CollectionCoversKey
+import com.metrolist.shared.constants.DatabaseLikesRecoveryVersionKey
 import com.metrolist.shared.constants.DefaultOpenTabKey
 import com.metrolist.shared.constants.DeletedPlaylistIdsJsonKey
 import com.metrolist.shared.constants.DensityScaleKey
@@ -744,6 +745,7 @@ class Settings(
     private var playlistCollectionSortingsJson by preference(PlaylistCollectionSortingsKey, "{}")
     var visibleAutoPlaylists by preference("liked,downloaded,top,uploaded,cached")
     var likedSongsJson by preference("[]")
+    var databaseLikesRecoveryVersion by preference(DatabaseLikesRecoveryVersionKey, 0)
     var likedSongsOrderCustomized by preference(LikedSongsOrderCustomizedKey, false)
     var likedSongsOrderAccount by preference(LikedSongsOrderAccountKey, "")
     var likedSongsCustomOrdersJson by preference(LikedSongsCustomOrdersJsonKey, "{}")
@@ -855,6 +857,8 @@ class Settings(
     var lastHomePageJson by blobPreference("lastHomePageJson")
 
     var enableSystemWindowFrame by preference(false)
+    var minimizeToTrayOnClose by preference(defaultMinimizeToTrayOnClose())
+    var desktopTrayToggleOnClick by preference(true)
     var waylandDefaultFrameApplied by preference(false)
     var disableWaylandScaleFix by preference(false)
     var macDefaultFrameApplied by preference(false)
@@ -1037,7 +1041,9 @@ class Settings(
 
     fun importBackupSettings(backup: PortableSettings) {
         validatePortableSettings(backup)
-        importSettings(backup, backupExcludedKeys, backupCredentialKeys + ArtistNameAliasesJsonKey)
+        val normalized =
+            backup.copy(entries = backup.entries.map { it.copy(value = normalizeLegacyStringSetting(it.key, it.value)) })
+        importSettings(normalized, backupExcludedKeys, backupCredentialKeys + ArtistNameAliasesJsonKey)
     }
 
     fun restoreBackupSettingsSnapshot(snapshot: PortableSettings) {

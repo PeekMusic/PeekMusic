@@ -247,6 +247,12 @@ In playlist reorder mode, dragging the handle moves a song immediately; holding 
 
 Playlist sort and direction are shared across ordinary local and remote playlists (authored order, ascending by default). Liked songs (newest first), downloaded and cached collections have their own saved sorting. Re-liking moves a song to the top of Date Added. Remote refreshes update like recency while preserving likes made during the refresh. Local Date Added uses the membership row ID as its insertion sequence; position updates must preserve it.
 
+Startup recovers Room likes into the settings catalog once, including partial v14 catalogs and signed-in upgrades whose like catalog has not been activated in v14. Recovery keeps the existing order and recency, appends missing rows newest first, and leaves Room liked dates unchanged. Pending v14 unlikes and dislikes exclude stale Room rows. Recovery sends no votes to YouTube; a complete remote refresh remains authoritative. Activated account catalogs and restored v14 account catalogs stay unchanged because acknowledged unlikes no longer have pending votes. Pending credentials defer recovery. Completed signed-out recovery does not run again when the recovery version changes.
+
+Account Library sync reads membership lists and grids, excluding recommendation carousels and release cards with their cursors. General browse pages keep those shelves. Previously tracked remote rows lose Library membership after two complete scans confirm their absence; partial scans do not confirm removals. This keeps song metadata, downloads and history. Untracked legacy Library rows stay because the database has no record of whether they came from a save or a recommendation.
+
+Albums, saved playlists and artist subscriptions stay in Room across the v14 upgrade and backup restore. Signed-out Library reads album bookmarks, album library membership and albums of saved tracks directly. Reading these albums leaves their liked state unchanged. A stale album liked date alone does not restore a like or library entry. Signed-in Library keeps its bookmark-based album selection.
+
 Android playlist removals publish the remaining occurrences before refreshing remote contents. Queued removals revalidate membership under the mutation lock so a deleted row cannot resend its old item ID.
 
 Android and iOS share the add-to-playlist sheet. **Add** submits the song batch to each selected destination; completed ones stay marked and failed ones keep their progress for retry. Duplicate prompts apply per occurrence and destination; **Skip** continues without it. The chooser shades playlists that already contain all selected songs, checking stored membership first and remote membership when the cache is incomplete. Lookup failures leave a playlist selectable.
@@ -284,6 +290,8 @@ The theme colour picker appears only while Material You is off. With Material Yo
 Automatic lookup uses the first usable source in the configured provider order, even when a later source has richer timing. With Prefer word-synced lyrics (off by default), lookup continues until it finds word timing, keeping provider order within each timing type and falling back to line-synced or plain lyrics. User edits and explicit source choices always take priority. Cached automatic results are used offline only while their provider is enabled and cannot outrank an earlier provider. Changing the source order reloads the current song's lyrics.
 
 Automatic searches wait for Lyprio within its 50-second timeout before trying lower providers. If a completed Lyprio search returns nothing, it retries once with the picker's full provider set within the same budget. Errors and cancellation are not cached as misses. The final selection is cached after the search completes, including refetches. Video-specific sources used for retiming also follow provider priority.
+
+TTML imports read inline translations and metadata translations keyed to lyric lines. They use the saved translation target or system language, preserve vocal timing, and hide cached translations when the target language changes.
 
 Lines that share one start and have no word timing count as unsynced. Lookup keeps them while checking for a synced fallback. Lyrics without line starts do not gain timing from a TTML body-duration end.
 
@@ -352,6 +360,8 @@ Podcast playback reads the local episode checkpoint before starting audio, falli
 Backup restore must roll back to the exact prior settings, and exports must reject destinations pointing at the live database or its SQLite sidecars. Restores stage `song.db-wal` beside the backup database and checkpoint it before validation. The database and each sidecar are limited to 512 MiB, with 600 MiB across archive entries. iOS journals the prior settings and database before restoring and recovers an interrupted restore before starting app services. Exports suggest `metrolist-backup-YYYYMMDD-HHMMSS.zip` in local time.
 
 Android backup snapshots use Room's writer connection: `VACUUM INTO` on API 30+, otherwise a copy of the main file and WAL under an exclusive transaction, checkpointed into the staged copy. After a failed Android legacy migration, onboarding can create an empty library while keeping the original database under the private `files/legacy-library-recovery/` directory.
+
+Legacy database conversion removes dangling children covered by cascading foreign keys after the data migrations, then checks all foreign keys. Dangling history provenance keeps its row with a null event reference. Format and lyrics rows without local songs remain intact. Android onboarding and manual restore use this shared conversion, as do desktop and iOS restores. Current backup validation still rejects foreign key violations.
 
 ## Integrations
 

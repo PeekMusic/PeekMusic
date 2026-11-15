@@ -67,6 +67,8 @@ def packaged_command(package, work, system, stdout):
         with zipfile.ZipFile(package) as archive:
             archive.extractall(app)
         yield [str(app / "Metrolist.exe")]
+    elif system == "darwin" and package.suffix == ".app":
+        yield [str(package / "Contents/MacOS/Metrolist")]
     elif system == "darwin" and package.suffix == ".zip":
         app = work / "app"
         with zipfile.ZipFile(package) as archive:
@@ -259,16 +261,21 @@ def native_backend_smoke(package, output, system):
         env = profile_environment(profile)
         env.pop("_JAVA_OPTIONS", None)
         env.update(HOME=str(profile), USERPROFILE=str(profile))
-        with (output / "stdout.log").open("wb") as log:
-            with packaged_command(package, work, system, log) as command:
-                result = subprocess.run([*command, f"-Duser.home={profile}", f"-Djava.io.tmpdir={work}",
-                    "-Djava.awt.headless=true", "-Dmetrolist.native.backendSmoke=true",
-                    "-XX:MissingRegistrationReportingMode=Exit"], env=env, cwd=work,
-                    stdout=log, stderr=subprocess.STDOUT, timeout=60)
-        for log in work.rglob("native_err_pid*.log"):
-            shutil.copy2(log, output / log.name)
+        result = None
+        try:
+            with (output / "stdout.log").open("wb") as log:
+                with packaged_command(package, work, system, log) as command:
+                    result = subprocess.run([*command, f"-Duser.home={profile}", f"-Djava.io.tmpdir={work}",
+                        "-Djava.awt.headless=true", "-Dmetrolist.native.backendSmoke=true",
+                        "-XX:MissingRegistrationReportingMode=Warn"], env=env, cwd=work,
+                        stdout=log, stderr=subprocess.STDOUT, timeout=60)
+        except subprocess.TimeoutExpired:
+            pass
+        finally:
+            for log in work.rglob("native_err_pid*.log"):
+                shutil.copy2(log, output / log.name)
         text = "\n".join(log.read_text(encoding="utf-8", errors="replace") for log in output.glob("*.log"))
-        passed = result.returncode == 0 and "[NativeBackendSmoke] passed" in text and "Unable to configure native crash log:" not in text and not re.search(r"Missing\w*RegistrationError", text)
+        passed = result is not None and result.returncode == 0 and "[NativeBackendSmoke] passed" in text and "Unable to configure native crash log:" not in text and not re.search(r"Missing\w*RegistrationError", text)
         message = "Native backend smoke " + ("passed" if passed else "failed") + "; GUI unavailable and unverified"
         (output / "result.txt").write_text(message + "\n")
         print(message)
@@ -283,20 +290,30 @@ def smoke(package, output, system=sys.platform, native=False, trace_java=None, t
         print(f"::warning::{message}")
         return native_backend_smoke(package, output, system) if native else 0
     errors = []
+    if native:
+        # The GUI run only covers guest startup; the backend probe also resolves every generated serializer.
+        backend = output / "backend"
+        backend.mkdir(exist_ok=True)
+        if native_backend_smoke(package, backend, system):
+            errors.append("Native backend smoke failed")
     # A DMG that fails to detach must not hide the launch result behind a cleanup error.
     with tempfile.TemporaryDirectory(prefix="metrolist-smoke-", ignore_cleanup_errors=True) as temporary:
         work = Path(temporary)
         profile = work / "profile"
         env = profile_environment(profile)
         # A non-English locale reaches localized JDK and app resources that an English trace never loads.
+        # Warn keeps running so every missing registration reaches the logs; any of them still fails the smoke below.
         native_options = [f"-Duser.home={profile}", f"-Djava.io.tmpdir={work}", "-Duser.language=fr", "-Duser.country=FR",
-                          "-XX:MissingRegistrationReportingMode=Exit"]
+                          "-XX:MissingRegistrationReportingMode=Warn"]
         if native and system != "win32":
             import resource
             resource.setrlimit(resource.RLIMIT_CORE, (0, resource.getrlimit(resource.RLIMIT_CORE)[1]))
         if native:
             env.pop("_JAVA_OPTIONS", None)
-            env.update(HOME=str(profile), USERPROFILE=str(profile), DBUS_SESSION_BUS_ADDRESS="unix:path=/nonexistent-metrolist-native-smoke")
+            env.update(USERPROFILE=str(profile), DBUS_SESSION_BUS_ADDRESS="unix:path=/nonexistent-metrolist-native-smoke")
+            # macOS finds the login keychain through HOME; a profile HOME makes Keychain block startup with a modal dialog.
+            if system != "darwin":
+                env["HOME"] = str(profile)
         if trace_java:
             trace_agent.mkdir(parents=True, exist_ok=True)
             command_context = nullcontext([str(trace_java), f"-agentlib:native-image-agent=config-merge-dir={trace_agent}",

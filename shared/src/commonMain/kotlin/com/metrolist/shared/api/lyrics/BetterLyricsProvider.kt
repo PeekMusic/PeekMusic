@@ -6,7 +6,6 @@
 package com.metrolist.shared.api.lyrics
 
 import com.metrolist.shared.model.AgentType
-import com.metrolist.shared.peek.PeekBuiltInTranslations
 import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.header
@@ -91,6 +90,7 @@ private data class TtmlLine(
     val isBackground: Boolean,
     val key: String? = null,
     val songPart: TtmlSongPartInfo? = null,
+    val translation: String? = null,
 )
 
 private data class AgentEntry(
@@ -107,8 +107,16 @@ internal fun parseTtmlToMlx(
     sourceId: String? = null,
     lyricsCurator: String? = null,
     lyricsCuratorId: String? = null,
+    configuredTranslationLanguage: String? = null,
 ): String {
     if (!isTtmlWithinLimits(ttml)) return ""
+    // Read the setting only for documents with translations; parsing must not depend on platform storage otherwise.
+    val translationLanguage =
+        if (ttml.contains("translation")) {
+            configuredTranslationLanguage ?: lyricsTranslationTargetLanguage()
+        } else {
+            ""
+        }
     val lines = mutableListOf<TtmlLine>()
     val agentTypes = mutableMapOf<String, String>()
 
@@ -134,12 +142,13 @@ internal fun parseTtmlToMlx(
             }
         }
 
-        findChild(root, "body")?.let { walk(it, lines, globalOffset, null) }
+        findChild(root, "body")?.let { walk(it, lines, globalOffset, null, translationLanguage) }
 
         val romanLinesList = parseTransliterations(root, globalOffset).take(MAX_TTML_LINES)
         val romanKeyMap = romanLinesList.filter { !it.key.isNullOrBlank() }.associateBy { it.key!! }
         val romanTimeMap = romanLinesList.groupBy { (it.startTime * 4).toLong() }
 
+        val translations = parseTranslations(root, translationLanguage)
         val sortedLines = lines.sortedBy { it.startTime }
 
         if (sortedLines.isEmpty()) {
@@ -165,7 +174,16 @@ internal fun parseTtmlToMlx(
                             sourceId = sourceId,
                             lyricsCurator = lyricsCurator,
                             lyricsCuratorId = lyricsCuratorId,
-                        ).song(title = title, artist = artist, songwriters = songwriters.takeIf { it.isNotEmpty() })
+                        ).song(
+                            title = title,
+                            artist = artist,
+                            songwriters = songwriters.takeIf { it.isNotEmpty() },
+                            translationLanguage =
+                                translationLanguage.takeIf {
+                                    translations.isNotEmpty() ||
+                                        sortedLines.any { it.translation != null }
+                                },
+                        )
                 plainLines.forEach { builder.unsyncedLine(it) }
                 return builder.build()
             }
@@ -201,7 +219,16 @@ internal fun parseTtmlToMlx(
                     sourceId = sourceId,
                     lyricsCurator = lyricsCurator,
                     lyricsCuratorId = lyricsCuratorId,
-                ).song(title = title, artist = artist, songwriters = songwriters.takeIf { it.isNotEmpty() })
+                ).song(
+                    title = title,
+                    artist = artist,
+                    songwriters = songwriters.takeIf { it.isNotEmpty() },
+                    translationLanguage =
+                        translationLanguage.takeIf {
+                            translations.isNotEmpty() ||
+                                sortedLines.any { it.translation != null }
+                        },
+                )
         if (isMultiAgent) agentMap.forEach { (_, e) -> builder.agent(e.mlxId, e.type) }
 
         val consumed = mutableSetOf<Int>()
@@ -258,6 +285,12 @@ internal fun parseTtmlToMlx(
                 builder.line(startMs, line.text)
             }
 
+            builder.translatedLine(
+                startMs,
+                line.translation ?: translations[line.key],
+                nextBg?.takeIf { bgWords != null }?.translation,
+            )
+
             if (!line.isBackground) {
                 val currentIdx = mainLineCount++
                 val romanMatch =
@@ -298,12 +331,7 @@ internal fun parseTtmlToMlx(
             }
         }
 
-        // PeekMusic: keep the translation the TTML ships with (Apple's), which upstream drops.
-        return PeekBuiltInTranslations.withTtmlTranslations(
-            builder.build(),
-            root,
-            sortedLines.filter { !it.isBackground && !it.key.isNullOrBlank() }.map { (it.startTime * 1000).toLong() to it.key!! },
-        )
+        return builder.build()
     } catch (_: Exception) {
         return ""
     }
@@ -421,6 +449,7 @@ private fun walk(
     lines: MutableList<TtmlLine>,
     offset: Double,
     parentAgent: String?,
+    translationLanguage: String,
 ) {
     val pending = ArrayDeque<WalkItem>()
     pending.addLast(WalkItem(element, parentAgent, null))
@@ -440,7 +469,7 @@ private fun walk(
             }
 
             "p" -> {
-                parseP(current, lines, offset, currentAgent, currentSongPart)
+                parseP(current, lines, offset, currentAgent, currentSongPart, translationLanguage)
                 continue
             }
         }
@@ -457,6 +486,7 @@ private fun parseP(
     offset: Double,
     divAgent: String?,
     divSongPart: TtmlSongPartInfo?,
+    translationLanguage: String,
 ) {
     val begin = timingAttr(p, "begin").ifEmpty { findFirstSpanBegin(p) } ?: return
     val startTime = parseTime(begin) + offset
@@ -484,7 +514,7 @@ private fun parseP(
                     if (isPBackground) {
                         parseWordSpan(child, offset, spanInfos)
                     } else {
-                        parseBackgroundSpan(child, startTime, offset, pSongPart)?.let { backgroundLines.add(it) }
+                        parseBackgroundSpan(child, startTime, offset, pSongPart, translationLanguage)?.let { backgroundLines.add(it) }
                     }
                 }
 
@@ -501,7 +531,9 @@ private fun parseP(
     val lineText = if (words.isEmpty()) getDirectText(p).trim() else buildLineText(words)
 
     if (lineText.isNotEmpty()) {
-        lines.add(TtmlLine(lineText, startTime, endTime, words, agent, isPBackground, pKey, pSongPart))
+        lines.add(
+            TtmlLine(lineText, startTime, endTime, words, agent, isPBackground, pKey, pSongPart, inlineTranslation(p, translationLanguage)),
+        )
         lines.addAll(backgroundLines)
     } else if (backgroundLines.isNotEmpty()) {
         lines.addAll(backgroundLines)
@@ -536,6 +568,7 @@ private fun parseBackgroundSpan(
     parentStart: Double,
     offset: Double,
     songPart: TtmlSongPartInfo? = null,
+    translationLanguage: String,
 ): TtmlLine? {
     val begin = timingAttr(span, "begin")
     val end = timingAttr(span, "end")
@@ -559,7 +592,20 @@ private fun parseBackgroundSpan(
 
     val words = spanInfos.filter { it.text.isNotEmpty() }
     val text = if (words.isEmpty()) getDirectText(span).trim() else buildLineText(words)
-    return if (text.isEmpty()) null else TtmlLine(text, start, endTime, words, null, true, songPart = songPart)
+    return if (text.isEmpty()) {
+        null
+    } else {
+        TtmlLine(
+            text,
+            start,
+            endTime,
+            words,
+            null,
+            true,
+            songPart = songPart,
+            translation = inlineTranslation(span, translationLanguage),
+        )
+    }
 }
 
 private fun extractSongwriters(
@@ -602,6 +648,38 @@ private fun buildLineText(words: List<TtmlWord>) =
             if (w.hasTrailingSpace && !w.text.endsWith('-') && i < words.lastIndex) append(" ")
         }
     }.trim()
+
+private fun inlineTranslation(
+    element: XmlElement,
+    targetLanguage: String,
+): String? =
+    element.children
+        .firstOrNull {
+            getAttr(it, "role") == "x-translation" && lyricsTranslationLanguageMatches(it.getAttribute("xml:lang"), targetLanguage)
+        }?.textContent
+        ?.trim()
+        ?.takeIf { it.isNotEmpty() }
+
+private fun parseTranslations(
+    root: XmlElement,
+    targetLanguage: String,
+): Map<String, String> {
+    val translations = mutableMapOf<String, String>()
+
+    fun collect(element: XmlElement) {
+        if (element.localName == "translation" && lyricsTranslationLanguageMatches(element.getAttribute("xml:lang"), targetLanguage)) {
+            element.children.filter { it.localName == "text" }.forEach { text ->
+                val key = getAttr(text, "for")
+                val value = text.textContent.trim()
+                if (key.isNotBlank() && value.isNotBlank()) translations[key] = value
+            }
+        } else {
+            element.children.forEach(::collect)
+        }
+    }
+    findChild(root, "head")?.let(::collect)
+    return translations
+}
 
 private fun parseTransliterations(
     root: XmlElement,

@@ -156,6 +156,26 @@ while True:
             self.assertEqual(1, smoke.smoke(Path("native.zip"), Path(directory), system="win32", native=True))
             backend.assert_called_once()
 
+    @unittest.skipIf(sys.platform == "win32", "The native Linux path lowers RLIMIT_CORE through the Unix resource module")
+    def test_native_desktop_run_also_requires_the_backend_probe(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(smoke, "desktop_available", return_value=True), \
+                patch.object(smoke, "native_backend_smoke", return_value=1) as backend, \
+                patch.object(smoke, "packaged_command", side_effect=RuntimeError("stop after probe")):
+            self.assertEqual(1, smoke.smoke(Path("native.AppImage"), Path(directory), system="linux", native=True))
+            backend.assert_called_once()
+            self.assertIn("Native backend smoke failed", (Path(directory) / "result.txt").read_text())
+
+    def test_backend_probe_timeout_keeps_native_logs_and_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output=Path(directory)/"evidence";output.mkdir()
+            def run(command, **options):
+                logs=Path(options["env"]["XDG_STATE_HOME"])/"metrolist/logs"
+                (logs/"native_err_pid7.log").write_text("hung")
+                raise smoke.subprocess.TimeoutExpired(command, 60)
+            with patch.object(smoke,"packaged_command",return_value=nullcontext(["Metrolist"])), patch.object(smoke.subprocess,"run",side_effect=run):
+                self.assertEqual(1,smoke.native_backend_smoke(Path("native.AppImage"),output,"linux"))
+            self.assertEqual("hung",(output/"native_err_pid7.log").read_text())
+
     def test_backend_probe_rejects_registration_errors_in_redirected_native_logs(self):
         for missing in (False, True):
             with tempfile.TemporaryDirectory() as directory:
@@ -180,6 +200,27 @@ while True:
                 self.assertEqual([str(work / "app/Metrolist.exe")], command)
                 self.assertEqual(b"launcher", Path(command[0]).read_bytes())
                 self.assertTrue((work / "app/runtime/bin/server/jvm.dll").is_file())
+
+    def test_macos_launches_app_and_zip_with_executable_modes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            work = Path(directory)
+            app = work / 'Metrolist.app'
+            launcher = app / 'Contents/MacOS/Metrolist'
+            launcher.parent.mkdir(parents=True)
+            launcher.write_bytes(b'launcher')
+            launcher.chmod(0o755)
+            with patch.object(smoke.subprocess, 'run') as run:
+                with smoke.packaged_command(app, work, 'darwin', None) as command:
+                    self.assertEqual(command, [str(launcher)])
+                package = work / 'native.zip'
+                with zipfile.ZipFile(package, 'w') as archive:
+                    archive.write(launcher, 'Metrolist.app/Contents/MacOS/Metrolist')
+                with smoke.packaged_command(package, work, 'darwin', None) as command:
+                    extracted = work / 'app/Metrolist.app/Contents/MacOS/Metrolist'
+                    self.assertEqual(command, [str(extracted)])
+                    self.assertEqual(extracted.read_bytes(), b'launcher')
+                    self.assertEqual(extracted.stat().st_mode & 0o777, 0o755)
+                run.assert_not_called()
 
     def test_macos_launches_from_final_dmg_and_detaches_on_failure(self):
         for failure in (False, True):
@@ -240,7 +281,7 @@ while True:
     def test_script_changes_trigger_x64_self_check_without_new_runners(self):
         sys.path.insert(0, str(ROOT / ".github/scripts"))
         from ci_paths import classify
-        workflow = (ROOT / ".github/workflows/build-desktop.yml").read_text()
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text()
         for event in ("push", "pull_request"):
             block = re.search(rf"(?ms)^  {event}:\n(.*?)(?=^  \w|^\w|\Z)", workflow)[1]
             self.assertNotIn("paths:", block)

@@ -15,6 +15,7 @@ import com.metrolist.shared.api.lyrics.YouTubeSubtitleLyricsProvider
 import com.metrolist.shared.api.lyrics.YouTubeTranscriptCue
 import com.metrolist.shared.api.lyrics.lyricsTimingKind
 import com.metrolist.shared.api.lyrics.lyricsTranslationFailure
+import com.metrolist.shared.api.lyrics.lyricsTranslationTargetLanguage
 import com.metrolist.shared.api.lyrics.retryLyricsTranslation
 import com.metrolist.shared.api.lyrics.romanizer.LyricsRomanizer
 import com.metrolist.shared.api.lyrics.romanizer.prepareJapaneseRomanizer
@@ -33,7 +34,6 @@ import com.metrolist.shared.peek.HedgedFetches
 import com.metrolist.shared.peek.PEEK_LYRICS_HEDGE_DELAY_MS
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.GlobalYouTube
-import com.metrolist.shared.utils.getSystemLanguage
 import com.metrolist.shared.utils.systemCountryCode
 import com.metrolist.shared.youtube.playback.PlaybackEventKind
 import com.metrolist.shared.youtube.playback.PlaybackEventLog
@@ -928,7 +928,7 @@ class LyricsRepository(
                     pieces.getOrNull(0)?.takeIf { pieces.getOrNull(1)?.toBooleanStrictOrNull() ?: false }
                 }.toSet()
         val romanizationEnabled = Settings.shared.lyricsRomanizationEnabled
-        val targetLanguage = resolveTargetLanguage(Settings.shared.lyricsAiTargetLanguage)
+        val targetLanguage = lyricsTranslationTargetLanguage()
         val translationStyle = Settings.shared.lyricsAiTranslationMode
         val backgroundSources =
             if (translationStyle == "Romanized") {
@@ -1196,15 +1196,6 @@ class LyricsRepository(
             if (settings.lyricsAiModel == model) settings.lyricsAiModel = validated
             if (settings.lyricsAiDetectorModel == detector) settings.lyricsAiDetectorModel = validatedDetector
         }
-    }
-
-    private fun resolveTargetLanguage(configuredLanguage: String): String {
-        if (configuredLanguage == "device" || configuredLanguage.isBlank()) {
-            return runCatching {
-                getSystemLanguage()
-            }.getOrNull().orEmpty()
-        }
-        return configuredLanguage
     }
 
     private suspend fun loadCachedTranslation(

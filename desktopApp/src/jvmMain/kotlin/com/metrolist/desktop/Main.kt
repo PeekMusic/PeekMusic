@@ -145,12 +145,14 @@ import com.metrolist.desktop.utils.configureLinuxWebKitRenderer
 import com.metrolist.desktop.utils.desktopRenderApiOverride
 import com.metrolist.desktop.utils.isDesktopPlatformSupported
 import com.metrolist.desktop.utils.resolveDesktopSeedColor
+import com.metrolist.desktop.web.DesktopWebViewError
 import com.metrolist.desktop.window.IconResources
 import com.metrolist.desktop.window.LinuxWindowFrame
 import com.metrolist.desktop.window.WindowFrame
 import com.metrolist.desktop.window.WindowVisibility
 import com.metrolist.desktop.window.findSkiaLayer
 import com.metrolist.desktop.window.restoreWindowPosition
+import com.metrolist.desktop.window.setWindowPlacement
 import com.metrolist.desktop.youtube.DesktopPageBoundTokenHost
 import com.metrolist.desktop.youtube.DesktopPageBoundTokenRuntime
 import com.metrolist.shared.BuildConfig
@@ -231,9 +233,11 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import sun.misc.Signal
 import sun.misc.SignalHandler
+import java.awt.Desktop
 import java.awt.EventQueue
 import java.awt.Frame
 import java.awt.GraphicsEnvironment
+import java.awt.desktop.AppReopenedListener
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.io.File
@@ -387,6 +391,7 @@ private fun WindowScope.AppContent(
                     },
             )
             DesktopPageBoundTokenHost(GlobalContext.get().get<DesktopPageBoundTokenRuntime>())
+            DesktopWebViewError()
             if (UiState.showIntegrationsSettings) {
                 IntegrationsOverlay(colorScheme)
             }
@@ -655,6 +660,7 @@ private fun shutdownApp(onComplete: () -> Unit) {
     if (!isShuttingDown.compareAndSet(false, true)) return
     shutdownScope.launch {
         try {
+            runCatching { DiscordRpcManager.destroy() }
             // Bounded: after a fatal error the composition may never dispose, and cleanup must still run.
             withTimeoutOrNull(UI_DISPOSE_TIMEOUT_MS) {
                 withContext(Dispatchers.Main) { uiVisible = false }
@@ -665,7 +671,6 @@ private fun shutdownApp(onComplete: () -> Unit) {
             if (startup.initialized) {
                 val deviceConnectRelease = launch { runCatching { DesktopDeviceConnect.manager.release() } }
                 runCatching { PlayerState.release() }
-                runCatching { DiscordRpcManager.destroy() }
                 runCatching { ComposeTrayManager.cleanup() }
                 runCatching { SongCacheManager.release() }
                 runCatching { DownloadManager.release() }
@@ -715,6 +720,9 @@ internal fun runBoundedShutdown(
 }
 
 private fun installGracefulShutdownSignals() {
+    Runtime.getRuntime().addShutdownHook(
+        Thread({ runBlocking { DiscordRpcManager.destroy() } }, "DiscordPresenceShutdown"),
+    )
     val handler =
         SignalHandler { signal ->
             AppLogger.info("Main", "Received ${signal.name} signal, shutting down")
@@ -893,6 +901,7 @@ private fun runDesktopApp(args: Array<String>) {
                     exitWithStartupMessage(downgrade.message.orEmpty())
                 }
             startup.trace("database")
+            runBlocking { SongLikeState.recoverDatabaseLikes(database) }
             SongMetadataState.bind(database, applicationScope)
 
             LastFM.initialize(
@@ -1189,10 +1198,16 @@ private fun runDesktopApp(args: Array<String>) {
             onDispose { DesktopNavigation.unbind(navigator) }
         }
 
-        Window(
-            onCloseRequest = {
+        fun minimizeToTrayOrClose() {
+            if (Settings.shared.minimizeToTrayOnClose) {
+                ComposeTrayManager.hideWindow()
+            } else {
                 shutdownApp { exitProcess(0) }
-            },
+            }
+        }
+
+        Window(
+            onCloseRequest = { minimizeToTrayOrClose() },
             title = if (BuildConfig.DEBUG) "Metrolist Debug" else "Metrolist",
             state = windowState,
             undecorated = isLinux && !useSystemWindowFrame,
@@ -1229,7 +1244,7 @@ private fun runDesktopApp(args: Array<String>) {
                         }
                         if (isLinux) {
                             LinuxWindowFrame(
-                                onCloseRequest = { shutdownApp { exitProcess(0) } },
+                                onCloseRequest = { minimizeToTrayOrClose() },
                                 darkTheme = !MaterialTheme.colorScheme.background.isLight(),
                                 state = windowState,
                             ) { shell() }
@@ -1259,12 +1274,13 @@ private fun runDesktopApp(args: Array<String>) {
                     navigator = navigator,
                     windowState = windowState,
                     toggleWindowFullscreen = {
-                        windowState.placement =
+                        val placement =
                             if (windowState.placement == WindowPlacement.Fullscreen) {
                                 lastNormalPlacement.value
                             } else {
                                 WindowPlacement.Fullscreen
                             }
+                        setWindowPlacement(windowState, placement) { window.placement = it }
                     },
                     onRefresh = {
                         UiState.isRefreshingApp = true
@@ -1274,9 +1290,8 @@ private fun runDesktopApp(args: Array<String>) {
                             UiState.isRefreshingApp = false
                         }
                     },
-                    onCloseWindow = {
-                        shutdownApp { exitProcess(0) }
-                    },
+                    onCloseWindow = { minimizeToTrayOrClose() },
+                    onQuit = { shutdownApp { exitProcess(0) } },
                 )
             }
 
@@ -1433,6 +1448,27 @@ private fun runDesktopApp(args: Array<String>) {
                 DesktopUrlHandler.onUiReady()
             }
 
+            if (OsUtil.isMac) {
+                DisposableEffect(Unit) {
+                    val reopenListener =
+                        AppReopenedListener {
+                            ComposeTrayManager.showWindow()
+                        }
+                    runCatching {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop().addAppEventListener(reopenListener)
+                        }
+                    }
+                    onDispose {
+                        runCatching {
+                            if (Desktop.isDesktopSupported()) {
+                                Desktop.getDesktop().removeAppEventListener(reopenListener)
+                            }
+                        }
+                    }
+                }
+            }
+
             LaunchedEffect(UiState.restartRequested) {
                 if (UiState.restartRequested) {
                     AppLogger.info("Main", "Restarting application for setting change")
@@ -1452,8 +1488,12 @@ private fun runDesktopApp(args: Array<String>) {
             }
 
             fun onClose() {
-                AppLogger.info("Main", "Application shutting down")
-                shutdownApp { exitProcess(0) }
+                if (Settings.shared.minimizeToTrayOnClose) {
+                    ComposeTrayManager.hideWindow()
+                } else {
+                    AppLogger.info("Main", "Application shutting down")
+                    shutdownApp { exitProcess(0) }
+                }
             }
 
             val areWeInDarkMode = remember { mutableStateOf(false) }

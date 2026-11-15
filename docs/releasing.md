@@ -6,15 +6,12 @@ Change `appVersion` only with release authorization. Workflows own signing, chec
 
 Keep release commits to `appVersion`, `versionCode` and release metadata. `.github/scripts/release_verification.py` follows first-parent history to find the source commit whose tree differs only in `gradle.properties` version assignments, `docs/changelog.md` and `fastlane/metadata/android/*/changelogs/*.txt`. Any other Gradle property or source change ends that search. Manual retries with release fixes must verify those fixes too.
 
-Before creating staging or starting platform builds, releases query GitHub for the applicable Verify Android, Verify Desktop, Verify iOS and Verify repository checks runs. The gate uses the same path rules as push/PR verification. It requires successful, completed GitHub Actions check runs from the expected main-branch workflows. A successful workflow with a skipped required job is insufficient. Android verification must include the debug checks, not just release APK assembly. A failed platform run blocks reuse even if the last commit did not touch that platform, because one push can contain several commits.
+Before creating staging or starting platform builds, releases query GitHub for the applicable Android, desktop, iOS and repository jobs in CI. The gate uses the same path rules as push/PR verification. It requires successful, completed GitHub Actions check runs from the expected main-branch workflows. A successful workflow with a skipped required job is insufficient. Android verification must include the debug checks, not just release APK assembly. A failed CI run blocks reuse even if the last commit did not touch that platform, because one push can contain several commits.
 
 The gate first tries the release revision, then each metadata-equivalent ancestor through the source commit. If it cannot prove verification, it fails before packaging. It does not start a second test matrix or wait for another run. Finish or rerun verification, then retry the failed release run. To verify the current main revision explicitly, run the needed commands below and wait for success.
 
 ```bash
-gh workflow run build-android.yml --ref main -f variant=debug
-gh workflow run build-desktop.yml --ref main
-gh workflow run build-ios.yml --ref main
-gh workflow run verify-repository-checks.yml --ref main
+gh workflow run ci.yml --ref main
 ```
 
 Once the gate passes, release jobs build, sign and upload. They skip unit tests, lint, launch smoke tests, verification-only Gradle dependencies and the duplicate iOS simulator job. They still inspect archive versions and native architectures and verify APK signatures. `metrolist.verifyPackaging=false` removes the Gradle verification dependencies only in these gated jobs; normal builds keep them. Manual package dispatches keep final distributable inspection. `build-desktop.yml` with `windows-manager=true` builds and tests the pinned Windows installer against its portable ZIP, including install, repair and uninstall. Run it when changing installer or payload behavior. See [release verification gate](build-performance.md#release-verification-gate) for where skipped checks run.
@@ -23,7 +20,15 @@ The prepare jobs have read-only Actions and checks permissions for this gate. Re
 
 ## Native tester builds
 
-Native packages are never published to users. Dispatch `build-desktop-native.yml` for one target; the package and its evidence archive are uploaded as workflow artifacts. Linux x64 is the first native test target; Windows x64 is available for manual coverage. Releases ship only the JVM/mobile packages. See [Native Image](desktop-native-image.md#opt-in-native-tester-builds) for pinned builders, strict smoke coverage, disabled ARM jobs and rollback/promotion criteria.
+Dispatch `build-desktop-native.yml` for one target; the package and its evidence archive are uploaded as workflow artifacts. Nightly prereleases also publish Linux x64 and Windows x64 native packages. Stable releases keep JVM desktop packages. See [Native Image](desktop-native-image.md#opt-in-native-tester-builds) for pinned builders, strict smoke coverage and rollback/promotion criteria.
+
+## Nightly prereleases
+
+[`nightly.yml`](../.github/workflows/nightly.yml) runs after pushes to main, except changes limited to docs, Markdown, fastlane metadata or assets. GitHub's `[skip ci]` commit marker skips push runs. Maintainers can also dispatch it on main. New runs cancel an unfinished nightly. CI runs the affected platform's ktlint and unit tests alongside Nightly, without debug APK assembly or a separate desktop compile task. Native launch probes run on manual builds only.
+
+All three builds must succeed before publication. The rolling `nightly` tag moves to the built commit, and the "Metrolist Nightly" prerelease replaces its assets with exactly one signed Android release APK, one native Linux x64 AppImage and one native Windows x64 portable ZIP. The assets have fixed names without a version, so `https://github.com/MetrolistGroup/Metrolist/releases/download/nightly/<name>` always points at the latest nightly: `Metrolist.apk`, `Metrolist-Desktop-linux-x64.AppImage` and `Metrolist-Desktop-windows.zip`. The release notes and the app show the version. Publication keeps the release in draft while replacing assets, then publishes it as a prerelease without marking it latest. A failed publication can leave a draft; rerun the workflow to finish it.
+
+Notes link the built commit and list up to 50 first-parent commits since the previous nightly tag target. Nightly builds override `appVersion` with the commit as semver build metadata, such as `14.0.0+abc1234`, so the app and release notes show the exact commit. Build metadata keeps update checks treating a nightly as equal to its base release, where a `-suffix` would mark it older and offer the stable release as an update. The reusable Android and native workflows take this through their `app-version` input, which sets `ORG_GRADLE_PROJECT_appVersion`. Android uses the same signing, Last.fm and Lyprio secrets as stable releases; signing must be available to push runs. Signing secrets stay in the Android job. Nightlies do not upload or finalize Sentry releases. Mapping files and native build evidence remain workflow artifacts.
 
 ## Stable releases
 
