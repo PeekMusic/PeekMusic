@@ -12,6 +12,7 @@ import com.metrolist.shared.model.AgentType
 import com.metrolist.shared.model.LyricsEntry
 import com.metrolist.shared.model.LyricsTimingKind
 import com.metrolist.shared.model.MlxDocument
+import com.metrolist.shared.peek.PeekBuiltInTranslations
 
 object LyricsUtils {
     const val FINAL_DYNAMIC_LINE_DURATION_MS = 5_000L
@@ -19,7 +20,8 @@ object LyricsUtils {
     fun parseLyrics(lyrics: String): List<LyricsEntry> {
         if (lyrics.isBlank()) return emptyList()
         return try {
-            MlxParser.parse(lyrics).lines
+            // PeekMusic: built-in translations only in the translation target language.
+            PeekBuiltInTranslations.linesForTarget(MlxParser.parse(lyrics))
         } catch (_: Exception) {
             emptyList()
         }
@@ -28,7 +30,7 @@ object LyricsUtils {
     fun parseMlxDocument(lyrics: String): MlxDocument? {
         if (lyrics.isBlank()) return null
         return try {
-            MlxParser.parse(lyrics)
+            MlxParser.parse(lyrics).let { it.copy(lines = PeekBuiltInTranslations.linesForTarget(it)) }
         } catch (_: Exception) {
             null
         }

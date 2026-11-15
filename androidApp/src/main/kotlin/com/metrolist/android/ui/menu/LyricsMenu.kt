@@ -55,11 +55,15 @@ import com.metrolist.shared.generated.resources.lyrics_offset
 import com.metrolist.shared.generated.resources.lyrics_romanize_title
 import com.metrolist.shared.generated.resources.lyrics_show_translations
 import com.metrolist.shared.generated.resources.no_lyrics_provider_results
+import com.metrolist.shared.generated.resources.peek_title
+import com.metrolist.shared.generated.resources.peek_translation_source_builtin
+import com.metrolist.shared.generated.resources.peek_translation_source_google
 import com.metrolist.shared.generated.resources.refetch
 import com.metrolist.shared.generated.resources.save
 import com.metrolist.shared.generated.resources.sources
 import com.metrolist.shared.model.LyricsEntry
 import com.metrolist.shared.model.LyricsProviderResult
+import com.metrolist.shared.peek.PeekBuiltInTranslations
 import com.metrolist.shared.repository.LyricsProviderSearch
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.components.AlertDialog
@@ -124,7 +128,22 @@ fun LyricsMenu(
     }
 
     var romanizationEnabled by remember { mutableStateOf(Settings.shared.lyricsRomanizationEnabled) }
-    var manualAiTranslationChecked by remember(manualAiTranslationEnabled) { mutableStateOf(manualAiTranslationEnabled) }
+    var peekOn by remember { mutableStateOf(Settings.shared.showLyricsOnPlayer) }
+    var translationsOn by remember {
+        mutableStateOf(Settings.shared.lyricsAiTranslationEnabled && Settings.shared.lyricsShowTranslations)
+    }
+    val hasTranslations = lyrics.any { !it.translatedText.isNullOrBlank() || !it.backgroundTranslatedText.isNullOrBlank() }
+    val builtInTranslationSource = remember(rawLyrics) { PeekBuiltInTranslations.builtInSource(rawLyrics) }
+
+    fun setTranslations(enabled: Boolean) {
+        translationsOn = enabled
+        Settings.shared.lyricsShowTranslations = enabled
+        if (enabled) {
+            Settings.shared.lyricsAiTranslationEnabled = true
+            // Nothing translated yet, e.g. after a failure: translate now.
+            if (!hasTranslations) onManualAiTranslationChange(true)
+        }
+    }
 
     PopupVisibility(visible = showEditDialog) {
         LyricsEditorScreen(
@@ -233,8 +252,45 @@ fun LyricsMenu(
                 Material3MenuGroup(
                     items =
                         listOfNotNull(
+                            // PeekMusic: the Peek itself, and one translation switch instead of upstream's AI items.
+                            // Translation is automatic (Google Translate, or the one shipped with the lyrics), and
+                            // "Reload" fetches anew, so the per-track AI switch and "new AI translation" are gone.
                             Material3MenuItemData(
-                                title = { Text(stringResource(Res.string.ai_translation_for_track)) },
+                                title = { Text(stringResource(Res.string.peek_title)) },
+                                cardColors = menuCardColors,
+                                icon = { Icon(imageVector = MetrolistIcons.Outlined.Lyrics, contentDescription = null) },
+                                onClick = {
+                                    peekOn = !peekOn
+                                    Settings.shared.showLyricsOnPlayer = peekOn
+                                },
+                                trailingContent = {
+                                    ExpressiveSwitch(
+                                        checked = peekOn,
+                                        onCheckedChange = {
+                                            peekOn = it
+                                            Settings.shared.showLyricsOnPlayer = it
+                                        },
+                                    )
+                                },
+                            ),
+                            Material3MenuItemData(
+                                title = { Text(stringResource(Res.string.lyrics_show_translations)) },
+                                description =
+                                    if (hasTranslations) {
+                                        {
+                                            Text(
+                                                builtInTranslationSource?.let {
+                                                    stringResource(
+                                                        Res.string.peek_translation_source_builtin,
+                                                        it,
+                                                    )
+                                                }
+                                                    ?: stringResource(Res.string.peek_translation_source_google),
+                                            )
+                                        }
+                                    } else {
+                                        null
+                                    },
                                 cardColors = menuCardColors,
                                 icon = {
                                     Icon(
@@ -242,64 +298,14 @@ fun LyricsMenu(
                                         contentDescription = null,
                                     )
                                 },
-                                onClick = {
-                                    if (Settings.shared.lyricsAiTranslationEnabled) {
-                                        manualAiTranslationChecked = !manualAiTranslationChecked
-                                        onManualAiTranslationChange(manualAiTranslationChecked)
-                                    }
-                                },
+                                onClick = { setTranslations(!translationsOn) },
                                 trailingContent = {
                                     ExpressiveSwitch(
-                                        checked = manualAiTranslationChecked,
-                                        enabled = Settings.shared.lyricsAiTranslationEnabled,
-                                        onCheckedChange = {
-                                            manualAiTranslationChecked = it
-                                            onManualAiTranslationChange(it)
-                                        },
+                                        checked = translationsOn,
+                                        onCheckedChange = { setTranslations(it) },
                                     )
                                 },
                             ),
-                            if (manualAiTranslationChecked) {
-                                Material3MenuItemData(
-                                    title = { Text(stringResource(Res.string.ai_translation_new_title)) },
-                                    description = { Text(stringResource(Res.string.ai_translation_new_desc)) },
-                                    cardColors = menuCardColors,
-                                    icon = {
-                                        Icon(
-                                            imageVector = MetrolistIcons.Outlined.Cached,
-                                            contentDescription = null,
-                                        )
-                                    },
-                                    onClick = {
-                                        onNewAiTranslation()
-                                    },
-                                )
-                            } else {
-                                null
-                            },
-                            if (lyrics.any { !it.translatedText.isNullOrBlank() || !it.backgroundTranslatedText.isNullOrBlank() }) {
-                                Material3MenuItemData(
-                                    title = { Text(stringResource(Res.string.lyrics_show_translations)) },
-                                    cardColors = menuCardColors,
-                                    icon = {
-                                        Icon(
-                                            imageVector = MetrolistIcons.Outlined.Translate,
-                                            contentDescription = null,
-                                        )
-                                    },
-                                    onClick = {
-                                        Settings.shared.lyricsShowTranslations = !Settings.shared.lyricsShowTranslations
-                                    },
-                                    trailingContent = {
-                                        ExpressiveSwitch(
-                                            checked = Settings.shared.lyricsShowTranslations,
-                                            onCheckedChange = { Settings.shared.lyricsShowTranslations = it },
-                                        )
-                                    },
-                                )
-                            } else {
-                                null
-                            },
                             Material3MenuItemData(
                                 title = { Text(stringResource(Res.string.lyrics_romanize_title)) },
                                 cardColors = menuCardColors,

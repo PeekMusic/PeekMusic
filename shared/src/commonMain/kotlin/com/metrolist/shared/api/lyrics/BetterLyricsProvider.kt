@@ -6,6 +6,7 @@
 package com.metrolist.shared.api.lyrics
 
 import com.metrolist.shared.model.AgentType
+import com.metrolist.shared.peek.PeekBuiltInTranslations
 import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.header
@@ -297,7 +298,12 @@ internal fun parseTtmlToMlx(
             }
         }
 
-        return builder.build()
+        // PeekMusic: keep the translation the TTML ships with (Apple's), which upstream drops.
+        return PeekBuiltInTranslations.withTtmlTranslations(
+            builder.build(),
+            root,
+            sortedLines.filter { !it.isBackground && !it.key.isNullOrBlank() }.map { (it.startTime * 1000).toLong() to it.key!! },
+        )
     } catch (_: Exception) {
         return ""
     }

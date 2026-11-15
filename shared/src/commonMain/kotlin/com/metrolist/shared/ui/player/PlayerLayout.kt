@@ -1466,7 +1466,7 @@ internal fun LandscapePlayerContent(
                                         onAltShareSong = onAltShareSong,
                                         onToggleLike = onToggleLike,
                                         onShowLyricsMenu = onShowLyricsMenu,
-                                        peekToggles = rememberPeekPlayerToggles(viewModel),
+                                        peekToggles = rememberPeekPlayerToggles(viewModel, onShowLyricsMenu),
                                     )
                                 }
                             }

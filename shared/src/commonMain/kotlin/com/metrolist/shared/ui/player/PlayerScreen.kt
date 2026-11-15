@@ -581,7 +581,7 @@ fun PlayerScreen(
     var showSongDetails by remember { mutableStateOf(false) }
     var showSleepTimerDialog by remember { mutableStateOf(false) }
     var showLyricsMenu by remember { mutableStateOf(false) }
-    val peekToggles = rememberPeekPlayerToggles(viewModel)
+    val peekToggles = rememberPeekPlayerToggles(viewModel) { showLyricsMenu = true }
     var showLyricsOffsetEditor by rememberSaveable(currentSong?.id) { mutableStateOf(false) }
     val hapticManager = rememberMetrolistHaptics()
     var seekFeedback by remember { mutableStateOf<SeekFeedback?>(null) }

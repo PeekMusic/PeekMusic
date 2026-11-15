@@ -7,7 +7,9 @@ package com.metrolist.shared.peek
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.viewmodels.PlayerViewModel
 
@@ -15,7 +17,11 @@ import com.metrolist.shared.viewmodels.PlayerViewModel
 @Stable
 class PeekPlayerToggles internal constructor(
     internal val viewModel: PlayerViewModel,
+    private val onOpenLyricsMenu: () -> Unit,
 ) {
+    /** The Peek button opens the lyrics menu (Peek, translations, romanization, reload, sources). */
+    fun openLyricsMenu() = onOpenLyricsMenu()
+
     val peekOn: Boolean
         get() = Settings.shared.showLyricsOnPlayer
 
@@ -73,4 +79,10 @@ internal fun restoredArtworkMotion(saved: String): Pair<Boolean, Boolean> {
 }
 
 @Composable
-fun rememberPeekPlayerToggles(viewModel: PlayerViewModel): PeekPlayerToggles = remember(viewModel) { PeekPlayerToggles(viewModel) }
+fun rememberPeekPlayerToggles(
+    viewModel: PlayerViewModel,
+    onOpenLyricsMenu: () -> Unit,
+): PeekPlayerToggles {
+    val openLyricsMenu by rememberUpdatedState(onOpenLyricsMenu)
+    return remember(viewModel) { PeekPlayerToggles(viewModel) { openLyricsMenu() } }
+}

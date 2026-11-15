@@ -36,7 +36,8 @@ fun LyricsTranslationSnackbar(
 ) {
     LaunchedEffect(snackbarHostState, failures) {
         failures.collect {
-            snackbarHostState.showSnackbar(getString(it.messageResource()), duration = SnackbarDuration.Short)
+            // PeekMusic: Google Translate only, so one plain message instead of the AI provider's reasons.
+            snackbarHostState.showSnackbar(getString(Res.string.peek_translation_failed), duration = SnackbarDuration.Short)
         }
     }
 }

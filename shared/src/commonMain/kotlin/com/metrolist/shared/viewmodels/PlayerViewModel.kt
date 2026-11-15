@@ -1938,6 +1938,8 @@ class PlayerViewModel(
                 onTranslationFailure = { failure ->
                     if (isCurrentLyricsRequest(songId, requestId)) {
                         failedTranslationRequestId = requestId
+                        // PeekMusic: a failed translation switches the translation toggles off (Peek sheet and lyrics menu).
+                        Settings.shared.lyricsShowTranslations = false
                         _uiState.value =
                             _uiState.value.copy(manualAiTranslationEnabled = false, lyricsTranslationProgress = LyricsTranslationProgress())
                         translationFailures.trySend(failure)
