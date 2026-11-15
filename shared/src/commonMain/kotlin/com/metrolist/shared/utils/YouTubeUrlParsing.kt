@@ -1,6 +1,7 @@
 package com.metrolist.shared.utils
 
 import com.metrolist.innertubex.utils.YouTubeUrlParser
+import com.metrolist.shared.peek.PeekLinks
 import io.ktor.http.Url
 
 private val youtubeVideoId = Regex("^[A-Za-z0-9_-]+$")
@@ -8,7 +9,7 @@ private val listenTogetherRoomCode = Regex("^[A-Za-z0-9]{8}$")
 private val partyCodePattern = Regex("^[A-Za-z0-9_-]{1,64}$")
 
 fun normalizeMetrolistShareUrl(text: String): String {
-    val trimmed = text.trim()
+    val trimmed = PeekLinks.toUpstream(text.trim())
     if (trimmed.startsWith("metrolist://", ignoreCase = true)) {
         val afterScheme = trimmed.substring("metrolist://".length).trimStart('/')
         if (afterScheme.startsWith("open?", ignoreCase = true)) {
@@ -79,11 +80,13 @@ fun normalizeMetrolistShareUrl(text: String): String {
 fun extractListenTogetherRoomCode(value: String?): String? {
     if (value.isNullOrBlank()) return null
     val trimmed =
-        value
-            .trim()
-            .removeSurrounding("\"")
-            .removeSurrounding("'")
-            .trim()
+        PeekLinks.toUpstream(
+            value
+                .trim()
+                .removeSurrounding("\"")
+                .removeSurrounding("'")
+                .trim(),
+        )
     if (trimmed.isEmpty()) return null
 
     val target =

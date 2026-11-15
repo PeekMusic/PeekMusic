@@ -2,6 +2,7 @@ package com.metrolist.android.playback
 
 import android.media.MediaExtractor
 import android.media.MediaFormat
+import com.metrolist.shared.peek.PeekFork
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -102,7 +103,7 @@ internal fun exportWebmOpus(
     }.getOrDefault(false)
 
 internal fun opusTagsPacket(metadata: AudioExportMetadata): ByteArray {
-    val vendor = "Metrolist".encodeToByteArray()
+    val vendor = PeekFork.USER_AGENT_PRODUCT.encodeToByteArray()
     val comments =
         buildList {
             add("TITLE=${metadata.title}")

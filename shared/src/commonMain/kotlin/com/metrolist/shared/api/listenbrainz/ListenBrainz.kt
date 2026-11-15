@@ -4,6 +4,7 @@ import com.metrolist.shared.api.ScrobbleApiException
 import com.metrolist.shared.api.ScrobbleFailureDisposition
 import com.metrolist.shared.api.parseRetryAfter
 import com.metrolist.shared.api.scrobbleStatusDisposition
+import com.metrolist.shared.peek.PeekFork
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -88,7 +89,7 @@ object ListenBrainz {
                             "additional_info",
                             buildJsonObject {
                                 put("duration_ms", seconds * 1000L)
-                                put("submission_client", "Metrolist")
+                                put("submission_client", PeekFork.USER_AGENT_PRODUCT)
                             },
                         )
                     }

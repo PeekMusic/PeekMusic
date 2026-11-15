@@ -36,6 +36,7 @@ import com.metrolist.shared.generated.resources.unknown_artist
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.isPodcast
 import com.metrolist.shared.network.sharedOkHttpClient
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.playback.PlaybackPreCache
 import com.metrolist.shared.playback.canReuseCachedAudio
 import com.metrolist.shared.playback.downloadSabrAudio
@@ -1347,7 +1348,7 @@ class AudioCacheManager(
             return File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), SHARED_DOWNLOAD_RELATIVE_DIR)
         }
         val base = context.externalMediaDirs.firstOrNull { it != null } ?: context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
-        return File(base ?: internalDirectory(kind), "Metrolist/Cache")
+        return File(base ?: internalDirectory(kind), "${PeekFork.MEDIA_FOLDER}/Cache")
     }
 
     private fun audioLocation(kind: String): String =
@@ -1607,7 +1608,7 @@ class AudioCacheManager(
                 }
             }.getOrDefault(uriString)
 
-        private const val SHARED_DOWNLOAD_RELATIVE_DIR = "Metrolist/Downloads"
+        private const val SHARED_DOWNLOAD_RELATIVE_DIR = "${PeekFork.MEDIA_FOLDER}/Downloads"
         private const val DOWNLOAD_BUFFER_BYTES = 64 * 1024
         private const val MIN_RANGE_CHUNK_BYTES = 1024 * 1024L
         private const val PARALLEL_RANGE_DOWNLOADS = 4

@@ -1,5 +1,7 @@
 package com.metrolist.shared.utils
 
+import com.metrolist.shared.peek.PeekLinks
+
 object ShareUrls {
     private const val MUSIC_DOMAIN = "https://music.youtube.com"
 
@@ -11,12 +13,7 @@ object ShareUrls {
     fun party(
         roomCode: String,
         usePartyParam: Boolean = true,
-    ): String =
-        if (usePartyParam) {
-            "https://metrolist.cc/party?r=$roomCode"
-        } else {
-            "https://metrolist.cc/listen?code=$roomCode"
-        }
+    ): String = PeekLinks.partyInvitation(roomCode, usePartyParam) // PeekMusic: invitations to PeekMusic's own server
 
     fun playlist(playlistId: String): String = "$MUSIC_DOMAIN/playlist?list=${playlistId.removePrefix("VL")}"
 

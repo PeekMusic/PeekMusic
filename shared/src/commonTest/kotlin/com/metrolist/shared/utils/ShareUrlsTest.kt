@@ -60,10 +60,10 @@ class ShareUrlsTest {
     @Test
     fun roomInvitationsKeepTheProductionHost() {
         val url = ShareUrls.party("ROOM1234", usePartyParam = false)
-        assertEquals("https://metrolist.cc/listen?code=ROOM1234", url)
+        assertEquals("https://listen.peekmusic.org/listen?code=ROOM1234", url)
         assertEquals("ROOM1234", parseListenTogetherInvitation(url))
         val partyUrl = ShareUrls.party("ROOM1234")
-        assertEquals("https://metrolist.cc/party?r=ROOM1234", partyUrl)
+        assertEquals("https://listen.peekmusic.org/party?r=ROOM1234", partyUrl)
         assertEquals("ROOM1234", extractListenTogetherRoomCode(partyUrl))
     }
 }

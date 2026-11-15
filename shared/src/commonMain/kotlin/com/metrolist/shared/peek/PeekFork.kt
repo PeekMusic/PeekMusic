@@ -18,6 +18,13 @@ object PeekFork {
     const val LISTEN_TOGETHER_SERVER_OPERATOR = "Endrit"
     const val USER_AGENT_PRODUCT = "PeekMusic"
 
+    /** Folder name for downloads, the audio cache and saved photos, so they never mix with an installed Metrolist. */
+    const val MEDIA_FOLDER = "PeekMusic"
+
+    /** URL scheme and invitation host for PeekMusic's own links (see PeekLinks). */
+    const val APP_SCHEME = "peekmusic"
+    const val INVITE_HOST = "listen.peekmusic.org"
+
     /** Release APK name the legacy (pre-KMP) PeekMusic updater recognizes: prefix `PeekMusic-`, suffix `Release.apk`. */
     fun releaseApkName(version: String): String = "PeekMusic-$version-fossRelease.apk"
 

@@ -7,6 +7,7 @@ import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.viewmodels.ArtistPhoto
 import com.metrolist.shared.viewmodels.downloadArtistPhoto
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 object ArtistPhotoSaver {
-    private const val RELATIVE_DIR = "Metrolist"
+    private const val RELATIVE_DIR = PeekFork.MEDIA_FOLDER
 
     val needsStoragePermission: Boolean get() = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
 

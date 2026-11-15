@@ -8,6 +8,7 @@ import com.metrolist.shared.model.HomeSection
 import com.metrolist.shared.model.PlaylistItem
 import com.metrolist.shared.model.PodcastItem
 import com.metrolist.shared.model.YTItem
+import com.metrolist.shared.peek.PeekLinks
 import com.metrolist.shared.ui.components.CollectionPreviews
 import com.metrolist.shared.ui.navigation.Screen
 import com.metrolist.shared.ui.settings.SettingsPageId
@@ -173,7 +174,8 @@ private fun partyInvitation(code: String?): MobileDeepLink? =
         MobileDeepLink.Destination(MobileRoute.ListenTogether(it.uppercase()))
     }
 
-internal fun resolveMobileDeepLink(callback: String): MobileDeepLink? {
+internal fun resolveMobileDeepLink(link: String): MobileDeepLink? {
+    val callback = PeekLinks.toUpstream(link)
     parseListenTogetherInvitation(callback)?.let { return MobileDeepLink.Destination(MobileRoute.ListenTogether(it)) }
     val uri = runCatching { Url(callback.replace("metrolist://", "https://app.metrolist/")) }.getOrNull()
     val path = uri?.encodedPath?.trim('/') ?: callback.removePrefix("metrolist://").substringBefore('?').trim('/')

@@ -150,6 +150,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="metrolist" android:host="listen-together" />
+                <data android:scheme="peekmusic" android:host="listen-together" />
+            </intent-filter>
+
+            <!-- PeekMusic: Listen Together invitations on PeekMusic's own server. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="listen.peekmusic.org" />
+                <data android:pathPrefix="/party" />
+                <data android:pathPrefix="/listen" />
             </intent-filter>
 
             <intent-filter android:autoVerify="true">
@@ -194,6 +206,7 @@
                 <data android:scheme="vnd.youtube" />
                 <data android:scheme="vnd.youtube.launch" />
                 <data android:scheme="metrolist" />
+                <data android:scheme="peekmusic" />
             </intent-filter>
 
             <intent-filter>
