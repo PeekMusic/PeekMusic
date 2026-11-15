@@ -415,6 +415,10 @@ func toProtoMessage(payload interface{}) (proto.Message, error) {
 		return pbPayload, nil
 
 	default:
+		// PeekMusic: PeekParty friends send their generated payloads as they are.
+		if m, ok := payload.(proto.Message); ok {
+			return m, nil
+		}
 		return nil, fmt.Errorf("unsupported payload type: %T", payload)
 	}
 }

@@ -1,4 +1,43 @@
-# Metroserver
+# PeekParty server (PeekMusic)
+
+This is upstream [metroserver](https://github.com/MetrolistGroup/metroserver) with PeekMusic's friends system on
+top. It runs at `wss://listen.peekmusic.org/ws` (see `website/README.md` for the Caddy block).
+
+## What PeekMusic adds
+
+- `peekproto/peek_friends.proto`: friend payloads, separate from upstream's `metroproto/listentogether.proto`
+  (vendored from metroproto at the commit the app's submodule uses). The 1.3.0 field numbers must not change.
+- `internal/server/peek_friends*.go`: accounts (a random app token, stored only as its SHA-256), friend codes,
+  friend requests, presence, party invites and account deletion. Upstream code only calls into it from five
+  marked places (`// PeekMusic:`): the message switch, client removal, the feature list, the codec fallback for
+  generated payloads, and startup.
+- Feature `peek_friends_v2`: clients that announce it get friend requests, invites and deletion. Apps without it
+  (PeekMusic 1.3.0) keep working: adding them befriends at once, as before, because they cannot accept requests.
+
+Message types: `authenticate`, `add_friend`, `remove_friend` (also withdraws or declines a request),
+`accept_friend_request`, `decline_friend_request`, `invite_friend`, `delete_friend_account` from the app;
+`auth_success`, `friends_status`, `friend_presence_update`, `friend_added`, `friend_removed`, `friend_request`,
+`friend_invite`, `friend_account_deleted` from the server.
+
+## Updating from upstream
+
+Copy the new upstream files over, keep the five `// PeekMusic:` lines, run `go test -race ./...`.
+The import commit `chore(server): import upstream metroserver` shows the untouched upstream state.
+
+## Deploy
+
+```sh
+rsync -a --delete --exclude data --exclude ua_policy.json --exclude docker-compose.yml \
+  server/ peekmusic:/opt/metroserver/
+ssh peekmusic 'cd /opt/metroserver && docker compose up -d --build'
+```
+
+`docker-compose.yml` on the server keeps the port on 127.0.0.1, `data/` holds the bbolt database, and logs go to
+journald (14 days, as the privacy policy says).
+
+---
+
+# Upstream: Metroserver
 
 [![codecov](https://codecov.io/gh/MetrolistGroup/metroserver/graph/badge.svg)](https://codecov.io/gh/MetrolistGroup/metroserver)
 

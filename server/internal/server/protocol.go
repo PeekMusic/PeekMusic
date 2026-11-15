@@ -65,6 +65,7 @@ const (
 var serverFeatures = []string{
 	FeatureRequestID, FeatureOriginTag, FeatureDriftReport, FeatureDesyncCanary, FeatureServerRestarting,
 	FeatureSuggestionAck, FeatureReplaceQueue, FeatureHostSequence, FeatureTrackRevision, FeatureUpdateTrack,
+	FeaturePeekFriends, // PeekMusic: PeekParty friends
 }
 
 // Playback actions

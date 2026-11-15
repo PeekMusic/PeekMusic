@@ -52,6 +52,7 @@ func Run() {
 		logger.Fatal("Failed to load previous state", zap.Error(err))
 	}
 	go server.runStateFlusher()
+	server.peekReady() // PeekMusic: hash 1.3.0 auth tokens, start friend presence
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ws", server.handleWebSocket)

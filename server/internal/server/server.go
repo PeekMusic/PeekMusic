@@ -86,6 +86,7 @@ type Server struct {
 	persistMu       sync.Mutex
 	persisted       map[string][]byte // last room records written to the database
 	lastFlush       time.Time
+	peek            peekState // PeekMusic: PeekParty friends (peek_friends.go)
 }
 
 type sourceWindow struct {
@@ -457,6 +458,9 @@ func (s *Server) handleMessage(c *Client, data []byte, receivedAt int64) {
 	case MsgTypeClientCapabilities:
 		s.handleClientCapabilities(c, payloadBytes)
 	default:
+		if s.handlePeekMessage(c, msgType, payloadBytes) { // PeekMusic: PeekParty friends
+			return
+		}
 		c.sendError(s.logger, "unknown_message_type", fmt.Sprintf("Unknown message type: %s", msgType))
 	}
 }

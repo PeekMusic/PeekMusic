@@ -183,6 +183,7 @@ func (s *Server) removeClient(c *Client) {
 	delete(s.clients, c)
 	s.mu.Unlock()
 	c.closeSend()
+	s.peekClientGone(c) // PeekMusic: PeekParty friends
 
 	if c.currentRoom() != nil {
 		s.handleClientDisconnect(c)

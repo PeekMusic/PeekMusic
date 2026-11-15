@@ -23,4 +23,10 @@ protoc --go_out="$OUT_DIR" --go_opt=paths=source_relative \
     -I="$PROTO_DIR" \
     "$PROTO_DIR/listentogether.proto"
 
+# PeekMusic: PeekParty friends payloads
+mkdir -p "$OUT_DIR/peek"
+protoc --go_out="$OUT_DIR/peek" --go_opt=paths=source_relative \
+    -I="./peekproto" \
+    "./peekproto/peek_friends.proto"
+
 echo "Protobuf files generated successfully in $OUT_DIR"

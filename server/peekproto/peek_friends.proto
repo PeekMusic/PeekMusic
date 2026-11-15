@@ -1,0 +1,72 @@
+// PeekMusic: PeekParty friends. Kept apart from upstream's listentogether.proto so metroproto updates stay
+// conflict-free. The envelope (type string + payload bytes) is upstream's; these are only payloads.
+//
+// Field numbers 1-4 of the first messages are what PeekMusic 1.3.0 sends and understands. Never renumber them.
+syntax = "proto3";
+
+package peekfriends;
+
+option go_package = "github.com/MetrolistGroup/metroserver/proto/peek";
+
+// Client -> server, "authenticate": the random token the app created on first use, and its current name.
+message AuthenticatePayload {
+  string auth_token = 1;
+  string current_username = 2;
+}
+
+// Client -> server: "add_friend", "remove_friend", "accept_friend_request", "decline_friend_request",
+// "invite_friend". Server -> client: "friend_removed" (a friendship or request is gone).
+message FriendCodePayload {
+  string friend_code = 1;
+}
+
+// Server -> client, "auth_success".
+message AuthSuccessPayload {
+  string friend_code = 1;
+}
+
+message FriendInfo {
+  string friend_code = 1;
+  string username = 2;
+  bool is_online = 3;
+  string active_room_code = 4;
+}
+
+// Server -> client, "friends_status": sent after authenticate and whenever the lists need a full refresh.
+// The request lists are only filled for clients with the "peek_friends_v2" feature.
+message FriendsStatusPayload {
+  repeated FriendInfo friends = 1;
+  repeated FriendInfo incoming_requests = 2;
+  repeated FriendInfo outgoing_requests = 3;
+}
+
+// Server -> client, "friend_presence_update": a friend came online, went offline, changed name or room, or
+// (for the sender of a request) accepted it.
+message FriendPresenceUpdatePayload {
+  FriendInfo friend = 1;
+}
+
+// Server -> client, "friend_added": the answer to add_friend. pending = a request was sent and waits for the
+// other person.
+message FriendAddedPayload {
+  string friend_code = 1;
+  bool success = 2;
+  string error_message = 3;
+  bool pending = 4;
+  string username = 5;
+}
+
+// Server -> client, "friend_request": someone sent you a request.
+message FriendRequestPayload {
+  FriendInfo from = 1;
+}
+
+// Server -> client, "friend_invite": a friend invites you to the party they are in.
+message FriendInvitePayload {
+  FriendInfo from = 1;
+  string room_code = 2;
+}
+
+// Client -> server, "delete_friend_account": forget the token, friend code, name, friends and requests.
+// Server -> client, "friend_account_deleted" when done.
+message DeleteFriendAccountPayload {}
