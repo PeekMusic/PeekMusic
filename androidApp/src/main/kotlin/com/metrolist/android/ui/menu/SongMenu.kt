@@ -145,7 +145,8 @@ fun SongMenu(
                         Toast.LENGTH_SHORT,
                     ).show()
             },
-            onStartRadio = onStartRadio,
+            // PeekMusic: radio in every song menu, not only on the screens that pass one.
+            onStartRadio = onStartRadio ?: { playerConnection.startRadio(song) }.takeIf { song.podcastId == null },
             onAddToPlaylist = {
                 if (onAddToPlaylist != null) {
                     onAddToPlaylist()

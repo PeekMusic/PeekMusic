@@ -495,7 +495,12 @@ fun AlbumScreen(
             onAddToQueue = { playerConnection?.addToQueue(song) },
             onLike = { SongLikeState.toggleLike(song) },
             onDownload = { downloadSongs(listOf(song)) },
-            onGoToAlbum = song.album?.id?.let { albumId -> { onAlbumClick(albumId) } },
+            // PeekMusic: no "view album" for the album this page already shows.
+            onGoToAlbum =
+                song.album
+                    ?.id
+                    ?.takeIf { it != albumId }
+                    ?.let { songAlbumId -> { onAlbumClick(songAlbumId) } },
             onGoToArtist = onArtistClick,
         )
     }

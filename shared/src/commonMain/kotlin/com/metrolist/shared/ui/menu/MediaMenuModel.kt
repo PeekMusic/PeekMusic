@@ -75,6 +75,7 @@ import com.metrolist.shared.model.PodcastItem
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.previewAspectRatio
 import com.metrolist.shared.model.previewThumbnailUrl
+import com.metrolist.shared.peek.peekSongMenuActionGroups
 import com.metrolist.shared.settings.ArtistNameAliases
 import com.metrolist.shared.settings.HiddenHomeItems
 import com.metrolist.shared.settings.displayName
@@ -262,62 +263,80 @@ fun songMediaMenuModel(
                 onClick = it,
             )
         }
-    val actionGroups =
-        songMenuActionGroups(
-            isPlayerMenu = isPlayerMenu,
-            queue =
-                if (isGuest) {
-                    listOfNotNull(
-                        onSuggestToHost?.let {
-                            suggestToHostMenuAction(onDismiss, it)
-                        },
-                    )
-                } else {
-                    queueActions(onDismiss, onPlayNext, onAddToQueue)
-                }.map { it.copy(enabled = it.enabled && !song.isUnavailable) },
-            removal =
-                listOfNotNull(
-                    onMoveUp?.let {
-                        action(MetrolistIcons.Default.ChevronLeft, moveUpLabel, onDismiss, it)
-                    },
-                    onMoveDown?.let {
-                        action(MetrolistIcons.Default.ChevronRight, moveDownLabel, onDismiss, it)
-                    },
-                    onRemove?.let {
-                        action(
-                            MetrolistIcons.Outlined.Delete,
-                            removeLabel ?: removeFromPlaylistLabel,
-                            onDismiss,
-                            it,
-                        )
-                    },
-                ),
-            library =
-                listOfNotNull(
-                    download.takeIf { isPlayerMenu },
-                    pinAction(isPinned, onDismiss, onTogglePin),
-                    hideAction(onDismiss, onHideFromLibrary),
-                    dislikeMenuAction(isDisliked, onDismiss, onDislike),
-                    blockArtistMenuAction(onDismiss, onBlockArtist),
-                    download.takeUnless { isPlayerMenu },
-                    deleteUploadAction,
-                    onEdit?.let {
-                        PlayerMenuAction(
-                            MetrolistIcons.Outlined.Edit,
-                            editLabel,
-                            editDesc,
-                            onClick = it,
-                        )
-                    },
-                ),
-            navigation =
-                buildList {
-                    artistAction?.let(::add)
-                    albumNavigationMenuAction(onDismiss, onGoToAlbum, isPodcast = song.podcastId != null)?.let(::add)
-                    if (isPlayerMenu) detailsAction?.let(::add)
+    val queue =
+        if (isGuest) {
+            listOfNotNull(
+                onSuggestToHost?.let {
+                    suggestToHostMenuAction(onDismiss, it)
                 },
-            additional = listOfNotNull(detailsAction.takeUnless { isPlayerMenu }) + additionalActions,
+            )
+        } else {
+            queueActions(onDismiss, onPlayNext, onAddToQueue)
+        }.map { it.copy(enabled = it.enabled && !song.isUnavailable) }
+    val removal =
+        listOfNotNull(
+            onMoveUp?.let {
+                action(MetrolistIcons.Default.ChevronLeft, moveUpLabel, onDismiss, it)
+            },
+            onMoveDown?.let {
+                action(MetrolistIcons.Default.ChevronRight, moveDownLabel, onDismiss, it)
+            },
+            onRemove?.let {
+                action(
+                    MetrolistIcons.Outlined.Delete,
+                    removeLabel ?: removeFromPlaylistLabel,
+                    onDismiss,
+                    it,
+                )
+            },
         )
+    val pin = pinAction(isPinned, onDismiss, onTogglePin)
+    val hide = hideAction(onDismiss, onHideFromLibrary)
+    val dislike = dislikeMenuAction(isDisliked, onDismiss, onDislike)
+    val blockArtist = blockArtistMenuAction(onDismiss, onBlockArtist)
+    val albumAction = albumNavigationMenuAction(onDismiss, onGoToAlbum, isPodcast = song.podcastId != null)
+    val actionGroups =
+        if (!isPlayerMenu) {
+            // PeekMusic: same order as the player menu, without subtitles and without edit.
+            peekSongMenuActionGroups(
+                queue = queue,
+                removal = removal,
+                navigation = listOfNotNull(artistAction, albumAction),
+                library = listOfNotNull(download, dislike, blockArtist, detailsAction),
+                extras = listOfNotNull(pin, hide, deleteUploadAction) + additionalActions,
+            )
+        } else {
+            songMenuActionGroups(
+                isPlayerMenu = isPlayerMenu,
+                queue = queue,
+                removal = removal,
+                library =
+                    listOfNotNull(
+                        download.takeIf { isPlayerMenu },
+                        pin,
+                        hide,
+                        dislike,
+                        blockArtist,
+                        download.takeUnless { isPlayerMenu },
+                        deleteUploadAction,
+                        onEdit?.let {
+                            PlayerMenuAction(
+                                MetrolistIcons.Outlined.Edit,
+                                editLabel,
+                                editDesc,
+                                onClick = it,
+                            )
+                        },
+                    ),
+                navigation =
+                    buildList {
+                        artistAction?.let(::add)
+                        albumAction?.let(::add)
+                        if (isPlayerMenu) detailsAction?.let(::add)
+                    },
+                additional = listOfNotNull(detailsAction.takeUnless { isPlayerMenu }) + additionalActions,
+            )
+        }
 
     return MediaMenuModel(
         title = song.title,
