@@ -3,7 +3,7 @@
 # Licensed under GPL-3.0 | See git history for contributors
 """Undo Crowdin's Android escaping in peek_strings.xml.
 
-Crowdin exports these Compose Multiplatform catalogs as Android XML and writes \\' \\" \\@ \\? into translations.
+Crowdin exports these Compose Multiplatform catalogs as Android XML (see .github/workflows/peek-crowdin.yml) and writes \\' \\" \\@ \\? into translations.
 Compose shows those backslashes literally, so they are removed here; \\n, \\t and \\u stay.
 Run with no arguments to fix every locale's peek_strings.xml in place.
 """

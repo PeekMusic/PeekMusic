@@ -1,0 +1,75 @@
+# PeekMusic: syncs peek_strings.xml with Crowdin through the Crowdin CLI. Crowdin's GitHub integration needs Crowdin
+# branches, which the free plan does not offer, so this uploads to the project root instead.
+# - push to main/kmp that changes the English peek_strings.xml: upload sources
+# - daily and on demand: download translations, strip Android escapes Compose would show, open/update a pull request
+# Secrets: CROWDIN_PROJECT_ID, CROWDIN_PERSONAL_TOKEN (Crowdin › Account Settings › API, project scope).
+name: Crowdin
+
+on:
+  push:
+    branches: [main, kmp]
+    paths: ["shared/src/commonMain/composeResources/values/peek_strings.xml", "crowdin.yml"]
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: "Upload sources (and the translations already in the repo) instead of downloading"
+        type: boolean
+        default: false
+
+concurrency:
+  group: crowdin
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  upload:
+    if: github.event_name == 'push' || inputs.upload
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Upload sources
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+          upload_translations: ${{ inputs.upload == true }}
+          download_translations: false
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+  download:
+    if: github.event_name != 'push' && !inputs.upload
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Download translations
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          push_translations: false
+          create_pull_request: false
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+      - name: Strip Android escapes
+        run: sudo chown -R "$(id -u)" . && python3 scripts/peek_normalize_crowdin.py
+      - name: Check translations
+        run: |
+          python3 scripts/check_compose_resource_escapes.py
+          python3 scripts/check_translation_mechanics.py
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: l10n_crowdin
+          commit-message: "chore(l10n): update translations from Crowdin"
+          title: "chore(l10n): update translations from Crowdin"
+          body: "PeekMusic strings (`peek_strings.xml`) from Crowdin, Android escapes stripped."
+          add-paths: shared/src/commonMain/composeResources/values-*/peek_strings.xml
+          delete-branch: true

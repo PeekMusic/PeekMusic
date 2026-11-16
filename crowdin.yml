@@ -1,6 +1,8 @@
 # PeekMusic on Crowdin: only PeekMusic's own strings (peek_strings.xml).
 # Upstream Metrolist strings (strings.xml) are translated on Metrolist's Weblate and arrive with upstream merges.
 # Never add them here, or Crowdin and Weblate overwrite each other.
+project_id_env: CROWDIN_PROJECT_ID
+api_token_env: CROWDIN_PERSONAL_TOKEN
 preserve_hierarchy: true
 
 files:
