@@ -65,6 +65,7 @@ import com.metrolist.shared.generated.resources.sources
 import com.metrolist.shared.model.LyricsEntry
 import com.metrolist.shared.model.LyricsProviderResult
 import com.metrolist.shared.peek.PeekBuiltInTranslations
+import com.metrolist.shared.peek.PeekPlayerMenu
 import com.metrolist.shared.repository.LyricsProviderSearch
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.components.AlertDialog
@@ -199,13 +200,16 @@ fun LyricsMenu(
                     bottom = 8.dp + WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
                 ),
         ) {
-            item {
-                ExpressiveMediaMenuHeader(
-                    title = songTitle,
-                    subtitle = artistName,
-                    thumbnail = artworkUrl,
-                    modifier = Modifier.padding(top = 12.dp),
-                )
+            // PeekMusic: the player and the lyrics page already show the song, see PeekPlayerMenu.
+            if (PeekPlayerMenu.SHOW_LYRICS_HEADER) {
+                item {
+                    ExpressiveMediaMenuHeader(
+                        title = songTitle,
+                        subtitle = artistName,
+                        thumbnail = artworkUrl,
+                        modifier = Modifier.padding(top = 12.dp),
+                    )
+                }
             }
 
             item {

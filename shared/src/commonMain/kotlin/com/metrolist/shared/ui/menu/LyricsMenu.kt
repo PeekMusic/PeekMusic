@@ -51,6 +51,7 @@ import com.metrolist.shared.model.LyricsProviderResult
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.previewAspectRatio
 import com.metrolist.shared.model.previewThumbnailUrl
+import com.metrolist.shared.peek.PeekPlayerMenu
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.settings.displayName
 import com.metrolist.shared.ui.components.ExpressiveSwitch
@@ -157,12 +158,15 @@ fun LyricsMenu(
                     .verticalScrollWithDrag(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            ExpressiveMediaMenuHeader(
-                title = song.title,
-                subtitle = song.artists.joinToString { it.displayName },
-                thumbnail = song.previewThumbnailUrl,
-                thumbnailAspectRatio = song.previewAspectRatio,
-            )
+            // PeekMusic: the player and the lyrics page already show the song, see PeekPlayerMenu.
+            if (PeekPlayerMenu.SHOW_LYRICS_HEADER) {
+                ExpressiveMediaMenuHeader(
+                    title = song.title,
+                    subtitle = song.artists.joinToString { it.displayName },
+                    thumbnail = song.previewThumbnailUrl,
+                    thumbnailAspectRatio = song.previewAspectRatio,
+                )
+            }
 
             PlayerMenuPrimaryActions(
                 actions =

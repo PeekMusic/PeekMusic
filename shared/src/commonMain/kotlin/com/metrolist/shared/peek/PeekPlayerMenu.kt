@@ -11,6 +11,9 @@ package com.metrolist.shared.peek
  */
 object PeekPlayerMenu {
     const val SHOW_HEADER = false
+
+    /** The lyrics menu opens from the player or the lyrics page, which both show the song already. */
+    const val SHOW_LYRICS_HEADER = false
     const val SHOW_VOLUME = false
     const val SHOW_LISTEN_TOGETHER = false
     const val FULL_VOLUME = 1f
