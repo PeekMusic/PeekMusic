@@ -54,6 +54,7 @@ import com.metrolist.shared.model.SortDirection
 import com.metrolist.shared.model.filterForPlaylistSearch
 import com.metrolist.shared.model.indexOfPlaylistOccurrence
 import com.metrolist.shared.model.sortedForPlaylist
+import com.metrolist.shared.peek.PeekHeaderDownload
 import com.metrolist.shared.ui.components.AlbumHeader
 import com.metrolist.shared.ui.components.CollectionHeaderHorizontalPadding
 import com.metrolist.shared.ui.components.CollectionHeaderNavigation
@@ -97,6 +98,7 @@ fun AlbumContent(
     onMoreOptions: (() -> Unit)? = null,
     isFavorite: Boolean = false,
     onFavorite: (() -> Unit)? = null,
+    headerDownload: PeekHeaderDownload? = null,
     onArtistClick: (String) -> Unit,
     onTrackClick: (SongItem, List<SongItem>, Int) -> Unit,
     onTrackMenuClick: (SongItem) -> Unit,
@@ -225,7 +227,7 @@ fun AlbumContent(
                         176.dp
                     }
                 val playbackActions: @Composable (() -> Unit)? =
-                    if (showPlayback || onFavorite != null) {
+                    if (showPlayback || onFavorite != null || headerDownload != null) {
                         {
                             PlaylistHeaderActions(
                                 onPlayAll = { onPlayAll(displayedSongs) },
@@ -236,6 +238,7 @@ fun AlbumContent(
                                 showPlayback = showPlayback,
                                 isFavorite = isFavorite,
                                 onFavorite = onFavorite,
+                                download = headerDownload,
                             )
                         }
                     } else {

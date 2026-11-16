@@ -63,6 +63,7 @@ import com.metrolist.shared.model.playlistLazyItemKeys
 import com.metrolist.shared.model.playlistSearchIndices
 import com.metrolist.shared.model.playlistTotalDuration
 import com.metrolist.shared.model.withLocalArtwork
+import com.metrolist.shared.peek.PeekHeaderDownload
 import com.metrolist.shared.ui.LocalIsTv
 import com.metrolist.shared.ui.components.CollectionHeaderHorizontalPadding
 import com.metrolist.shared.ui.components.CollectionHeaderNavigation
@@ -125,6 +126,7 @@ fun PlaylistContent(
     cover: DrawableResource? = null,
     isFavorite: Boolean = false,
     onFavorite: (() -> Unit)? = null,
+    headerDownload: PeekHeaderDownload? = null,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     preparedSongKeys: List<String>? = null,
@@ -406,7 +408,7 @@ fun PlaylistContent(
                                         onAuthorClick = onArtistClick,
                                         fallbackIcon = fallbackIcon,
                                         actions =
-                                            if (showPlayback || onAddToLibrary != null) {
+                                            if (showPlayback || onAddToLibrary != null || headerDownload != null) {
                                                 {
                                                     PlaylistHeaderActions(
                                                         onPlayAll = onPlayAll,
@@ -417,6 +419,7 @@ fun PlaylistContent(
                                                         isFavorite = isFavorite,
                                                         onFavorite = onAddToLibrary,
                                                         buttonHeight = 48.dp,
+                                                        download = headerDownload,
                                                     )
                                                 }
                                             } else {
@@ -597,7 +600,7 @@ fun PlaylistContent(
                                             isMedium = isMedium,
                                             mediumArtworkSize = mediumArtworkSize,
                                             actions =
-                                                if (showPlayback || onAddToLibrary != null) {
+                                                if (showPlayback || onAddToLibrary != null || headerDownload != null) {
                                                     {
                                                         PlaylistHeaderActions(
                                                             onPlayAll = onPlayAll,
@@ -608,6 +611,7 @@ fun PlaylistContent(
                                                             isFavorite = isFavorite,
                                                             onFavorite = onAddToLibrary,
                                                             buttonHeight = 40.dp,
+                                                            download = headerDownload,
                                                         )
                                                     }
                                                 } else {

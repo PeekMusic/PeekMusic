@@ -30,6 +30,8 @@ fun PlaylistMenu(
     loadSongs: suspend () -> List<SongItem> = { loadMediaItemSongs(playlist) },
     showSpeedDialAction: Boolean = true,
     hideFromLibraryLabel: String? = null,
+    // PeekMusic: the album/playlist page has its own header download button.
+    showDownload: Boolean = true,
 ) {
     val playlist = localizedBuiltinPlaylist(playlist)
     val download = rememberMediaDownloadAction(playlist, onDismiss, onDownload, loadSongs)
@@ -50,7 +52,7 @@ fun PlaylistMenu(
             onPlayNext = onPlayNext,
             onAddToQueue = onAddToQueue,
             onTogglePin = pin.toggle,
-            onDownload = download.invoke,
+            onDownload = download.invoke.takeIf { showDownload },
             onHideFromLibrary = onHideFromLibrary,
             hideFromLibraryLabel = hideFromLibraryLabel,
             onExport = onExport,

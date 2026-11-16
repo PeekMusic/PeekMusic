@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.add_to_favorites
 import com.metrolist.shared.generated.resources.remove_from_favorites
+import com.metrolist.shared.peek.PeekHeaderDownload
+import com.metrolist.shared.peek.PeekHeaderDownloadButton
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import com.metrolist.shared.ui.tv.tvFocusHighlight
 import org.jetbrains.compose.resources.stringResource
@@ -48,6 +50,7 @@ fun PlaylistHeaderActions(
     isFavorite: Boolean,
     onFavorite: (() -> Unit)?,
     buttonHeight: Dp,
+    download: PeekHeaderDownload? = null,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -59,6 +62,7 @@ fun PlaylistHeaderActions(
         } else {
             Spacer(Modifier.weight(1f))
         }
+        download?.let { PeekHeaderDownloadButton(it, buttonHeight) }
         if (onFavorite != null) {
             ToggleButton(
                 checked = isFavorite,

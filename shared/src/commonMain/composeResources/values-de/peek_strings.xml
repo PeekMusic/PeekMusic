@@ -99,4 +99,8 @@
     <string name="peek_precache_wifi_only_desc">Keine mobilen Daten für Songs, die noch nicht laufen</string>
     <string name="peek_listen_together_location_germany">Deutschland</string>
     <string name="peek_translation_rate_limited">Google Translate blockt gerade Anfragen aus deinem Netzwerk. Versuch es später nochmal oder nutz ein VPN.</string>
+    <string name="peek_download_cancel_title">Download abbrechen?</string>
+    <string name="peek_download_cancel_message">Bereits heruntergeladene Songs bleiben auf dem Gerät.</string>
+    <string name="peek_download_cancel_confirm">Download stoppen</string>
+    <string name="peek_download_cancel_keep">Weiterladen</string>
 </resources>

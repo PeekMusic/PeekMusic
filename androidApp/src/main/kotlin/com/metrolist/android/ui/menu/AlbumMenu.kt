@@ -40,6 +40,8 @@ fun AlbumMenu(
     onHideFromLibrary: (() -> Unit)? = null,
     onExport: (() -> Unit)? = null,
     loadSongs: suspend () -> List<SongItem> = { loadMediaItemSongs(album) },
+    // PeekMusic: the album/playlist page has its own header download button.
+    showDownload: Boolean = true,
 ) {
     var loadingPlaylistSongs by remember(album.id) { mutableStateOf(false) }
     val addToPlaylist = LocalPlaylistAdder.current
@@ -91,7 +93,7 @@ fun AlbumMenu(
                     Unit
                 },
             onTogglePin = pin.toggle,
-            onDownload = download.invoke,
+            onDownload = download.invoke.takeIf { showDownload },
             onHideFromLibrary = onHideFromLibrary,
             onExport = onExport,
             onGoToArtist = onGoToArtist,

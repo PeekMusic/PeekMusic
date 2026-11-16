@@ -62,8 +62,10 @@ import com.metrolist.android.playback.LocalPlayerConnection
 import com.metrolist.android.playback.SongDownloadManager
 import com.metrolist.android.ui.component.SwipeGestureHandler
 import com.metrolist.android.ui.download.rememberDownloadPermissionGate
+import com.metrolist.android.ui.download.rememberPeekHeaderDownload
 import com.metrolist.android.ui.menu.AlbumMenu
 import com.metrolist.android.ui.menu.SongMenu
+import com.metrolist.android.ui.menu.rememberMediaDownloadAction
 import com.metrolist.android.viewmodels.AlbumViewModel
 import com.metrolist.shared.api.playlistPageForPlayback
 import com.metrolist.shared.db.MusicDatabase
@@ -204,6 +206,20 @@ fun AlbumScreen(
             }
         }
     }
+
+    // PeekMusic: download button in the header instead of the ⋮ menu.
+    val headerDownloadAction =
+        albumInfo?.let { album ->
+            rememberMediaDownloadAction(
+                album,
+                onDismiss = {},
+                onDownload = { withAllSongs(::downloadSongs) },
+                loadSongs = viewModel::allSongs,
+            )
+        }
+    val headerDownload =
+        headerDownloadAction?.let { rememberPeekHeaderDownload(it.isDownloaded, it.invoke, songs, downloadedSongIds) }
+    headerDownloadAction?.confirmationDialog?.invoke {}
 
     var showMenu by remember { mutableStateOf(false) }
     var selectedMenuSong by remember { mutableStateOf<SongItem?>(null) }
@@ -398,6 +414,7 @@ fun AlbumScreen(
                             currentSongId = currentSong?.id,
                             isPlaying = isPlaying,
                             downloadedSongIds = downloadedSongIds,
+                            headerDownload = headerDownload,
                             description = albumPage?.description,
                             otherVersions = albumPage?.otherVersions.orEmpty(),
                             onAlbumClick = onAlbumClick,
@@ -436,6 +453,7 @@ fun AlbumScreen(
     albumInfo?.let { album ->
         PopupVisibility(visible = showMenu) {
             AlbumMenu(
+                showDownload = false,
                 album = album,
                 isFavorite = isFavorite,
                 onFavorite = { viewModel.toggleFavorite(album, songs) },

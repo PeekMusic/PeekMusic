@@ -79,9 +79,11 @@ import com.metrolist.android.ui.component.AdaptiveModalBottomSheet
 import com.metrolist.android.ui.component.SwipeGestureHandler
 import com.metrolist.android.ui.components.SongMetadataRow
 import com.metrolist.android.ui.download.rememberDownloadPermissionGate
+import com.metrolist.android.ui.download.rememberPeekHeaderDownload
 import com.metrolist.android.ui.menu.CollectionExportDialog
 import com.metrolist.android.ui.menu.PlaylistMenu
 import com.metrolist.android.ui.menu.SongMenu
+import com.metrolist.android.ui.menu.rememberMediaDownloadAction
 import com.metrolist.android.utils.readPlaylistCover
 import com.metrolist.android.viewmodels.PlaylistViewModel
 import com.metrolist.shared.api.PlaylistRemovalFailedException
@@ -511,6 +513,25 @@ fun PlaylistScreen(
         }
     }
 
+    // PeekMusic: download button in the header instead of the ⋮ menu.
+    val headerDownloadAction =
+        playlistInfo
+            ?.takeIf { it.id !in setOf("downloaded", "LP_DOWNLOADED") }
+            ?.let { playlist ->
+                rememberMediaDownloadAction(
+                    playlist,
+                    onDismiss = {},
+                    onDownload = {
+                        viewModel.withAllSongs {
+                            downloadSongs(it.sortedForPlaylist(sortType, sortDirection).filterForPlaylistSearch(searchQuery))
+                        }
+                    },
+                )
+            }
+    val headerDownload =
+        headerDownloadAction?.let { rememberPeekHeaderDownload(it.isDownloaded, it.invoke, songs, downloadedSongIds) }
+    headerDownloadAction?.confirmationDialog?.invoke {}
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val isTopBarCollapsed by remember(scrollBehavior) { derivedStateOf { scrollBehavior.state.overlappedFraction > 0.5f } }
     val miniPlayerInset = LocalMiniPlayerBottomInset.current
@@ -705,6 +726,7 @@ fun PlaylistScreen(
                     onArtistClick = onArtistClick,
                     onReorder = { from, to -> viewModel.moveDisplayedSong(from, to, selectedSongs) },
                     onReorderFinished = viewModel::commitPendingReorder,
+                    headerDownload = headerDownload,
                     isFavorite = isFavorite,
                     onFavorite =
                         if (!isLocalPlaylist && !isEditablePlaylist &&
@@ -819,6 +841,7 @@ fun PlaylistScreen(
         playlistInfo?.let { playlist ->
             PopupVisibility(visible = showMenu) {
                 PlaylistMenu(
+                    showDownload = headerDownload == null,
                     playlist = playlist,
                     isFavorite = isFavorite,
                     onFavorite =

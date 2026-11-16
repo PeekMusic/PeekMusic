@@ -124,4 +124,8 @@
     <string name="peek_precache_wifi_only_desc">Don’t use mobile data for songs that aren’t playing yet</string>
     <string name="peek_listen_together_location_germany">Germany</string>
     <string name="peek_translation_rate_limited">Google Translate is blocking requests from your network right now. Try again later or use a VPN.</string>
+    <string name="peek_download_cancel_title">Cancel download?</string>
+    <string name="peek_download_cancel_message">Songs that are already downloaded stay on your device.</string>
+    <string name="peek_download_cancel_confirm">Stop download</string>
+    <string name="peek_download_cancel_keep">Keep downloading</string>
 </resources>
