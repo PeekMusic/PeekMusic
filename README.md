@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="shared/src/commonMain/composeResources/drawable/logo.png" alt="PeekMusic logo" width="160" />
+<img src="assets/logo.png" alt="PeekMusic logo" width="160" />
 
 # PeekMusic
 
