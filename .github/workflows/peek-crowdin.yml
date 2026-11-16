@@ -8,7 +8,10 @@ name: Crowdin
 on:
   push:
     branches: [main, kmp]
-    paths: ["shared/src/commonMain/composeResources/values/peek_strings.xml", "crowdin.yml"]
+    paths:
+      - "shared/src/commonMain/composeResources/values/peek_strings.xml"
+      - "crowdin.yml"
+      - ".github/workflows/peek-crowdin.yml"
   schedule:
     - cron: "17 4 * * *"
   workflow_dispatch:
@@ -36,7 +39,8 @@ jobs:
         uses: crowdin/github-action@v2
         with:
           upload_sources: true
-          upload_translations: ${{ inputs.upload == true }}
+          # Also on a push whose commit message contains [crowdin-translations], e.g. for the first import.
+          upload_translations: ${{ inputs.upload == true || contains(github.event.head_commit.message, '[crowdin-translations]') }}
           download_translations: false
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
