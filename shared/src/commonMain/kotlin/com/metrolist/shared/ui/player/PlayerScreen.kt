@@ -2512,6 +2512,8 @@ fun PlayerScreen(
                             onDismiss = { showLyricsMenu = false },
                             onShowLyricsOffset = {
                                 showLyricsMenu = false
+                                // PeekMusic: the offset editor lives on the lyrics page, so open it from the player too.
+                                viewModel.setLyricsVisible(true)
                                 showLyricsOffsetEditor = true
                             },
                         )
