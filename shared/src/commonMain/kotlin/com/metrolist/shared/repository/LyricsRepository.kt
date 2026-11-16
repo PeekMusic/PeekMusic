@@ -34,6 +34,7 @@ import com.metrolist.shared.model.lyricsProviderLabel
 import com.metrolist.shared.peek.HedgedFetches
 import com.metrolist.shared.peek.PEEK_LYRICS_HEDGE_DELAY_MS
 import com.metrolist.shared.peek.PeekBuiltInTranslations
+import com.metrolist.shared.peek.PeekTranslationNotNeeded
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.GlobalYouTube
 import com.metrolist.shared.utils.systemCountryCode
@@ -1404,6 +1405,11 @@ class LyricsRepository(
                 return null
             }
         onTranslationProgress(emptyList())
+        // PeekMusic: lyrics already in the target language come back unchanged; remember that instead of a translation.
+        if (PeekTranslationNotNeeded.isUnchanged(selected.map { sourceLines[it] }, aiResult, translationStyle)) {
+            updateTranslationCache(videoId, LyricsAiResult(), targetLanguage, translationStyle, sourceHash, configKey, notNeeded = true)
+            return null
+        }
         if (!detectPerLine) {
             updateTranslationCache(videoId, aiResult, targetLanguage, translationStyle, sourceHash, configKey, notNeeded = false)
             return aiResult

@@ -1079,8 +1079,11 @@ class LyricsTranslationClient(
                 )
             }
         if (!response.status.isSuccess()) {
+            // PeekMusic: a blocked network gets a 302 to Google's "unusual traffic" page; report it as a rate limit so it
+            // is not retried and the user sees why.
+            val status = if (response.status.value == 302) 429 else response.status.value
             throw LyricsTranslationHttpException(
-                response.status.value,
+                status,
                 "Google Translate request failed (${response.status.value})",
             )
         }
