@@ -102,6 +102,8 @@ internal fun SettingsUiRegistry.peekLayout(): SettingsUiRegistry {
     val translationDescription = stringResource(Res.string.peek_settings_translation_description)
     return withoutItems(PeekSettingsLayout.hiddenItemIds)
         .withoutNavigationTo(SettingsPageId.APPEARANCE_NAVIGATION, SettingsPageId.PLAYER_QUEUE, SettingsPageId.CONTENT_HOME)
+        // Artwork (canvas, animated covers, artist videos) is a top-level page, not a link inside the player pages.
+        .withoutItems(setOf("playerArtwork"))
         // The player's own page collects everything about the player; Appearance keeps theme and density.
         .moveGroup(SettingsPageId.APPEARANCE, "playerAppearance", SettingsPageId.PLAYER_STYLE, "more", moreSettings)
         .moveItems(SettingsPageId.PRIVACY, setOf("blockedArtists"), SettingsPageId.CONTENT, "blocklists", null)
@@ -110,6 +112,7 @@ internal fun SettingsUiRegistry.peekLayout(): SettingsUiRegistry {
             SettingsPageId.APPEARANCE,
             subtitle = stringResource(Res.string.peek_settings_appearance_description),
         ).retitlePage(SettingsPageId.APPEARANCE_NAVIGATION, icon = MetrolistIcons.Default.Menu)
+        .retitlePage(SettingsPageId.PLAYER_ARTWORK, icon = PeekIcons.Animation)
         .retitlePage(SettingsPageId.PRIVACY, subtitle = stringResource(Res.string.peek_settings_privacy_description))
         .retitlePage(SettingsPageId.PLAYER_STYLE, player, playerDescription, MetrolistIcons.Outlined.SmartDisplay)
         .retitlePage(
@@ -141,7 +144,12 @@ internal fun SettingsUiRegistry.peekLayout(): SettingsUiRegistry {
             listOf(
                 SettingsRootGroupRegistration(
                     stringResource(Res.string.settings_interface),
-                    listOf(SettingsPageId.APPEARANCE, SettingsPageId.APPEARANCE_NAVIGATION, SettingsPageId.PLAYER_STYLE),
+                    listOf(
+                        SettingsPageId.APPEARANCE,
+                        SettingsPageId.APPEARANCE_NAVIGATION,
+                        SettingsPageId.PLAYER_STYLE,
+                        SettingsPageId.PLAYER_ARTWORK,
+                    ),
                 ),
                 SettingsRootGroupRegistration(
                     stringResource(Res.string.settings_playback),

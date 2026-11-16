@@ -4,7 +4,7 @@
     <string name="peek_plain_lyrics_hint">Nur Lyrics ohne Zeitstempel</string>
     <string name="peek_settings_audio">Audio</string>
     <string name="peek_settings_audio_description">Qualität, Klang, Crossfade und Cast</string>
-    <string name="peek_settings_player_description">Design, Cover, Canvas und Mini-Player</string>
+    <string name="peek_settings_player_description">Design, Hintergrund und Mini-Player</string>
     <string name="peek_settings_home_library_description">Home-Bereiche, automatische Playlists und ausgeblendete Elemente</string>
     <string name="peek_settings_translation">Lyrics-Übersetzung</string>
     <string name="peek_settings_translation_description">Lyrics automatisch mit Google Translate übersetzen</string>

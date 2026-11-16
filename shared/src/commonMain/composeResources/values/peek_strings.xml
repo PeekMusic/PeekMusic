@@ -7,7 +7,7 @@
     <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
     <string name="peek_settings_audio">Audio</string>
     <string name="peek_settings_audio_description">Quality, sound, crossfade and cast</string>
-    <string name="peek_settings_player_description">Design, artwork, canvas and mini player</string>
+    <string name="peek_settings_player_description">Design, background and mini player</string>
     <string name="peek_settings_home_library_description">Home sections, automatic playlists and hidden items</string>
     <string name="peek_settings_translation">Lyrics translation</string>
     <string name="peek_settings_translation_description">Translate lyrics automatically with Google Translate</string>
