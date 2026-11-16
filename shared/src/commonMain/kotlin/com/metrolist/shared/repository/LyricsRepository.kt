@@ -340,12 +340,12 @@ class LyricsRepository(
             ?.takeIf {
                 it.provider != LyricsEntity.LYRICS_NOT_FOUND && it.lyrics.isNotBlank() &&
                     (
-                        it.isUserSelected || isLocalLyricsProvider(it.provider) ||
+                        it.isLegacyProtected || it.isUserSelected || isLocalLyricsProvider(it.provider) ||
                             isRetiredLyricsProvider(it.provider) ||
                             providerPriority(it.provider, providers) != Int.MAX_VALUE
                     ) &&
-                    (isLocalLyricsProvider(it.provider) || usableProviderLyrics(LyricsUtils.parseLyrics(it.lyrics)))
-            }?.let { LyricsWithProviderModel(it.lyrics, it.provider, isUserSelected = it.isUserSelected) }
+                    (it.isLegacyProtected || isLocalLyricsProvider(it.provider) || usableProviderLyrics(LyricsUtils.parseLyrics(it.lyrics)))
+            }?.let { LyricsWithProviderModel(it.lyrics, it.provider, isUserSelected = it.isUserSelected || it.isLegacyProtected) }
 
     suspend fun getLyrics(
         videoId: String,
@@ -510,8 +510,10 @@ class LyricsRepository(
                                 missExpiresAt = if (selectedResult == null) nowMs() + NEGATIVE_CACHE_TTL_MS else null,
                             ),
                         expected = expected,
+                        allowLegacyOverwrite = skipCache,
                     )
-                if (stored == null || stored.isUserSelected || isLocalLyricsProvider(stored.provider) || selectedResult == null ||
+                if (stored == null || stored.isLegacyProtected || stored.isUserSelected || isLocalLyricsProvider(stored.provider) ||
+                    selectedResult == null ||
                     !prefersLyrics(selectedResult, LyricsWithProviderModel(stored.lyrics, stored.provider), providers, preferWordSynced)
                 ) {
                     break
@@ -765,8 +767,11 @@ class LyricsRepository(
                 ?.cachedLyrics(videoId)
                 ?.takeIf {
                     it.provider != LyricsEntity.LYRICS_NOT_FOUND && it.lyrics.isNotBlank() &&
-                        (isLocalLyricsProvider(it.provider) || usableProviderLyrics(LyricsUtils.parseLyrics(it.lyrics)))
-                }?.let { LyricsWithProviderModel(it.lyrics, it.provider, isUserSelected = it.isUserSelected) }
+                        (
+                            it.isLegacyProtected || isLocalLyricsProvider(it.provider) ||
+                                usableProviderLyrics(LyricsUtils.parseLyrics(it.lyrics))
+                        )
+                }?.let { LyricsWithProviderModel(it.lyrics, it.provider, isUserSelected = it.isUserSelected || it.isLegacyProtected) }
         if (!skipCache && cached != null && (cached.isUserSelected || isLocalLyricsProvider(cached.provider))) return cached
         var bestResult =
             cached?.takeIf {
@@ -948,7 +953,7 @@ class LyricsRepository(
                     val pieces = part.split(':', limit = 2)
                     pieces.getOrNull(0)?.takeIf { pieces.getOrNull(1)?.toBooleanStrictOrNull() ?: false }
                 }.toSet()
-        val romanizationEnabled = Settings.shared.lyricsRomanizationEnabled
+        val romanizationEnabled = Settings.shared.isLyricsRomanizationActive
         val backgroundSources =
             if (translationStyle == "Romanized") {
                 emptyList()

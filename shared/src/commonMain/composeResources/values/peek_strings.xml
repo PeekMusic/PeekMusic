@@ -122,4 +122,5 @@
     <string name="peek_precache_upcoming_one">Next song</string>
     <string name="peek_precache_wifi_only">Cache ahead only on Wi-Fi</string>
     <string name="peek_precache_wifi_only_desc">Don’t use mobile data for songs that aren’t playing yet</string>
+    <string name="peek_listen_together_location_germany">Germany</string>
 </resources>

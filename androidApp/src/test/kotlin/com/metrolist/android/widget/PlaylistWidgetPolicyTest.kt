@@ -14,8 +14,9 @@ class PlaylistWidgetPolicyTest {
 
     @Test
     fun resizingUsesTheSameCapacityAsCompactAndBalancedFullLayouts() {
-        assertEquals(1, playlistWidgetQuickPickCapacity(200, 100))
-        assertEquals(1, playlistWidgetQuickPickCapacity(339, 500))
+        // PeekMusic: narrow widgets show a 2x2 grid instead of one item.
+        assertEquals(4, playlistWidgetQuickPickCapacity(200, 100))
+        assertEquals(4, playlistWidgetQuickPickCapacity(339, 500))
         assertEquals(4, playlistWidgetQuickPickCapacity(340, 500))
         assertEquals(4, playlistWidgetQuickPickCapacity(360, 329))
         assertEquals(8, playlistWidgetQuickPickCapacity(360, 330))

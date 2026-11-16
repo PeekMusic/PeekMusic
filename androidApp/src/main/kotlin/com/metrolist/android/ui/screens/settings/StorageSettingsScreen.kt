@@ -193,7 +193,6 @@ fun StorageSettingsScreen(
 
     var cacheSliderRevision by remember { mutableIntStateOf(0) }
 
-    val exoplayerDir = remember { context.filesDir.resolve("exoplayer") }
     val coilDir = remember { context.cacheDir.resolve("coil") }
     val imageDiskCache = context.imageLoader.diskCache
     var audioCacheLocation by remember { mutableStateOf(Settings.shared.audioCacheLocation) }
@@ -315,7 +314,7 @@ fun StorageSettingsScreen(
 
     suspend fun readSongCacheSize(): Long =
         withContext(Dispatchers.IO) {
-            audioCacheManager.getCacheSizeBytes() + exoplayerDir.calculateDirectorySize()
+            audioCacheManager.getCacheSizeBytes()
         }
 
     suspend fun readImageCacheSize(): Long =
@@ -416,8 +415,6 @@ fun StorageSettingsScreen(
                 launchStorageOperation {
                     storageOperationFailed =
                         !withContext(Dispatchers.IO) {
-                            exoplayerDir.deleteRecursively()
-                            exoplayerDir.mkdirs()
                             audioCacheManager.clearCache()
                         }
                     refreshStorageSizes()

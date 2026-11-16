@@ -6,7 +6,7 @@ Release AppImages target x64 and ARM64 on glibc-based distributions. The packagi
 
 Choose x64 for `uname -m` output `x86_64`, or ARM64 for `aarch64`. Get the matching package through [the download channels](README.md#get-the-package).
 
-Use X11 or XWayland. Login needs GTK3/WebKitGTK 4.1. Saved credentials need Secret Service, libsecret, `secret-tool` and `dbus-send`. Audio needs ALSA integration with your audio server. See [Linux setup](../desktop.md#linux-login) and [audio setup](../desktop.md#linux-audio-setup). Startup rejects Omarchy.
+Use X11 or XWayland. Login needs GTK3/WebKitGTK 4.1. Saved credentials need Secret Service, libsecret, `secret-tool` and `dbus-send`. Audio needs ALSA integration with your audio server. See [Linux setup](../desktop.md#linux-login) and [audio setup](../desktop.md#linux-audio-setup). Startup rejects Omarchy, detected from its packages, install directories, environment, pacman repository or `os-release`, and links to [stopomarchy.org](https://stopomarchy.org/).
 
 ## Install and verify
 
@@ -23,6 +23,20 @@ Substitute the downloaded filename. Check playback, sign-in and retained credent
 
 On Arch Linux, install the community-maintained [`metrolist-desktop-bin`](https://aur.archlinux.org/packages/metrolist-desktop-bin) package, which wraps the x86_64 release AppImage, for example with `yay -S metrolist-desktop-bin`. Update it through your AUR helper instead of replacing the AppImage.
 
+## Homebrew
+
+On x86_64 or ARM64 Linux with [Homebrew](https://brew.sh), the [Metrolist tap](https://github.com/MetrolistGroup/homebrew-tap) unpacks the release AppImage, so FUSE is not needed:
+
+```sh
+brew trust metrolistgroup/tap
+brew install metrolistgroup/tap/metrolist
+metrolist
+```
+
+Homebrew only installs from trusted taps, so `brew trust` is needed once.
+
+`brew info metrolistgroup/tap/metrolist` shows how to add the desktop entry to your application menu. Update with `brew upgrade metrolist`.
+
 ## Nix
 
 The repository flake wraps the release AppImage for x86_64 and aarch64 Linux. Run it once, or install it into your profile:
@@ -33,6 +47,18 @@ nix profile install github:MetrolistGroup/Metrolist
 ```
 
 To use it from a NixOS or Home Manager configuration, add `github:MetrolistGroup/Metrolist` as an input and include `inputs.metrolist.packages.${pkgs.stdenv.hostPlatform.system}.default` in your packages. The flake follows the latest stable release; run `nix flake update metrolist` or `nix profile upgrade` to update.
+
+## Flatpak
+
+[flatpark](https://flatpark.org/apps/com.metrolist.desktop/) repackages the release AppImage as the Flatpak `com.metrolist.desktop` for x86_64 and aarch64:
+
+```sh
+flatpak --user remote-add --if-not-exists flatpark https://dl.flatpark.org/flatpark.flatpakrepo
+flatpak --user install flatpark com.metrolist.desktop
+flatpak run com.metrolist.desktop
+```
+
+Inside the sandbox, the download folder can only be Downloads or Music. Update with `flatpak update`.
 
 ## Update and uninstall
 

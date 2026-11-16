@@ -6,6 +6,9 @@
 package com.metrolist.shared.peek
 
 import com.metrolist.shared.BuildConfig
+import com.metrolist.shared.generated.resources.Res
+import com.metrolist.shared.generated.resources.peek_listen_together_location_germany
+import org.jetbrains.compose.resources.StringResource
 
 /** Values where the PeekMusic fork differs from upstream Metrolist. Upstream files reference these instead of hardcoding them. */
 object PeekFork {
@@ -14,7 +17,7 @@ object PeekFork {
     const val RELEASES_API_URL = "https://api.github.com/repos/$GITHUB_REPOSITORY/releases"
     const val LISTEN_TOGETHER_SERVER_URL = "wss://listen.peekmusic.org/ws"
     const val LISTEN_TOGETHER_SERVER_NAME = "PeekMusic Official"
-    const val LISTEN_TOGETHER_SERVER_LOCATION = "Germany"
+    val LISTEN_TOGETHER_SERVER_LOCATION: StringResource get() = Res.string.peek_listen_together_location_germany
     const val LISTEN_TOGETHER_SERVER_OPERATOR = "Endrit"
     const val USER_AGENT_PRODUCT = "PeekMusic"
 

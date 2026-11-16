@@ -1237,6 +1237,16 @@
     <string name="history_duration_desc">Minimum playback time before saving to history</string>
     <!-- Translators: Option or section label for blocklists in the Privacy settings. -->
     <string name="privacy_blocklists">Blocklists</string>
+    <!-- Translators: Option or section label for blocked songs in the Privacy settings. -->
+    <string name="blocked_songs">Blocked songs</string>
+    <!-- Translators: Supporting text beneath the blocked songs option in the settings. -->
+    <string name="blocked_songs_desc">Restore songs you disliked or blocked</string>
+    <!-- Translators: Empty state shown when no songs are blocked. -->
+    <string name="blocked_songs_empty">No blocked songs</string>
+    <!-- Translators: One-time message after hiding or blocking something. %1$s is a settings path such as "Settings > Privacy > Blocked artists". -->
+    <string name="content_undo_hint">You can undo this in %1$s.</string>
+    <!-- Translators: Settings navigation path; keep the separators. %1$s, %2$s and %3$s are page names. -->
+    <string name="content_undo_path">%1$s > %2$s > %3$s</string>
     <!-- Translators: Option or section label for blocked artists in the settings. -->
     <string name="blocked_artists">Blocked artists</string>
     <!-- Translators: Supporting text beneath the blocked artists option in the settings. -->
@@ -2290,6 +2300,18 @@
     <string name="lyrics_romanization_enable_description">Show how lyrics sound in Latin letters, for languages such as Japanese, Korean or Russian</string>
     <!-- Translators: Supporting text beneath the languages option in the lyrics romanization settings. -->
     <string name="lyrics_romanization_languages_description">Chinese hanzi-only lines need AI romanization mode for accurate pinyin</string>
+    <!-- Translators: Option label for choosing whether lyrics or romanization appears larger. -->
+    <string name="lyrics_romanization_larger_text">Larger text: Romanization or lyrics</string>
+    <!-- Translators: Supporting text beneath the larger text option in the lyrics romanization settings. -->
+    <string name="lyrics_romanization_larger_text_description">Choose whether lyrics or romanization appears larger when both are displayed.</string>
+    <!-- Translators: Option label for showing original lyrics below romanized lyrics. -->
+    <string name="lyrics_romanization_show_original">Show original</string>
+    <!-- Translators: Supporting text beneath the show original option in the lyrics romanization settings. -->
+    <string name="lyrics_romanization_show_original_description">Show the original line below</string>
+    <!-- Translators: Option label for showing romanization below original lyrics. -->
+    <string name="lyrics_romanization_show_romanization">Show romanization</string>
+    <!-- Translators: Supporting text beneath the show romanization option in the lyrics romanization settings. -->
+    <string name="lyrics_romanization_show_romanization_description">Show romanization below lyrics</string>
     <!-- Translators: Option or section label for manual in the Home and browse screens and settings. -->
     <string name="manual">Manual</string>
     <!-- Translators: Label for metadata refreshed in the Home screen. -->
@@ -3097,6 +3119,10 @@
     <string name="listen_together_server_url">Server URL</string>
     <string name="listen_together_server_name">Server name</string>
     <string name="listen_together_server_maintainer">Maintainer</string>
+    <string name="listen_together_location_poland">Poland</string>
+    <string name="listen_together_location_custom">Custom</string>
+    <string name="listen_together_custom_server_name">Custom server</string>
+    <string name="listen_together_custom_server_maintainer">User</string>
     <string name="listen_together_edit_server">Edit server details</string>
     <!-- Translators: Label for custom server; retained for translation compatibility but not currently referenced by app code. -->
     <!-- Translators: Listen Together room connection status. -->
@@ -4428,6 +4454,7 @@
     <string name="desktop_minimize_to_tray_desc">Closing the window will minimize Metrolist to the tray instead</string>
     <string name="desktop_tray_toggle_on_click">Hide or show on tray click</string>
     <string name="desktop_tray_toggle_on_click_desc">Left-clicking the tray icon will open or close the Metrolist window</string>
+    <string name="desktop_tray_toggle_on_click_desc_mac">Right-clicking the tray icon will open or close the Metrolist window</string>
     <!-- Translators: Imperative action label for show miniplayer in the desktop system tray. -->
     <string name="tray_show_miniplayer">Show miniplayer</string>
     <!-- Translators: Label for tray settings in the desktop system tray. -->
@@ -4883,6 +4910,9 @@
     <string name="enable_landscape_scaling">Landscape scaling</string>
     <string name="enable_landscape_scaling_desc">Scale the interface for larger screens in landscape mode</string>
     <string name="force_bottom_navbar">Force bottom navigation bar</string>
+    <string name="density_massive">Massive (200%)</string>
+    <string name="density_huge">Huge (175%)</string>
+    <string name="density_extra_large">Extra large (150%)</string>
     <string name="density_large">Large (125%)</string>
     <string name="density_slightly_large">Slightly large (115%)</string>
     <string name="density_native">Native (100%)</string>
@@ -5132,6 +5162,8 @@
     <string name="widget_recognizer_open_result">Open identified song</string>
     <string name="statistics_load_failed">Could not refresh statistics. Try again.</string>
     <string name="desktop_platform_unsupported">This operating system is not supported by Metrolist. Use Windows 10 or later, macOS, or a Linux distribution other than Omarchy.</string>
+    <string name="desktop_omarchy_unsupported">Metrolist does not run on Omarchy. Use another Linux distribution, Windows 10 or later, or macOS.</string>
+    <string name="learn_more">Learn more</string>
     <string name="shortcut_toggle_expanded">Toggle expanded player</string>
     <string name="desktop_display_unavailable">Metrolist could not connect to this session’s X display. Launch it from your desktop session with DISPLAY set.</string>
     <string name="webkit_install_hint">Embedded sign-in requires WebKitGTK 4.1 (%1$s). Install it using your system package manager.</string>
@@ -5290,6 +5322,9 @@
     <string name="crash_clear" translatable="false">Clear</string>
     <string name="crash_close" translatable="false">Close</string>
     <string name="crash_copy_logs" translatable="false">Copy logs</string>
+    <string name="crash_screenshot_title" translatable="false">Share the crash report</string>
+    <string name="crash_screenshot_description" translatable="false">Screenshots do not include the details needed to fix a crash. Share the report link or crash log instead.</string>
+    <string name="crash_screenshot_hint" translatable="false">Share the report link or log, not a screenshot.</string>
     <string name="crash_file_size_unit_byte" translatable="false">B</string>
     <string name="crash_file_size_unit_gigabyte" translatable="false">GB</string>
     <string name="crash_file_size_unit_kilobyte" translatable="false">kB</string>

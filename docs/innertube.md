@@ -26,6 +26,8 @@ Artist failures retain available offline data. Without it, propagate the origina
 
 ## Search
 
+Spotify account imports first search with the source album in the query, then retry without it if no exact title, artist and duration match is found. This handles YouTube Music catalog entries whose album metadata differs while keeping the match checks unchanged.
+
 Android, desktop and iOS request suggestions after a 300 ms typing debounce and load results on submit. Only an empty field shows the search start page. Nonempty input keeps the suggestions page, with the typed query available as a search action while suggestions are unavailable. Existing suggestions stay visible while their replacement loads or fails. Clearing, submission and edits shorter than two characters discard remote suggestions; cancelled requests cannot publish old suggestions.
 
 Verify typing after submitted results, rapid edits, deletion to one character, clearing, failed requests, submission and Back. Desktop inline search uses the shared debounce and does not start a separate preview search.
@@ -43,6 +45,8 @@ Mobile API library shelves show saved music albums while podcast shelves remain 
 Home cache identity respects account, locale and browse policy. Visitor publication must pass InnerTubeX's session compatibility check before accepting an in-flight response.
 
 Legacy settings migration and backup imports convert `SYSTEM_DEFAULT` and lowercase `system` to `SYSTEM` for app language, content language and content country. Invalid saved content languages and countries return to the system locale before requests, including settings already migrated to v14. Language validation uses the platform locale catalog and bundled resource tags. Imports also clear v13's literal `null` visitor data without discarding valid session values. Failed restores keep their exact settings snapshot.
+
+Artist subscriber and monthly-audience counts use the same extractor without consulting the app or content locale. It preserves YouTube's digits, separators and compact unit, including counts after a translated label. Unknown or ambiguous formats retain YouTube's full text and omit the app's audience label. The shared Compose artist page, About view, menus and song details use that distinction on Android, desktop and iOS. Captured request pairs and refresh instructions are in [test fixtures](test-fixtures.md#artist-audience-counts).
 
 ## History and uploads
 
@@ -73,6 +77,8 @@ Android closes storage off the playback thread. Video hiding must wait until the
 ## Live stream classification
 
 Player metadata uses current-live flags or an HLS-only response without a finite duration. `isLiveContent` alone does not mark an active stream. Recordings with a finite duration keep seeking and the normal client fallback, including saved songs with a live performance type. Confirmed live playback clears the song duration so extraction and player controls use the same classification.
+
+Stream resolution uses the same rule for Android HLS responses. Extracted streams retain finite durations from client metadata, SABR or the queued song. Playback resources carry the resolver's classification; client profiles and URL markers alone do not mark a song live.
 
 ## Live tests
 

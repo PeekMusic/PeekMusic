@@ -20,7 +20,7 @@ Connected action groups use the shared Material shapes and spacing, with fixed c
 
 ## Miniplayer
 
-The Linux miniplayer and player top bar use the main window's X11 drag handler, which avoids Compose's JBR window-move lookup. The player top bar uses it with both system and custom window frames. Both JVM and native packages use this handler. Linux keeps the miniplayer window opaque, because some backends stop drawing transparent undecorated windows, so both layouts use square corners there.
+The Linux miniplayer and player top bar use the main window's X11 drag handler, which avoids Compose's JBR window-move lookup. When Java does not export its X11 peer APIs, the handler falls back to pointer-based window positioning. The player top bar uses it with both system and custom window frames. Both JVM and native packages use this handler. Linux keeps the miniplayer window opaque, because some backends stop drawing transparent undecorated windows, so both layouts use square corners there.
 
 Check both layouts on a Linux desktop with the packaged JVM AppImage and native AppImage. Verify dragging, playback buttons, seeking, opening and closing, focus-mode control fades and pressed-button springs. Repeat on X11 and XWayland with OpenGL and software rendering.
 
@@ -31,6 +31,12 @@ The thumbnail toolbar keeps its COM object on one STA thread and pumps native me
 The [Nucleus JNI implementation](https://github.com/NucleusFramework/Nucleus/blob/8801e033d0080f595611d95dc3790e79f915b330/launcher-windows/src/main/native/windows/nucleus_launcher_windows.cpp) calls COM synchronously on its caller's thread. The app's window procedure receives thumbnail clicks and posts playback actions to the EDT, so Nucleus does not install a competing subclass from the worker. The window procedure accepts a null settings-group pointer in `WM_SETTINGCHANGE`.
 
 With logging enabled, `WindowsWindow` records native minimize and restore sizes and whether restore reaches the EDT.
+
+## System tray
+
+On Linux and Windows, Metrolist uses `ComposeNativeTray` to integrate with native system notification areas (StatusNotifierItem/D-Bus on Linux and Shell_NotifyIcon on Windows). Left-clicking the tray icon toggles window visibility when `desktopTrayToggleOnClick` is enabled, and right-clicking opens the tray context menu.
+
+On macOS, Metrolist uses Compose Multiplatform's stock `Tray` backed by OpenJDK's `java.awt.SystemTray` (`CTrayIcon`) to avoid AWT/AppKit event loop deadlocks. On macOS, left-clicking opens the native status bar menu, and right-clicking triggers the window toggle action when `desktopTrayToggleOnClick` is enabled. Template rendering is explicitly enabled via the `apple.awt.enableTemplateImages` system property so macOS automatically adapts icon contrast to the menu bar appearance. Native macOS images register `CTrayIcon` and `CMenuItem` callbacks for JNI accessibility.
 
 ## Linux audio setup
 
@@ -70,7 +76,7 @@ The embedded login is used when registration fails, when a macOS launch lacks a 
 
 Linux JVM and native launchers preserve `XCURSOR_THEME` and `XCURSOR_SIZE`. In KDE sessions they read Plasma's `kcminputrc` through `kreadconfig6` or `kreadconfig5`, without applying GNOME cursor defaults. Missing or automatic cursor sizes stay unset for the toolkit to resolve.
 
-Appearance's Display density scales text, icons and controls on top of the system scale. Desktop uses the same 55% to 125% presets and saved preference as Android. Changes apply live to the main window, mini player, Compose dialogs and popups. Library grid columns controls only the library column count.
+Appearance's Display density scales text, icons and controls on top of the system scale. Desktop uses the same 55% to 200% presets and saved preference as Android. Changes apply live to the main window, mini player, Compose dialogs and popups. Library grid columns controls only the library column count.
 
 Linux uses X11 or Xwayland by default. Scale setup runs before AWT window identity, URL-handler registration and Swing dispatcher initialization. In Wayland sessions, scale detection checks the compositor before toolkit environment variables, so a neutral `GDK_SCALE=1` cannot hide KDE's fractional output scale. Without compositor tools, detection uses `QT_SCALE_FACTOR`, the product of `GDK_SCALE` and `GDK_DPI_SCALE`, `XDG_SCALE`, Xft DPI from `xrdb -query`, or `[KScreen] ScaleFactor` in `kdeglobals`. Configuration follows `XDG_CONFIG_HOME`. X11 sessions also use these fallbacks.
 
@@ -151,7 +157,7 @@ Linux cannot validate DMG packaging or Rosetta. Before release, inspect Finder b
 
 ### Flatpak
 
-The local manifest is `flatpak/com.metrolist.desktop.yaml`, with app ID `com.metrolist.desktop`. It builds the working tree and needs initialized submodules.
+The local manifest is `flatpak/com.metrolist.desktop.yaml`, with app ID `com.metrolist.desktop`. It builds the committed `main` branch with its submodules, so commit changes before building.
 
 ```sh
 make flatpak-deps
@@ -160,7 +166,7 @@ make flatpak-run-installed
 make flatpak-bundle
 ```
 
-`make flatpak-run` uses the build directory without installation. Keep the manifest's GNOME runtime version and `FLATPAK_RUNTIME_VERSION` in `Makefile` synchronized. The [distribution reference](distribution.md#flatpak-and-flathub) covers the separate offline recipe and Flathub requirements.
+`make flatpak-run` uses the build directory without installation. Keep the manifest's GNOME runtime version and `FLATPAK_RUNTIME_VERSION` in `Makefile` synchronized. The [distribution reference](distribution.md#flatpak) covers flatpark, which ships the Flatpak users install.
 
 ## Runtime and CDS
 
@@ -192,7 +198,7 @@ The loading window draws the Home shimmer under the saved theme and locale-aware
 
 The Linux loading shell and full app share the custom caption controls. Minimize, maximize/restore and close stay available during initialization when system decorations are disabled. The shell frame must not access `PlayerState`. Fullscreen hides the custom controls.
 
-After that frame, consent-controlled Sentry, enabled Discord integration, native media controls, tray and miniplayer start. Windows registry registration runs after the shell and must finish before SMTC attaches. The process AppUserModelID applies before any UI, as [Microsoft requires](https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-setcurrentprocessexplicitappusermodelid). Taskbar icons fill their cache on IO; taskbar registration uses its COM worker and delayed retry. The Rust WebView/WebView2 paths load on demand for login, token minting or Last.fm browsing, as [Microsoft advises for WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/performance). FFmpeg loads when playback or a download needs decoding. Downloaded fonts load on IO; the first frame uses the locale-matched system font.
+After that frame, consent-controlled Sentry on stable releases, enabled Discord integration, native media controls, tray and miniplayer start. Nightlies never initialize Sentry and preserve the saved consent. Windows registry registration runs after the shell and must finish before SMTC attaches. The process AppUserModelID applies before any UI, as [Microsoft requires](https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-setcurrentprocessexplicitappusermodelid). Taskbar icons fill their cache on IO; taskbar registration uses its COM worker and delayed retry. The Rust WebView/WebView2 paths load on demand for login, token minting or Last.fm browsing, as [Microsoft advises for WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/performance). FFmpeg loads when playback or a download needs decoding. Downloaded fonts load on IO; the first frame uses the locale-matched system font.
 
 `METROLIST_STARTUP_TRACE=1` with detailed logging enabled writes process ID and JVM uptime for `main`, `settings`, `shell-frame`, `runtime`, `database`, `backend` and `app-frame` to stdout/app.log. Frame markers mean Compose draw completion, not display presentation. Leave this variable unset for normal launches.
 
@@ -251,13 +257,15 @@ The logger buffers writes. Export or normal shutdown flushes them; native termin
 
 Packaged JVMs write fatal HotSpot reports as `hs_err_pid<PID>.log` in the log directory. A termination outside HotSpot's fatal handler may produce no file.
 
-Desktop playback installs FFmpeg's native log callback. Warnings and errors go to both `app.log` and the playback event log; the file logger flushes these records immediately. FFmpeg runs inside the JVM, so it has no separate process exit code or stderr pipe. Unexpected demuxer errors and video decoder errors include the native return code. FFmpeg decodes video into Skia bitmap storage. Video teardown joins decoder threads and uses draw locking; keep both, along with padded scaler rows.
+Desktop playback installs FFmpeg's native log callback. Warnings and errors go to both `app.log` and the playback event log; the file logger flushes these records immediately. FFmpeg runs inside the JVM, so it has no separate process exit code or stderr pipe. Unexpected demuxer errors and video decoder errors include the native return code. Desktop tempo and pitch processing uses float samples and combines both settings into one `atempo` ratio; it skips WSOLA when the ratio is one, as in varispeed. FFmpeg decodes video into Skia bitmap storage. Video teardown joins decoder threads and uses draw locking; keep both, along with padded scaler rows.
 
 Animated covers keep one decoder at a time per artwork slot. Track changes wait for the previous load, decoder and draw to finish before creating the next cover player. Failed loads or ended playback clear the animated frame so static artwork remains visible. Cover cancellation aborts pending downloads and waits for native cleanup off the UI thread.
 
+Player artwork keeps its video drawing node mounted when switching between static and animated covers. With animated covers enabled, shared-element bounds and player fades still animate, but artwork draws in its owning tree rather than the shared transition overlay. Static artwork keeps the overlay when animated covers are disabled. Video paints and shader builders belong to each draw, so composition disposal cannot close them before a queued draw runs. The renderer copies mutable decoder bitmaps into Skia images under the frame lock; recorded draws retain those images after decoder reuse or teardown. Backend tests cover deferred shader replay and disposal ordering, not Windows GPU rendering. Retest rapid expansion, collapse and track changes with Canvas and music video enabled on Windows. Native packages write fatal diagnostics to `native_err_pid*.log` in the same log directory; see [Native Image diagnostics](desktop-native-image.md#test-and-inspect).
+
 The Spotify sign-in button in player artwork settings opens the same login window as playlist imports. Successful authentication saves the Spotify session for Canvas artwork; failures leave the login window open for retry.
 
-`session-running.txt` records an active desktop session. Normal app shutdown removes it. On the next start, a remaining marker or an unreported `hs_err_pid` file produces a diagnostic in both logs. When crash reporting is enabled and an unreported crash file exists, the Sentry client sends a previous-exit event with `previous-desktop-exit.txt` attached. The attachment contains the session description and a bounded, redacted summary of each crash header and native stack. It omits VM arguments, environment variables and memory dumps. The original crash files stay on disk; `.reported` files prevent repeated uploads. An unfinished shutdown alone also covers forced termination and power loss, so it does not prove a native crash. Sentry events include `desktop.os`, `desktop.os_version` and `desktop.arch` tags.
+`session-running.txt` records an active desktop session. Normal app shutdown removes it. On the next start, a remaining marker or an unreported `hs_err_pid` file produces a diagnostic in both logs. On stable releases, when crash reporting is enabled and an unreported crash file exists, the Sentry client sends a previous-exit event with `previous-desktop-exit.txt` attached. The attachment contains the session description and a bounded, redacted summary of each crash header and native stack. It omits VM arguments, environment variables and memory dumps. The original crash files stay on disk; `.reported` files prevent repeated uploads. An unfinished shutdown alone also covers forced termination and power loss, so it does not prove a native crash. Sentry events include `desktop.os`, `desktop.os_version` and `desktop.arch` tags.
 
 `scripts/metromem --help` lists profiling modes. Keep heap dumps and traces private; they can contain account data.
 

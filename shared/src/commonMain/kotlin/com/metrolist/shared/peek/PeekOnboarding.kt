@@ -133,7 +133,7 @@ object PeekOnboarding {
                 listOf(
                     PeekOnboardingItem("translationEnabled"),
                     PeekOnboardingItem("targetLanguage"),
-                    PeekOnboardingItem("romanizationEnabled"),
+                    PeekOnboardingItem("showSecondaryLyrics"),
                     PeekOnboardingItem("lyricsProgressiveBlur", isNew = true),
                 )
             }

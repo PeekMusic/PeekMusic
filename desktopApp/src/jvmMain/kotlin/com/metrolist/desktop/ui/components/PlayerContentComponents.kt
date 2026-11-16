@@ -173,18 +173,15 @@ fun PlayerCoreContent(
                         .alpha(if (hasAnimatedFrame) 0f else 1f)
                         .clip(RoundedCornerShape(28.dp))
                         .shadow(24.dp, RoundedCornerShape(28.dp)),
-                extractColor = true,
                 contentScale = if (Settings.shared.cropAlbumArt) ContentScale.Crop else ContentScale.Fit,
             )
-            PlayerState.animatedCoverUrl?.let { coverUrl ->
-                AnimatedCover(
-                    url = coverUrl,
-                    active = PlayerState.isPlaying && !UiState.videoFullscreenObscuresPlayer,
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(28.dp)),
-                    contentScale = ContentScale.Crop,
-                    onFrameAvailabilityChanged = { hasAnimatedFrame = it },
-                )
-            }
+            AnimatedCover(
+                url = PlayerState.animatedCoverUrl,
+                active = PlayerState.isPlaying && !UiState.videoFullscreenObscuresPlayer,
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(28.dp)),
+                contentScale = ContentScale.Crop,
+                onFrameAvailabilityChanged = { hasAnimatedFrame = it },
+            )
         }
 
         Column(

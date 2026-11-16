@@ -36,6 +36,7 @@ internal sealed interface MobileRoute {
 
     data class ListenTogether(
         val initialRoomCode: String? = null,
+        val initialBlockedUsers: Boolean = false,
     ) : MobileRoute
 
     data class Login(

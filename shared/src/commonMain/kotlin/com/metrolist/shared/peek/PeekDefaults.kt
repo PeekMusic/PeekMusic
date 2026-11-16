@@ -20,7 +20,7 @@ import com.metrolist.shared.settings.SliderStyle
  * defaults in Settings stay untouched, which keeps upstream merges and tests unaffected.
  */
 object PeekDefaults {
-    internal const val VERSION = 2
+    internal const val VERSION = 3
 
     fun apply(settings: Settings = Settings.shared) {
         if (settings.peekDefaultsVersion >= VERSION) return
@@ -40,6 +40,8 @@ object PeekDefaults {
             setIfUnset(AppleMusicArtistVideosKey) { enableAppleMusicArtistVideos = false }
             setIfUnset(UseLegacyShuffleKey) { useLegacyShuffle = false }
             setIfUnset(LyricsProgressiveBlurKey) { lyricsProgressiveBlur = true }
+            // Version 3: translate into English unless the user picked a language.
+            setIfUnset("lyricsAiTargetLanguage") { lyricsAiTargetLanguage = "en" }
         }
         settings.peekDefaultsVersion = VERSION
     }

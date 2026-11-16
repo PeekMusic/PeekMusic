@@ -87,6 +87,7 @@ private struct AppHostView: View {
 }
 
 private func startSentryReporting() {
+    guard IosSentryKt.iosCrashReportingAvailable() else { return }
     SentrySDK.start { options in
         options.dsn = ""
         options.debug = false

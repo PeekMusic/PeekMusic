@@ -150,6 +150,8 @@ import com.metrolist.shared.generated.resources.listen_together_connection_lost_
 import com.metrolist.shared.generated.resources.listen_together_copy_code
 import com.metrolist.shared.generated.resources.listen_together_copy_link
 import com.metrolist.shared.generated.resources.listen_together_create_room_title
+import com.metrolist.shared.generated.resources.listen_together_custom_server_maintainer
+import com.metrolist.shared.generated.resources.listen_together_custom_server_name
 import com.metrolist.shared.generated.resources.listen_together_description
 import com.metrolist.shared.generated.resources.listen_together_disconnected
 import com.metrolist.shared.generated.resources.listen_together_edit_server
@@ -622,12 +624,12 @@ internal fun listenTogetherSettingsPage(
             choice(
                 id = "listenTogetherServer",
                 title = stringResource(Res.string.listen_together_server),
-                valueLabel = servers.firstOrNull { it.url == serverUrl }?.name ?: serverUrl,
+                valueLabel = servers.firstOrNull { it.url == serverUrl }?.let { serverName(it) } ?: serverUrl,
                 choices =
                     servers.map {
                         SettingsChoice(
                             it.url,
-                            stringResource(Res.string.listen_together_server_label, it.name, it.location),
+                            stringResource(Res.string.listen_together_server_label, serverName(it), stringResource(it.location)),
                         )
                     },
                 selectedChoiceId = serverUrl,
@@ -775,8 +777,8 @@ fun ListenTogetherServerScreen(
         )
     }
     editingServer?.let { server ->
-        var name by remember(server.url) { mutableStateOf(server.name) }
-        var operator by remember(server.url) { mutableStateOf(server.operator) }
+        var name by remember(server.url) { mutableStateOf(server.name.orEmpty()) }
+        var operator by remember(server.url) { mutableStateOf(server.operator.orEmpty()) }
         AlertDialog(
             onDismissRequest = { editingServer = null },
             title = { Text(stringResource(Res.string.listen_together_edit_server)) },
@@ -2475,9 +2477,11 @@ private fun ServerRow(
     ) {
         RadioButton(selected = selected, onClick = onClick)
         Column(modifier = Modifier.weight(1f)) {
-            Text(server.name, style = MaterialTheme.typography.titleMedium)
+            Text(serverName(server), style = MaterialTheme.typography.titleMedium)
             Text(
-                "${server.location} -\u00a0${server.operator}",
+                "${stringResource(
+                    server.location,
+                )} -\u00a0${server.operator ?: stringResource(Res.string.listen_together_custom_server_maintainer)}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -2698,3 +2702,6 @@ private fun List<ListenTogetherLogEntry>.toShareText(): String =
             append(entry.message)
         }
     }
+
+@Composable
+private fun serverName(server: ListenTogetherServer): String = server.name ?: stringResource(Res.string.listen_together_custom_server_name)

@@ -1103,6 +1103,18 @@ private fun SettingsItemRow(
             if (highlighted) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.settingsRowContainerColor(pressed),
         label = "settingsItemRow",
     )
+    val titleColor by animateColorAsState(
+        if (highlighted) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
+        label = "settingsItemTitle",
+    )
+    val descriptionColor by animateColorAsState(
+        if (highlighted) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+        label = "settingsItemDescription",
+    )
+    val valueColor by animateColorAsState(
+        if (highlighted) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary,
+        label = "settingsItemValue",
+    )
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     LaunchedEffect(highlighted) {
         if (highlighted) {
@@ -1160,9 +1172,9 @@ private fun SettingsItemRow(
                         style = MaterialTheme.typography.bodyLarge,
                         color =
                             if (item.enabled) {
-                                MaterialTheme.colorScheme.onSurface
+                                titleColor
                             } else {
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                                titleColor.copy(alpha = 0.38f)
                             },
                         modifier = Modifier.weight(1f),
                     )
@@ -1171,7 +1183,7 @@ private fun SettingsItemRow(
                     Text(
                         it,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (item.enabled) 1f else 0.38f),
+                        color = descriptionColor.copy(alpha = if (item.enabled) 1f else 0.38f),
                     )
                 }
             }
@@ -1188,9 +1200,9 @@ private fun SettingsItemRow(
                             style = MaterialTheme.typography.labelLarge,
                             color =
                                 if (item.enabled) {
-                                    MaterialTheme.colorScheme.primary
+                                    valueColor
                                 } else {
-                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                                    titleColor.copy(alpha = 0.38f)
                                 },
                             textAlign = TextAlign.End,
                             modifier = Modifier.widthIn(max = 128.dp),
@@ -1209,7 +1221,7 @@ private fun SettingsItemRow(
                                 MetrolistIcons.Outlined.ChevronRight
                             },
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (item.enabled) 1f else 0.38f),
+                        tint = descriptionColor.copy(alpha = if (item.enabled) 1f else 0.38f),
                     )
                 }
 
@@ -1218,13 +1230,13 @@ private fun SettingsItemRow(
                         Text(
                             it,
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = valueColor,
                             textAlign = TextAlign.End,
                             modifier = Modifier.widthIn(max = 128.dp),
                         )
                         Spacer(Modifier.width(8.dp))
                     }
-                    Icon(MetrolistIcons.Outlined.ChevronRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Icon(MetrolistIcons.Outlined.ChevronRight, null, tint = descriptionColor)
                 }
 
                 SettingsControl.ACTION -> {
@@ -1232,7 +1244,7 @@ private fun SettingsItemRow(
                         Text(
                             it,
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = valueColor,
                             textAlign = TextAlign.End,
                             modifier = Modifier.widthIn(max = 128.dp),
                         )

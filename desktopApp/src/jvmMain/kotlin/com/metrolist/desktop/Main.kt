@@ -35,6 +35,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,6 +49,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -114,6 +116,7 @@ import com.metrolist.desktop.ui.components.LocalCaptionBarInsets
 import com.metrolist.desktop.ui.components.MiniplayerWindow
 import com.metrolist.desktop.ui.components.ShortcutsOverlay
 import com.metrolist.desktop.ui.components.TokenLoginDialog
+import com.metrolist.desktop.ui.components.UpdateArtworkTheme
 import com.metrolist.desktop.ui.components.VideoFullscreenOverlay
 import com.metrolist.desktop.ui.layouts.ExpressLayout
 import com.metrolist.desktop.ui.layouts.FocusedLayout
@@ -134,6 +137,7 @@ import com.metrolist.desktop.utils.DesktopSingleInstance
 import com.metrolist.desktop.utils.DesktopStartup
 import com.metrolist.desktop.utils.DesktopUrlHandler
 import com.metrolist.desktop.utils.NativeMemoryTrimmer
+import com.metrolist.desktop.utils.STOP_OMARCHY_URL
 import com.metrolist.desktop.utils.SentryManager
 import com.metrolist.desktop.utils.SkiaCacheCleaner
 import com.metrolist.desktop.utils.SystemMediaManager
@@ -144,7 +148,8 @@ import com.metrolist.desktop.utils.configureDesktopJvmErrorFile
 import com.metrolist.desktop.utils.configureLinuxWebKitRenderer
 import com.metrolist.desktop.utils.desktopRenderApiOverride
 import com.metrolist.desktop.utils.isDesktopPlatformSupported
-import com.metrolist.desktop.utils.resolveDesktopSeedColor
+import com.metrolist.desktop.utils.isOmarchy
+import com.metrolist.desktop.utils.openStopOmarchy
 import com.metrolist.desktop.web.DesktopWebViewError
 import com.metrolist.desktop.window.IconResources
 import com.metrolist.desktop.window.LinuxWindowFrame
@@ -166,9 +171,12 @@ import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.action_login
 import com.metrolist.shared.generated.resources.action_not_now
 import com.metrolist.shared.generated.resources.app_name
+import com.metrolist.shared.generated.resources.close
 import com.metrolist.shared.generated.resources.copy
 import com.metrolist.shared.generated.resources.desktop_display_unavailable
+import com.metrolist.shared.generated.resources.desktop_omarchy_unsupported
 import com.metrolist.shared.generated.resources.desktop_platform_unsupported
+import com.metrolist.shared.generated.resources.learn_more
 import com.metrolist.shared.generated.resources.liked_songs
 import com.metrolist.shared.generated.resources.ok
 import com.metrolist.shared.generated.resources.playback_error
@@ -213,6 +221,7 @@ import com.metrolist.shared.ui.utils.desktopMouseScrollFactors
 import com.metrolist.shared.ui.utils.verticalScrollWithDrag
 import com.metrolist.shared.utils.OsUtil
 import com.metrolist.shared.utils.XdgUtils
+import com.metrolist.shared.utils.isCrashReportingAvailable
 import com.metrolist.shared.youtube.di.sharedModule
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -237,6 +246,7 @@ import java.awt.Desktop
 import java.awt.EventQueue
 import java.awt.Frame
 import java.awt.GraphicsEnvironment
+import java.awt.Toolkit
 import java.awt.desktop.AppReopenedListener
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
@@ -259,6 +269,7 @@ fun WindowScope.App(
     toggleWindowFullscreen: () -> Unit,
     checkDarkMode: (Boolean) -> Unit,
     isLinux: Boolean = false,
+    integrationsReady: Boolean = false,
 ) {
     val playbackController = remember { DesktopPlaybackController(AppState.scope) }
     val downloadStates = LibraryState.downloadStates
@@ -271,7 +282,7 @@ fun WindowScope.App(
         LocalMouseScrollFactors provides desktopMouseScrollFactors(LocalDensity.current),
         desktopScrollConfig(),
     ) {
-        AppContent(navigator, onMaximized, toggleWindowFullscreen, checkDarkMode, isLinux)
+        AppContent(navigator, onMaximized, toggleWindowFullscreen, checkDarkMode, isLinux, integrationsReady)
     }
 }
 
@@ -282,11 +293,9 @@ private fun WindowScope.AppContent(
     toggleWindowFullscreen: () -> Unit,
     checkDarkMode: (Boolean) -> Unit,
     isLinux: Boolean,
+    integrationsReady: Boolean,
 ) {
-    MetrolistTheme(
-        seedColor =
-            resolveDesktopSeedColor(UiState.seedColor),
-    ) {
+    MetrolistTheme {
         val colorScheme = MaterialTheme.colorScheme
         WindowsWindowBackground(colorScheme.background)
         val isExpandedPlayerVisible = PlayerState.currentTrack != null && PlayerState.isExpanded
@@ -300,10 +309,12 @@ private fun WindowScope.AppContent(
         var onboardingComplete by remember { mutableStateOf(Settings.shared.desktopOnboardingComplete) }
         if (!onboardingComplete) {
             DesktopOnboarding { sendCrashReports, openLogin ->
-                if (Settings.shared.desktopPendingOnboardingSentryConsent.isNotBlank()) {
-                    Settings.shared.desktopPendingOnboardingSentryConsent = sendCrashReports.toString()
+                if (isCrashReportingAvailable()) {
+                    if (Settings.shared.desktopPendingOnboardingSentryConsent.isNotBlank()) {
+                        Settings.shared.desktopPendingOnboardingSentryConsent = sendCrashReports.toString()
+                    }
+                    Settings.shared.sentryEnabled = sendCrashReports
                 }
-                Settings.shared.sentryEnabled = sendCrashReports
                 Settings.shared.desktopOnboardingComplete = true
                 applicationScope.launch(Dispatchers.IO) { SentryManager.initialize() }
                 if (openLogin) {
@@ -322,6 +333,7 @@ private fun WindowScope.AppContent(
         setSingletonImageLoaderFactory { context ->
             DesktopImageLoader.create(context)
         }
+        UpdateArtworkTheme()
         LaunchedEffect(colorScheme) {
             try {
                 val bg = colorScheme.background.toArgb()
@@ -563,8 +575,21 @@ private fun WindowScope.AppContent(
                 SettingsOverlay(colorScheme)
             }
             YouTubeSyncSnackbar(AppState.snackbarHostState)
-            SnackbarHost(AppState.snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+            val snackbarScheme = rememberUpdatedState(colorScheme)
+            SnackbarHost(AppState.snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter)) { data ->
+                val scheme = snackbarScheme.value
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = scheme.inverseSurface,
+                    contentColor = scheme.inverseOnSurface,
+                    actionColor = scheme.inversePrimary,
+                    actionContentColor = scheme.inversePrimary,
+                    dismissActionContentColor = scheme.inverseOnSurface,
+                )
+            }
         }
+
+        if (integrationsReady) MiniplayerWindow()
 
         if (UiState.showFloatingSearch) {
             FloatingSearchOverlay(
@@ -648,6 +673,8 @@ private fun configureLinuxWindowIdentity() {
     if (!OsUtil.isLinux) return
     System.setProperty("awt.app.id", "Metrolist")
     runCatching {
+        // XToolkit's constructor names the X11 class after the creating thread, so create it here and then rename it.
+        Toolkit.getDefaultToolkit()
         val xToolkit = Class.forName("sun.awt.X11.XToolkit")
         xToolkit.getDeclaredField("awtAppClassName").apply {
             isAccessible = true
@@ -770,7 +797,32 @@ private fun exitWithStartupMessage(message: String): Nothing {
     exitProcess(1)
 }
 
+private fun exitOnOmarchy(): Nothing {
+    val message = runBlocking { getString(Res.string.desktop_omarchy_unsupported) }
+    System.err.println("$message $STOP_OMARCHY_URL")
+    if (!GraphicsEnvironment.isHeadless()) {
+        runCatching {
+            val learnMore = runBlocking { getString(Res.string.learn_more) }
+            val choice =
+                JOptionPane.showOptionDialog(
+                    null,
+                    message,
+                    runBlocking { getString(Res.string.app_name) },
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE,
+                    null,
+                    arrayOf(learnMore, runBlocking { getString(Res.string.close) }),
+                    learnMore,
+                )
+            if (choice == 0) openStopOmarchy()
+        }
+    }
+    DesktopSingleInstance.release()
+    exitProcess(1)
+}
+
 private fun runDesktopApp(args: Array<String>) {
+    if (OsUtil.isLinux && isOmarchy()) exitOnOmarchy()
     if (!isDesktopPlatformSupported()) {
         exitWithStartupMessage(runBlocking { getString(Res.string.desktop_platform_unsupported) })
     }
@@ -800,6 +852,7 @@ private fun runDesktopApp(args: Array<String>) {
         property = System.getProperty("skiko.renderApi"),
     )?.let { System.setProperty("skiko.renderApi", it) }
     if (OsUtil.isMac) {
+        System.setProperty("apple.awt.enableTemplateImages", "true")
         if (System.getProperty("skiko.renderApi") == null && System.getenv("SKIKO_RENDER_API") == null) {
             System.setProperty("skiko.renderApi", "METAL")
         }
@@ -812,9 +865,11 @@ private fun runDesktopApp(args: Array<String>) {
         settings.desktopOnboardingComplete = File(XdgUtils.getXdgDataHome(), "metrolist/metrolist.db").isFile
         settings.desktopOnboardingInitialized = true
     }
-    settings.desktopPendingOnboardingSentryConsent.takeIf(String::isNotBlank)?.let { consent ->
-        settings.sentryEnabled = consent.toBooleanStrict()
-        settings.desktopPendingOnboardingSentryConsent = ""
+    if (isCrashReportingAvailable()) {
+        settings.desktopPendingOnboardingSentryConsent.takeIf(String::isNotBlank)?.let { consent ->
+            settings.sentryEnabled = consent.toBooleanStrict()
+            settings.desktopPendingOnboardingSentryConsent = ""
+        }
     }
     DesktopLocaleManager.apply(settings.appLanguage)
 
@@ -1100,7 +1155,7 @@ private fun runDesktopApp(args: Array<String>) {
         @Suppress("DEPRECATION")
         val logoPainter = painterResource("logo.svg")
         val iconColor =
-            resolveDesktopSeedColor(UiState.seedColor)
+            UiState.seedColor
 
         val dynamicIcon =
             remember(iconColor) {
@@ -1226,7 +1281,7 @@ private fun runDesktopApp(args: Array<String>) {
             }
             if (!backendReady) {
                 DesktopDensityProvider {
-                    MetrolistTheme(seedColor = resolveDesktopSeedColor(UiState.seedColor)) {
+                    MetrolistTheme(seedColor = UiState.seedColor) {
                         WindowsWindowBackground(MaterialTheme.colorScheme.background)
                         val shell: @Composable () -> Unit = {
                             Surface(
@@ -1527,15 +1582,20 @@ private fun runDesktopApp(args: Array<String>) {
                                     toggleWindowFullscreen = toggleFullscreen,
                                     checkDarkMode = { areWeInDarkMode.value = it },
                                     isLinux = isLinux,
+                                    integrationsReady = integrationsReady,
                                 )
                             }
                         }
                     }
                 }
             }
-            if (integrationsReady) MiniplayerWindow()
         }
 
-        if (integrationsReady) ComposeTrayManager.TrayIcon()
+        // System tray icon (stock Compose Tray on macOS, ComposeNativeTray on Linux/Windows)
+        if (integrationsReady) {
+            with(ComposeTrayManager) {
+                TrayIcon()
+            }
+        }
     }
 }

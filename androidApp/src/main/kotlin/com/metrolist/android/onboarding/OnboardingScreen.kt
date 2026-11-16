@@ -56,7 +56,6 @@ import com.metrolist.shared.generated.resources.settings_playback
 import com.metrolist.shared.generated.resources.side_menu_welcome
 import com.metrolist.shared.generated.resources.skip
 import com.metrolist.shared.generated.resources.yes
-import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.peek.PeekOnboarding
 import com.metrolist.shared.peek.PeekOnboardingFeature
 import com.metrolist.shared.peek.peekDescription
@@ -72,6 +71,7 @@ import com.metrolist.shared.ui.settings.SettingsHostChoice
 import com.metrolist.shared.ui.settings.SettingsPageId
 import com.metrolist.shared.ui.settings.SettingsPlatform
 import com.metrolist.shared.ui.settings.SharedSettingsHost
+import com.metrolist.shared.utils.isCrashReportingAvailable
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -94,7 +94,7 @@ internal fun OnboardingScreen(
                 add(OnboardingPage.WELCOME)
                 if (hasLegacyInstallation && !libraryStartedFresh) add(OnboardingPage.MIGRATION)
                 if (hasLegacyInstallation && !libraryStartedFresh) add(OnboardingPage.MIGRATION_COMPLETE)
-                if (PeekFork.CRASH_REPORTING_AVAILABLE) add(OnboardingPage.CRASH_REPORTS)
+                if (isCrashReportingAvailable()) add(OnboardingPage.CRASH_REPORTS)
                 add(OnboardingPage.NOTIFICATIONS)
                 addAll(PeekOnboarding.featurePages)
                 add(OnboardingPage.FINISH)
@@ -146,7 +146,7 @@ internal fun OnboardingScreen(
                     libraryStartedFresh = true
                     error = null
                     currentPageName =
-                        (if (PeekFork.CRASH_REPORTING_AVAILABLE) OnboardingPage.CRASH_REPORTS else PeekOnboarding.featurePages.first()).name
+                        (if (isCrashReportingAvailable()) OnboardingPage.CRASH_REPORTS else PeekOnboarding.featurePages.first()).name
                 } else {
                     nextPage()
                 }
