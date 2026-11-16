@@ -47,6 +47,25 @@ come along, and a short onboarding shows what's new.
 
 </div>
 
+## Features
+
+- YouTube Music playback with or without signing in, no ads
+- Downloads, offline library and Android Auto
+- Material 3 Expressive design with several player, mini player and background styles
+- Lyrics from many sources with word-by-word sync, translation, romanization and a lyrics editor
+- Music videos and YouTube live streams
+- Canvas and animated covers from Apple Music, Spotify and YouTube Music
+- PeekParty: listen together with friends in real time
+- Casting to Google Cast, FCast, DLNA and Sonos
+- Playlist imports from Spotify, Apple Music, Deezer, Tidal and Amazon Music, and backups from other clients
+- MetroEQ equalizer with AutoEQ profiles
+- Music recognition through Shazam
+- Filters for AI-generated artists, explicit content, videos and podcasts, and blocking artists
+- Last.fm, ListenBrainz and Discord Rich Presence (off by default)
+- Custom fonts
+
+Most of this comes from Metrolist 14. What PeekMusic adds on top is below.
+
 ## What PeekMusic does differently
 
 **Lyrics Peek.** The current lyric line sits between the cover and the song title, big enough to read along without
