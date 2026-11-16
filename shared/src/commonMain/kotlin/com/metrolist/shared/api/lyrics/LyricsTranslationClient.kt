@@ -8,6 +8,7 @@ package com.metrolist.shared.api.lyrics
 import com.metrolist.shared.network.ExpectedHttpFailureStatusCodes
 import com.metrolist.shared.network.createHttpClient
 import com.metrolist.shared.peek.PeekFork
+import com.metrolist.shared.peek.PeekLanguageDetector
 import com.metrolist.shared.peek.PeekTranslationBackfill
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.GlobalYouTube
@@ -217,9 +218,12 @@ class LyricsTranslationClient(
         model: String,
         systemPrompt: String = "",
     ): Result<List<Boolean>> {
+        // PeekMusic: Google Translate gets only the lines that are not in the target language yet, decided on the device.
+        if (provider.equals("Google Translate", ignoreCase = true)) {
+            return Result.success(PeekLanguageDetector.linesNeedingTranslation(lines, targetLanguage))
+        }
         if (provider.equals("DeepL", ignoreCase = true) ||
-            provider.equals("DeepL (keyless)", ignoreCase = true) ||
-            provider.equals("Google Translate", ignoreCase = true)
+            provider.equals("DeepL (keyless)", ignoreCase = true)
         ) {
             return Result.success(lines.map(String::isNotBlank))
         }
