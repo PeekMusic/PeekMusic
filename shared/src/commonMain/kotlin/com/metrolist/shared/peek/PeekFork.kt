@@ -21,6 +21,12 @@ object PeekFork {
     const val LISTEN_TOGETHER_SERVER_OPERATOR = "Endrit"
     const val USER_AGENT_PRODUCT = "PeekMusic"
 
+    /** Contact address that lyrics services see in our requests (lrc.red's terms require one). */
+    const val CONTACT_EMAIL = "contact@peekmusic.org"
+
+    /** User-Agent for lyrics services: who we are, where to find us, how to reach us. */
+    const val LYRICS_CLIENT_USER_AGENT = "$USER_AGENT_PRODUCT (+$REPOSITORY_URL; $CONTACT_EMAIL)"
+
     /** Folder name for downloads, the audio cache and saved photos, so they never mix with an installed Metrolist. */
     const val MEDIA_FOLDER = "PeekMusic"
 

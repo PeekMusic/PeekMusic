@@ -7,6 +7,7 @@ package com.metrolist.shared.api.lyrics
 
 import com.metrolist.shared.model.AgentType
 import com.metrolist.shared.network.ExpectedHttpFailureStatusCodes
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.state.GlobalYouTube
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ClientRequestException
@@ -149,7 +150,7 @@ class PaxsenixLyricsProvider(
                 .prepareGet("https://lyrics.paxsenix.org/apple-music/lyrics") {
                     expectMissingLyrics()
                     parameter("id", id)
-                    header("User-Agent", "Metrolist")
+                    header("User-Agent", PeekFork.LYRICS_CLIENT_USER_AGENT)
                 }.readLyricsText(MAX_LYRICS_RESPONSE_BYTES)
                 ?: return null
 

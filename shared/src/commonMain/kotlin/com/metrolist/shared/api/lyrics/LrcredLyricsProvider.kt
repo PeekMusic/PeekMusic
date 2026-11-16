@@ -5,7 +5,9 @@
 
 package com.metrolist.shared.api.lyrics
 
+import com.metrolist.shared.peek.PeekFork
 import io.ktor.client.HttpClient
+import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.prepareGet
 import io.ktor.http.HttpStatusCode
@@ -138,6 +140,8 @@ class LrcredLyricsProvider(
         val response =
             httpClient.prepareGet(LRCRED_BASE_URL) {
                 expectMissingLyrics()
+                // PeekMusic: lrc.red's terms ask every client to identify itself with a link and contact address.
+                header("User-Agent", PeekFork.LYRICS_CLIENT_USER_AGENT)
                 parameter("q", query)
             }
         val body = response.readLyricsText(MAX_LYRICS_RESPONSE_BYTES) ?: return null
@@ -157,7 +161,11 @@ class LrcredLyricsProvider(
         val lyricsUrl = match.lyricsUrl?.takeIf { it.isNotBlank() } ?: return null
         val fullLyricsUrl = if (lyricsUrl.startsWith("/")) "https://lrc.red$lyricsUrl" else lyricsUrl
 
-        val lyricsResponse = httpClient.prepareGet(fullLyricsUrl) { expectMissingLyrics() }
+        val lyricsResponse =
+            httpClient.prepareGet(fullLyricsUrl) {
+                expectMissingLyrics()
+                header("User-Agent", PeekFork.LYRICS_CLIENT_USER_AGENT)
+            }
         val ttmlText = lyricsResponse.readLyricsText(MAX_LYRICS_RESPONSE_BYTES) ?: return null
         if (ttmlText.isBlank()) return null
 
