@@ -83,6 +83,8 @@ internal class AndroidQueueTransitions(
 
     fun observe(sleepTimer: SleepTimerController) {
         player.consumePreloadedNext = { consumePreloadedNext(player.currentPlaybackInstanceId) }
+        // PeekMusic: caches upcoming queue songs ahead (Storage › Song cache › Cache ahead).
+        PeekUpcomingPreCache(scope, player, queue.repeatMode, audioCacheManager, fetchPlaybackResource, ::activeSabrCacheIds).start()
 
         scope.launch {
             nextTrackPreloadTriggers(

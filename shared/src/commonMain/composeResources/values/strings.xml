@@ -5575,4 +5575,11 @@
     <string name="peek_friends_share_link">Share link</string>
     <string name="peek_friends_link_title">Add friend?</string>
     <string name="peek_friends_link_text">Send a friend request to %1$s?</string>
+    <string name="peek_precache_upcoming">Cache ahead</string>
+    <string name="peek_precache_upcoming_desc">Download the next songs in the queue while music plays, so playback keeps going on a weak connection</string>
+    <string name="peek_precache_upcoming_off">Off</string>
+    <string name="peek_precache_upcoming_count">Next %1$d songs</string>
+    <string name="peek_precache_upcoming_one">Next song</string>
+    <string name="peek_precache_wifi_only">Cache ahead only on Wi-Fi</string>
+    <string name="peek_precache_wifi_only_desc">Don’t use mobile data for songs that aren’t playing yet</string>
 </resources>

@@ -52,6 +52,7 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.imageLoader
 import com.metrolist.android.R
 import com.metrolist.android.playback.AudioCacheManager
+import com.metrolist.android.playback.PeekPreCacheUpcomingCounts
 import com.metrolist.android.playback.SongDownloadManager
 import com.metrolist.android.ui.player.CanvasCache
 import com.metrolist.shared.api.artwork.AnimatedArtworkService
@@ -93,6 +94,13 @@ import com.metrolist.shared.generated.resources.music_video_quality_auto
 import com.metrolist.shared.generated.resources.music_video_quality_desc
 import com.metrolist.shared.generated.resources.music_video_quality_resolution
 import com.metrolist.shared.generated.resources.ok
+import com.metrolist.shared.generated.resources.peek_precache_upcoming
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_count
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_desc
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_off
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_one
+import com.metrolist.shared.generated.resources.peek_precache_wifi_only
+import com.metrolist.shared.generated.resources.peek_precache_wifi_only_desc
 import com.metrolist.shared.generated.resources.retry
 import com.metrolist.shared.generated.resources.select_download_directory
 import com.metrolist.shared.generated.resources.settings_download_folder_summary
@@ -200,6 +208,8 @@ fun StorageSettingsScreen(
     var animatedCoverCacheSize by remember { mutableLongStateOf(0L) }
     var musicVideoCacheEntries by remember { mutableIntStateOf(0) }
     var maxSongCacheSize by remember { mutableIntStateOf(Settings.shared.maxSongCacheSize) }
+    var preCacheUpcomingCount by remember { mutableIntStateOf(Settings.shared.peekPreCacheUpcomingCount) }
+    var preCacheWifiOnly by remember { mutableStateOf(Settings.shared.peekPreCacheWifiOnly) }
     var maxImageCacheSize by remember { mutableIntStateOf(Settings.shared.maxImageCacheSize) }
     var maxAnimatedCoverCacheSize by remember { mutableIntStateOf(Settings.shared.animatedArtworkCacheSize) }
     var cacheLimitRequestId by remember { mutableIntStateOf(0) }
@@ -865,6 +875,54 @@ fun StorageSettingsScreen(
                         steps = songCacheValues.size - 1,
                         enabled = !isCalculatingSizes,
                         isFirst = true,
+                        isLast = false,
+                    )
+
+                    // PeekMusic: cache the next queue songs ahead.
+                    val preCacheOff = stringResource(Res.string.peek_precache_upcoming_off)
+                    val preCacheOne = stringResource(Res.string.peek_precache_upcoming_one)
+                    val preCacheLabel: @Composable (Int) -> String = { count ->
+                        when (count) {
+                            0 -> preCacheOff
+                            1 -> preCacheOne
+                            else -> stringResource(Res.string.peek_precache_upcoming_count, count)
+                        }
+                    }
+                    SettingsSubScreenItemRow(
+                        item =
+                            listChooserSettingsItem(
+                                title = stringResource(Res.string.peek_precache_upcoming),
+                                description =
+                                    if (preCacheUpcomingCount == 0) {
+                                        stringResource(Res.string.peek_precache_upcoming_desc)
+                                    } else {
+                                        preCacheLabel(preCacheUpcomingCount)
+                                    },
+                                options = PeekPreCacheUpcomingCounts,
+                                selectedOption = preCacheUpcomingCount,
+                                optionToString = preCacheLabel,
+                                enabled = maxSongCacheSize != 0,
+                                onOptionSelected = { count ->
+                                    Settings.shared.peekPreCacheUpcomingCount = count
+                                    preCacheUpcomingCount = count
+                                },
+                            ),
+                        isFirst = false,
+                        isLast = false,
+                    )
+                    SettingsSubScreenItemRow(
+                        item =
+                            switchSettingsItem(
+                                title = stringResource(Res.string.peek_precache_wifi_only),
+                                description = stringResource(Res.string.peek_precache_wifi_only_desc),
+                                checked = preCacheWifiOnly,
+                                onCheckedChange = { checked ->
+                                    Settings.shared.peekPreCacheWifiOnly = checked
+                                    preCacheWifiOnly = checked
+                                },
+                                enabled = maxSongCacheSize != 0 && preCacheUpcomingCount != 0,
+                            ),
+                        isFirst = false,
                         isLast = false,
                     )
 

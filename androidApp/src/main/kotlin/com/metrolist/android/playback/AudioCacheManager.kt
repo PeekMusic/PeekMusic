@@ -410,6 +410,54 @@ class AudioCacheManager(
         }
     }
 
+    /**
+     * PeekMusic: downloads an upcoming queue song into the song cache before it plays, so the queue keeps going on a
+     * patchy connection. [cacheSong] only keeps what playback streamed; this fetches the whole file itself.
+     * True once the song is in the cache.
+     */
+    suspend fun preCacheUpcomingSong(
+        song: SongItem,
+        resource: PlaybackResource,
+    ): Boolean =
+        withContext(Dispatchers.IO) {
+            if (Settings.shared.maxSongCacheSize == 0) return@withContext false
+            val cacheResource = cacheableAudioResource(resource) ?: return@withContext false
+            if (!cacheResource.isSabr && !cacheResource.url.startsWith("https://", ignoreCase = true)) return@withContext false
+            val targetSong = cacheResource.musicVideoId?.takeIf { it != song.id }?.let { song.copy(id = it) } ?: song
+            if (manuallyRemovedCacheSongs.containsKey(targetSong.id)) return@withContext false
+            if (isCached(targetSong.id)) return@withContext true
+            synchronized(activeDownloads) {
+                if (!activeDownloads.add(targetSong.id)) return@withContext false
+            }
+            val generation = cacheGeneration.get()
+            try {
+                val configured = Settings.shared.maxSongCacheSize.toLong() * 1024L * 1024L
+                val budget = if (configured < 0L) MAX_AUDIO_BYTES else minOf(MAX_AUDIO_BYTES, configured)
+                cacheResource.contentLengthBytes?.let { incoming ->
+                    if (incoming > budget) return@withContext false
+                    evictIfNeeded(incoming, if (cacheResource.isDirectFile) incoming else 0L)
+                }
+                // No storage lock here: a cache entry takes every lock itself when it publishes, like cacheSong.
+                storeAudioFile(
+                    targetSong,
+                    cacheResource,
+                    KIND_CACHE,
+                    maxBytes = budget,
+                    cacheMayPublish = {
+                        cacheGeneration.get() == generation && Settings.shared.maxSongCacheSize != 0 &&
+                            !manuallyRemovedCacheSongs.containsKey(targetSong.id)
+                    },
+                    allowCacheDownload = true,
+                )
+                evictIfNeeded()
+                isCached(targetSong.id)
+            } finally {
+                synchronized(activeDownloads) {
+                    activeDownloads.remove(targetSong.id)
+                }
+            }
+        }
+
     suspend fun getCacheSizeBytes(): Long = withContext(Dispatchers.IO) { database.dao().cachedAudioSize(KIND_CACHE) }
 
     suspend fun getDownloadSizeBytes(): Long = withContext(Dispatchers.IO) { database.dao().cachedAudioSize(KIND_DOWNLOAD) }
@@ -845,6 +893,8 @@ class AudioCacheManager(
         sabrCapture: SabrInputStream.CompleteCapture? = null,
         allowSabrDownload: Boolean = true,
         cacheMayPublish: () -> Boolean = { true },
+        // PeekMusic: lets a cache entry download the file itself instead of only keeping playback's capture.
+        allowCacheDownload: Boolean = false,
     ) {
         val existing = database.dao().cachedAudio(song.id)
         if (existing?.kind == kind && audioAvailable(existing.filePath)) {
@@ -886,7 +936,9 @@ class AudioCacheManager(
                             checkNotNull(resource.sabrBootstrap).mimeType.substringBefore(';')
                         } else if (DirectPlaybackCache.copyComplete(resource, tempFile)) {
                             resource.mimeType?.substringBefore(';') ?: "application/octet-stream"
-                        } else if (resource.isDirectFile && resource.contentLengthBytes != null && kind == KIND_CACHE) {
+                        } else if (resource.isDirectFile && resource.contentLengthBytes != null && kind == KIND_CACHE &&
+                            !allowCacheDownload
+                        ) {
                             error("Playback capture is incomplete")
                         } else if (resource.isSabr) {
                             check(allowSabrDownload) { "SABR playback did not reach the cache download threshold" }
@@ -904,7 +956,9 @@ class AudioCacheManager(
                             downloadWithRangeFallback(
                                 control = control,
                                 range = {
-                                    if (kind == KIND_DOWNLOAD || (resource.useRangeChunks && resource.contentLengthBytes != null)) {
+                                    if (kind == KIND_DOWNLOAD || allowCacheDownload ||
+                                        (resource.useRangeChunks && resource.contentLengthBytes != null)
+                                    ) {
                                         downloadWithRanges(resource, tempFile, control, onProgress)
                                     } else {
                                         null

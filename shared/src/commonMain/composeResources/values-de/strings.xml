@@ -2563,4 +2563,11 @@
     <string name="peek_friends_share_link">Link teilen</string>
     <string name="peek_friends_link_title">Freund hinzufügen?</string>
     <string name="peek_friends_link_text">Freundschaftsanfrage an %1$s schicken?</string>
+    <string name="peek_precache_upcoming">Vorab cachen</string>
+    <string name="peek_precache_upcoming_desc">Lädt die nächsten Songs der Warteschlange schon beim Hören, damit es bei schwachem Netz weiterläuft</string>
+    <string name="peek_precache_upcoming_off">Aus</string>
+    <string name="peek_precache_upcoming_count">Nächste %1$d Songs</string>
+    <string name="peek_precache_upcoming_one">Nächster Song</string>
+    <string name="peek_precache_wifi_only">Vorab cachen nur im WLAN</string>
+    <string name="peek_precache_wifi_only_desc">Keine mobilen Daten für Songs, die noch nicht laufen</string>
 </resources>

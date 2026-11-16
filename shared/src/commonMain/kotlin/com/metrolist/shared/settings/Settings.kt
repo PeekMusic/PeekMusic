@@ -562,6 +562,10 @@ class Settings(
 
     var songCacheEnabled by preference(false)
     var maxSongCacheSize by preference(1024)
+
+    // PeekMusic: how many upcoming queue songs to cache ahead (0 = off), and whether only off mobile data.
+    var peekPreCacheUpcomingCount by preference(0)
+    var peekPreCacheWifiOnly by preference(true)
     var maxImageCacheSize by preference(512)
     var audioCacheLocation by preference("INTERNAL")
     var downloadLocation by preference("INTERNAL")
