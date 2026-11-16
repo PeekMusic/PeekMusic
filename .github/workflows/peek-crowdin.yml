@@ -45,6 +45,22 @@ jobs:
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+      # Log what the Crowdin project holds (files, target languages, progress) so drift shows up in the run.
+      - name: List Crowdin files
+        uses: crowdin/github-action@v2
+        with:
+          command: file
+          command_args: list
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+      - name: Show Crowdin status
+        uses: crowdin/github-action@v2
+        with:
+          command: status
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
   download:
     if: github.event_name != 'push' && !inputs.upload
