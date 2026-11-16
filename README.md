@@ -26,6 +26,9 @@ PeekMusic 2.0 starts from scratch on **Metrolist 14**, the Kotlin Multiplatform 
 codebase now runs on Android, iOS and desktop. That brings a new player, new settings, casting, statistics and many
 fixes, plus faster updates from upstream from now on.
 
+**Android comes first.** PeekMusic 2.0 ships for Android only. iOS and desktop builds follow later, once PeekMusic's
+features are ready there too.
+
 **A big thank you to the [Metrolist team](https://github.com/MetrolistGroup) and every contributor.** The rewrite is
 their work, and PeekMusic would not exist without it. If you like the app, consider
 [supporting Metrolist](https://github.com/MetrolistGroup/Metrolist#support-the-project).
