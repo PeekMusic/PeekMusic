@@ -1,303 +1,125 @@
-<div style="display: flex; gap: 1rem;">
-  <img src="fastlane/metadata/android/en-US/images/icon.png" alt="Metrolist app icon" width="200" height="200" />
-  <div>
-      <h1>Metrolist</h1>
-      <h3>A Material Design YouTube Music client for Android, iOS and desktop</h3>
-      <div style="display: flex; gap: 1rem;">
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases"><img src="https://img.shields.io/github/v/release/MetrolistGroup/Metrolist?style=for-the-badge&labelColor=0d1117" alt="Latest release" /></a>
-        <a href="https://github.com/MetrolistGroup/Metrolist/blob/main/LICENSE"><img src="https://img.shields.io/github/license/MetrolistGroup/metrolist?style=for-the-badge&labelColor=0d1117" alt="License" /></a>
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases"><img src="https://img.shields.io/github/downloads/MetrolistGroup/Metrolist/total?style=for-the-badge&labelColor=0d1117" alt="Downloads" /></a>
-      </div>
-  </div>
+<div align="center">
+
+<img src="shared/src/commonMain/composeResources/drawable/logo.png" alt="PeekMusic logo" width="160" />
+
+# PeekMusic
+
+### A YouTube Music client that keeps your lyrics in sight
+
+<a href="https://github.com/PeekMusic/PeekMusic/releases/latest"><img src="https://img.shields.io/github/v/release/PeekMusic/PeekMusic?style=for-the-badge&labelColor=0d1117" alt="Latest release" /></a>
+<a href="LICENSE"><img src="https://img.shields.io/github/license/PeekMusic/PeekMusic?style=for-the-badge&labelColor=0d1117" alt="License" /></a>
+<a href="https://crowdin.com/project/peekmusic"><img src="https://img.shields.io/badge/Translate-Crowdin-2E3340?style=for-the-badge&logo=crowdin&logoColor=white" alt="Translate on Crowdin" /></a>
+
 </div>
 
-<br>
-
-<div style="display: flex; gap: 0.5rem; align-items: center;">
-  <a href="https://www.blacksmith.sh"><img src="assets/blacksmith-powered.svg" alt="CI powered by Blacksmith" height="32" /></a>
-  <a href="https://dsc.gg/metrolist"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord" height="32" /></a>
-  <a href="https://t.me/metrolistapp"><img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" height="32" /></a>
-</div>
-
-<br>
+PeekMusic is a fork of [Metrolist](https://github.com/MetrolistGroup/Metrolist). The idea stays the same as in 1.x:
+**less noise, more convenience.** Things you touch every day, like the player and the lyrics, get extra care. Settings
+nobody needs stay out of the way.
 
 > [!WARNING]
-> <details>
->   <summary>The use of Metrolist to access YouTube Music may violate YouTube's Terms of Service.</summary>
->   <p>You use Metrolist at your own risk. You are solely responsible for any consequences. Metrolist's contributors are not liable for damages, claims or actions against your account. We have received no reports of bans or restrictions for using Metrolist, but that does not guarantee your account's safety.</p>
-> </details>
->
-> YouTube Music is region-restricted. If the service is unavailable in your region, you need a [VPN or proxy in a supported region](https://one.one.one.one/) to use the app. [Changing your DNS](https://developers.cloudflare.com/1.1.1.1/setup/) can bypass some blocks.
+> Using a third-party client to access YouTube Music may violate YouTube's Terms of Service. You use PeekMusic at your
+> own risk. YouTube Music is region-restricted; outside supported regions you need a VPN or proxy.
 
-<!---
+## PeekMusic 2.0: built on Metrolist 14
 
-DO NOT REMOVE THIS SECTION, I WANT TO ADD IT LATER!!!
----
-<div align="center">
+PeekMusic 2.0 starts from scratch on **Metrolist 14**, the Kotlin Multiplatform rewrite of Metrolist. One shared
+codebase now runs on Android, iOS and desktop. That brings a new player, new settings, casting, statistics and many
+fixes, plus faster updates from upstream from now on.
 
-<h1><a id="screenshots"></a>Screenshots</h1>
+**A big thank you to the [Metrolist team](https://github.com/MetrolistGroup) and every contributor.** The rewrite is
+their work, and PeekMusic would not exist without it. If you like the app, consider
+[supporting Metrolist](https://github.com/MetrolistGroup/Metrolist#support-the-project).
 
-<img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_1.png" alt="Home screen" width="30%" />
-<img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_2.png" alt="Artist screen" width="30%" />
-<img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_3.png" alt="Recognize music screen" width="30%" />
-<img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_4.png" alt="Listen together screen" width="30%" />
-<img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_5.png" alt="Player screen" width="30%" />
-<img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_6.png" alt="Player lyrics screen" width="30%" />
+Upgrading from PeekMusic 1.x? Install 2.0 over your current app. Your account, library, playlists, likes and history
+come along, and a short onboarding shows what's new.
 
-</div>
--->
-
-<div align="center">
-<h1>Features</h1>
-</div>
-
-- YouTube Music playback with or without signing in
-- Android 7+, iOS 17+, Windows 10+, macOS 15+ and Linux support
-- Material 3 Expressive design
-- Discord Rich Presence and scrobbling through Last.fm and ListenBrainz
-- No ads
-- Listen Together for shared playback online
-- Casting to Google Cast, F-Cast and SONOS devices, and over DLNA (Android and desktop)
-- Backup and playlist imports from 30+ clients and 6 services
-- Music recognition through Shazam
-- Lyrics with translation and romanization
-- Translations in over 15 languages
-- Video playback (Android and desktop)
-- Content filters for AI-generated content, explicit-only playback and SFW-only playback
-- Canvas from Apple Music, Spotify and YouTube Music
-- Player, thumbnail, miniplayer and background styles
-- Custom fonts and app icons
-
-> [!TIP]
-> <p>See the <a href="https://metrolist.cc/#faq">FAQ</a> for common questions.</p>
-
-<br>
+## Screenshots
 
 <div align="center">
 
-<h1><a id="download-now"></a>Download now</h1>
-
-<p>Install Metrolist: <a href="docs/install/android.md">Android</a>, <a href="docs/install/ios.md">iOS</a>, <a href="docs/install/windows.md">Windows</a>, <a href="docs/install/macos.md">macOS</a> or <a href="docs/install/linux.md">Linux</a>. Check <a href="docs/install/README.md#get-the-package">download availability</a> before choosing a package.</p>
-
-<p>
-  <a href="https://github.com/MetrolistGroup/Metrolist/releases/latest">Choose a release for your device</a>
-</p>
-
-<table>
-  <tr>
-    <td align="center" valign="top" width="33%">
-      <h2>Windows</h2>
-      <p>Windows 10+ · pick your chip</p>
-      <p><sub>x64 · installer and portable</sub></p>
-      <p>
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases/latest">
-          <img alt="Download the Windows installer (.exe)" src="assets/badges/platform/windows-installer.svg">
-        </a>
-      </p>
-      <p>
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases/latest/download/Metrolist-Desktop-windows.zip"><img alt="Download the portable Windows x64 package (.zip)" src="assets/badges/platform/windows-portable.svg"></a>
-      </p>
-      <p><sub>ARM64 · portable only</sub></p>
-      <p>
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases/latest"><img alt="Download the portable Windows ARM64 package (.zip)" src="assets/badges/platform/windows-portable.svg"></a>
-      </p>
-    </td>
-    <td align="center" valign="top" width="33%">
-      <h2>macOS</h2>
-      <p>macOS 15+ · pick your chip</p>
-      <p>
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases/latest">
-          <img alt="Download Metrolist for macOS on Apple silicon (.dmg)" src="assets/badges/platform/macos-apple-silicon.svg">
-        </a>
-      </p>
-      <p>
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases/latest">
-          <img alt="Download Metrolist for macOS on Intel (.dmg)" src="assets/badges/platform/macos-intel.svg">
-        </a>
-      </p>
-      <p><sub>Unsigned app, you need to trust it first</sub></p>
-    </td>
-    <td align="center" valign="top" width="33%">
-      <h2>iOS</h2>
-      <p>iPhone &amp; iPad · iOS 17+</p>
-      <p>
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases/latest/download/Metrolist.ipa">
-          <img alt="Download the iOS IPA package" src="assets/badges/platform/ios-ipa.svg">
-        </a>
-      </p>
-      <p><sub>AltStore, SideStore, TrollStore or Sideloadly</sub></p>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" valign="top" width="33%">
-      <h2>Android</h2>
-      <p>Android 7+</p>
-      <p>
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases/latest/download/Metrolist.apk">
-          <img alt="Download the stable Android APK" src="assets/badges/platform/android-stable.svg">
-        </a>
-      </p>
-    </td>
-    <td align="center" valign="top" width="33%">
-      <h2>Linux</h2>
-      <p>glibc · pick your chip</p>
-      <p><sub>x86_64 · AppImage or packages</sub></p>
-      <p>
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases/latest"><img alt="Download the x86_64 Linux AppImage" src="assets/badges/platform/linux-appimage.svg"></a>
-      </p>
-      <p>
-        <a href="https://aur.archlinux.org/packages/metrolist-desktop-bin"><img alt="Get the AUR PKGBUILD for Metrolist" src="assets/badges/platform/linux-aur.svg"></a>
-      </p>
-      <p>
-        <a href="docs/install/linux.md#nix"><img alt="Get the Nix flake" src="assets/badges/platform/linux-nix.svg"></a>
-      </p>
-      <p><sub>ARM64 · AppImage or Nix</sub></p>
-      <p>
-        <a href="https://github.com/MetrolistGroup/Metrolist/releases/latest"><img alt="Download the ARM64 Linux AppImage" src="assets/badges/platform/linux-appimage.svg"></a>
-      </p>
-      <p>
-        <a href="docs/install/linux.md#nix"><img alt="Get the Nix flake" src="assets/badges/platform/linux-nix.svg"></a>
-      </p>
-    </td>
-    <td align="center" valign="top" width="33%">
-      <h2>Android stores</h2>
-      <p>The app already has a built-in updater.</p>
-      <p>
-        <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/MetrolistGroup/Metrolist/">
-          <img alt="Add the Metrolist repository to Obtainium" src="assets/badges/platform/store-obtainium.svg">
-        </a>
-      </p>
-      <p>
-        <a href="https://apt.izzysoft.de/fdroid/index/apk/com.metrolist.music">
-          <img alt="Find Metrolist in the IzzyOnDroid F-Droid repository" src="assets/badges/platform/store-izzyondroid.svg">
-        </a>
-      </p>
-      <p>
-        <a href="https://www.openapk.net/metrolist/com.metrolist.music/">
-          <img alt="Find the Metrolist APK on OpenAPK" src="assets/badges/platform/store-openapk.svg">
-        </a>
-      </p>
-    </td>
-  </tr>
-</table>
+<img src="assets/screenshots/player.jpg" alt="Player with canvas and the lyrics Peek, romanized and translated" width="24%" />
+<img src="assets/screenshots/lyrics.jpg" alt="Lyrics with romanization and translation" width="24%" />
+<img src="assets/screenshots/home.jpg" alt="Home screen" width="24%" />
+<img src="assets/screenshots/party.jpg" alt="PeekParty" width="24%" />
 
 </div>
 
-<br>
+## What PeekMusic does differently
 
-<div align="center">
+**Lyrics Peek.** The current lyric line sits between the cover and the song title, big enough to read along without
+opening the lyrics. It shows word-by-word karaoke, background vocals and a ring during instrumental breaks. In landscape
+it sits next to the controls.
 
-<h1><a id="support-the-project"></a>Support the project</h1>
+**Lyrics that load fast.** Metrolist asks the lyrics providers one after another. PeekMusic starts the next provider
+when the previous one is slow, so lyrics appear sooner without changing which source wins.
 
-Metrolist is free and open-source. Donations support its development.
+**Translation without an API key.** Translations come from Google Translate, with no account or key needed. When the
+lyrics already ship with an official translation (for example from Apple Music), PeekMusic shows that one and names
+the source. Songs that mix languages get every line translated, not just the main language.
 
-<p>
-  <a href="https://github.com/sponsors/nyxiereal">
-    <img src="https://img.shields.io/badge/Sponsor-nyxiereal-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor nyxiereal" />
-  </a>
-  <a href="https://www.buymeacoffee.com/mostafaalagamy">
-    <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-mostafaalagamy-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee" />
-  </a>
-  <a href="https://github.com/sponsors/l6t9">
-    <img src="https://img.shields.io/badge/Sponsor-l6t9-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor l6t9" />
-  </a>
-  <a href="https://github.com/sponsors/adrielggmotion">
-    <img src="https://img.shields.io/badge/Sponsor-adrielggmotion-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor adrielggmotion" />
-  </a>
-</p>
+**Quick switches in the player.** The share button became two buttons: **Peek** opens the lyrics menu (Peek,
+translation, romanization) and **Canvas** turns the moving artwork on and off. Sharing moved to the ⋮ menu.
 
-<details>
-  <summary>Donate Monero to Mostafa Alagamy</summary>
-  <p>
-    <img src="assets/XMR.png" alt="Monero QR code" width="150" />
-  </p>
+**PeekParty.** Listen Together with friends. Add friends by code or link, see who is online, and invite them to your
+party with a notification they can accept or decline. PeekParty runs on its own server at `listen.peekmusic.org`.
 
-```text
-44XjSELSWcgJTZiCKzjpCQWyXhokrH9RqH3rpp35FkSKi57T25hniHWHQNhLeXyFn3DDYqufmfRB1iEtENerZpJc7xJCcqt
+**Cleaner settings.** About 40 switches are hidden and set to sensible values, and the rest are regrouped into fewer
+pages. Defaults are chosen for comfort: floating bars, gradient player background, Peek on.
+
+**Onboarding with real settings.** The first start walks through language, look, player, lyrics, canvas and sound with
+live previews, so the app fits before the first song plays.
+
+**Songs cached ahead.** PeekMusic can download the next 1 to 10 songs in the queue in advance (Wi-Fi only by default),
+so skipping is instant and spotty connections don't stop the music.
+
+**Small fixes.** Material You colors are correct on Samsung devices with preset palettes, and animated covers work on
+the very first start.
+
+Everything else is Metrolist. Discord, Last.fm and ListenBrainz are still there and stay off until you turn them on.
+
+## Download
+
+PeekMusic is **Android only** for now (Android 7+). iOS and desktop come later; the code is already shared.
+
+- [Latest APK on GitHub Releases](https://github.com/PeekMusic/PeekMusic/releases/latest)
+- [Add to Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/PeekMusic/PeekMusic/)
+
+The app has a built-in updater. PeekMusic installs next to Metrolist; the two don't share data.
+
+## Translations
+
+PeekMusic's own texts are translated on **[Crowdin](https://crowdin.com/project/peekmusic)**. If your language is
+missing, request it there.
+
+Everything else in the app comes from Metrolist and is translated on
+[Metrolist's Weblate](https://hosted.weblate.org/projects/Metrolist/). Those translations reach PeekMusic with every
+upstream update.
+
+## Build
+
+You need JDK 25. A debug build installs next to the release app:
+
+```bash
+./gradlew :androidApp:assembleDebug
 ```
 
-</details>
-</div>
+Before a change, run `./gradlew ktlintCheck` and the tests. The developer docs from Metrolist are in
+[docs/](docs/README.md).
 
-<br>
+## Thanks
 
-<div align="center">
+- [Metrolist](https://github.com/MetrolistGroup/Metrolist) by [MetrolistGroup](https://github.com/MetrolistGroup):
+  the app PeekMusic is built on.
+- [InnerTubeX](https://github.com/MetrolistGroup/innertubex): YouTube streaming engine, with help from
+  [ZemerTeam](https://github.com/ZemerTeam/).
+- [metroserver](https://github.com/MetrolistGroup/metroserver): the Listen Together backend behind PeekParty.
+- [MusicRecognizer](https://github.com/aleksey-saenko/MusicRecognizer): music recognition through Shazam.
+- BetterLyrics, LrcLib, KuGou, Paxsenix and the other lyrics providers.
+- Everyone who translates PeekMusic on Crowdin and Metrolist on Weblate.
 
-<h1>Special thanks</h1>
+## License
 
-Metrolist uses these projects and services.
+[GPL-3.0](LICENSE), same as Metrolist.
 
-<table>
-  <thead>
-    <tr>
-      <th align="center">Project</th>
-      <th align="center">Contribution</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><a href="https://github.com/aleksey-saenko/MusicRecognizer">MusicRecognizer</a></td>
-      <td>Music recognition through the Shazam API</td>
-    </tr>
-    <tr>
-      <td align="center"><a href="https://github.com/MetrolistGroup/innertubex">InnerTubeX</a></td>
-      <td>YouTube streaming engine, developed with help from <a href="https://github.com/ZemerTeam/">ZemerTeam</a></td>
-    </tr>
-    <tr>
-      <td align="center">Lyprio</td>
-      <td>Lyrics provider</td>
-    </tr>
-    <tr>
-      <td align="center"><a href="https://github.com/MetrolistGroup/metroserver">metroserver</a></td>
-      <td>Listen Together real-time synchronization backend</td>
-    </tr>
-    <tr>
-      <td align="center"><a href="https://www.blacksmith.sh">Blacksmith</a></td>
-      <td>GitHub Actions runners for CI</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-<br>
-
-<div align="center">
-
-<h1><a id="translations"></a>Translations</h1>
-
-[![Translation status](https://img.shields.io/weblate/progress/metrolist?style=for-the-badge&labelColor=0d1117)](https://hosted.weblate.org/engage/metrolist/)
-
-<p>We use Weblate to translate Metrolist. <a href="https://hosted.weblate.org/projects/Metrolist/">Contribute a translation</a>.</p>
-
-<a href="https://hosted.weblate.org/projects/Metrolist/">
-  <img src="https://hosted.weblate.org/widget/Metrolist/horizontal-auto.svg" alt="Translation status" />
-</a>
-</div>
-
-<br>
-
-<div align="center">
-<h1>Contributors</h1>
-<p>To contribute code, start with the <a href="docs/README.md">developer docs</a>.</p>
-<a href="https://github.com/MetrolistGroup/Metrolist/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=MetrolistGroup/Metrolist" alt="Contributors" />
-</a>
-</div>
-
-<br>
-
-> [!WARNING]
-> <h2>Legal disclaimer</h2>
-> <p>This project is not affiliated with, funded, authorized or endorsed by YouTube, Google LLC, MetroList MLS, or their affiliates and subsidiaries.</p>
->
-> <p>All trademarks, service marks, and intellectual property rights referenced in this project belong to their respective owners.</p>
-
-<br/>
-
-<div align="center">
-
-**Developed by [the Metrolist development team](https://github.com/MetrolistGroup)**
-
-**This project stands with Palestine 🇵🇸**
-
-</div>
+PeekMusic is not affiliated with, funded, authorized or endorsed by YouTube, Google LLC or their affiliates. All
+trademarks belong to their respective owners.
