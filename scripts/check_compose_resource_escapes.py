@@ -28,7 +28,7 @@ def resource_errors(content, path):
 
 
 def invalid_escapes(resources):
-    files = sorted(resources.glob("values*/strings.xml"))
+    files = sorted(resources.glob("values*/*strings.xml"))  # PeekMusic: also peek_strings.xml
     if not files:
         raise FileNotFoundError(f"No Compose string resources in {resources}")
     for path in files:
@@ -38,7 +38,7 @@ def invalid_escapes(resources):
 def staged_resource_errors():
     paths = subprocess.check_output([
         "git", "diff", "--cached", "--name-only", "--no-relative", "--diff-filter=ACMRT", "-z",
-        "--", f":(top,glob){RESOURCE_DIRECTORY}/values*/strings.xml",
+        "--", f":(top,glob){RESOURCE_DIRECTORY}/values*/*strings.xml",
     ])
     for name in paths.split(b"\0"):
         if name:

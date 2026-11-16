@@ -182,14 +182,18 @@ def catalog_errors(catalog, base, directory):
 
 
 def translation_errors(resources):
-    base_path = resources / "values/strings.xml"
-    base = read_catalog(base_path)
-    for path in sorted(resources.glob("values*/strings.xml")):
-        try:
-            catalog = read_catalog(path)
-            yield from (f"{path}: {error}" for error in catalog_errors(catalog, base, path.parent.name))
-        except (ValueError, ElementTree.ParseError) as error:
-            yield f"{path}: {error}"
+    # PeekMusic: peek_strings.xml is checked against its own English catalog, like upstream's strings.xml.
+    for name in ("strings.xml", "peek_strings.xml"):
+        base_path = resources / "values" / name
+        if not base_path.is_file():
+            continue
+        base = read_catalog(base_path)
+        for path in sorted(resources.glob(f"values*/{name}")):
+            try:
+                catalog = read_catalog(path)
+                yield from (f"{path}: {error}" for error in catalog_errors(catalog, base, path.parent.name))
+            except (ValueError, ElementTree.ParseError) as error:
+                yield f"{path}: {error}"
 
 
 def missing_translations(resources):

@@ -1,0 +1,69 @@
+# PeekMusic on Crowdin: only PeekMusic's own strings (peek_strings.xml).
+# Upstream Metrolist strings (strings.xml) are translated on Metrolist's Weblate and arrive with upstream merges.
+# Never add them here, or Crowdin and Weblate overwrite each other.
+preserve_hierarchy: true
+
+files:
+  - source: /shared/src/commonMain/composeResources/values/peek_strings.xml
+    translation: /shared/src/commonMain/composeResources/values-%android_code%/peek_strings.xml
+    type: android
+    # Untranslated keys fall back to English at runtime; never copy English into a locale file.
+    skip_untranslated_strings: true
+    # Crowdin language ID -> the composeResources folder upstream already uses.
+    languages_mapping:
+      android_code:
+        ar: ar
+        be: be
+        bg: bg
+        bn: bn
+        bn-IN: bn-rIN
+        bs: bs
+        ca: ca
+        cs: cs
+        da: da
+        de: de
+        el: el
+        en-CA: en-rCA
+        es-ES: es
+        es-US: es-rUS
+        et: et
+        fa: fa
+        fi: fi
+        fil: fil
+        fr: fr
+        he: iw
+        hi: hi
+        hr: hr
+        hu: hu
+        id: in
+        it: it
+        ja: ja
+        ko: ko
+        lt: lt
+        lv: lv
+        ml: ml
+        ms: ms
+        nb: nb-rNO
+        ne-NP: ne
+        nl: nl
+        nn-NO: nn
+        pa-IN: pa
+        pl: pl
+        pt-BR: pt-rBR
+        pt-PT: pt
+        ro: ro
+        ru: ru
+        si-LK: si
+        sk: sk
+        sl: sl
+        sr-CS: sr
+        sv-SE: sv
+        ta: ta
+        te: te
+        th: th
+        tr: tr
+        uk: uk
+        ur-PK: ur
+        vi: vi
+        zh-CN: zh-rCN
+        zh-TW: zh-rTW

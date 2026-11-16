@@ -61,9 +61,19 @@ abstract class GenerateAndroidStringsTask : DefaultTask() {
                 .filter { it.isDirectory && it.name.startsWith("values") }
                 .sortedBy { it.name }
                 .mapNotNull { directory ->
-                    File(directory, "strings.xml").takeIf(File::isFile)?.let { file ->
-                        directory.name to builder.parse(file).documentElement
-                    }
+                    // PeekMusic: peek_strings.xml (Crowdin) joins upstream's strings.xml (Weblate) in each directory.
+                    val files = listOf("strings.xml", "peek_strings.xml").map { File(directory, it) }.filter(File::isFile)
+                    files
+                        .map { builder.parse(it).documentElement }
+                        .reduceOrNull { root, extra ->
+                            root.apply {
+                                (0 until extra.childNodes.length).forEach {
+                                    appendChild(
+                                        ownerDocument.importNode(extra.childNodes.item(it), true),
+                                    )
+                                }
+                            }
+                        }?.let { directory.name to it }
                 }
 
         fun entries(root: Element): List<Element> = (0 until root.childNodes.length).mapNotNull { root.childNodes.item(it) as? Element }

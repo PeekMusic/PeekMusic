@@ -1,0 +1,30 @@
+# PeekMusic: Crowdin pushes translations to l10n_* branches as Android XML. Compose shows Android escapes such as \'
+# literally, so this strips them from peek_strings.xml before the Crowdin pull request is merged.
+name: Normalize Crowdin translations
+
+on:
+  push:
+    branches: ["l10n_*"]
+    paths: ["shared/src/commonMain/composeResources/values-*/peek_strings.xml"]
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Strip Android escapes
+        run: python3 scripts/peek_normalize_crowdin.py
+      - name: Check translations
+        run: |
+          python3 scripts/check_compose_resource_escapes.py
+          python3 scripts/check_translation_mechanics.py
+      - name: Commit
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898729+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(l10n): strip Android escapes from Crowdin translations [skip ci]"
+          git push
