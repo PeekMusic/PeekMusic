@@ -397,71 +397,97 @@ fun albumMediaMenuModel(
     val addToPlaylistLabel = stringResource(Res.string.add_to_playlist)
     val exportAlbumLabel = stringResource(Res.string.export_album)
     val viewArtistLabel = stringResource(Res.string.view_artist)
+    val favoriteLabel = stringResource(if (isFavorite) Res.string.remove_from_library else Res.string.action_like)
 
-    return collectionMediaMenuModel(
-        title = album.title,
-        subtitle = album.artists.joinToString(", ") { it.displayName },
-        subtitleLinks =
-            artistLinksText(
-                album.artists,
-                onGoToArtist?.let { go ->
-                    { id ->
-                        go(id)
-                        onDismiss()
-                    }
+    // PeekMusic: built like the song menu: heart in the header and no play button, playlist next to
+    // shuffle and share, artist, download, then the rarely used extras; no subtitles (peekSongMenuActionGroups).
+    val addToPlaylist =
+        onAddToPlaylist?.let {
+            action(
+                MetrolistIcons.AutoMirrored.Outlined.PlaylistAdd,
+                addToPlaylistLabel,
+                onDismiss,
+                it,
+            )
+        }
+    val export =
+        onExport?.let {
+            action(MetrolistIcons.Outlined.Share, exportAlbumLabel, onDismiss, it)
+        }
+    val artistActions =
+        if (onGoToArtist == null) {
+            emptyList()
+        } else {
+            album.artists.mapNotNull { artist ->
+                artist.id?.let { artistId ->
+                    action(
+                        MetrolistIcons.Outlined.Person,
+                        viewArtistLabel,
+                        onDismiss,
+                        description = artist.displayName,
+                        onClick = {
+                            CollectionPreviews.record(artist)
+                            onGoToArtist(artistId)
+                        },
+                    )
+                }
+            }
+        }
+    val queue = queueActions(onDismiss, onPlayNext, onAddToQueue)
+    val download = downloadAction(downloadState, downloadProgress, false, onDismiss, onDownload)
+    val pin = pinAction(isPinned, onDismiss, onTogglePin)
+    val hide = hideAction(onDismiss, onHideFromLibrary)
+
+    val model =
+        collectionMediaMenuModel(
+            title = album.title,
+            subtitle = album.artists.joinToString(", ") { it.displayName },
+            subtitleLinks =
+                artistLinksText(
+                    album.artists,
+                    onGoToArtist?.let { go ->
+                        { id ->
+                            go(id)
+                            onDismiss()
+                        }
+                    },
+                ),
+            thumbnail = album.thumbnail,
+            onDismiss = onDismiss,
+            isPinned = isPinned,
+            downloadState = downloadState,
+            downloadProgress = downloadProgress,
+            onPlay = null,
+            onShuffle = onShuffle,
+            onShare = onShare,
+            onPlayNext = null,
+            onAddToQueue = null,
+            onTogglePin = null,
+            onDownload = null,
+            onHideFromLibrary = null,
+            downloadIsPodcast = false,
+            extraPrimaryAction = addToPlaylist,
+            trailingGroups = emptyList(),
+        )
+    return model.copy(
+        headerActions =
+            listOfNotNull(
+                onFavorite?.let {
+                    PlayerMenuAction(
+                        icon = if (isFavorite) MetrolistIcons.Filled.Favorite else MetrolistIcons.Outlined.FavoriteBorder,
+                        title = favoriteLabel,
+                        selected = isFavorite,
+                        onClick = it,
+                    )
                 },
             ),
-        thumbnail = album.thumbnail,
-        onDismiss = onDismiss,
-        isPinned = isPinned,
-        downloadState = downloadState,
-        downloadProgress = downloadProgress,
-        onPlay = onPlay,
-        onShuffle = onShuffle,
-        onShare = onShare,
-        onPlayNext = onPlayNext,
-        onAddToQueue = onAddToQueue,
-        onTogglePin = onTogglePin,
-        onDownload = onDownload,
-        onHideFromLibrary = onHideFromLibrary,
-        downloadIsPodcast = false,
-        extraLibraryAction = collectionLibraryAction(isFavorite, onFavorite, onDismiss),
-        trailingGroups =
-            listOf(
-                listOfNotNull(
-                    onAddToPlaylist?.let {
-                        action(
-                            MetrolistIcons.AutoMirrored.Outlined.PlaylistAdd,
-                            addToPlaylistLabel,
-                            onDismiss,
-                            it,
-                        )
-                    },
-                ),
-                listOfNotNull(
-                    onExport?.let {
-                        action(MetrolistIcons.Outlined.Share, exportAlbumLabel, onDismiss, it)
-                    },
-                ),
-                if (onGoToArtist == null) {
-                    emptyList()
-                } else {
-                    album.artists.mapNotNull { artist ->
-                        artist.id?.let { artistId ->
-                            action(
-                                MetrolistIcons.Outlined.Person,
-                                viewArtistLabel,
-                                onDismiss,
-                                description = artist.displayName,
-                                onClick = {
-                                    CollectionPreviews.record(artist)
-                                    onGoToArtist(artistId)
-                                },
-                            )
-                        }
-                    }
-                },
-                listOfNotNull(saveToAccount) + additionalActions,
+        actionGroups =
+            peekSongMenuActionGroups(
+                queue = queue,
+                removal = emptyList(),
+                navigation = artistActions,
+                library = listOfNotNull(download),
+                extras = listOfNotNull(pin, hide, export, saveToAccount) + additionalActions,
             ),
     )
 }
