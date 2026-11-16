@@ -74,4 +74,46 @@ class PeekLineIndexTest {
         assertFalse(peekLyricsMatchPlayback(PlayerViewModel.PlayerUiState(isVideoModeActive = true)))
         assertTrue(peekLyricsMatchPlayback(PlayerViewModel.PlayerUiState(isVideoModeActive = true, mvLyricsRetimed = true)))
     }
+
+    @Test
+    fun backgroundLinesStayWithTheMainLine() {
+        val main =
+            LyricsEntry(
+                time = 1_000,
+                text = "Main line",
+                words = listOf(WordTimestamp("Main", 1.0, 1.5), WordTimestamp("line", 1.5, 3.0)),
+            )
+        val adlib =
+            LyricsEntry(
+                time = 2_000,
+                text = "ooh",
+                words = listOf(WordTimestamp("ooh", 2.0, 2.8)),
+                isBackground = true,
+            )
+        val next = LyricsEntry(time = 5_000, text = "Next", endTime = 6_000)
+        val merged = mergeBackgroundLines(listOf(main, adlib, next))
+
+        assertEquals(listOf("Main line", "Next"), merged.map { it.text })
+        assertEquals(0, peekLineIndex(merged, 2_400))
+        val (shown, call) = splitAdlib(merged[0])
+        assertEquals(listOf("Main", "line"), shown.words?.map { it.text })
+        assertEquals("ooh", call?.text)
+        assertEquals(2_000, call?.time)
+    }
+
+    @Test
+    fun untimedBackgroundLinesBecomeBackgroundText() {
+        val merged =
+            mergeBackgroundLines(
+                listOf(
+                    LyricsEntry(time = 1_000, text = "Main line"),
+                    LyricsEntry(time = 2_000, text = "ooh", isBackground = true),
+                ),
+            )
+
+        assertEquals(1, merged.size)
+        assertNull(merged[0].words)
+        assertEquals("ooh", splitAdlib(merged[0]).second?.text)
+        assertEquals("Main line", splitAdlib(merged[0]).first.text)
+    }
 }

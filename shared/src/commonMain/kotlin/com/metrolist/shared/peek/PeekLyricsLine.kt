@@ -57,6 +57,7 @@ import com.metrolist.shared.generated.resources.peek_plain_lyrics_hint
 import com.metrolist.shared.generated.resources.retry
 import com.metrolist.shared.generated.resources.search_lyrics
 import com.metrolist.shared.model.LyricsEntry
+import com.metrolist.shared.model.WordTimestamp
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.components.lyrics.ActiveLyricsLineContent
 import com.metrolist.shared.ui.components.lyrics.InlineLyricsLine
@@ -132,10 +133,12 @@ internal fun PeekLyricsLine(
         exit = shrinkVertically() + fadeOut(),
         modifier = modifier,
     ) {
-        val hasTiming = remember(lyrics) { LyricsUtils.hasPlaybackTiming(lyrics) }
+        // Background-vocal lines belong to the line before them; on their own they would replace it in the Peek.
+        val peekLyrics = remember(lyrics) { mergeBackgroundLines(lyrics) }
+        val hasTiming = remember(peekLyrics) { LyricsUtils.hasPlaybackTiming(peekLyrics) }
         val positionState =
             rememberCaptionLyricsPositionState(
-                lyrics = lyrics,
+                lyrics = peekLyrics,
                 currentPositionFlow = viewModel.currentPosition,
                 positionReader = viewModel::currentPositionMs,
                 playbackSpeed = viewModel.playbackSpeed.collectAsState().value,
@@ -163,15 +166,15 @@ internal fun PeekLyricsLine(
             remember(smoothPosition, offsetMs) {
                 derivedStateOf { LyricsUtils.lyricsPositionForOffset(smoothPosition.longValue, offsetMs) }
             }
-        val gaps = remember(lyrics) { buildLyricsListItems(lyrics).filterIsInstance<LyricsListItem.Indicator>() }
-        val content by remember(lyrics, isLoading, hasTiming, gaps, positionState, gapPosition) {
+        val gaps = remember(peekLyrics) { buildLyricsListItems(peekLyrics).filterIsInstance<LyricsListItem.Indicator>() }
+        val content by remember(peekLyrics, isLoading, hasTiming, gaps, positionState, gapPosition) {
             derivedStateOf(structuralEqualityPolicy()) {
                 when {
-                    lyrics.isEmpty() && isLoading -> {
+                    peekLyrics.isEmpty() && isLoading -> {
                         PeekContent.Loading
                     }
 
-                    lyrics.isEmpty() -> {
+                    peekLyrics.isEmpty() -> {
                         PeekContent.NotFound
                     }
 
@@ -185,7 +188,7 @@ internal fun PeekLyricsLine(
                         gaps
                             .firstOrNull { gapNow in (it.gapStartMs - LYRICS_GAP_START_LAG_MS) until it.gapEndMs }
                             ?.let(PeekContent::Gap)
-                            ?: peekLine(lyrics, peekLineIndex(lyrics, positionState.value))
+                            ?: peekLine(peekLyrics, peekLineIndex(peekLyrics, positionState.value))
                     }
                 }
             }
@@ -266,17 +269,19 @@ internal fun PeekPreviewLine(
         exit = shrinkVertically() + fadeOut(),
         modifier = modifier,
     ) {
-        val gaps = remember(lyrics) { buildLyricsListItems(lyrics).filterIsInstance<LyricsListItem.Indicator>() }
-        val content by remember(lyrics, gaps) {
+        // Background-vocal lines belong to the line before them; on their own they would replace it in the Peek.
+        val peekLyrics = remember(lyrics) { mergeBackgroundLines(lyrics) }
+        val gaps = remember(peekLyrics) { buildLyricsListItems(peekLyrics).filterIsInstance<LyricsListItem.Indicator>() }
+        val content by remember(peekLyrics, gaps) {
             derivedStateOf(structuralEqualityPolicy()) {
-                if (lyrics.isEmpty()) {
+                if (peekLyrics.isEmpty()) {
                     PeekContent.Loading
                 } else {
                     val now = position()
                     gaps
                         .firstOrNull { now in (it.gapStartMs - LYRICS_GAP_START_LAG_MS) until it.gapEndMs }
                         ?.let(PeekContent::Gap)
-                        ?: peekLine(lyrics, peekLineIndex(lyrics, now))
+                        ?: peekLine(peekLyrics, peekLineIndex(peekLyrics, now))
                 }
             }
         }
@@ -386,6 +391,41 @@ private fun PeekLine(
             }
         }
     }
+}
+
+/**
+ * Folds background-vocal lines (whole entries marked [LyricsEntry.isBackground]) into the line before them, so the Peek
+ * keeps showing the main line and [splitAdlib] turns them into call-outs. With word timing on the main line they become
+ * background words; otherwise they become its background text.
+ */
+internal fun mergeBackgroundLines(lyrics: List<LyricsEntry>): List<LyricsEntry> {
+    if (lyrics.none { it.isBackground }) return lyrics
+    val merged = ArrayList<LyricsEntry>(lyrics.size)
+    for (entry in lyrics) {
+        val main = merged.lastOrNull()
+        if (!entry.isBackground || main == null || main.isBackground) {
+            merged += entry
+            continue
+        }
+        val mainWords = main.words?.takeIf { it.isNotEmpty() }
+        val adlibWords =
+            entry.words?.takeIf { it.isNotEmpty() }?.map { it.copy(isBackground = true) }
+                ?: listOf(
+                    WordTimestamp(
+                        text = entry.text,
+                        startTime = entry.time / 1000.0,
+                        endTime = (entry.endTime ?: (entry.time + UNTIMED_ADLIB_MS)) / 1000.0,
+                        isBackground = true,
+                    ),
+                )
+        merged[merged.lastIndex] =
+            main.copy(
+                words = mainWords?.plus(adlibWords),
+                backgroundText = listOfNotNull(main.backgroundText, entry.text.takeIf { it.isNotBlank() }).joinToString(" "),
+                backgroundTranslatedText = main.backgroundTranslatedText ?: entry.translatedText,
+            )
+    }
+    return merged
 }
 
 /** Splits background vocals out of a line so the Peek can show them as call-outs instead of below the line. */
