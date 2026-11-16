@@ -100,6 +100,7 @@ import com.metrolist.shared.model.isLive
 import com.metrolist.shared.model.isPodcast
 import com.metrolist.shared.model.isVideoSong
 import com.metrolist.shared.model.previewThumbnailUrl
+import com.metrolist.shared.peek.PeekPlayerMenu
 import com.metrolist.shared.playback.PauseOnMuteController
 import com.metrolist.shared.playback.PlaybackErrorContext
 import com.metrolist.shared.playback.PlaybackFailure
@@ -554,7 +555,11 @@ class MusicService :
         playbackRestoreJob =
             serviceScope.launch {
                 (application as App).startup.await()
-                if (Settings.shared.hasSavedVolume) player.setVolume(Settings.shared.volume)
+                // PeekMusic: no volume slider, so a saved lower in-app volume would keep the app quiet for good.
+                if (Settings.shared.hasSavedVolume) {
+                    Settings.shared.volume = PeekPlayerMenu.FULL_VOLUME
+                    player.setVolume(PeekPlayerMenu.FULL_VOLUME)
+                }
                 playbackPersistenceLifecycle.restore { restorePersistedPlayback() }
                 savePlaybackState()
                 AndroidDeviceConnect.manager.remote.attach(syncPlayback.port)

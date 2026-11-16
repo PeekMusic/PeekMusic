@@ -19,6 +19,7 @@ import com.metrolist.shared.listentogether.ListenTogetherText
 import com.metrolist.shared.listentogether.PlaybackReadiness
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.network.HttpFailureLog
+import com.metrolist.shared.peek.PeekPlayerMenu
 import com.metrolist.shared.playback.MusicQueueSnapshot
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.GlobalYouTubeRepository
@@ -90,6 +91,11 @@ object AndroidListenTogetherManager {
                 ) { role, inRoom, connection, pending ->
                     (role == ListenTogetherRoomRole.GUEST && inRoom) to roomNeedsPlaybackService(inRoom, pending, connection)
                 }.collect { (locked, required) ->
+                    // PeekMusic: a guest may have muted the in-app volume; there is no slider to undo that later.
+                    if (_isGuestPlaybackLocked.value && !locked) {
+                        Settings.shared.volume = PeekPlayerMenu.FULL_VOLUME
+                        playback.currentPlayer?.setVolumeFromRemote(PeekPlayerMenu.FULL_VOLUME)
+                    }
                     _isGuestPlaybackLocked.value = locked
                     _playbackRequired.value = required
                 }

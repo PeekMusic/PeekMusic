@@ -95,6 +95,7 @@ import com.metrolist.shared.generated.resources.unknown_artist
 import com.metrolist.shared.generated.resources.volume
 import com.metrolist.shared.listentogether.ListenTogetherRoomRole
 import com.metrolist.shared.model.previewAspectRatio
+import com.metrolist.shared.peek.PeekPlayerMenu
 import com.metrolist.shared.settings.MusicVideoQuality
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.settings.displayName
@@ -291,78 +292,87 @@ fun PlayerMenu(
                                     bottom = 8.dp + WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
                                 ),
                         ) {
-                            item {
-                                ExpressiveMediaMenuHeader(
-                                    title = songTitle,
-                                    subtitle = artistName,
-                                    thumbnail = thumbnail,
-                                    thumbnailAspectRatio = currentSong?.toSongItem()?.previewAspectRatio ?: 1f,
-                                    subtitleLinks =
-                                        artistLinksText(currentSong?.artists.orEmpty()) {
-                                            onNavigateToArtist(it)
-                                            onDismiss()
-                                        },
-                                )
+                            // PeekMusic: the player already shows the song, see PeekPlayerMenu.
+                            if (PeekPlayerMenu.SHOW_HEADER) {
+                                item {
+                                    ExpressiveMediaMenuHeader(
+                                        title = songTitle,
+                                        subtitle = artistName,
+                                        thumbnail = thumbnail,
+                                        thumbnailAspectRatio = currentSong?.toSongItem()?.previewAspectRatio ?: 1f,
+                                        subtitleLinks =
+                                            artistLinksText(currentSong?.artists.orEmpty()) {
+                                                onNavigateToArtist(it)
+                                                onDismiss()
+                                            },
+                                    )
+                                }
                             }
 
-                            item {
-                                Card(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(28.dp),
-                                    colors =
-                                        CardDefaults.cardColors(
-                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                        ),
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(20.dp),
-                                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                            // PeekMusic: no volume slider, see PeekPlayerMenu.
+                            if (PeekPlayerMenu.SHOW_VOLUME) {
+                                item {
+                                    Card(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(28.dp),
+                                        colors =
+                                            CardDefaults.cardColors(
+                                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                            ),
                                     ) {
-                                        Text(
-                                            text = stringResource(Res.string.volume),
-                                            style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.Bold,
-                                        )
-
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                        Column(
+                                            modifier = Modifier.padding(20.dp),
+                                            verticalArrangement = Arrangement.spacedBy(12.dp),
                                         ) {
-                                            val percentSymbol = stringResource(Res.string.percent_symbol)
-                                            val volumeLabelStyle =
-                                                MaterialTheme.typography.labelLarge.copy(
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontFeatureSettings = "tnum",
-                                                )
-                                            val textMeasurer = rememberTextMeasurer()
-                                            val volumeLabelWidth =
-                                                with(LocalDensity.current) {
-                                                    textMeasurer
-                                                        .measure(100.toString() + percentSymbol, volumeLabelStyle)
-                                                        .size.width
-                                                        .toDp()
-                                                }
-                                            val sliderState = rememberSliderState(value = volume)
-                                            sliderState.value = volume
-                                            Slider(
-                                                state = sliderState,
-                                                onValueChange = onVolumeChange,
-                                                modifier = Modifier.weight(1f),
-                                                colors =
-                                                    SliderDefaults.colors(
-                                                        thumbColor = MaterialTheme.colorScheme.primary,
-                                                        activeTrackColor = MaterialTheme.colorScheme.primary,
-                                                        inactiveTrackColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
-                                                    ),
+                                            Text(
+                                                text = stringResource(Res.string.volume),
+                                                style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.Bold,
                                             )
 
-                                            Text(
-                                                text = (volume.coerceIn(0f, 1f) * 100).roundToInt().toString() + percentSymbol,
-                                                modifier = Modifier.width(volumeLabelWidth),
-                                                style = volumeLabelStyle,
-                                                textAlign = TextAlign.End,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            )
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                            ) {
+                                                val percentSymbol = stringResource(Res.string.percent_symbol)
+                                                val volumeLabelStyle =
+                                                    MaterialTheme.typography.labelLarge.copy(
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontFeatureSettings = "tnum",
+                                                    )
+                                                val textMeasurer = rememberTextMeasurer()
+                                                val volumeLabelWidth =
+                                                    with(LocalDensity.current) {
+                                                        textMeasurer
+                                                            .measure(100.toString() + percentSymbol, volumeLabelStyle)
+                                                            .size.width
+                                                            .toDp()
+                                                    }
+                                                val sliderState = rememberSliderState(value = volume)
+                                                sliderState.value = volume
+                                                Slider(
+                                                    state = sliderState,
+                                                    onValueChange = onVolumeChange,
+                                                    modifier = Modifier.weight(1f),
+                                                    colors =
+                                                        SliderDefaults.colors(
+                                                            thumbColor = MaterialTheme.colorScheme.primary,
+                                                            activeTrackColor = MaterialTheme.colorScheme.primary,
+                                                            inactiveTrackColor =
+                                                                MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                                    alpha = 0.3f,
+                                                                ),
+                                                        ),
+                                                )
+
+                                                Text(
+                                                    text = (volume.coerceIn(0f, 1f) * 100).roundToInt().toString() + percentSymbol,
+                                                    modifier = Modifier.width(volumeLabelWidth),
+                                                    style = volumeLabelStyle,
+                                                    textAlign = TextAlign.End,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -415,13 +425,7 @@ fun PlayerMenu(
                                                 currentSong?.albumId?.let { albumId -> { onNavigateToAlbum(albumId) } },
                                                 currentSong?.album?.takeIf { it.isNotBlank() },
                                             )?.let(::add)
-                                            add(
-                                                PlayerMenuAction(
-                                                    icon = MetrolistIcons.Outlined.Info,
-                                                    title = stringResource(Res.string.song_details),
-                                                    onClick = onShowSongDetails,
-                                                ),
-                                            )
+                                            // PeekMusic: song details sit with download/dislike/block below.
                                         },
                                 )
                             }
@@ -529,11 +533,20 @@ fun PlayerMenu(
                                                     },
                                                 description = artistName,
                                             )?.let(::add)
+                                            // PeekMusic: song details moved here from the artist/album group.
+                                            add(
+                                                PlayerMenuAction(
+                                                    icon = MetrolistIcons.Outlined.Info,
+                                                    title = stringResource(Res.string.song_details),
+                                                    onClick = onShowSongDetails,
+                                                ),
+                                            )
                                         },
                                 )
                             }
 
-                            if (Settings.shared.listenTogetherEnabled) {
+                            // PeekMusic: PeekParty is not about this song, see PeekPlayerMenu.
+                            if (PeekPlayerMenu.SHOW_LISTEN_TOGETHER && Settings.shared.listenTogetherEnabled) {
                                 item {
                                     PlayerMenuActionGroup(
                                         actions =
