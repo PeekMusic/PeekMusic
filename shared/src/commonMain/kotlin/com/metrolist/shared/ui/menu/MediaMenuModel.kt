@@ -75,6 +75,7 @@ import com.metrolist.shared.model.PodcastItem
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.previewAspectRatio
 import com.metrolist.shared.model.previewThumbnailUrl
+import com.metrolist.shared.peek.PEEK_SONG_MENU_PLAY
 import com.metrolist.shared.peek.peekSongMenuActionGroups
 import com.metrolist.shared.settings.ArtistNameAliases
 import com.metrolist.shared.settings.HiddenHomeItems
@@ -232,7 +233,8 @@ fun songMediaMenuModel(
                     onClick = it,
                 )
             },
-            onPlay?.let {
+            // PeekMusic: no play button in song menus, tapping the song plays it (see PeekSongMenu).
+            onPlay?.takeIf { isPlayerMenu || PEEK_SONG_MENU_PLAY }?.let {
                 action(
                     MetrolistIcons.Rounded.PlayArrow,
                     playLabel,

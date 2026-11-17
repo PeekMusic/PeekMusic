@@ -35,6 +35,7 @@ import com.metrolist.shared.listentogether.ListenTogetherRoomRole
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.editSongMetadata
 import com.metrolist.shared.model.resetSongMetadata
+import com.metrolist.shared.peek.PEEK_SONG_MENU_REFETCH
 import com.metrolist.shared.settings.BlockedContent
 import com.metrolist.shared.state.SongLikeState
 import com.metrolist.shared.state.SongMetadataState
@@ -203,7 +204,8 @@ fun SongMenu(
             trailingPrimaryActions = trailingPrimaryActions,
             additionalActions =
                 listOfNotNull(
-                    onRefetch?.let {
+                    // PeekMusic: no metadata refetch in the song menu (see PeekSongMenu).
+                    onRefetch?.takeIf { PEEK_SONG_MENU_REFETCH }?.let {
                         PlayerMenuAction(
                             MetrolistIcons.Outlined.Refresh,
                             stringResource(Res.string.refetch),
