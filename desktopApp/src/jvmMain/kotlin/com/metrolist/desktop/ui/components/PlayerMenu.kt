@@ -60,7 +60,6 @@ import com.metrolist.shared.generated.resources.details
 import com.metrolist.shared.generated.resources.display_gaps_between_sections
 import com.metrolist.shared.generated.resources.edit
 import com.metrolist.shared.generated.resources.edit_lyrics
-import com.metrolist.shared.generated.resources.edit_song_description
 import com.metrolist.shared.generated.resources.equalizer
 import com.metrolist.shared.generated.resources.exit_fullscreen
 import com.metrolist.shared.generated.resources.follow_agent_positioning_hints
@@ -122,6 +121,7 @@ import com.metrolist.shared.ui.menu.songPrimaryActions
 import com.metrolist.shared.ui.menu.suggestToHostMenuAction
 import com.metrolist.shared.ui.menu.tempoPitchMenuAction
 import com.metrolist.shared.ui.playback.LocalPlaybackController
+import com.metrolist.shared.peek.PeekPlayerMenu
 import com.metrolist.shared.utils.ShareUrls
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.context.GlobalContext
@@ -503,17 +503,6 @@ fun PlayerMenuPanel(
 ) {
     val currentTrack = PlayerState.currentTrack
     val playback = LocalPlaybackController.current
-    var editingSong by remember { mutableStateOf<SongItem?>(null) }
-    editingSong?.let { song ->
-        SongMetadataEditorDialog(
-            song = song,
-            onSaved = {
-                editingSong = null
-                onDismiss()
-            },
-            onDismiss = { editingSong = null },
-        )
-    }
     val deleteUploadAction =
         currentTrack?.takeIf { expanded }?.let {
             rememberDeleteUploadAction(it, remember { GlobalContext.get().get<MusicDatabase>() }, onDismiss)
@@ -557,11 +546,12 @@ fun PlayerMenuPanel(
     val sleepActive = PlayerState.sleepTimerEnabled
     val sleepTimeLeft = if (expanded && sleepActive) PlayerState.sleepTimerTimeLeftMs.collectAsState().value else 0L
     MediaContextMenu(
-        expanded = expanded && editingSong == null,
+        expanded = expanded,
         offset = offset,
         onDismiss = onDismiss,
         preferSidePlacement = true,
         tonalElevation = 6.dp,
+        showHeader = PeekPlayerMenu.SHOW_HEADER, // PeekMusic: as on Android
         title = currentTrack?.title ?: stringResource(Res.string.no_track_playing),
         subtitle = currentTrack?.artists?.joinToString(", ") { it.displayName },
         subtitleLinks =
@@ -592,8 +582,16 @@ fun PlayerMenuPanel(
                         }
                     },
             ),
+        // PeekMusic: same order as the Android player menu (see PeekPlayerMenu): no edit entry, song details
+        // sit with download/dislike/block, sound and sleep timer after them.
         actionGroups =
             listOf(
+                listOfNotNull(
+                    currentTrack?.takeIf { isListenTogetherGuest }?.let { track ->
+                        suggestToHostMenuAction(onDismiss) { ListenTogetherState.suggestTrack(track) }
+                    },
+                ),
+                listOfNotNull(deleteUploadAction),
                 listOfNotNull(
                     artistAction,
                     albumNavigationMenuAction(
@@ -603,14 +601,7 @@ fun PlayerMenuPanel(
                     ),
                 ),
                 listOfNotNull(
-                    deleteUploadAction,
-                    currentTrack?.let { track ->
-                        PlayerMenuAction(
-                            MetrolistIcons.Outlined.Edit,
-                            stringResource(Res.string.edit),
-                            stringResource(Res.string.edit_song_description),
-                        ) { editingSong = track }
-                    },
+                    currentTrack?.let { track -> songDownloadAction(track, onDismiss) },
                     dislikeMenuAction(
                         currentTrack?.let { PlayerState.isDisliked(it.id) } == true,
                         onDismiss,
@@ -620,10 +611,6 @@ fun PlayerMenuPanel(
                     currentTrack?.artists?.firstOrNull { it.id != null }?.let { artist ->
                         blockArtistMenuAction(onDismiss, { PlayerState.blockArtist(artist) }, artist.displayName)
                     },
-                ),
-                listOfNotNull(
-                    equalizerMenuAction(onOpen = { showEqualizer = true }),
-                    tempoPitchMenuAction(varispeed) { showTempoPitch = true },
                     onShowDetailsDialog?.let { action ->
                         PlayerMenuAction(
                             MetrolistIcons.Outlined.Info,
@@ -634,6 +621,10 @@ fun PlayerMenuPanel(
                             onDismiss()
                         }
                     },
+                ),
+                listOfNotNull(
+                    equalizerMenuAction(onOpen = { showEqualizer = true }),
+                    tempoPitchMenuAction(varispeed) { showTempoPitch = true },
                     (onShowSleepTimerDialog != null || sleepActive).takeIf { it && !isListenTogetherGuest }?.let {
                         PlayerMenuAction(
                             MetrolistIcons.Outlined.Bedtime,
@@ -662,12 +653,6 @@ fun PlayerMenuPanel(
                             if (sleepActive) PlayerState.clearSleepTimer() else onShowSleepTimerDialog?.invoke()
                             onDismiss()
                         }
-                    },
-                    currentTrack?.let { track -> songDownloadAction(track, onDismiss) },
-                ),
-                listOfNotNull(
-                    currentTrack?.takeIf { isListenTogetherGuest }?.let { track ->
-                        suggestToHostMenuAction(onDismiss) { ListenTogetherState.suggestTrack(track) }
                     },
                 ),
                 listOfNotNull(

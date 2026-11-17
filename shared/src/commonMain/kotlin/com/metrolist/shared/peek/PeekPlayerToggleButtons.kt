@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
@@ -45,11 +47,15 @@ import androidx.compose.ui.unit.dp
 import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.action_like
 import com.metrolist.shared.generated.resources.canvas
+import com.metrolist.shared.generated.resources.more_options
 import com.metrolist.shared.generated.resources.peek_title
+import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.components.playerInactiveControlContainerColor
+import com.metrolist.shared.ui.components.playerControlBlend
 import com.metrolist.shared.ui.haptics.HapticEvent
 import com.metrolist.shared.ui.haptics.rememberMetrolistHaptics
 import com.metrolist.shared.ui.icons.MetrolistIcons
+import com.metrolist.shared.ui.navigation.navigationPopupSource
 import org.jetbrains.compose.resources.stringResource
 
 private data class PeekButton(
@@ -83,6 +89,90 @@ internal fun PeekActionButtonGroup(
     iconSize: Dp,
     modifier: Modifier = Modifier,
 ) {
+    PeekConnectedButtonGroup(
+        buttons = peekButtons(toggles) + likeButton(isLiked, onLikeClick),
+        groupHeight = groupHeight,
+        buttonWidth = buttonWidth,
+        iconSize = iconSize,
+        modifier = modifier,
+    )
+}
+
+/**
+ * Desktop full player: Canvas and like in place of upstream's like/share group, plus the ⋮ button.
+ * Peek lives on the desktop's lyrics button, share stays in the ⋮ menu.
+ */
+@Composable
+fun PeekCanvasLikeButtons(
+    canvasOn: Boolean,
+    onCanvasClick: () -> Unit,
+    isLiked: Boolean,
+    onLikeClick: () -> Unit,
+    groupHeight: Dp,
+    buttonWidth: Dp,
+    iconSize: Dp,
+    onMoreClick: () -> Unit,
+    isMoreActive: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val darkTheme = Settings.shared.getCurrentThemeIsDark()
+    val moreDesc = stringResource(Res.string.more_options)
+    Row(modifier = modifier.height(groupHeight), verticalAlignment = Alignment.CenterVertically) {
+        PeekConnectedButtonGroup(
+            buttons =
+                listOf(
+                    PeekButton(PeekIcons.Animation, stringResource(Res.string.canvas), canvasOn, onCanvasClick),
+                    likeButton(isLiked, onLikeClick),
+                ),
+            groupHeight = groupHeight,
+            buttonWidth = buttonWidth,
+            iconSize = iconSize,
+            modifier = Modifier.playerControlBlend(),
+        )
+        Spacer(Modifier.width(8.dp))
+        ToggleButton(
+            checked = isMoreActive,
+            onCheckedChange = { onMoreClick() },
+            shapes = ToggleButtonDefaults.shapesFor(groupHeight),
+            contentPadding = PaddingValues(0.dp),
+            colors =
+                ToggleButtonDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = if (darkTheme) 0.5f else 1f),
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    checkedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    checkedContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                ),
+            modifier =
+                Modifier
+                    .size(buttonWidth, groupHeight)
+                    .semantics { contentDescription = moreDesc }
+                    .navigationPopupSource(),
+        ) {
+            Icon(MetrolistIcons.Default.MoreVert, contentDescription = null, modifier = Modifier.size(iconSize))
+        }
+    }
+}
+
+@Composable
+private fun likeButton(
+    isLiked: Boolean,
+    onLikeClick: () -> Unit,
+) = PeekButton(
+    if (isLiked) MetrolistIcons.Default.Favorite else MetrolistIcons.Outlined.FavoriteBorder,
+    stringResource(Res.string.action_like),
+    isLiked,
+    onLikeClick,
+)
+
+/** Connected toggle buttons: pressed buttons widen and shapes morph smoothly, like upstream's like/share group. */
+@Composable
+private fun PeekConnectedButtonGroup(
+    buttons: List<PeekButton>,
+    groupHeight: Dp,
+    buttonWidth: Dp,
+    iconSize: Dp,
+    modifier: Modifier = Modifier,
+) {
     val haptics = rememberMetrolistHaptics()
     val colors =
         ToggleButtonDefaults.colors(
@@ -91,15 +181,7 @@ internal fun PeekActionButtonGroup(
             checkedContainerColor = MaterialTheme.colorScheme.primary,
             checkedContentColor = MaterialTheme.colorScheme.onPrimary,
         )
-    val buttons =
-        peekButtons(toggles) +
-            PeekButton(
-                if (isLiked) MetrolistIcons.Default.Favorite else MetrolistIcons.Outlined.FavoriteBorder,
-                stringResource(Res.string.action_like),
-                isLiked,
-                onLikeClick,
-            )
-    val interactionSources = remember { List(buttons.size) { MutableInteractionSource() } }
+    val interactionSources = remember(buttons.size) { List(buttons.size) { MutableInteractionSource() } }
     val shapes: List<ToggleButtonShapes> =
         buttons.indices.map { index ->
             when (index) {
@@ -108,7 +190,6 @@ internal fun PeekActionButtonGroup(
                 else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
             }
         }
-    // A real ButtonGroup, like upstream's like/share group: pressed buttons widen and shapes morph smoothly.
     ButtonGroup(
         overflowIndicator = { menuState -> ButtonGroupDefaults.OverflowIndicator(menuState) },
         expandedRatio = 1f,

@@ -189,7 +189,9 @@ internal class DesktopQueueTransitions(
                 preloadSong = next
                 preloadResource = resource
                 preloadToken = token
-                if (!gapless && Settings.shared.crossfadeEnabled && fadeDurationMs > 0L) {
+                // PeekMusic: no crossfade in a PeekParty; guests would hear the old song while the host already plays the next.
+                val inPeekParty = ListenTogetherState.listenTogetherManager.isInRoom.value
+                if (!gapless && Settings.shared.crossfadeEnabled && !inPeekParty && fadeDurationMs > 0L) {
                     crossfadeJob = launch { crossfade(next, resource, token, fadeDurationMs) }
                 }
             }

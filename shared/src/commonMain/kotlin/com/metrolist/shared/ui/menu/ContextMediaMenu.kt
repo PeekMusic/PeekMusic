@@ -351,6 +351,7 @@ fun MediaContextMenu(
     subtitleLinks: AnnotatedString? = null,
     preferSidePlacement: Boolean = false,
     tonalElevation: Dp = 0.dp,
+    showHeader: Boolean = true, // PeekMusic: the desktop player menu leaves the song to the player, see PeekPlayerMenu.
 ) {
     val menuWidth = 360.dp
     CursorDropdownMenu(
@@ -366,16 +367,18 @@ fun MediaContextMenu(
             modifier = Modifier.width(menuWidth).padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            MediaContextMenuHeader(
-                title,
-                subtitle,
-                thumbnail,
-                fallbackIcon,
-                thumbnailModifier,
-                isExplicit,
-                subtitleLinks,
-                thumbnailAspectRatio,
-            )
+            if (showHeader) {
+                MediaContextMenuHeader(
+                    title,
+                    subtitle,
+                    thumbnail,
+                    fallbackIcon,
+                    thumbnailModifier,
+                    isExplicit,
+                    subtitleLinks,
+                    thumbnailAspectRatio,
+                )
+            }
             ExpressiveMenuPrimaryActions(primaryActions)
 
             val groups = actionGroups.filter { it.isNotEmpty() }

@@ -59,7 +59,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.metrolist.desktop.deviceconnect.DesktopDeviceConnect
 import com.metrolist.desktop.peek.DesktopPeekLyricsLine
-import com.metrolist.desktop.state.app.AppState
 import com.metrolist.desktop.state.app.UiState
 import com.metrolist.desktop.state.content.ArtistState
 import com.metrolist.desktop.state.content.PlaylistAlbumState
@@ -76,6 +75,7 @@ import com.metrolist.shared.generated.resources.play
 import com.metrolist.shared.generated.resources.previous
 import com.metrolist.shared.generated.resources.view_album
 import com.metrolist.shared.model.SongItem
+import com.metrolist.shared.peek.PeekCanvasLikeButtons
 import com.metrolist.shared.model.isLive
 import com.metrolist.shared.model.previewAspectRatio
 import com.metrolist.shared.settings.PlayerBackgroundStyle
@@ -83,7 +83,6 @@ import com.metrolist.shared.settings.PlayerType
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.components.LiveBadge
 import com.metrolist.shared.ui.components.PlayerConnectedButtonGroup
-import com.metrolist.shared.ui.components.PlayerLikeShareButtons
 import com.metrolist.shared.ui.components.PlayerPrimaryControls
 import com.metrolist.shared.ui.components.PopupVisibility
 import com.metrolist.shared.ui.components.VintagePlayerControls
@@ -95,7 +94,6 @@ import com.metrolist.shared.ui.menu.rememberCursorContextMenuState
 import com.metrolist.shared.ui.navigation.navigationPopupSource
 import com.metrolist.shared.ui.player.PlayerArtistLine
 import com.metrolist.shared.ui.utils.verticalScrollWithDrag
-import com.metrolist.shared.utils.ShareUrls
 import com.metrolist.shared.utils.formatDuration
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
@@ -254,14 +252,13 @@ fun PlayerCoreContent(
                 Spacer(Modifier.width(16.dp))
 
                 Box {
-                    PlayerLikeShareButtons(
+                    // PeekMusic: Canvas instead of share (share stays in the ⋮ menu). Desktop has no separate
+                    // canvas setting, so the button switches animated covers (Spotify Canvas, Apple Music).
+                    PeekCanvasLikeButtons(
+                        canvasOn = Settings.shared.isCanvasEnabled,
+                        onCanvasClick = { Settings.shared.enableAnimatedCovers = !Settings.shared.enableAnimatedCovers },
                         isLiked = currentTrack?.let { PlayerState.isLiked(it.id) } == true,
                         onLikeClick = { currentTrack?.let { PlayerState.toggleLike(it) } },
-                        onShareClick = {
-                            currentTrack?.let { track ->
-                                AppState.copyToClipboard(ShareUrls.song(track.id))
-                            }
-                        },
                         groupHeight = 40.dp,
                         buttonWidth = 48.dp,
                         iconSize = 20.dp,
