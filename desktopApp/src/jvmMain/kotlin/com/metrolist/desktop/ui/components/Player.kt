@@ -58,6 +58,7 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -122,6 +123,7 @@ import com.metrolist.shared.generated.resources.play
 import com.metrolist.shared.generated.resources.play_pause
 import com.metrolist.shared.generated.resources.playback_reconnecting
 import com.metrolist.shared.generated.resources.previous
+import com.metrolist.shared.generated.resources.shortcut_toggle_expanded
 import com.metrolist.shared.generated.resources.sleep_timer
 import com.metrolist.shared.generated.resources.start
 import com.metrolist.shared.model.SongItem
@@ -560,7 +562,12 @@ fun StandardBottomPlayer(
             Modifier
                 .fillMaxWidth()
                 .cursorContextMenu(playerMenu)
-                .background(colorScheme.surfaceContainer),
+                .background(colorScheme.surfaceContainer)
+                // PeekMusic: a click on the bar opens the full player, not only the cover.
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                ) { PlayerState.enterExpanded() },
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             StandardPlayerProgress(colorScheme)
@@ -1133,6 +1140,17 @@ fun StandardBottomPlayer(
                             isDeviceConnectActive =
                                 UiState.showDeviceConnectPanel || deviceConnectState.sessionId != null,
                         )
+                        // PeekMusic: a visible way to open the full player, tonal like the button group next to it.
+                        FilledTonalIconButton(
+                            onClick = { PlayerState.enterExpanded() },
+                            shapes = IconButtonDefaults.shapes(),
+                            modifier = Modifier.padding(start = 8.dp),
+                        ) {
+                            Icon(
+                                MetrolistIcons.Outlined.KeyboardArrowUp,
+                                contentDescription = stringResource(Res.string.shortcut_toggle_expanded),
+                            )
+                        }
                     }
                 }
             }

@@ -277,8 +277,9 @@ fun FullscreenPlayerView(
                     }
                 }
 
+                // PeekMusic: an arrow down closes the full player in every layout, as the arrow up in the bar opens it.
                 val backButton = @Composable {
-                    if (isWide) {
+                    run {
                         IconButton(
                             onClick = {
                                 PlayerState.toggleExpandedMode()
@@ -291,7 +292,7 @@ fun FullscreenPlayerView(
                             shapes = IconButtonDefaults.shapes(),
                         ) {
                             Icon(
-                                imageVector = MetrolistIcons.AutoMirrored.Filled.ArrowBack,
+                                imageVector = MetrolistIcons.Outlined.KeyboardArrowDown,
                                 contentDescription = stringResource(Res.string.exit_expanded_mode),
                                 tint = iconTint,
                                 modifier = Modifier.size(24.dp),

@@ -7,15 +7,13 @@ package com.metrolist.shared.peek
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +25,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,6 +72,7 @@ import com.metrolist.shared.ui.menu.LyricsProviderDialog
 import com.metrolist.shared.ui.menu.LyricsSearchDialog
 import com.metrolist.shared.ui.player.LocalPlayerPositionActive
 import com.metrolist.shared.viewmodels.PlayerViewModel
+import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.stringResource
 
 /** Text sizes of the Peek line: as in the legacy PeekMusic player, smaller where vertical space is tight. */
@@ -79,10 +80,17 @@ private const val PEEK_TEXT_SIZE_SP = 24f
 private const val PEEK_COMPACT_TEXT_SIZE_SP = 20f
 private const val PEEK_ADLIB_TEXT_SIZE_SP = 15f
 private const val UNTIMED_ADLIB_MS = 3_500L
+private const val ADLIB_HOLD_MS = 1_200L
+private const val ADLIB_MIN_VISIBLE_MS = 2_500L
+private const val ADLIB_PREPARE_MS = 2_000L
+private const val ADLIB_ANIMATION_MS = 300L
 
 /** Fixed minimum heights keep the artwork and controls still while the Peek switches between lines, gaps and states. */
 private val PeekMinHeight = 80.dp
 private val PeekCompactMinHeight = 64.dp
+
+/** Adlibs sit near the line, not at the far edges of a wide player. */
+private val PeekAdlibAreaWidth = 560.dp
 
 private sealed interface PeekContent {
     data object Loading : PeekContent
@@ -126,11 +134,53 @@ internal fun PeekLyricsLine(
 ) {
     var searching by remember { mutableStateOf(false) }
     if (searching) PeekLyricsSearch(viewModel, onDismiss = { searching = false })
+    PeekLyricsLine(
+        positionFlow = viewModel.currentPosition,
+        positionReader = viewModel::currentPositionMs,
+        playbackSpeed = viewModel.playbackSpeed.collectAsState().value,
+        lyrics = lyrics,
+        songId = songId,
+        timingOffsetMs = timingOffsetMs,
+        isPlaying = isPlaying,
+        isLoading = isLoading,
+        textColor = textColor,
+        isCasting = isCasting,
+        onShowLyrics = onShowLyrics,
+        onReload = onReload,
+        onSearchLyrics = { searching = true },
+        modifier = modifier,
+        compact = compact,
+        matchesPlayback = matchesPlayback,
+    )
+}
 
+/**
+ * The Peek for players without a [PlayerViewModel] (desktop): the same line, driven by the player's own position clock.
+ * [onSearchLyrics] opens the platform's lyrics search when no lyrics were found.
+ */
+@Composable
+fun PeekLyricsLine(
+    positionFlow: StateFlow<Long>,
+    positionReader: () -> Long,
+    playbackSpeed: Float,
+    lyrics: List<LyricsEntry>,
+    songId: String?,
+    timingOffsetMs: Int,
+    isPlaying: Boolean,
+    isLoading: Boolean,
+    textColor: Color,
+    isCasting: Boolean,
+    onShowLyrics: () -> Unit,
+    onReload: () -> Unit,
+    onSearchLyrics: () -> Unit,
+    modifier: Modifier = Modifier,
+    compact: Boolean = false,
+    matchesPlayback: Boolean = true,
+) {
     AnimatedVisibility(
         visible = Settings.shared.showLyricsOnPlayer && matchesPlayback,
-        enter = expandVertically() + fadeIn(),
-        exit = shrinkVertically() + fadeOut(),
+        enter = expandVertically(clip = false) + fadeIn(),
+        exit = shrinkVertically(clip = false) + fadeOut(),
         modifier = modifier,
     ) {
         // Background-vocal lines belong to the line before them; on their own they would replace it in the Peek.
@@ -139,9 +189,9 @@ internal fun PeekLyricsLine(
         val positionState =
             rememberCaptionLyricsPositionState(
                 lyrics = peekLyrics,
-                currentPositionFlow = viewModel.currentPosition,
-                positionReader = viewModel::currentPositionMs,
-                playbackSpeed = viewModel.playbackSpeed.collectAsState().value,
+                currentPositionFlow = positionFlow,
+                positionReader = positionReader,
+                playbackSpeed = playbackSpeed,
                 isPlaying = isPlaying,
                 enabled = LocalPlayerPositionActive.current && hasTiming,
                 songId = songId,
@@ -153,9 +203,9 @@ internal fun PeekLyricsLine(
         // and let it overshoot its end. Like the full lyrics view, gaps get their own smooth clock with the same offset.
         val smoothPosition =
             rememberSmoothLyricsPositionState(
-                positionFlow = viewModel.currentPosition,
-                playbackSpeed = viewModel.playbackSpeed.collectAsState().value,
-                positionReader = viewModel::currentPositionMs,
+                positionFlow = positionFlow,
+                playbackSpeed = playbackSpeed,
+                positionReader = positionReader,
                 isPlaying = isPlaying,
                 songId = songId,
                 isCasting = isCasting,
@@ -194,14 +244,23 @@ internal fun PeekLyricsLine(
             }
         }
         val color = resolveLyricsTextColor(textColor)
+        val adlibs = remember(peekLyrics) { peekAdlibs(peekLyrics) }
         val textSizeSp = if (compact) PEEK_COMPACT_TEXT_SIZE_SP else PEEK_TEXT_SIZE_SP
         Box(
             modifier = Modifier.fillMaxWidth().heightIn(min = if (compact) PeekCompactMinHeight else PeekMinHeight),
             contentAlignment = Alignment.Center,
         ) {
+            PeekAdlibLayer(
+                adlibs = adlibs,
+                position = { positionState.value },
+                isPlaying = isPlaying,
+                color = color,
+                modifier = Modifier.align(Alignment.TopCenter),
+            )
             AnimatedContent(
                 targetState = content,
-                transitionSpec = { fadeIn(tween(400)) togetherWith fadeOut(tween(400)) },
+                // No clipping: adlib call-outs stand out of the line's bounds.
+                transitionSpec = { (fadeIn(tween(400)) togetherWith fadeOut(tween(400))).using(SizeTransform(clip = false)) },
                 contentAlignment = Alignment.Center,
                 label = "peekLyricsLine",
             ) { shown ->
@@ -211,7 +270,7 @@ internal fun PeekLyricsLine(
                     }
 
                     PeekContent.NotFound -> {
-                        PeekMissingLyrics(color = color, onReload = onReload, onSearchLyrics = { searching = true })
+                        PeekMissingLyrics(color = color, onReload = onReload, onSearchLyrics = onSearchLyrics)
                     }
 
                     PeekContent.PlainOnly -> {
@@ -265,8 +324,8 @@ internal fun PeekPreviewLine(
 ) {
     AnimatedVisibility(
         visible = Settings.shared.showLyricsOnPlayer,
-        enter = expandVertically() + fadeIn(),
-        exit = shrinkVertically() + fadeOut(),
+        enter = expandVertically(clip = false) + fadeIn(),
+        exit = shrinkVertically(clip = false) + fadeOut(),
         modifier = modifier,
     ) {
         // Background-vocal lines belong to the line before them; on their own they would replace it in the Peek.
@@ -286,10 +345,19 @@ internal fun PeekPreviewLine(
             }
         }
         val color = resolveLyricsTextColor(textColor)
+        val adlibs = remember(peekLyrics) { peekAdlibs(peekLyrics) }
         Box(Modifier.fillMaxWidth().heightIn(min = PeekMinHeight), contentAlignment = Alignment.Center) {
+            PeekAdlibLayer(
+                adlibs = adlibs,
+                position = position,
+                isPlaying = true,
+                color = color,
+                modifier = Modifier.align(Alignment.TopCenter),
+            )
             AnimatedContent(
                 targetState = content,
-                transitionSpec = { fadeIn(tween(400)) togetherWith fadeOut(tween(400)) },
+                // No clipping: adlib call-outs stand out of the line's bounds.
+                transitionSpec = { (fadeIn(tween(400)) togetherWith fadeOut(tween(400))).using(SizeTransform(clip = false)) },
                 contentAlignment = Alignment.Center,
                 label = "peekPreviewLine",
             ) { shown ->
@@ -334,7 +402,8 @@ private fun PeekLine(
     textSizeSp: Float,
     onShowLyrics: () -> Unit,
 ) {
-    val (mainEntry, adlib) = remember(line.entry) { splitAdlib(line.entry) }
+    // Adlibs are drawn by PeekAdlibLayer, so they can outlast this line.
+    val mainEntry = remember(line.entry) { splitAdlib(line.entry).first }
     val isActive by remember(line) { derivedStateOf { position() in line.entry.time..line.endTimeMs } }
     val textMeasurer = rememberTextMeasurer()
     Box(contentAlignment = Alignment.Center) {
@@ -353,41 +422,92 @@ private fun PeekLine(
             textMeasurer = textMeasurer,
             isPlaying = isPlaying,
         )
-        if (adlib != null) {
-            // Without word timing an adlib shows briefly from its start, like the legacy Peek did.
-            val adlibEnd = adlib.endTime ?: minOf(adlib.time + UNTIMED_ADLIB_MS, line.endTimeMs)
-            val adlibSung by remember(adlib, adlibEnd) { derivedStateOf { position() in adlib.time..adlibEnd } }
-            val isLeft = line.index % 2 == 0
-            // As in the legacy Peek: a tilted, italic call-out above the line that only appears while it is sung.
-            AnimatedVisibility(
-                visible = adlibSung,
-                enter = fadeIn(tween(300)) + scaleIn(initialScale = 0.8f) + slideInVertically { it / 2 },
-                exit = fadeOut(tween(300)) + scaleOut(targetScale = 0.8f) + slideOutVertically { it / 2 },
-                modifier =
+    }
+}
+
+/** A background-vocal call-out and the Peek line it belongs to; it stays up past that line until it has been read. */
+private class PeekAdlib(
+    val lineIndex: Int,
+    val entry: LyricsEntry,
+    val endTimeMs: Long,
+    val hideAtMs: Long,
+)
+
+private fun peekAdlibs(lyrics: List<LyricsEntry>): List<PeekAdlib> =
+    lyrics.mapIndexedNotNull { index, line ->
+        val adlib = splitAdlib(line).second ?: return@mapIndexedNotNull null
+        val lineEnd = LyricsUtils.getLineEndTime(line, lyrics.getOrNull(index + 1), LyricsUtils.FINAL_DYNAMIC_LINE_DURATION_MS)
+        // Without word timing an adlib shows briefly from its start, like the legacy Peek did.
+        val end = adlib.endTime ?: minOf(adlib.time + UNTIMED_ADLIB_MS, lineEnd)
+        // Sung adlibs are often under a second; keep them long enough to read, even after the next line starts.
+        PeekAdlib(index, adlib, end, maxOf(end + ADLIB_HOLD_MS, adlib.time + ADLIB_MIN_VISIBLE_MS))
+    }
+
+/**
+ * The adlib layer above the Peek line, as in the legacy Peek: a tilted, italic call-out that appears while it is sung,
+ * alternating sides line by line. It is separate from the line so the next line can start without cutting it off.
+ */
+@Composable
+private fun PeekAdlibLayer(
+    adlibs: List<PeekAdlib>,
+    position: () -> Long,
+    isPlaying: Boolean,
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    if (adlibs.isEmpty()) return
+    // Adlibs are composed a little before they are sung: the word animation prepares its glyph masks on first use, and
+    // until then only the sung part was drawn, so the call-out popped in a few hundred milliseconds late.
+    val composed by remember(adlibs) {
+        derivedStateOf(structuralEqualityPolicy()) {
+            val now = position()
+            adlibs.filter { now in (it.entry.time - ADLIB_PREPARE_MS)..(it.hideAtMs + ADLIB_ANIMATION_MS) }
+        }
+    }
+    val textMeasurer = rememberTextMeasurer()
+    Box(modifier.widthIn(max = PeekAdlibAreaWidth).fillMaxWidth()) {
+        composed.forEach { adlib ->
+            key(adlib.lineIndex) {
+                val shown by remember(adlib) { derivedStateOf { position() in adlib.entry.time..adlib.hideAtMs } }
+                val progress by animateFloatAsState(
+                    targetValue = if (shown) 1f else 0f,
+                    animationSpec = tween(ADLIB_ANIMATION_MS.toInt()),
+                    label = "peekAdlib",
+                )
+                val isLeft = adlib.lineIndex % 2 == 0
+                Box(
                     Modifier
                         .align(if (isLeft) Alignment.TopStart else Alignment.TopEnd)
                         .offset(x = if (isLeft) 24.dp else (-24).dp, y = (-20).dp)
-                        .graphicsLayer { rotationZ = if (isLeft) -6f else 6f },
-            ) {
-                ActiveLyricsLineContent(
-                    entry = adlib,
-                    isActive = true,
-                    positionProvider = position,
-                    lineEndTimeMs = adlibEnd,
-                    isPlaying = isPlaying,
-                    textColor = color,
-                    lyricStyle =
-                        MaterialTheme.typography.bodyMedium.copy(
-                            fontSize = PEEK_ADLIB_TEXT_SIZE_SP.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontStyle = FontStyle.Italic,
-                        ),
-                    textMeasurer = textMeasurer,
-                    alignment = if (isLeft) TextAlign.Start else TextAlign.End,
-                    maxLines = 2,
-                    fillWidth = false,
-                    useFixedTone = false,
-                )
+                        .graphicsLayer {
+                            // As in the legacy Peek: grows in from half size, rising slightly, tilted to its side.
+                            alpha = progress
+                            scaleX = 0.5f + 0.5f * progress
+                            scaleY = scaleX
+                            translationY = (1f - progress) * size.height / 2f
+                            rotationZ = if (isLeft) -6f else 6f
+                        },
+                ) {
+                    ActiveLyricsLineContent(
+                        entry = adlib.entry,
+                        isActive = true,
+                        positionProvider = position,
+                        lineEndTimeMs = adlib.endTimeMs,
+                        isPlaying = isPlaying,
+                        textColor = color,
+                        lyricStyle =
+                            MaterialTheme.typography.bodyMedium.copy(
+                                fontSize = PEEK_ADLIB_TEXT_SIZE_SP.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontStyle = FontStyle.Italic,
+                            ),
+                        textMeasurer = textMeasurer,
+                        alignment = if (isLeft) TextAlign.Start else TextAlign.End,
+                        maxLines = 2,
+                        fillWidth = false,
+                        useFixedTone = false,
+                    )
+                }
             }
         }
     }

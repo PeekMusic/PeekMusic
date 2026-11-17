@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.metrolist.desktop.state.app.AppState
+import com.metrolist.desktop.state.app.UiState
 import com.metrolist.desktop.state.content.ArtistState
 import com.metrolist.desktop.state.content.PlaylistAlbumState
 import com.metrolist.desktop.state.playback.ListenTogetherState
@@ -74,6 +75,9 @@ import com.metrolist.shared.generated.resources.lyrics_show_translations
 import com.metrolist.shared.generated.resources.manual_translate_this_track
 import com.metrolist.shared.generated.resources.no_provider_results_found
 import com.metrolist.shared.generated.resources.no_track_playing
+import com.metrolist.shared.generated.resources.peek_title
+import com.metrolist.shared.generated.resources.peek_translation_source_builtin
+import com.metrolist.shared.generated.resources.peek_translation_source_google
 import com.metrolist.shared.generated.resources.playback_speed
 import com.metrolist.shared.generated.resources.refetch
 import com.metrolist.shared.generated.resources.romanize_track
@@ -91,6 +95,7 @@ import com.metrolist.shared.generated.resources.tempo_and_pitch
 import com.metrolist.shared.generated.resources.view_song_info
 import com.metrolist.shared.listentogether.ListenTogetherRoomRole
 import com.metrolist.shared.model.SongItem
+import com.metrolist.shared.peek.PeekBuiltInTranslations
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.settings.displayName
 import com.metrolist.shared.ui.components.AlertDialog
@@ -128,11 +133,27 @@ fun LyricsActionsMenuCard(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     onShowLyricsOffset: () -> Unit = { LyricsState.showLyricsOffsetEditor = true },
+    // PeekMusic: the full player's lyrics button opens this menu with the lyrics panel and Peek switches as well.
+    showViewToggles: Boolean = false,
 ) {
-    var respectAgentPositioning by remember { mutableStateOf(Settings.shared.respectAgentPositioning) }
-    var showIntervalIndicator by remember { mutableStateOf(true) }
-    var aiTranslationChecked by remember(LyricsState.manualAiTranslationEnabled) { mutableStateOf(LyricsState.manualAiTranslationEnabled) }
-    var showTranslationsChecked by remember { mutableStateOf(Settings.shared.lyricsShowTranslations) }
+    // PeekMusic: one translation switch instead of upstream's AI items, as in the Android lyrics menu.
+    var peekOn by remember { mutableStateOf(Settings.shared.showLyricsOnPlayer) }
+    var translationsOn by remember {
+        mutableStateOf(Settings.shared.lyricsAiTranslationEnabled && Settings.shared.lyricsShowTranslations)
+    }
+    val hasTranslations =
+        LyricsState.currentLyricsEntries.any { !it.translatedText.isNullOrBlank() || !it.backgroundTranslatedText.isNullOrBlank() }
+    val builtInTranslationSource = remember(LyricsState.currentLyrics) { PeekBuiltInTranslations.builtInSource(LyricsState.currentLyrics) }
+
+    fun setTranslations(enabled: Boolean) {
+        translationsOn = enabled
+        Settings.shared.lyricsShowTranslations = enabled
+        if (enabled) {
+            Settings.shared.lyricsAiTranslationEnabled = true
+            // Nothing translated yet, e.g. after a failure: translate now.
+            if (!hasTranslations) LyricsState.setManualLyricsTranslation(true)
+        }
+    }
 
     var showEditDialog by remember { mutableStateOf(false) }
     var editText by remember { mutableStateOf("") }
@@ -262,63 +283,40 @@ fun LyricsActionsMenuCard(
                 }
             }
 
-            LyricsToggleRow(
-                icon = MetrolistIcons.Outlined.Edit,
-                title = stringResource(Res.string.lyrics_respect_agent_positioning),
-                subtitle = stringResource(Res.string.follow_agent_positioning_hints),
-                checked = respectAgentPositioning,
-                colorScheme = colorScheme,
-                onCheckedChange = {
-                    respectAgentPositioning = it
-                    Settings.shared.respectAgentPositioning = it
-                },
-            )
-
-            LyricsToggleRow(
-                icon = MetrolistIcons.Outlined.Edit,
-                title = stringResource(Res.string.show_interval_indicator),
-                subtitle = stringResource(Res.string.display_gaps_between_sections),
-                checked = showIntervalIndicator,
-                colorScheme = colorScheme,
-                onCheckedChange = { showIntervalIndicator = it },
-            )
-
-            LyricsToggleRow(
-                icon = MetrolistIcons.Outlined.Translate,
-                title = stringResource(Res.string.ai_translation),
-                subtitle =
-                    if (Settings.shared.lyricsAiActivationMode ==
-                        "Manual"
-                    ) {
-                        stringResource(Res.string.manual_translate_this_track)
-                    } else {
-                        stringResource(Res.string.automatic_mode)
-                    },
-                checked = aiTranslationChecked,
-                enabled = Settings.shared.lyricsAiTranslationEnabled,
-                colorScheme = colorScheme,
-                onCheckedChange = {
-                    aiTranslationChecked = it
-                    LyricsState.setManualLyricsTranslation(it)
-                },
-            )
-
-            if (LyricsState.currentLyricsEntries.any {
-                    !it.translatedText.isNullOrBlank() ||
-                        !it.backgroundTranslatedText.isNullOrBlank()
-                }
-            ) {
+            if (showViewToggles) {
                 LyricsToggleRow(
-                    icon = MetrolistIcons.Outlined.Translate,
-                    title = stringResource(Res.string.lyrics_show_translations),
-                    checked = showTranslationsChecked,
+                    icon = MetrolistIcons.Outlined.Lyrics,
+                    title = stringResource(Res.string.show_lyrics),
+                    checked = UiState.showLyricsDrawer,
+                    colorScheme = colorScheme,
+                    onCheckedChange = { if (it != UiState.showLyricsDrawer) LyricsState.toggleLyricsDrawer() },
+                )
+                LyricsToggleRow(
+                    icon = MetrolistIcons.Outlined.Lyrics,
+                    title = stringResource(Res.string.peek_title),
+                    checked = peekOn,
                     colorScheme = colorScheme,
                     onCheckedChange = {
-                        showTranslationsChecked = it
-                        Settings.shared.lyricsShowTranslations = it
+                        peekOn = it
+                        Settings.shared.showLyricsOnPlayer = it
                     },
                 )
             }
+
+            LyricsToggleRow(
+                icon = MetrolistIcons.Outlined.Translate,
+                title = stringResource(Res.string.lyrics_show_translations),
+                subtitle =
+                    if (hasTranslations) {
+                        builtInTranslationSource?.let { stringResource(Res.string.peek_translation_source_builtin, it) }
+                            ?: stringResource(Res.string.peek_translation_source_google)
+                    } else {
+                        null
+                    },
+                checked = translationsOn,
+                colorScheme = colorScheme,
+                onCheckedChange = { setTranslations(it) },
+            )
 
             val romanizeAsMain = Settings.shared.isLyricsRomanizationActive && Settings.shared.lyricsRomanizeAsMain
             val toggleChecked =
@@ -470,13 +468,13 @@ private fun LyricsToggleRow(
                 modifier = Modifier.playbackMarquee(),
             )
             if (subtitle != null) {
+                // PeekMusic: wrap the description instead of scrolling it as a marquee.
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
                     color = colorScheme.onSurfaceVariant.copy(alpha = contentAlpha),
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.playbackMarquee(),
                 )
             }
         }

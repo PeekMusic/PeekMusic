@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.metrolist.desktop.deviceconnect.DesktopDeviceConnect
+import com.metrolist.desktop.peek.DesktopPeekLyricsLine
 import com.metrolist.desktop.state.app.AppState
 import com.metrolist.desktop.state.app.UiState
 import com.metrolist.desktop.state.content.ArtistState
@@ -142,6 +143,7 @@ fun PlayerCoreContent(
     val castState by PlayerState.castManager.state.collectAsState()
     val isListenTogetherGuest = ListenTogetherState.isListenTogetherGuest()
     var showCastDialog by remember { mutableStateOf(false) }
+    var showLyricsMenu by remember { mutableStateOf(false) }
     var showDetailsDialog by remember { mutableStateOf(false) }
     var showSleepDialog by remember { mutableStateOf(false) }
 
@@ -188,15 +190,21 @@ fun PlayerCoreContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.widthIn(max = 650.dp * scale).fillMaxWidth(),
         ) {
-            ActiveLyricsLine(modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
-
-            Spacer(Modifier.height(54.dp * scale))
-
             val isSolid = Settings.shared.playerBackgroundStyle == PlayerBackgroundStyle.SOLID
             val textBackgroundColor by animateColorAsState(
                 targetValue = if (isSolid) MaterialTheme.colorScheme.onSurface else Color.White,
                 label = "PlayerContentTextColor",
             )
+
+            // PeekMusic: our Peek instead of upstream's active lyrics line; subtitles of a music video keep upstream's line.
+            if (PlayerState.isSubtitleActive) {
+                ActiveLyricsLine(modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
+            } else {
+                // Room above the line for the tilted adlib call-outs, so they stay off the cover.
+                DesktopPeekLyricsLine(textColor = textBackgroundColor, modifier = Modifier.fillMaxWidth().padding(top = 28.dp))
+            }
+
+            Spacer(Modifier.height(54.dp * scale))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -368,9 +376,8 @@ fun PlayerCoreContent(
                     volume = PlayerState.volume,
                     onVolumeChange = { PlayerState.setVolumeLevel(it) },
                     onQueueClick = UiState::togglePersistentPlayerDrawer,
-                    onLyricsClick = {
-                        LyricsState.toggleLyricsDrawer()
-                    },
+                    // PeekMusic: in the full player the lyrics button opens the lyrics menu (panel, Peek, translation, …).
+                    onLyricsClick = { showLyricsMenu = true },
                     isLyricsActive = UiState.showLyricsDrawer,
                     isQueueActive = UiState.showPersistentPlayerDrawer,
                     onVideoClick =
@@ -394,6 +401,14 @@ fun PlayerCoreContent(
                     onFullscreenClick = toggleWindowFullscreen,
                     isFullscreen = PlayerState.isFullscreen || UiState.isNativeFullscreen,
                 )
+                Box {
+                    LyricsActionsMenuCard(
+                        expanded = showLyricsMenu,
+                        colorScheme = MaterialTheme.colorScheme,
+                        onDismiss = { showLyricsMenu = false },
+                        showViewToggles = true,
+                    )
+                }
             }
         }
     }
