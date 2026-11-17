@@ -63,8 +63,8 @@ object DesktopBackupRestoreManager {
     private val json = Json { ignoreUnknownKeys = true }
     internal var databaseFileOverride: File? = null
     internal var restoreDirOverride: File? = null
-    private val databaseFile get() = databaseFileOverride ?: File(XdgUtils.getXdgDataHome(), "metrolist/metrolist.db")
-    private val restoreDir get() = restoreDirOverride ?: File(XdgUtils.getXdgStateHome(), "metrolist/pending-restore")
+    private val databaseFile get() = databaseFileOverride ?: File(XdgUtils.getXdgDataHome(), "peekmusic/metrolist.db")
+    private val restoreDir get() = restoreDirOverride ?: File(XdgUtils.getXdgStateHome(), "peekmusic/pending-restore")
 
     fun backup(destination: File): Result<Unit> =
         runCatching {

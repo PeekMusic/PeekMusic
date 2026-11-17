@@ -102,6 +102,7 @@ import com.metrolist.shared.model.filterForPlaylistSearch
 import com.metrolist.shared.model.isReordering
 import com.metrolist.shared.model.playlistOccurrenceKey
 import com.metrolist.shared.model.sortedForPlaylist
+import com.metrolist.shared.peek.peekLogoPainter
 import com.metrolist.shared.playlist.PlaylistPartiallyUpdatedException
 import com.metrolist.shared.settings.HiddenLibraryItems
 import com.metrolist.shared.settings.SavedPlaylistSongSorting
@@ -237,7 +238,7 @@ fun PlaylistScreen(colorScheme: ColorScheme) {
     val editCoverLabel = stringResource(Res.string.edit_playlist_cover)
 
     fun coverFiles(id: String): List<File> {
-        val dir = File(XdgUtils.getXdgDataHome(), "metrolist/playlist_covers")
+        val dir = File(XdgUtils.getXdgDataHome(), "peekmusic/playlist_covers")
         return dir
             .listFiles { _, name ->
                 name == "$id.jpg" || (name.startsWith("${id}_") && name.endsWith(".jpg"))
@@ -250,7 +251,7 @@ fun PlaylistScreen(colorScheme: ColorScheme) {
         id: String,
     ): String? =
         runCatching {
-            val coversDir = File(XdgUtils.getXdgDataHome(), "metrolist/playlist_covers").apply { mkdirs() }
+            val coversDir = File(XdgUtils.getXdgDataHome(), "peekmusic/playlist_covers").apply { mkdirs() }
             val dest = File(coversDir, "${id}_${System.currentTimeMillis()}.jpg")
             dest.outputStream().use { output -> output.write(bytes) }
             dest.absolutePath
@@ -674,7 +675,7 @@ fun PlaylistScreen(colorScheme: ColorScheme) {
                             )
                         } else {
                             Image(
-                                painterResource(Res.drawable.logo),
+                                peekLogoPainter(), // PeekMusic: smooth at small sizes
                                 contentDescription = null,
                                 modifier =
                                     Modifier.size(72.dp).clip(

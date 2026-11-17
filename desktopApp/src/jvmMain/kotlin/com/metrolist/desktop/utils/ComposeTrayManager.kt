@@ -28,6 +28,7 @@ import com.metrolist.shared.generated.resources.tray_tooltip_paused
 import com.metrolist.shared.generated.resources.tray_tooltip_playing
 import com.metrolist.shared.generated.resources.tray_unknown
 import com.metrolist.shared.generated.resources.tray_unknown_title
+import com.metrolist.shared.peek.peekLogoPainter
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.settings.displayName
 import com.metrolist.shared.ui.navigation.Screen
@@ -149,7 +150,7 @@ object ComposeTrayManager {
         val isListenTogetherGuest = ListenTogetherState.isListenTogetherGuest()
 
         @Suppress("DEPRECATION")
-        val icon = painterResource("logo.png")
+        val icon = peekLogoPainter() // PeekMusic: smooth at tray size
 
         val strUnknownTitle = stringResource(Res.string.tray_unknown_title)
         val strUnknown = stringResource(Res.string.tray_unknown)
@@ -173,7 +174,7 @@ object ComposeTrayManager {
                 } else {
                     stringResource(Res.string.tray_tooltip_paused, title, artistStr)
                 }
-            } ?: "Metrolist"
+            } ?: "PeekMusic"
 
         val currentArtistLabel =
             currentTrack?.let { track ->

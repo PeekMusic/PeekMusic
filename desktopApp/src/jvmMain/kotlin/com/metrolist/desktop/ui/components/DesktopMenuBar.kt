@@ -115,6 +115,7 @@ import com.metrolist.shared.generated.resources.statistics
 import com.metrolist.shared.generated.resources.tray_quit_metrolist
 import com.metrolist.shared.generated.resources.user
 import com.metrolist.shared.model.RepeatMode
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.settings.NavigationId
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.icons.MetrolistIcons
@@ -726,7 +727,7 @@ fun FrameWindowScope.DesktopMenuBar(
                 text = stringResource(Res.string.menu_report_issue),
                 onClick = {
                     try {
-                        Desktop.getDesktop().browse(URI("https://github.com/MetrolistGroup/Metrolist/issues"))
+                        Desktop.getDesktop().browse(URI("${PeekFork.REPOSITORY_URL}/issues"))
                     } catch (_: Exception) {
                     }
                 },

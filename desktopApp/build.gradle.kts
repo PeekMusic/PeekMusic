@@ -410,7 +410,10 @@ val syncExternalResources =
         }
 
         if (platform == "win") {
-            from(project.file("src/desktopMain/resources/logo.png")) { into("windows") }
+            from(project.file("src/desktopMain/resources/peek_app_icon.png")) {
+                into("windows")
+                rename { "logo.png" }
+            }
         }
         from(sidecarChecksumResourcesDir)
     }
@@ -611,7 +614,7 @@ tasks.named<ProcessResources>("jvmProcessResources") {
     dependsOn(generateSentryDebugMetaProperties)
     from(sentryDebugMetaProperties)
     from(layout.projectDirectory.dir("src/desktopMain/resources")) {
-        include("logo.svg", "logo.png", "logo_dark.png", "logo.icns", "nucleus/nucleus-app.properties")
+        include("logo.png", "peek_app_icon.png", "logo_dark.png", "logo.icns", "nucleus/nucleus-app.properties")
     }
 }
 
@@ -723,8 +726,8 @@ compose.desktop {
                 "-XX:ErrorFile=${
                     when (platform) {
                         "linux" -> "\$METROLIST_JVM_ERROR_FILE"
-                        "win" -> "\$USERPROFILE/.local/state/metrolist/logs/hs_err_pid%p.log"
-                        else -> "\$HOME/.local/state/metrolist/logs/hs_err_pid%p.log"
+                        "win" -> "\$USERPROFILE/.local/state/peekmusic/logs/hs_err_pid%p.log"
+                        else -> "\$HOME/.local/state/peekmusic/logs/hs_err_pid%p.log"
                     }
                 }",
             ) + desktopMemoryJvmArgs
@@ -735,7 +738,7 @@ compose.desktop {
                 "mac" -> targetFormats(TargetFormat.Dmg)
                 else -> targetFormats(TargetFormat.Deb, TargetFormat.Rpm, TargetFormat.AppImage)
             }
-            packageName = "Metrolist"
+            packageName = "PeekMusic" // PeekMusic: our app name, launcher and installer
             val versionMatch =
                 Regex("""^(\d+)\.(\d+)\.(\d+)(?:-[A-Za-z0-9][A-Za-z0-9._-]*)?(?:\+[0-9A-Za-z.-]+)?$""")
                     .matchEntire(appVersion)
@@ -760,9 +763,9 @@ compose.desktop {
                 } else {
                     versionComponents.joinToString(".")
                 }
-            description = "Metrolist music player"
-            copyright = "© 2026 Metrolist"
-            vendor = "MetrolistGroup"
+            description = "PeekMusic music player"
+            copyright = "© 2026 PeekMusic, based on Metrolist"
+            vendor = "PeekMusic"
 
             appResourcesRootDir.set(nativeResourcesDir)
 
@@ -805,16 +808,16 @@ compose.desktop {
                 iconFile.set(project.file("src/desktopMain/resources/logo.ico"))
             }
             linux {
-                iconFile.set(project.file("src/desktopMain/resources/logo.png"))
+                iconFile.set(project.file("src/desktopMain/resources/peek_app_icon.png"))
                 jvmArgs += listOf("-Djava.locale.providers=CLDR,SPI", "-Dwebkit.disable.dmabuf.renderer=1")
             }
             macOS {
-                bundleID = "com.metrolist.desktop"
+                bundleID = "com.peekmusic.desktop"
                 infoPlist {
                     extraKeysRawXml =
                         """
                         <key>NSLocalNetworkUsageDescription</key>
-                        <string>Metrolist uses the local network to find and control casting devices.</string>
+                        <string>PeekMusic uses the local network to find and control casting devices.</string>
                         <key>NSBonjourServices</key>
                         <array>
                             <string>_fcast._tcp</string>
@@ -824,7 +827,7 @@ compose.desktop {
                         <array>
                             <dict>
                                 <key>CFBundleURLName</key>
-                                <string>Metrolist URL</string>
+                                <string>PeekMusic URL</string>
                                 <key>CFBundleURLSchemes</key>
                                 <array>
                                     <string>metrolist</string>
@@ -836,7 +839,7 @@ compose.desktop {
                 }
                 iconFile.set(project.file("src/desktopMain/resources/logo.icns"))
                 dmgPackageVersion = packageVersion
-                dockName = "Metrolist"
+                dockName = "PeekMusic"
             }
         }
     }
@@ -844,8 +847,8 @@ compose.desktop {
 
 val cdsCache =
     when (platform) {
-        "win" -> "\$LOCALAPPDATA/Metrolist/cache"
-        "mac" -> "\$HOME/Library/Caches/com.metrolist.desktop"
+        "win" -> "\$LOCALAPPDATA/PeekMusic/cache"
+        "mac" -> "\$HOME/Library/Caches/com.peekmusic.desktop"
         else -> "\$METROLIST_CDS_CACHE"
     }
 // Compose assigns launcherJvmArgs while registering its tasks after project evaluation.

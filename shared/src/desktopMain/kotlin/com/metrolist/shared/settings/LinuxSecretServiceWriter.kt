@@ -276,7 +276,7 @@ private object LinuxSecretServiceWriter {
                     value = replacement
                     secret.secret_item_set_secret_sync(readable.getValue(record), replacement, cancellable, error)
                 } else {
-                    secret.secret_password_storev_sync(null, table, null, "Metrolist Desktop Secrets", payload, cancellable, error)
+                    secret.secret_password_storev_sync(null, table, null, "PeekMusic Desktop Secrets", payload, cancellable, error)
                 }
             CredentialCommandResult(if (saved != 0) 0 else 1, "", "")
         } finally {

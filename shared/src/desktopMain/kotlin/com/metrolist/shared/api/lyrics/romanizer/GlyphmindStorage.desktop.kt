@@ -8,8 +8,8 @@ package com.metrolist.shared.api.lyrics.romanizer
 import com.metrolist.shared.utils.XdgUtils
 import java.io.File
 
-internal actual fun glyphmindStorageDirectory(): String = File(XdgUtils.getXdgDataHome(), "metrolist/glyphmind").absolutePath
+internal actual fun glyphmindStorageDirectory(): String = File(XdgUtils.getXdgDataHome(), "peekmusic/glyphmind").absolutePath
 
 internal actual fun removeLegacyJapaneseDictionary() {
-    File(XdgUtils.getXdgDataHome(), "metrolist/japanese-dictionary").deleteRecursively()
+    File(XdgUtils.getXdgDataHome(), "peekmusic/japanese-dictionary").deleteRecursively()
 }

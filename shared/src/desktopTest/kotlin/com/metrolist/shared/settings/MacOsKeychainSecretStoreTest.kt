@@ -168,7 +168,7 @@ class MacOsKeychainSecretStoreTest {
             return when (command[1]) {
                 "find-generic-password" -> {
                     val service = command[command.indexOf("-s") + 1]
-                    val value = if (service == "com.metrolist.desktop.encryption-key-v1") encryptionKey else null
+                    val value = if (service == "org.peekmusic.desktop.encryption-key-v1") encryptionKey else null
                     if (value == null) CredentialCommandResult(44, "", "") else CredentialCommandResult(0, value, "")
                 }
 

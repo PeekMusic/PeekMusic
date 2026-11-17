@@ -19,7 +19,7 @@ actual val platformBrowser: String =
         "Mac OS X" -> "Discord Mac"
         else -> "Discord Linux"
     }
-actual val platformDevice: String = "Metrolist Desktop"
+actual val platformDevice: String = "PeekMusic Desktop"
 actual val platformOsVersion: String = checkNotNull(System.getProperty("os.version")) { "JVM operating system version is unavailable" }
 actual val platformOsSdkVersion: String = platformOsVersion
 actual val platformUserAgent: String =

@@ -16,7 +16,7 @@ class DesktopDiscordRegistrationTest {
         assertTrue("Exec=env \"$launcher\" %u\n" in entry)
         assertTrue("MimeType=x-scheme-handler/metrolist-auth;\n" in entry)
         assertEquals(
-            listOf("xdg-mime", "default", "com.metrolist.desktop.discord-auth.desktop", "x-scheme-handler/metrolist-auth"),
+            listOf("xdg-mime", "default", "com.peekmusic.desktop.discord-auth.desktop", "x-scheme-handler/metrolist-auth"),
             linuxDiscordRegistrationCommand(),
         )
     }
@@ -39,14 +39,14 @@ class DesktopDiscordRegistrationTest {
                     writeText("")
                     setExecutable(true)
                 }
-            val appImage = executable("Metrolist.AppImage")
-            val native = executable("Metrolist.bin")
-            val wrapper = executable("Metrolist")
+            val appImage = executable("PeekMusic.AppImage")
+            val native = executable("PeekMusic.bin")
+            val wrapper = executable("PeekMusic")
             val java = executable("java")
             assertEquals(appImage, linuxDiscordLauncher(appImage.path, native.path))
             assertEquals(wrapper, linuxDiscordLauncher(null, native.path))
             assertNull(linuxDiscordLauncher(null, java.path))
-            assertNull(linuxDiscordLauncher(null, "Metrolist"))
+            assertNull(linuxDiscordLauncher(null, "PeekMusic"))
             assertNull(linuxDiscordLauncher(File(directory, "missing.AppImage").path, native.path))
         } finally {
             directory.deleteRecursively()

@@ -184,6 +184,9 @@ import com.metrolist.shared.generated.resources.technical_information
 import com.metrolist.shared.generated.resources.window_title_now_playing
 import com.metrolist.shared.generated.resources.youtube_session_expired_message
 import com.metrolist.shared.generated.resources.youtube_session_expired_title
+import com.metrolist.shared.peek.PeekDefaults
+import com.metrolist.shared.peek.PeekFork
+import com.metrolist.shared.peek.peekLogoPainter
 import com.metrolist.shared.scrobble.ScrobbleSessions
 import com.metrolist.shared.settings.AppLayout
 import com.metrolist.shared.settings.LibraryFilterType
@@ -649,10 +652,10 @@ private fun startupRuntimeAvailable(): Boolean {
         if (error !is Exception && error !is LinkageError) throw error
         val location = System.getProperty("java.io.tmpdir")
         val message =
-            "Metrolist cannot initialize its native runtime or temporary storage.\n\n" +
+            "PeekMusic cannot initialize its native runtime or temporary storage.\n\n" +
                 "Location: $location\n" +
                 "Error: ${error.message ?: error::class.simpleName}\n\n" +
-                "Free disk space or adjust the temporary directory, then restart Metrolist."
+                "Free disk space or adjust the temporary directory, then restart PeekMusic."
         System.err.println(message)
         error.printStackTrace(System.err)
         if (!GraphicsEnvironment.isHeadless()) {
@@ -660,7 +663,7 @@ private fun startupRuntimeAvailable(): Boolean {
                 JOptionPane.showMessageDialog(
                     null,
                     message,
-                    "Metrolist startup error",
+                    "PeekMusic startup error",
                     JOptionPane.ERROR_MESSAGE,
                 )
             }
@@ -673,14 +676,14 @@ private fun startupRuntimeAvailable(): Boolean {
 
 private fun configureLinuxWindowIdentity() {
     if (!OsUtil.isLinux) return
-    System.setProperty("awt.app.id", "Metrolist")
+    System.setProperty("awt.app.id", "PeekMusic")
     runCatching {
         // XToolkit's constructor names the X11 class after the creating thread, so create it here and then rename it.
         Toolkit.getDefaultToolkit()
         val xToolkit = Class.forName("sun.awt.X11.XToolkit")
         xToolkit.getDeclaredField("awtAppClassName").apply {
             isAccessible = true
-            set(null, "Metrolist")
+            set(null, "PeekMusic")
         }
     }
 }
@@ -826,7 +829,7 @@ private fun exitOnOmarchy(): Nothing {
 }
 
 private fun runDesktopApp(args: Array<String>) {
-    if (OsUtil.isLinux && isOmarchy()) exitOnOmarchy()
+    if (PeekFork.DESKTOP_BLOCKS_OMARCHY && OsUtil.isLinux && isOmarchy()) exitOnOmarchy() // PeekMusic: see PeekFork
     if (!isDesktopPlatformSupported()) {
         exitWithStartupMessage(runBlocking { getString(Res.string.desktop_platform_unsupported) })
     }
@@ -848,6 +851,9 @@ private fun runDesktopApp(args: Array<String>) {
     DesktopBackupRestoreManager
         .applyPendingRestore(Settings.shared)
     val settings = Settings.shared
+    // PeekMusic: our defaults and the fixed values of hidden settings, as on Android.
+    PeekDefaults.apply(settings)
+    PeekDefaults.pinHidden(settings)
     desktopRenderApiOverride(
         choice = settings.desktopRenderBackend,
         osName = OsUtil.name,
@@ -868,7 +874,7 @@ private fun runDesktopApp(args: Array<String>) {
         DesktopUrlHandler.handleUrl(url)
     }
     if (!settings.desktopOnboardingInitialized) {
-        settings.desktopOnboardingComplete = File(XdgUtils.getXdgDataHome(), "metrolist/metrolist.db").isFile
+        settings.desktopOnboardingComplete = File(XdgUtils.getXdgDataHome(), "peekmusic/metrolist.db").isFile
         settings.desktopOnboardingInitialized = true
     }
     if (isCrashReportingAvailable()) {
@@ -891,7 +897,7 @@ private fun runDesktopApp(args: Array<String>) {
     flushDesktopCredentialWarnings()
     startup.trace("settings")
 
-    AppLogger.info("Main", "Metrolist starting up")
+    AppLogger.info("Main", "PeekMusic starting up")
     AppLogger.info("Main", "OS: ${OsUtil.name}")
     val javaVersion = Runtime.version()
     AppLogger.info(
@@ -1159,7 +1165,7 @@ private fun runDesktopApp(args: Array<String>) {
         }
 
         @Suppress("DEPRECATION")
-        val logoPainter = painterResource("logo.svg")
+        val logoPainter = peekLogoPainter() // PeekMusic: our PNG logo, smoothly scaled
         val iconColor =
             UiState.seedColor
 
@@ -1267,7 +1273,7 @@ private fun runDesktopApp(args: Array<String>) {
             }
         }
 
-        val appTitle = if (BuildConfig.DEBUG) "Metrolist Debug" else "Metrolist"
+        val appTitle = if (BuildConfig.DEBUG) "PeekMusic Debug" else "PeekMusic"
         val windowTitle =
             PlayerState.currentTrack?.takeIf { it.title.isNotBlank() }?.let { track ->
                 val artists = track.artists.joinToString { it.displayName }

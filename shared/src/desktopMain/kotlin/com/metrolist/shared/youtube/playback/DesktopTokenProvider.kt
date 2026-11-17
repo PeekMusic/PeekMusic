@@ -632,7 +632,7 @@ class DesktopTokenProvider internal constructor(
 
     /** Downloads the upstream sidecar into $XDG_CACHE_HOME/metrolist/bgutil-pot-provider when absent. */
     private suspend fun cachedSidecarPath(spec: BinarySpec): String? {
-        val cacheRoot = File(XdgUtils.getXdgCacheHome(), "metrolist/bgutil-pot-provider")
+        val cacheRoot = File(XdgUtils.getXdgCacheHome(), "peekmusic/bgutil-pot-provider")
         val target = File(cacheRoot, spec.binaryFileName)
         if (isLikelyNativeBinary(target)) {
             if (sha256(target) == spec.assetSha256) {

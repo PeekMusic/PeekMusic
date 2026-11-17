@@ -35,7 +35,7 @@ class JmDnsCastDiscovery(
             session =
                 MdnsDiscoverySession(
                     addresses = localAddresses,
-                    create = { JmDNS.create(it, "Metrolist") },
+                    create = { JmDNS.create(it, "PeekMusic") },
                     configure = { jmDns ->
                         register(jmDns, FCAST_TYPE, CastProtocol.FCAST, onDeviceFound, onDeviceLost, current)
                         register(jmDns, GOOGLE_CAST_TYPE, CastProtocol.GOOGLE_CAST, onDeviceFound, onDeviceLost, current)

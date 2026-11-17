@@ -13,6 +13,7 @@ import com.metrolist.desktop.state.playback.PlayerState
 import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.app_name
 import com.metrolist.shared.generated.resources.logo
+import com.metrolist.shared.peek.peekLogoPainter
 import com.metrolist.shared.ui.screens.AboutScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -23,7 +24,7 @@ fun DesktopAboutScreen(
     onDevtoolsUnlocked: () -> Unit = {},
 ) {
     AboutScreen(
-        logo = painterResource(Res.drawable.logo),
+        logo = peekLogoPainter(), // PeekMusic: smooth at small sizes
         appName = stringResource(Res.string.app_name),
         colorScheme = colorScheme,
         contentPadding = PaddingValues(32.dp),

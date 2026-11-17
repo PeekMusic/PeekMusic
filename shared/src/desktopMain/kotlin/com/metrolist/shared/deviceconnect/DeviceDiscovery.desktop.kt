@@ -119,7 +119,7 @@ actual class DeviceDiscoveryController actual constructor(
         session =
             MdnsDiscoverySession(
                 addresses = ::desktopDeviceConnectDiscoveryAddresses,
-                create = { JmDNS.create(it, "Metrolist-${instanceName(it)}") },
+                create = { JmDNS.create(it, "PeekMusic-${instanceName(it)}") },
                 configure = { jmDns ->
                     instances += jmDns
                     registration?.invoke(jmDns)

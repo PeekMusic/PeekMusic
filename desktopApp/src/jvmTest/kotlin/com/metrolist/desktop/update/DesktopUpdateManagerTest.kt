@@ -50,8 +50,8 @@ class DesktopUpdateManagerTest {
     fun portableAndDevelopmentProcessesCannotUpdateRegisteredInstallation() {
         val directory = Files.createTempDirectory("installed-desktop")
         try {
-            val installed = Files.createDirectories(directory.resolve("installed/app")).resolve("Metrolist.exe")
-            val portable = Files.createDirectories(directory.resolve("portable/app")).resolve("Metrolist.exe")
+            val installed = Files.createDirectories(directory.resolve("installed/app")).resolve("PeekMusic.exe")
+            val portable = Files.createDirectories(directory.resolve("portable/app")).resolve("PeekMusic.exe")
             Files.createFile(installed)
             Files.createFile(portable)
             val root = installed.parent.parent
@@ -87,7 +87,7 @@ class DesktopUpdateManagerTest {
         assertEquals(listOf("14.0.0-rc10", "14.0.0-rc8", "13.7.0"), releases.map { it.version })
         assertEquals("## Fixes", releases[1].body)
         assertEquals("2026-11-01T12:00:00Z", releases[1].publishedAt)
-        assertEquals("https://github.com/MetrolistGroup/Metrolist/releases/tag/v14.0.0-rc8", releases[1].url)
+        assertEquals("https://github.com/PeekMusic/PeekMusic/releases/tag/v14.0.0-rc8", releases[1].url)
         assertFailsWith<Exception> { DesktopUpdateManager.parseReleases("not json") }
         assertFailsWith<Exception> {
             DesktopUpdateManager.parseReleases("""[{"tag_name":"v14.0.0","prerelease":false,"assets":[]}]""")

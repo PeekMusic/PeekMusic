@@ -117,13 +117,13 @@ class PlaylistDownloadOwnershipRegressionTest {
                 DownloadedPlaylists.track(first.id)
                 DownloadedPlaylists.track(second.id)
 
-                val audio = XdgUtils.getXdgDataHome().resolve("metrolist/downloads/shared.m4a").toPath()
+                val audio = XdgUtils.getXdgDataHome().resolve("peekmusic/downloads/shared.m4a").toPath()
                 Files.createDirectories(audio.parent)
                 Files.write(audio, ByteArray(2_048) { 1 })
                 val uniqueAudio = audio.parent.resolve("external/unique.m4a")
                 Files.createDirectories(uniqueAudio.parent)
                 Files.write(uniqueAudio, ByteArray(2_048) { 2 })
-                val catalog = XdgUtils.getXdgStateHome().resolve("metrolist/downloads.json").toPath()
+                val catalog = XdgUtils.getXdgStateHome().resolve("peekmusic/downloads.json").toPath()
                 Files.createDirectories(catalog.parent)
                 Files.writeString(
                     catalog,

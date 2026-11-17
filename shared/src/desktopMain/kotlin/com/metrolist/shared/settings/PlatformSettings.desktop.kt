@@ -39,13 +39,13 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import com.russhwolf.settings.Settings as KmpSettings
 
-private const val APP_DIR_NAME = "metrolist"
+private const val APP_DIR_NAME = "peekmusic"
 private const val SETTINGS_FILE_NAME = "settings.properties"
 private const val SECRETS_FILE_NAME = "secrets.properties"
-private const val WINDOWS_SECRET_ENTROPY = "MetrolistDesktopSecretsV1"
-private const val MAC_KEYCHAIN_KEY_SERVICE = "com.metrolist.desktop.encryption-key-v1"
+private const val WINDOWS_SECRET_ENTROPY = "PeekMusicDesktopSecretsV1"
+private const val MAC_KEYCHAIN_KEY_SERVICE = "org.peekmusic.desktop.encryption-key-v1"
 private const val MAC_KEYCHAIN_KEY_ACCOUNT = "desktop-secrets"
-private const val MAC_LEGACY_KEYCHAIN_SERVICE = "com.metrolist.desktop"
+private const val MAC_LEGACY_KEYCHAIN_SERVICE = "org.peekmusic.desktop"
 private const val MAC_SECRET_KEY_BYTES = 32
 private const val MAC_GCM_NONCE_BYTES = 12
 private val MAC_ENCRYPTED_FILE_MAGIC = byteArrayOf(0x4d, 0x4c, 0x53, 0x4b, 0x31)
@@ -806,7 +806,7 @@ internal class LinuxSecretServiceStore(
                                     }.store(output, "Metrolist desktop secrets")
                                 output.toString(StandardCharsets.UTF_8)
                             }
-                        val result = runCommand(listOf(tool, "store", "--label=Metrolist Desktop Secrets") + attributes, payload)
+                        val result = runCommand(listOf(tool, "store", "--label=PeekMusic Desktop Secrets") + attributes, payload)
                         if (result.exit != 0) credentialWarning("Credential keyring save failed exit=${result.exit}")
                         check(result.exit == 0) { "Secret Service write failed (${result.exit})" }
                         operation = "verify"
@@ -946,7 +946,7 @@ internal class LinuxSecretServiceStore(
     private companion object {
         const val REMOVED_PREFIX = "__metrolist_removed__."
         const val CLEAR_KEY = "__metrolist_clear__"
-        val attributes = listOf("service", "com.metrolist.desktop", "schema", "metrolist-settings", "account", "desktop-secrets")
+        val attributes = listOf("service", "org.peekmusic.desktop", "schema", "peekmusic-settings", "account", "desktop-secrets")
     }
 }
 

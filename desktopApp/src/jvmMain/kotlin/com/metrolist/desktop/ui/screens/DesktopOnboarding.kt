@@ -83,6 +83,7 @@ import com.metrolist.shared.generated.resources.settings_localization
 import com.metrolist.shared.generated.resources.settings_playback
 import com.metrolist.shared.generated.resources.side_menu_welcome
 import com.metrolist.shared.generated.resources.yes
+import com.metrolist.shared.peek.peekLogoPainter
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.components.ContainedLoadingIndicator
 import com.metrolist.shared.ui.components.GroupedListItem
@@ -325,7 +326,7 @@ private fun DesktopOnboardingPage(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Image(
-                        painter = painterResource(Res.drawable.logo),
+                        painter = peekLogoPainter(), // PeekMusic: smooth at small sizes
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(colors.onSurface),
                         modifier = Modifier.size(20.dp),

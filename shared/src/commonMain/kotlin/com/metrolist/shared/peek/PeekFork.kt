@@ -45,4 +45,7 @@ object PeekFork {
 
     /** Upstream's Sentry project is not ours, so crash reporting stays off until PeekMusic has its own DSN. */
     const val CRASH_REPORTING_AVAILABLE = false
+
+    /** Upstream refuses to start on Omarchy, and Ryoku's Omarchy compatibility trips that check too. PeekMusic runs anywhere. */
+    const val DESKTOP_BLOCKS_OMARCHY = false
 }
