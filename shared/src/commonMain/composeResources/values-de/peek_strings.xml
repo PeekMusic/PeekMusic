@@ -103,4 +103,6 @@
     <string name="peek_download_cancel_message">Bereits heruntergeladene Songs bleiben auf dem Gerät.</string>
     <string name="peek_download_cancel_confirm">Download stoppen</string>
     <string name="peek_download_cancel_keep">Weiterladen</string>
+    <string name="peek_canvas_desktop_desc">Spielt Spotify-Canvas-Videos im Cover des Players, wenn verfügbar. Braucht mehr Speicher und Daten.</string>
+    <string name="peek_animated_covers_desktop_desc">Zeigt animierte Album-Cover von Apple Music, wenn verfügbar. Braucht mehr Speicher und Daten.</string>
 </resources>

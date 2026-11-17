@@ -2,7 +2,6 @@
 
 package com.metrolist.shared.ui.components
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -36,6 +35,7 @@ import com.metrolist.shared.generated.resources.add_to_favorites
 import com.metrolist.shared.generated.resources.remove_from_favorites
 import com.metrolist.shared.peek.PeekHeaderDownload
 import com.metrolist.shared.peek.PeekHeaderDownloadButton
+import com.metrolist.shared.peek.rememberPeekPressSource
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import com.metrolist.shared.ui.tv.tvFocusHighlight
 import org.jetbrains.compose.resources.stringResource
@@ -114,7 +114,7 @@ internal fun HeaderPlaybackButtons(
         labels.forEachIndexed { index, label ->
             customItem(
                 buttonGroupContent = {
-                    val interactionSource = remember { MutableInteractionSource() }
+                    val interactionSource = rememberPeekPressSource() // PeekMusic: holds the press so the expressive morph shows on a mouse click too
                     val shapes =
                         if (index == 0) {
                             ButtonGroupDefaults.connectedLeadingButtonShapes()

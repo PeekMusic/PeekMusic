@@ -853,6 +853,8 @@ private fun runDesktopApp(args: Array<String>) {
     DesktopBackupRestoreManager
         .applyPendingRestore(Settings.shared)
     val settings = Settings.shared
+    // PeekMusic: Canvas has its own switch, apart from animated covers, as on Android.
+    settings.hasCanvasToggle = true
     // PeekMusic: our defaults and the fixed values of hidden settings, as on Android.
     PeekDefaults.apply(settings)
     PeekDefaults.pinHidden(settings)

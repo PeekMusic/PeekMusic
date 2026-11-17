@@ -79,12 +79,20 @@ internal fun CollectionHeader(
             }
         } else {
             artwork(Modifier.fillMaxWidth().aspectRatio(1f), uiEnhanced(8.dp, if (isWide) 20.dp else 28.dp))
+            // PeekMusic: in the wide (desktop) layout the buttons sit between cover and title, so a long
+            // description can't push them out of view.
+            if (isWide && actions != null) {
+                Spacer(Modifier.height(16.dp))
+                actions()
+            }
             Spacer(Modifier.height(16.dp))
             CollectionInfoCard(content = content)
         }
-        actions?.let {
-            Spacer(Modifier.height(16.dp))
-            it()
+        if (!isWide) {
+            actions?.let {
+                Spacer(Modifier.height(16.dp))
+                it()
+            }
         }
     }
 }

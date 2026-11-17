@@ -1314,6 +1314,21 @@ class MusicPlayer(
     val nextPlayerPosition: Long
         get() = synchronized(playerLock) { nextPlayer?.getCurrentPosition() ?: 0L }
 
+    /**
+     * PeekMusic: starts the preloaded next track under the current one, so a crossfade overlaps both songs as on
+     * Android instead of fading out, then in. Its volume stays at the next-track gain until [swapToNext].
+     */
+    fun startNextForCrossfade(token: PlaybackPreloadToken): Boolean =
+        synchronized(playerLock) {
+            val next = nextPlayer ?: return false
+            if (next.hasFailed || token.generation != nextGeneration || token.playerInstanceId != nextPlaybackInstanceId) {
+                return false
+            }
+            nextStartsPaused = false
+            if (audioPlayer.wantsPlayback) next.resume()
+            true
+        }
+
     fun isPreloadedNextActive(token: PlaybackPreloadToken): Boolean =
         synchronized(playerLock) {
             val next = nextPlayer ?: return false

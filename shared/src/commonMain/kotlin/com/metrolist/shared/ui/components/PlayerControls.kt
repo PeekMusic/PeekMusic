@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -86,6 +85,7 @@ import com.metrolist.shared.generated.resources.more_options
 import com.metrolist.shared.generated.resources.next
 import com.metrolist.shared.generated.resources.previous
 import com.metrolist.shared.generated.resources.share
+import com.metrolist.shared.peek.rememberPeekPressSource
 import com.metrolist.shared.settings.PlayerBackgroundStyle
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.LocalIsTv
@@ -150,9 +150,9 @@ fun PlayerPrimaryControls(
     showLoadingIndicator: Boolean = true,
 ) {
     val haptics = rememberMetrolistHaptics()
-    val prevInteractionSource = remember { MutableInteractionSource() }
-    val nextInteractionSource = remember { MutableInteractionSource() }
-    val playPauseInteractionSource = remember { MutableInteractionSource() }
+    val prevInteractionSource = rememberPeekPressSource() // PeekMusic: holds the press so the expressive morph shows on a mouse click too
+    val nextInteractionSource = rememberPeekPressSource()
+    val playPauseInteractionSource = rememberPeekPressSource()
 
     val isPrevPressed by prevInteractionSource.collectIsPressedAsState()
     val isNextPressed by nextInteractionSource.collectIsPressedAsState()
@@ -407,8 +407,8 @@ fun PlayerLikeShareButtons(
     val coroutineScope = rememberCoroutineScope()
     var isShiftPressed by remember { mutableStateOf(false) }
 
-    val shareInteractionSource = remember { MutableInteractionSource() }
-    val likeInteractionSource = remember { MutableInteractionSource() }
+    val shareInteractionSource = rememberPeekPressSource() // PeekMusic: holds the press so the expressive morph shows on a mouse click too
+    val likeInteractionSource = rememberPeekPressSource()
     val hapticFeedback = rememberMetrolistHaptics()
 
     val linkCopiedDesc = stringResource(Res.string.link_copied_to_clipboard)

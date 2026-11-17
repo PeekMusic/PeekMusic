@@ -744,18 +744,24 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
             val isAndroid = host.platform == SettingsPlatform.ANDROID
             val canvasEnabled = settings.isCanvasEnabled
             group("animatedCovers", stringResource(Res.string.settings_playback)) {
-                if (isAndroid) {
+                // PeekMusic: desktop has its own Canvas switch too; there the canvas plays in the cover.
+                val isDesktop = host.platform == SettingsPlatform.DESKTOP
+                if (isAndroid || isDesktop) {
                     switch(
                         id = "playerCanvasEnabled",
                         title = stringResource(Res.string.canvas),
-                        description = stringResource(Res.string.player_canvas_desc),
+                        description =
+                            stringResource(if (isDesktop) Res.string.peek_canvas_desktop_desc else Res.string.player_canvas_desc),
                         checked = settings.playerCanvasEnabled,
                     ) { settings.playerCanvasEnabled = it }
                 }
                 switch(
                     id = "animatedCovers",
                     title = stringResource(Res.string.enable_animated_covers),
-                    description = stringResource(Res.string.enable_animated_covers_desc),
+                    description =
+                        stringResource(
+                            if (isDesktop) Res.string.peek_animated_covers_desktop_desc else Res.string.enable_animated_covers_desc,
+                        ),
                     checked = settings.enableAnimatedCovers,
                 ) { settings.enableAnimatedCovers = it }
                 if (host.platform != SettingsPlatform.DESKTOP) {

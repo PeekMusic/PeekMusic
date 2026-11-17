@@ -252,11 +252,11 @@ fun PlayerCoreContent(
                 Spacer(Modifier.width(16.dp))
 
                 Box {
-                    // PeekMusic: Canvas instead of share (share stays in the ⋮ menu). Desktop has no separate
-                    // canvas setting, so the button switches animated covers (Spotify Canvas, Apple Music).
+                    // PeekMusic: Canvas instead of share (share stays in the ⋮ menu). Switches only the canvas;
+                    // animated covers keep their own setting, as on Android.
                     PeekCanvasLikeButtons(
                         canvasOn = Settings.shared.isCanvasEnabled,
-                        onCanvasClick = { Settings.shared.enableAnimatedCovers = !Settings.shared.enableAnimatedCovers },
+                        onCanvasClick = { Settings.shared.playerCanvasEnabled = !Settings.shared.playerCanvasEnabled },
                         isLiked = currentTrack?.let { PlayerState.isLiked(it.id) } == true,
                         onLikeClick = { currentTrack?.let { PlayerState.toggleLike(it) } },
                         groupHeight = 40.dp,

@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.metrolist.desktop.state.app.AppState
 import com.metrolist.shared.api.artwork.CanvasContentSource
+import com.metrolist.shared.api.artwork.isEnabled
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.artworkExplicitness
 import com.metrolist.shared.settings.Settings
@@ -39,21 +40,21 @@ internal class DesktopAnimatedArtwork(
 
     init {
         scope.launch {
+            // PeekMusic: Canvas (Spotify) and animated covers (Apple Music) are separate switches; watching only
+            // "either is on" kept a running canvas after Canvas was switched off while animated covers stayed on.
             snapshotFlow {
-                Triple(
+                listOf(
+                    Settings.shared.isCanvasEnabled,
                     Settings.shared.enableAnimatedCovers,
                     Settings.shared.animatedCoverResolution,
                     Settings.shared.canvasContentOrder,
-                ) to Settings.shared.canvasEnabledSources
-            }.distinctUntilChanged().collectLatest { (options, _) ->
-                val (enabled, _, _) = options
-                if (enabled) {
-                    currentTrack?.let(::fetchAnimatedCover)
-                } else {
-                    animatedCoverFetchJob?.cancel()
-                    _animatedCoverUrl = null
-                    animatedCoverSongId = null
-                }
+                    Settings.shared.canvasEnabledSources,
+                )
+            }.distinctUntilChanged().collectLatest {
+                animatedCoverFetchJob?.cancel()
+                _animatedCoverUrl = null
+                animatedCoverSongId = null
+                if (Settings.shared.isAnimatedArtworkOrCanvasEnabled) currentTrack?.let(::fetchAnimatedCover)
             }
         }
     }
@@ -70,7 +71,7 @@ internal class DesktopAnimatedArtwork(
                 previousAlbumId = previousTrack?.album?.id,
                 nextAlbumId = effectiveTrack?.album?.id,
                 animatedCoverUrl = _animatedCoverUrl,
-                animatedCoversEnabled = Settings.shared.enableAnimatedCovers,
+                animatedCoversEnabled = Settings.shared.isAnimatedArtworkOrCanvasEnabled,
             )
 
         if (retainedCoverUrl == null) animatedCoverFetchJob?.cancel()
@@ -83,8 +84,8 @@ internal class DesktopAnimatedArtwork(
     }
 
     private fun fetchAnimatedCover(song: SongItem) {
-        if (!Settings.shared.enableAnimatedCovers) return
-        val enabledSources = CanvasContentSource.parseEnabled(Settings.shared.canvasEnabledSources)
+        if (!Settings.shared.isAnimatedArtworkOrCanvasEnabled) return
+        val enabledSources = desktopArtworkSources()
         if (CanvasContentSource.SPOTIFY_CANVAS !in enabledSources && CanvasContentSource.APPLE_MUSIC !in enabledSources) {
             animatedCoverFetchJob?.cancel()
             _animatedCoverUrl = null
@@ -132,12 +133,12 @@ internal class DesktopAnimatedArtwork(
                     } catch (_: Exception) {
                         null
                     }
-                if (Settings.shared.enableAnimatedCovers && currentTrack?.id == songId) {
+                if (Settings.shared.isAnimatedArtworkOrCanvasEnabled && currentTrack?.id == songId) {
                     _animatedCoverUrl =
                         result?.let { (spotify, appleMusic) ->
                             CanvasContentSource
                                 .parseOrder(Settings.shared.canvasContentOrder)
-                                .filter { it in CanvasContentSource.parseEnabled(Settings.shared.canvasEnabledSources) }
+                                .filter { it in desktopArtworkSources() }
                                 .firstNotNullOfOrNull { source ->
                                     when (source) {
                                         CanvasContentSource.SPOTIFY_CANVAS -> spotify
@@ -150,4 +151,12 @@ internal class DesktopAnimatedArtwork(
                 }
             }
     }
+}
+
+/** PeekMusic: the sources picked in Settings, minus Spotify when Canvas is off and Apple Music when animated covers are off. */
+private fun desktopArtworkSources(): Set<CanvasContentSource> {
+    val settings = Settings.shared
+    return CanvasContentSource
+        .parseEnabled(settings.canvasEnabledSources)
+        .filterTo(mutableSetOf()) { it.isEnabled(settings.isCanvasEnabled, settings.enableAnimatedCovers) }
 }

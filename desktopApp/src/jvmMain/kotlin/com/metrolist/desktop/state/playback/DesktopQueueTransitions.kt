@@ -4,8 +4,7 @@ import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.isPodcast
 import com.metrolist.shared.playback.MusicPlayer
 import com.metrolist.shared.playback.MusicQueue
-import com.metrolist.shared.playback.playbackFadeThroughGains
-import com.metrolist.shared.playback.shouldPromotePlaybackCrossfade
+import com.metrolist.shared.playback.playbackCrossfadeGains
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.youtube.playback.PlaybackResource
 import kotlinx.coroutines.CoroutineScope
@@ -221,6 +220,11 @@ internal class DesktopQueueTransitions(
         val clock = DesktopCrossfadeClock(startPosition, fadeDurationMs)
         var progress = 0f
         var promoted = false
+        // PeekMusic: a real crossfade as on Android: the next song starts right away under the current one.
+        if (!player.startNextForCrossfade(token)) {
+            abortCrossfade()
+            return
+        }
         while (progress < 1f) {
             if (!allowed() || (!promoted && (!hasCurrentTarget() || !player.isPreloadedNextActive(token)))) {
                 abortCrossfade()
@@ -229,13 +233,14 @@ internal class DesktopQueueTransitions(
             val sampledPosition = player.currentPosition.value
             val sampledPlaying = player.isPlaying.value
             progress = maxOf(progress, clock.sample(sampledPosition, player.playbackSpeed.value, sampledPlaying, pendingEof))
-            val (outgoingGain, incomingGain) = playbackFadeThroughGains(progress)
+            val (outgoingGain, incomingGain) = playbackCrossfadeGains(progress)
             if (promoted) {
                 player.setTransitionVolume(incomingGain * 100f)
             } else {
                 player.setTransitionVolume(outgoingGain * 100f)
                 player.setNextVolume(incomingGain * 100f)
-                if (shouldPromotePlaybackCrossfade(incomingGain)) {
+                // PeekMusic: hand over once the outgoing song has faded out (upstream swaps at the first incoming sound).
+                if (progress >= 1f || outgoingGain <= PEEK_CROSSFADE_HANDOVER_GAIN) {
                     val incomingStartPosition = player.nextPlayerPosition
                     promoted =
                         player.swapToNext(
@@ -315,6 +320,9 @@ internal class DesktopQueueTransitions(
         }
     }
 }
+
+/** PeekMusic: outgoing gain below which the crossfade hands the player over to the next song. */
+private const val PEEK_CROSSFADE_HANDOVER_GAIN = 0.02f
 
 internal fun desktopRemainingOutputMs(
     positionMs: Long,

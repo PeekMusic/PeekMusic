@@ -83,6 +83,7 @@ import com.metrolist.shared.generated.resources.subtitles
 import com.metrolist.shared.generated.resources.video_viewer
 import com.metrolist.shared.generated.resources.volume
 import com.metrolist.shared.model.RepeatMode
+import com.metrolist.shared.peek.rememberPeekPressSource
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import com.metrolist.shared.ui.navigation.navigationPopupSource
@@ -327,10 +328,13 @@ actual fun PlayerConnectedButtonGroup(
                 actions.forEachIndexed { index, action ->
                     customItem(
                         buttonGroupContent = {
-                            val interactionSource = remember { MutableInteractionSource() }
+                            val interactionSource = rememberPeekPressSource() // PeekMusic: holds the press so the expressive morph shows on a mouse click too
                             val startsSegment = index == 0
                             val endsSegment = index == lastVisibleIndex
-                            Box {
+                            // PeekMusic: animateWidth belongs on the group item itself (this Box); the button inside was
+                            // never widened, which is the "bounce" the like button has. propagateMinConstraints hands the
+                            // group's wider width down to the button.
+                            Box(Modifier.animateWidth(interactionSource, 12.dp), propagateMinConstraints = true) {
                                 ToggleButton(
                                     checked = action.checked == true,
                                     interactionSource = interactionSource,
@@ -368,7 +372,6 @@ actual fun PlayerConnectedButtonGroup(
                                     contentPadding = PaddingValues(horizontal = if (action.text != null) 8.dp else 0.dp),
                                     modifier =
                                         Modifier
-                                            .animateWidth(interactionSource, 12.dp) // PeekMusic: as on Android
                                             .navigationPopupSource()
                                             .height(height)
                                             .then(

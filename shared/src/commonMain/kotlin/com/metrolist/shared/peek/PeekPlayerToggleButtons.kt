@@ -9,7 +9,6 @@ package com.metrolist.shared.peek
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -50,8 +49,8 @@ import com.metrolist.shared.generated.resources.canvas
 import com.metrolist.shared.generated.resources.more_options
 import com.metrolist.shared.generated.resources.peek_title
 import com.metrolist.shared.settings.Settings
-import com.metrolist.shared.ui.components.playerInactiveControlContainerColor
 import com.metrolist.shared.ui.components.playerControlBlend
+import com.metrolist.shared.ui.components.playerInactiveControlContainerColor
 import com.metrolist.shared.ui.haptics.HapticEvent
 import com.metrolist.shared.ui.haptics.rememberMetrolistHaptics
 import com.metrolist.shared.ui.icons.MetrolistIcons
@@ -181,7 +180,7 @@ private fun PeekConnectedButtonGroup(
             checkedContainerColor = MaterialTheme.colorScheme.primary,
             checkedContentColor = MaterialTheme.colorScheme.onPrimary,
         )
-    val interactionSources = remember(buttons.size) { List(buttons.size) { MutableInteractionSource() } }
+    val interactionSources = remember(buttons.size) { List(buttons.size) { peekPressSource() } }
     val shapes: List<ToggleButtonShapes> =
         buttons.indices.map { index ->
             when (index) {
