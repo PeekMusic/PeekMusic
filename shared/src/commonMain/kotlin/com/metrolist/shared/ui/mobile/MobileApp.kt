@@ -1669,6 +1669,8 @@ fun MobileApp(
                                     loader = remember(detailStates, entry) { detailStates.entry(checkNotNull(entry)).album(route.id) },
                                     onSwipeFeedback = onSwipeFeedback,
                                     onDownload = downloadSongs,
+                                    downloadedSongIds = downloadedSongIds,
+                                    onRemoveDownloads = removeDownloads,
                                     onAddToPlaylist = playlistWorkflow::select,
                                     albumId = route.id,
                                     fallbackTitle = route.title,
@@ -1745,6 +1747,8 @@ fun MobileApp(
                                     MobilePlaylistScreen(
                                         bottomContentPadding = playerContentPadding,
                                         onDownload = downloadSongs,
+                                        downloadedSongIds = downloadedSongIds,
+                                        onRemoveDownloads = removeDownloads,
                                         onAddToPlaylist = playlistWorkflow::select,
                                         database = database,
                                         onSwipeFeedback = onSwipeFeedback,
@@ -1829,6 +1833,7 @@ fun MobileApp(
                     onCopyText = { text -> scope.launch { clipboard.setText(text) } },
                     onShareText = playerServices::shareText,
                     scope = scope,
+                    currentAlbumId = (currentRoute as? MobileRoute.Album)?.id,
                 )
             }
 

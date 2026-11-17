@@ -122,6 +122,7 @@ internal fun MobileItemMenu(
     onShowSongDetails: (SongItem) -> Unit,
     scope: CoroutineScope,
     onShareText: ((String) -> Unit)? = null,
+    currentAlbumId: String? = null, // PeekMusic: no "view album" for the album page that is open
 ) {
     if (item is PlaylistItem && item.id.startsWith("auto:") && item.id != "auto:liked") {
         BuiltinPlaylistMenu(item, database, onDismiss)
@@ -215,7 +216,7 @@ internal fun MobileItemMenu(
                                 onOpenArtist(artistId)
                             },
                             onGoToAlbum =
-                                song.album?.id?.let { albumId ->
+                                song.album?.id?.takeIf { it != currentAlbumId }?.let { albumId ->
                                     {
                                         onDismiss()
                                         onOpenAlbum(albumId, song.album.name)

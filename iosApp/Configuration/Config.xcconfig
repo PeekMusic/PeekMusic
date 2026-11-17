@@ -1,10 +1,10 @@
 //
 // Config.xcconfig
-// Metrolist iOS App Scaffold Configuration
+// PeekMusic iOS app configuration (fork of Metrolist)
 //
 
-PRODUCT_NAME = Metrolist
-PRODUCT_BUNDLE_IDENTIFIER = com.metrolist.MetrolistApp
+PRODUCT_NAME = PeekMusic
+PRODUCT_BUNDLE_IDENTIFIER = com.peekmusic.app
 CODE_SIGN_ENTITLEMENTS = Configuration/iosApp.entitlements
 INFOPLIST_PREPROCESS = YES
 INFOPLIST_PREFIX_HEADER = $(DERIVED_FILE_DIR)/MetrolistVersion.h

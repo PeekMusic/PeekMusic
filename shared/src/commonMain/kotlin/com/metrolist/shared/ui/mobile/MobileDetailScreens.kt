@@ -65,6 +65,7 @@ import com.metrolist.shared.model.playlistOccurrenceKey
 import com.metrolist.shared.model.playlistSearchIndices
 import com.metrolist.shared.model.sortedForPlaylist
 import com.metrolist.shared.model.toSongItem
+import com.metrolist.shared.peek.rememberPeekMobileHeaderDownload
 import com.metrolist.shared.playback.fullArtistShelfQueue
 import com.metrolist.shared.playlist.PlaylistChanges
 import com.metrolist.shared.playlist.addSongToStoredPlaylist
@@ -134,6 +135,9 @@ internal fun MobileAlbumScreen(
     onAddToPlaylist: (List<SongItem>) -> Unit,
     modifier: Modifier = Modifier,
     bottomContentPadding: Dp = 0.dp,
+    // PeekMusic: header download button, see PeekHeaderDownload.
+    downloadedSongIds: Set<String> = emptySet(),
+    onRemoveDownloads: ((List<String>) -> Unit)? = null,
 ) {
     val isFavorite by remember(albumId) { AlbumLikeState.albumLiked(albumId) }.collectAsState(false)
     val favoriteErrorText = stringResource(Res.string.error_occurred)
@@ -170,7 +174,10 @@ internal fun MobileAlbumScreen(
         else -> {
             val loaded = albumPage
             val page = remember(loaded, blockedVersion) { BlockedContent.filterAlbumPage(loaded) }
+            val headerDownload =
+                onRemoveDownloads?.let { rememberPeekMobileHeaderDownload(page.songs, downloadedSongIds, onDownload, it) }
             AlbumContent(
+                headerDownload = headerDownload,
                 isTrackSelected = { selection.isSelected(it.id) },
                 trackContainer = { song, content -> SongSwipeActions(song, onSwipeFeedback, content = content) },
                 album = page.album,
@@ -409,6 +416,9 @@ internal fun MobilePlaylistScreen(
     onSwipeFeedback: (String) -> Unit,
     modifier: Modifier = Modifier,
     bottomContentPadding: Dp = 0.dp,
+    // PeekMusic: header download button, see PeekHeaderDownload.
+    downloadedSongIds: Set<String> = emptySet(),
+    onRemoveDownloads: ((List<String>) -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
     val editMutex = remember(playlistId) { Mutex() }
@@ -675,7 +685,10 @@ internal fun MobilePlaylistScreen(
                     if (selection.active) displayedRows.filter { selection.isSelected(it.second) }.map { it.first } else emptyList()
                 }
             val displayedKeys = remember(displayedRows) { displayedRows.mapTo(mutableSetOf()) { it.second } }
+            val headerDownload =
+                onRemoveDownloads?.let { rememberPeekMobileHeaderDownload(songs, downloadedSongIds, onDownload, it) }
             PlaylistContent(
+                headerDownload = headerDownload,
                 isTrackSelected = { selection.isSelected(key(it)) },
                 trackContainer = {
                     song,

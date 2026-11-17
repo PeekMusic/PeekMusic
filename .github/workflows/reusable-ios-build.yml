@@ -16,7 +16,7 @@ on:
       artifact-name:
         description: Workflow artifact name
         required: false
-        default: Metrolist-iOS-IPA
+        default: PeekMusic-iOS-IPA
         type: string
       build-ipa:
         description: Build the IPA for stable releases
@@ -38,6 +38,11 @@ on:
         required: false
         default: false
         type: boolean
+      ipa-configuration:
+        description: PeekMusic test IPAs use Debug (fast link on GitHub's runners); releases use Release
+        required: false
+        default: Release
+        type: string
     secrets:
       SENTRY_AUTH_TOKEN:
         required: false
@@ -56,7 +61,7 @@ jobs:
   build-ios:
     name: Validate iOS
     if: inputs.run-verification
-    runs-on: blacksmith-6vcpu-macos-latest
+    runs-on: macos-latest # PeekMusic: GitHub-hosted, we have no Blacksmith runners
     timeout-minutes: 45
     env:
       LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
@@ -158,14 +163,15 @@ jobs:
   package-ios:
     name: Package iOS IPA
     if: inputs.build-ipa || inputs.upload-artifact || inputs.staging-release-tag != ''
-    runs-on: blacksmith-6vcpu-macos-latest
-    timeout-minutes: 45
+    runs-on: macos-15-intel # PeekMusic: GitHub-hosted; arm64 macOS runners were not acquired, the device IPA builds on Intel too
+    timeout-minutes: 120 # PeekMusic: the release link alone takes over 30 min on the 4-core Intel runner
     env:
       LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
       LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
+      # PeekMusic: the release framework link ran out of heap at 60 % on the 14 GB Intel runner.
       GRADLE_OPTS: >-
-        -Dorg.gradle.jvmargs="-XX:MaxRAMPercentage=60.0 -XX:+UseParallelGC -Dkotlin.daemon.jvm.options=-XX:MaxRAMPercentage=60.0"
-      ORG_GRADLE_PROJECT_org.gradle.workers.max: "2"
+        -Dorg.gradle.jvmargs="-XX:MaxRAMPercentage=85.0 -XX:+UseParallelGC -Dkotlin.daemon.jvm.options=-XX:MaxRAMPercentage=30.0"
+      ORG_GRADLE_PROJECT_org.gradle.workers.max: "1"
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -219,21 +225,22 @@ jobs:
           test -n "$LYPRIO_BASE_URL" || { echo "LYPRIO_BASE_URL is required for tester releases" >&2; exit 1; }
           test -n "$LYPRIO_HMAC_KEY" || { echo "LYPRIO_HMAC_KEY is required for tester releases" >&2; exit 1; }
 
-      - name: Compile iOS release framework
+      - name: Compile iOS framework
         env:
-          CONFIGURATION: Release
+          CONFIGURATION: ${{ inputs.ipa-configuration }}
           ORG_GRADLE_PROJECT_metrolist.verifyPackaging: ${{ inputs.run-verification }}
           LYPRIO_BASE_URL: ${{ secrets.LYPRIO_BASE_URL }}
           LYPRIO_HMAC_KEY: ${{ secrets.LYPRIO_HMAC_KEY }}
-        run: ./gradlew :shared:linkReleaseFrameworkIosArm64 --no-configuration-cache
+        run: ./gradlew ":shared:link${CONFIGURATION}FrameworkIosArm64" --no-configuration-cache
 
       - name: Build iOS IPA
         env:
           ORG_GRADLE_PROJECT_metrolist.verifyPackaging: ${{ inputs.run-verification }}
           LYPRIO_BASE_URL: ${{ secrets.LYPRIO_BASE_URL }}
           LYPRIO_HMAC_KEY: ${{ secrets.LYPRIO_HMAC_KEY }}
+          IPA_CONFIGURATION: ${{ inputs.ipa-configuration }}
         run: |
-          ./scripts/build_ios.sh --ipa
+          if [ "$IPA_CONFIGURATION" = "Debug" ]; then ./scripts/build_ios.sh --ipa-debug; else ./scripts/build_ios.sh --ipa; fi
 
       - name: Upload iOS debug symbols to Sentry
         if: inputs.upload-sentry
@@ -264,7 +271,7 @@ jobs:
           actual_sha256="$(shasum -a 256 "$cli")"
           [[ "${actual_sha256%% *}" == "$sha256" ]]
           chmod +x "$cli"
-          dsyms="iosApp/build/Metrolist.xcarchive/dSYMs"
+          dsyms="iosApp/build/PeekMusic.xcarchive/dSYMs"
           find "$dsyms" -maxdepth 1 -name '*.dSYM' | grep -q . || { echo "No dSYMs in $dsyms" >&2; exit 1; }
           "$cli" debug-files upload \
             --org metrolistgroup \
@@ -278,7 +285,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7 / v4
         with:
           name: ${{ inputs.artifact-name }}
-          path: dist/Metrolist.ipa
+          path: dist/PeekMusic.ipa
           if-no-files-found: error
           retention-days: 4
 
@@ -287,4 +294,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           STAGING_RELEASE_TAG: ${{ inputs.staging-release-tag }}
-        run: gh release upload "$STAGING_RELEASE_TAG" dist/Metrolist.ipa --clobber --repo "$GITHUB_REPOSITORY"
+        run: gh release upload "$STAGING_RELEASE_TAG" dist/PeekMusic.ipa --clobber --repo "$GITHUB_REPOSITORY"

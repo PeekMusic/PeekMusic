@@ -44,6 +44,9 @@ import com.metrolist.shared.generated.resources.lyrics_romanize_title
 import com.metrolist.shared.generated.resources.lyrics_show_translations
 import com.metrolist.shared.generated.resources.no_provider_results_found
 import com.metrolist.shared.generated.resources.offset_ms
+import com.metrolist.shared.generated.resources.peek_title
+import com.metrolist.shared.generated.resources.peek_translation_source_builtin
+import com.metrolist.shared.generated.resources.peek_translation_source_google
 import com.metrolist.shared.generated.resources.refetch
 import com.metrolist.shared.generated.resources.save
 import com.metrolist.shared.generated.resources.sources
@@ -51,6 +54,7 @@ import com.metrolist.shared.model.LyricsProviderResult
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.previewAspectRatio
 import com.metrolist.shared.model.previewThumbnailUrl
+import com.metrolist.shared.peek.PeekBuiltInTranslations
 import com.metrolist.shared.peek.PeekPlayerMenu
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.settings.displayName
@@ -103,8 +107,23 @@ fun LyricsMenu(
         } else {
             Settings.shared.lyricsRomanizationEnabled
         }
-    var manualAiTranslationChecked by remember(lyricsUiState.manualAiTranslationEnabled) {
-        mutableStateOf(lyricsUiState.manualAiTranslationEnabled)
+    // PeekMusic: the Peek switch and one translation switch instead of upstream's AI items, as on Android.
+    var peekOn by remember { mutableStateOf(Settings.shared.showLyricsOnPlayer) }
+    var translationsOn by remember {
+        mutableStateOf(Settings.shared.lyricsAiTranslationEnabled && Settings.shared.lyricsShowTranslations)
+    }
+    val hasTranslations =
+        lyricsUiState.lyrics.any { !it.translatedText.isNullOrBlank() || !it.backgroundTranslatedText.isNullOrBlank() }
+    val builtInTranslationSource = remember(lyricsUiState.rawLyrics) { PeekBuiltInTranslations.builtInSource(lyricsUiState.rawLyrics) }
+
+    fun setTranslations(enabled: Boolean) {
+        translationsOn = enabled
+        Settings.shared.lyricsShowTranslations = enabled
+        if (enabled) {
+            Settings.shared.lyricsAiTranslationEnabled = true
+            // Nothing translated yet, e.g. after a failure: translate now.
+            if (!hasTranslations) onManualAiTranslationChange?.invoke(true)
+        }
     }
 
     PopupVisibility(visible = showEditDialog) {
@@ -201,57 +220,53 @@ fun LyricsMenu(
             Material3MenuGroup(
                 items =
                     listOfNotNull(
-                        if (Settings.shared.lyricsAiTranslationEnabled) {
-                            Material3MenuItemData(
-                                title = { Text(stringResource(Res.string.ai_translation_for_track)) },
-                                icon = {
-                                    Icon(
-                                        imageVector = MetrolistIcons.Outlined.Translate,
-                                        contentDescription = null,
-                                    )
+                        // PeekMusic: translation is automatic (Google Translate, or the one shipped with the lyrics),
+                        // so the per-track AI switch is gone; see the Android LyricsMenu.
+                        Material3MenuItemData(
+                            title = { Text(stringResource(Res.string.peek_title)) },
+                            icon = { Icon(imageVector = MetrolistIcons.Outlined.Lyrics, contentDescription = null) },
+                            onClick = {
+                                peekOn = !peekOn
+                                Settings.shared.showLyricsOnPlayer = peekOn
+                            },
+                            trailingContent = {
+                                ExpressiveSwitch(
+                                    checked = peekOn,
+                                    onCheckedChange = {
+                                        peekOn = it
+                                        Settings.shared.showLyricsOnPlayer = it
+                                    },
+                                )
+                            },
+                        ),
+                        Material3MenuItemData(
+                            title = { Text(stringResource(Res.string.lyrics_show_translations)) },
+                            description =
+                                if (hasTranslations) {
+                                    {
+                                        Text(
+                                            builtInTranslationSource?.let {
+                                                stringResource(Res.string.peek_translation_source_builtin, it)
+                                            } ?: stringResource(Res.string.peek_translation_source_google),
+                                        )
+                                    }
+                                } else {
+                                    null
                                 },
-                                onClick = {
-                                    manualAiTranslationChecked = !manualAiTranslationChecked
-                                    onManualAiTranslationChange?.invoke(manualAiTranslationChecked)
-                                },
-                                trailingContent = {
-                                    ExpressiveSwitch(
-                                        checked = manualAiTranslationChecked,
-                                        onCheckedChange = {
-                                            manualAiTranslationChecked = it
-                                            onManualAiTranslationChange?.invoke(it)
-                                        },
-                                    )
-                                },
-                            )
-                        } else {
-                            null
-                        },
-                        if (lyricsUiState.lyrics.any {
-                                !it.translatedText.isNullOrBlank() || !it.backgroundTranslatedText.isNullOrBlank()
-                            }
-                        ) {
-                            Material3MenuItemData(
-                                title = { Text(stringResource(Res.string.lyrics_show_translations)) },
-                                icon = {
-                                    Icon(
-                                        imageVector = MetrolistIcons.Outlined.Translate,
-                                        contentDescription = null,
-                                    )
-                                },
-                                onClick = {
-                                    Settings.shared.lyricsShowTranslations = !Settings.shared.lyricsShowTranslations
-                                },
-                                trailingContent = {
-                                    ExpressiveSwitch(
-                                        checked = Settings.shared.lyricsShowTranslations,
-                                        onCheckedChange = { Settings.shared.lyricsShowTranslations = it },
-                                    )
-                                },
-                            )
-                        } else {
-                            null
-                        },
+                            icon = {
+                                Icon(
+                                    imageVector = MetrolistIcons.Outlined.Translate,
+                                    contentDescription = null,
+                                )
+                            },
+                            onClick = { setTranslations(!translationsOn) },
+                            trailingContent = {
+                                ExpressiveSwitch(
+                                    checked = translationsOn,
+                                    onCheckedChange = { setTranslations(it) },
+                                )
+                            },
+                        ),
                         Material3MenuItemData(
                             title = {
                                 Text(

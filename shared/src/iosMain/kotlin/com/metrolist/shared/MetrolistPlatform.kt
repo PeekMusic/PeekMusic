@@ -7,6 +7,7 @@ import com.metrolist.shared.db.MusicDatabase
 import com.metrolist.shared.db.daos.DatabaseDao
 import com.metrolist.shared.db.getDatabaseBuilder
 import com.metrolist.shared.discord.DiscordRpcManager
+import com.metrolist.shared.peek.PeekDefaults
 import com.metrolist.shared.playback.MusicPlayer
 import com.metrolist.shared.repository.LyricsRepository
 import com.metrolist.shared.scrobble.ScrobbleSessions
@@ -32,6 +33,9 @@ object MetrolistPlatform {
         if (isInitialized) return
         IosBackupRestoreManager().recoverInterruptedRestore()
         isInitialized = true
+        // PeekMusic: our defaults and the fixed values of hidden settings, as on Android and desktop.
+        PeekDefaults.apply()
+        PeekDefaults.pinHidden()
         startKoin {
             modules(
                 coreModule,

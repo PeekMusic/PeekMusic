@@ -53,30 +53,35 @@ import com.metrolist.shared.ui.utils.artistArtworkShape
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun MediaMenuSheetContent(model: MediaMenuModel) {
-    ExpressiveMediaMenuHeader(
-        title = model.title,
-        subtitle = model.subtitle,
-        subtitleLinks = model.subtitleLinks,
-        thumbnail = model.thumbnail,
-        thumbnailAspectRatio = model.thumbnailAspectRatio,
-        fallbackIcon = model.fallbackIcon,
-        isExplicit = model.isExplicit,
-        artistId = model.artistId,
-        modifier = Modifier.padding(top = 12.dp),
-        actions =
-            model.headerActions.map { action ->
-                MediaMenuHeaderAction(
-                    icon = action.icon,
-                    contentDescription = action.title,
-                    onClick = action.onClick,
-                    isPrimary = action.prominent,
-                    isToggle = action.selected != null,
-                    isChecked = action.selected == true,
-                    isLoading = action.isLoading,
-                )
-            },
-    )
+fun MediaMenuSheetContent(
+    model: MediaMenuModel,
+    showHeader: Boolean = true, // PeekMusic: the player menu leaves the song to the player, see PeekPlayerMenu.
+) {
+    if (showHeader) {
+        ExpressiveMediaMenuHeader(
+            title = model.title,
+            subtitle = model.subtitle,
+            subtitleLinks = model.subtitleLinks,
+            thumbnail = model.thumbnail,
+            thumbnailAspectRatio = model.thumbnailAspectRatio,
+            fallbackIcon = model.fallbackIcon,
+            isExplicit = model.isExplicit,
+            artistId = model.artistId,
+            modifier = Modifier.padding(top = 12.dp),
+            actions =
+                model.headerActions.map { action ->
+                    MediaMenuHeaderAction(
+                        icon = action.icon,
+                        contentDescription = action.title,
+                        onClick = action.onClick,
+                        isPrimary = action.prominent,
+                        isToggle = action.selected != null,
+                        isChecked = action.selected == true,
+                        isLoading = action.isLoading,
+                    )
+                },
+        )
+    }
     model.description?.takeIf(String::isNotBlank)?.let { description ->
         ExpandableText(
             text = description,

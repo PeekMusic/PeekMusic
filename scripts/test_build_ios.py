@@ -36,8 +36,8 @@ def main():
     xcconfig_path = repository / "iosApp/Configuration/Config.xcconfig"
     xcconfig = xcconfig_path.read_text()
     inherited_settings = {
-        "PRODUCT_NAME": "Metrolist",
-        "PRODUCT_BUNDLE_IDENTIFIER": "com.metrolist.MetrolistApp",
+        "PRODUCT_NAME": "PeekMusic",
+        "PRODUCT_BUNDLE_IDENTIFIER": "com.peekmusic.app",
         "CODE_SIGN_ENTITLEMENTS": "Configuration/iosApp.entitlements",
         "SWIFT_VERSION": "5.9",
         "IPHONEOS_DEPLOYMENT_TARGET": "17.0",
@@ -56,7 +56,7 @@ def main():
         assert f"{setting} = {value}" in xcconfig, setting
         assert f"{setting} =" not in xcode_project, setting
     entitlements = plistlib.loads((repository / "iosApp/Configuration/iosApp.entitlements").read_bytes())
-    assert entitlements["com.apple.developer.associated-domains"] == ["applinks:metrolist.cc"]
+    assert entitlements["com.apple.developer.associated-domains"] == ["applinks:listen.peekmusic.org"]
     build_script = (repository / "scripts/build_ios.sh").read_text()
     for check in ("CFBundleIdentifier", "CFBundleShortVersionString", "CFBundleVersion", "lipo", "vtool", "unzip -tq"):
         assert check in build_script, f"IPA check missing: {check}"
@@ -64,7 +64,7 @@ def main():
     reusable = (repository / ".github/workflows/reusable-ios-build.yml").read_text()
     reusable_purged = "\n".join(line for line in reusable.splitlines() if not line.lstrip().startswith("#"))
     assert 'if: inputs.staging-release-tag != \'\'' in reusable_purged
-    assert 'gh release upload "$STAGING_RELEASE_TAG" dist/Metrolist.ipa' in reusable_purged
+    assert 'gh release upload "$STAGING_RELEASE_TAG" dist/PeekMusic.ipa' in reusable_purged
     assert "if: inputs.build-ipa || inputs.upload-artifact || inputs.staging-release-tag != ''" in reusable_purged
     assert "Build iOS Simulator" not in reusable_purged
     test_job = reusable_purged.split("  build-ios:\n", 1)[1].split("  package-ios:\n", 1)[0]

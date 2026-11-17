@@ -230,8 +230,6 @@ fun songMediaMenuModel(
     val moveUpLabel = stringResource(Res.string.move_up)
     val moveDownLabel = stringResource(Res.string.move_down)
     val removeFromPlaylistLabel = stringResource(Res.string.remove_from_playlist)
-    val editLabel = stringResource(Res.string.edit)
-    val editDesc = stringResource(Res.string.edit_song_description)
     val artistAction = artistNavigationMenuAction(song.artists, onGoToArtist, onDismiss)
     val download =
         downloadAction(downloadState, downloadProgress, false, onDismiss, onDownload)?.let {
@@ -323,37 +321,16 @@ fun songMediaMenuModel(
                 extras = listOfNotNull(pin, hide, deleteUploadAction) + additionalActions,
             )
         } else {
-            songMenuActionGroups(
-                isPlayerMenu = isPlayerMenu,
-                queue = queue,
-                removal = removal,
-                library =
-                    listOfNotNull(
-                        download.takeIf { isPlayerMenu },
-                        pin,
-                        libraryAction,
-                        hide,
-                        dislike,
-                        blockArtist,
-                        download.takeUnless { isPlayerMenu },
-                        deleteUploadAction,
-                        onEdit?.let {
-                            PlayerMenuAction(
-                                MetrolistIcons.Outlined.Edit,
-                                editLabel,
-                                editDesc,
-                                onClick = it,
-                            )
-                        },
-                    ),
-                navigation =
-                    buildList {
-                        artistAction?.let(::add)
-                        albumAction?.let(::add)
-                        if (isPlayerMenu) detailsAction?.let(::add)
-                    },
-                additional = listOfNotNull(detailsAction.takeUnless { isPlayerMenu }) + additionalActions,
-            )
+            // PeekMusic: the player menu as on Android (see PeekPlayerMenu): artist and album, then download,
+            // dislike, block and details, the audio tools last; no pin, hide, library or edit for the playing song.
+            listOf(
+                queue,
+                removal,
+                listOfNotNull(deleteUploadAction),
+                listOfNotNull(artistAction, albumAction),
+                listOfNotNull(download, dislike, blockArtist, detailsAction),
+                additionalActions,
+            ).filter { it.isNotEmpty() }
         }
 
     return MediaMenuModel(

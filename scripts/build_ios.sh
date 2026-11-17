@@ -9,7 +9,7 @@ build_dir="$root_dir/iosApp/build"
 derived_data_dir="$root_dir/iosApp/DerivedData"
 scheme="iosApp"
 project_path="$root_dir/iosApp/iosApp.xcodeproj"
-bundle_id="com.metrolist.MetrolistApp"
+bundle_id="com.peekmusic.app"
 
 mode="sim"
 configuration="Debug"
@@ -20,6 +20,12 @@ while [[ $# -gt 0 ]]; do
     --ipa|--release)
       mode="ipa"
       configuration="Release"
+      shift
+      ;;
+    --ipa-debug)
+      # PeekMusic: test IPA with the debug framework, which links in minutes instead of half an hour on CI.
+      mode="ipa"
+      configuration="Debug"
       shift
       ;;
     --device)
@@ -38,13 +44,13 @@ while [[ $# -gt 0 ]]; do
       ;;
     --clean)
       echo "Cleaning iOS build artifacts..."
-      rm -rf "$build_dir" "$derived_data_dir" "$dist_dir/Metrolist.ipa" "$dist_dir/Metrolist.app"
+      rm -rf "$build_dir" "$derived_data_dir" "$dist_dir/PeekMusic.ipa" "$dist_dir/PeekMusic.app"
       echo "Clean finished."
       exit 0
       ;;
     *)
       echo "Unknown option: $1"
-      echo "Usage: $0 [--sim|--ipa|--device] [--run] [--clean]"
+      echo "Usage: $0 [--sim|--ipa|--ipa-debug|--device] [--run] [--clean]"
       exit 1
       ;;
   esac
@@ -61,12 +67,12 @@ marketing_version="$(bash "$root_dir/scripts/ios_version.sh")"
 build_version="$marketing_version"
 
 echo "=================================================="
-echo " Building Metrolist iOS ($configuration - Mode: $mode)"
+echo " Building PeekMusic iOS ($configuration - Mode: $mode)"
 echo "=================================================="
 
 if [[ "$mode" == "ipa" ]]; then
   echo "Step 1: Preparing app bundle for IPA packaging..."
-  archive_path="$build_dir/Metrolist.xcarchive"
+  archive_path="$build_dir/PeekMusic.xcarchive"
   rm -rf "$archive_path"
   
   xcodebuild archive \
@@ -104,13 +110,13 @@ if [[ "$mode" == "ipa" ]]; then
 
   echo "Step 2: Creating unsigned IPA package in dist/..."
   payload_dir="$build_dir/Payload"
-  rm -rf "$payload_dir" "$dist_dir/Metrolist.ipa"
+  rm -rf "$payload_dir" "$dist_dir/PeekMusic.ipa"
   mkdir -p "$payload_dir"
   cp -R "$app_bundle" "$payload_dir/"
   
-  (cd "$build_dir" && zip -qr "$dist_dir/Metrolist.ipa" Payload)
-  unzip -tq "$dist_dir/Metrolist.ipa"
-  echo "IPA package created: $dist_dir/Metrolist.ipa"
+  (cd "$build_dir" && zip -qr "$dist_dir/PeekMusic.ipa" Payload)
+  unzip -tq "$dist_dir/PeekMusic.ipa"
+  echo "IPA package created: $dist_dir/PeekMusic.ipa"
   echo "You can install this IPA using AltStore, SideStore, TrollStore, or Sideloadly."
 
 elif [[ "$mode" == "sim" ]]; then
@@ -128,9 +134,9 @@ elif [[ "$mode" == "sim" ]]; then
 
   app_path=$(find "$derived_data_dir/Build/Products/$configuration-iphonesimulator" -name "*.app" -type d | head -n 1)
   if [[ -n "$app_path" && -d "$app_path" ]]; then
-    rm -rf "$dist_dir/Metrolist.app"
-    cp -R "$app_path" "$dist_dir/Metrolist.app"
-    echo "Simulator App bundle created: $dist_dir/Metrolist.app"
+    rm -rf "$dist_dir/PeekMusic.app"
+    cp -R "$app_path" "$dist_dir/PeekMusic.app"
+    echo "Simulator App bundle created: $dist_dir/PeekMusic.app"
   else
     echo "Error: Could not find built app bundle in derived data."
     exit 1
@@ -139,7 +145,7 @@ elif [[ "$mode" == "sim" ]]; then
   if [[ "$run_after_build" == true ]]; then
     echo "Step 2: Deploying and launching on booted iOS Simulator..."
     if xcrun simctl list devices | grep -q "Booted"; then
-      xcrun simctl install booted "$dist_dir/Metrolist.app"
+      xcrun simctl install booted "$dist_dir/PeekMusic.app"
       xcrun simctl launch booted "$bundle_id"
       echo "App launched on iOS Simulator."
     else

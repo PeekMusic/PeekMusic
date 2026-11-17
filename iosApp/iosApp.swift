@@ -96,7 +96,7 @@ private func startSentryReporting() {
         options.tracesSampleRate = 0.0
         options.failedRequestTargets = [
             try? NSRegularExpression(
-                pattern: #"^https://(?:(?:[a-z0-9-]+\.)*metrolist\.cc|metroserverx\.meowery\.eu)(?::443)?(?:[/?#]|$)"#,
+                pattern: #"^https://(?:[a-z0-9-]+\.)*peekmusic\.org(?::443)?(?:[/?#]|$)"#,
                 options: .caseInsensitive
             )
         ].compactMap { $0 }

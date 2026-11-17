@@ -2,6 +2,13 @@ name: Build iOS
 
 on:
   workflow_dispatch:
+    inputs:
+      configuration:
+        # PeekMusic: Debug links in minutes on GitHub's runners and is enough for test installs.
+        description: Framework configuration for the IPA
+        type: choice
+        options: [Debug, Release]
+        default: Debug
 
 concurrency:
   # Dispatched IPA builds get their own group so pushes to main cannot cancel them.
@@ -17,6 +24,7 @@ jobs:
     with:
       upload-artifact: ${{ github.event_name == 'workflow_dispatch' }}
       cache-read-only: ${{ github.event_name == 'pull_request' }}
+      ipa-configuration: ${{ inputs.configuration || 'Release' }}
     secrets:
       GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       LYPRIO_BASE_URL: ${{ secrets.LYPRIO_BASE_URL }}

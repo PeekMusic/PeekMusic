@@ -36,6 +36,7 @@ import com.metrolist.shared.generated.resources.unavailable
 import com.metrolist.shared.listentogether.ListenTogetherManager
 import com.metrolist.shared.listentogether.ListenTogetherRoomRole
 import com.metrolist.shared.model.SongItem
+import com.metrolist.shared.peek.PeekPlayerMenu
 import com.metrolist.shared.playback.LocalPlayerSession
 import com.metrolist.shared.settings.BlockedContent
 import com.metrolist.shared.settings.Settings
@@ -305,9 +306,10 @@ internal class MobilePlayerPlatform(
                                     onDismiss()
                                     onNavigateToListenTogether()
                                 },
-                            ).takeIf { Settings.shared.listenTogetherEnabled },
+                            ).takeIf { PeekPlayerMenu.SHOW_LISTEN_TOGETHER && Settings.shared.listenTogetherEnabled },
                         ),
                 ),
+                showHeader = PeekPlayerMenu.SHOW_HEADER, // PeekMusic: as on Android
             )
         }
     }
