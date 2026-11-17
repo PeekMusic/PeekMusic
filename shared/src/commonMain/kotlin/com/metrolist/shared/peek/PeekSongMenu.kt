@@ -8,6 +8,9 @@ const val PEEK_SONG_MENU_PLAY = false
 /** No "refetch metadata" in song menus; a repair tool that almost always finds nothing newer. */
 const val PEEK_SONG_MENU_REFETCH = false
 
+/** No local artist-name editor in the artist menu, like the song editor that left the song menu. */
+const val PEEK_ARTIST_MENU_EDIT = false
+
 /**
  * PeekMusic's song menu, in the same order as the player menu: queue, playlist moves, artist and album,
  * then download, dislike, block and details, and the rarely used extras last. Subtitles that only repeat

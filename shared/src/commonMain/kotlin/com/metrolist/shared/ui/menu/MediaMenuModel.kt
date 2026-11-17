@@ -54,7 +54,6 @@ import com.metrolist.shared.generated.resources.remove_from_library
 import com.metrolist.shared.generated.resources.remove_from_playlist
 import com.metrolist.shared.generated.resources.remove_from_saved_podcasts
 import com.metrolist.shared.generated.resources.rename
-import com.metrolist.shared.generated.resources.rename_playlist_description
 import com.metrolist.shared.generated.resources.save_podcast
 import com.metrolist.shared.generated.resources.select_songs
 import com.metrolist.shared.generated.resources.share
@@ -75,6 +74,7 @@ import com.metrolist.shared.model.PodcastItem
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.previewAspectRatio
 import com.metrolist.shared.model.previewThumbnailUrl
+import com.metrolist.shared.peek.PEEK_ARTIST_MENU_EDIT
 import com.metrolist.shared.peek.PEEK_SONG_MENU_PLAY
 import com.metrolist.shared.peek.peekSongMenuActionGroups
 import com.metrolist.shared.settings.ArtistNameAliases
@@ -532,32 +532,39 @@ fun artistMediaMenuModel(
         artistId = artist.id,
         description = artist.description,
         primaryActions = primaryActions(onDismiss, onPlay, onShuffle, onShare),
+        // PeekMusic: subscribe and block first, the rarely used extras below, no alias editor, no subtitles.
         actionGroups =
-            listOf(
-                queueActions(onDismiss, onPlayNext, onAddToQueue),
-                listOfNotNull(
-                    pinAction(isPinned, onDismiss, onTogglePin),
-                    onBlock?.let {
-                        action(
-                            if (isBlocked) MetrolistIcons.Filled.Remove else MetrolistIcons.Outlined.Block,
-                            if (isBlocked) unblockLabel else blockArtistLabel,
-                            onDismiss,
-                            it,
-                        )
-                    },
-                    PlayerMenuAction(MetrolistIcons.Outlined.Edit, editArtistLabel, onClick = { editingAlias = true }),
-                    onToggleSubscription?.let {
-                        action(
-                            if (isSubscribed == true) MetrolistIcons.Outlined.NotificationsNone else MetrolistIcons.Outlined.AddAlert,
-                            if (isSubscribed == true) unsubscribeLabel else subscribeLabel,
-                            onDismiss,
-                            it,
-                        )
-                    },
-                    hideAction(onDismiss, { HiddenHomeItems.hide(artist) }, stringResource(Res.string.hide_from_home)),
-                    hideAction(onDismiss, onHideFromLibrary),
-                ),
-                additionalActions,
+            peekSongMenuActionGroups(
+                queue = queueActions(onDismiss, onPlayNext, onAddToQueue),
+                removal = emptyList(),
+                navigation = emptyList(),
+                library =
+                    listOfNotNull(
+                        onToggleSubscription?.let {
+                            action(
+                                if (isSubscribed == true) MetrolistIcons.Outlined.NotificationsNone else MetrolistIcons.Outlined.AddAlert,
+                                if (isSubscribed == true) unsubscribeLabel else subscribeLabel,
+                                onDismiss,
+                                it,
+                            )
+                        },
+                        onBlock?.let {
+                            action(
+                                if (isBlocked) MetrolistIcons.Filled.Remove else MetrolistIcons.Outlined.Block,
+                                if (isBlocked) unblockLabel else blockArtistLabel,
+                                onDismiss,
+                                it,
+                            )
+                        },
+                        PlayerMenuAction(MetrolistIcons.Outlined.Edit, editArtistLabel, onClick = { editingAlias = true })
+                            .takeIf { PEEK_ARTIST_MENU_EDIT },
+                    ),
+                extras =
+                    listOfNotNull(
+                        pinAction(isPinned, onDismiss, onTogglePin),
+                        hideAction(onDismiss, { HiddenHomeItems.hide(artist) }, stringResource(Res.string.hide_from_home)),
+                        hideAction(onDismiss, onHideFromLibrary),
+                    ) + additionalActions,
             ),
     )
 }
@@ -591,67 +598,95 @@ fun playlistMediaMenuModel(
     val exportPlaylistLabel = stringResource(Res.string.export_playlist)
     val selectSongsLabel = stringResource(Res.string.select_songs)
     val renameLabel = stringResource(Res.string.rename)
-    val renameDesc = stringResource(Res.string.rename_playlist_description)
     val deletePlaylistLabel = stringResource(Res.string.delete_playlist)
     val removeFromLibraryLabel = stringResource(Res.string.remove_from_library)
+    val favoriteLabel = stringResource(if (isFavorite) Res.string.remove_from_library else Res.string.action_like)
+    val isOwn = playlist.isLocal || playlist.isEditable
 
-    return collectionMediaMenuModel(
-        title = playlist.title,
-        subtitle = playlist.author?.let { ArtistNameAliases.resolve(null, it) },
-        thumbnail = playlist.thumbnail,
-        fallbackIcon = fallbackIcon,
-        onDismiss = onDismiss,
-        isPinned = isPinned,
-        downloadState = downloadState,
-        downloadProgress = downloadProgress,
-        onPlay = onPlay,
-        onShuffle = onShuffle,
-        onShare = onShare,
-        onPlayNext = onPlayNext,
-        onAddToQueue = onAddToQueue,
-        onTogglePin = onTogglePin.takeIf { showPinAction },
-        onDownload = onDownload,
-        onHideFromLibrary = onHideFromLibrary,
-        hideFromLibraryLabel = hideFromLibraryLabel ?: stringResource(Res.string.hide_from_library_local),
-        removeDownloadLabel =
+    // PeekMusic: built like the album menu: no play button, heart in the header for playlists that are not
+    // your own, queue, download, the rarely used extras, then select/rename/delete last; no subtitles.
+    val queue = queueActions(onDismiss, onPlayNext, onAddToQueue)
+    val download =
+        downloadAction(
+            downloadState,
+            downloadProgress,
+            false,
+            onDismiss,
+            onDownload,
             if (playlist.id == "auto:downloaded") stringResource(Res.string.remove_all_downloads) else null,
-        downloadIsPodcast = false,
-        extraLibraryAction = collectionLibraryAction(isFavorite, onFavorite, onDismiss),
-        trailingGroups =
-            listOf(
-                listOfNotNull(
-                    onExport?.let {
-                        action(MetrolistIcons.Outlined.Share, exportPlaylistLabel, onDismiss, it)
-                    },
-                ),
-                listOfNotNull(
-                    onSelect?.let {
-                        action(MetrolistIcons.Outlined.LibraryMusic, selectSongsLabel, onDismiss, it)
-                    },
-                    onRename?.let {
-                        action(
-                            MetrolistIcons.Outlined.Edit,
-                            renameLabel,
-                            onDismiss,
-                            it,
-                            renameDesc,
-                        )
-                    },
-                    onDelete?.takeIf { onFavorite == null || playlist.isLocal || playlist.isEditable }?.let {
-                        action(
-                            MetrolistIcons.Outlined.Delete,
-                            if (playlist.isLocal || playlist.isEditable) {
-                                deletePlaylistLabel
-                            } else {
-                                removeFromLibraryLabel
-                            },
-                            onDismiss,
-                            it,
-                        )
-                    },
-                ),
-                additionalActions,
+        )
+    val extras =
+        listOfNotNull(
+            pinAction(isPinned, onDismiss, onTogglePin.takeIf { showPinAction }),
+            hideAction(onDismiss, onHideFromLibrary, hideFromLibraryLabel ?: stringResource(Res.string.hide_from_library_local)),
+            onExport?.let {
+                action(MetrolistIcons.Outlined.Share, exportPlaylistLabel, onDismiss, it)
+            },
+        ) + additionalActions
+    val manage =
+        listOfNotNull(
+            onSelect?.let {
+                action(MetrolistIcons.Outlined.LibraryMusic, selectSongsLabel, onDismiss, it)
+            },
+            onRename?.let {
+                action(
+                    MetrolistIcons.Outlined.Edit,
+                    renameLabel,
+                    onDismiss,
+                    it,
+                )
+            },
+            onDelete?.takeIf { onFavorite == null || isOwn }?.let {
+                action(
+                    MetrolistIcons.Outlined.Delete,
+                    if (isOwn) deletePlaylistLabel else removeFromLibraryLabel,
+                    onDismiss,
+                    it,
+                )
+            },
+        )
+
+    val model =
+        collectionMediaMenuModel(
+            title = playlist.title,
+            subtitle = playlist.author?.let { ArtistNameAliases.resolve(null, it) },
+            thumbnail = playlist.thumbnail,
+            fallbackIcon = fallbackIcon,
+            onDismiss = onDismiss,
+            isPinned = isPinned,
+            downloadState = downloadState,
+            downloadProgress = downloadProgress,
+            onPlay = null,
+            onShuffle = onShuffle,
+            onShare = onShare,
+            onPlayNext = null,
+            onAddToQueue = null,
+            onTogglePin = null,
+            onDownload = null,
+            onHideFromLibrary = null,
+            downloadIsPodcast = false,
+            trailingGroups = emptyList(),
+        )
+    return model.copy(
+        headerActions =
+            listOfNotNull(
+                onFavorite?.takeUnless { isOwn }?.let {
+                    PlayerMenuAction(
+                        icon = if (isFavorite) MetrolistIcons.Filled.Favorite else MetrolistIcons.Outlined.FavoriteBorder,
+                        title = favoriteLabel,
+                        selected = isFavorite,
+                        onClick = it,
+                    )
+                },
             ),
+        actionGroups =
+            peekSongMenuActionGroups(
+                queue = queue,
+                removal = emptyList(),
+                navigation = emptyList(),
+                library = listOfNotNull(download),
+                extras = extras,
+            ) + listOf(manage).filter { it.isNotEmpty() },
     )
 }
 
