@@ -103,6 +103,20 @@ data class PlaylistContentText(
     val suggestions: String,
 )
 
+internal fun LazyListState.preparePlaylistSearch(
+    previousQuery: String,
+    query: String,
+    isWide: Boolean,
+    unfilteredState: LazyListState,
+) {
+    if (previousQuery.isNotBlank() || query.isBlank()) return
+    if (isWide) {
+        requestScrollToItem(0)
+    } else {
+        requestScrollToItem(unfilteredState.firstVisibleItemIndex, unfilteredState.firstVisibleItemScrollOffset)
+    }
+}
+
 @Composable
 fun PlaylistContent(
     playlist: PlaylistItem?,
@@ -290,10 +304,9 @@ fun PlaylistContent(
             BoxWithConstraints(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
                 val isWide = maxWidth >= 960.dp
                 val isMedium = maxWidth >= 600.dp && !isWide
-                LaunchedEffect(effectiveQuery.isNotBlank(), isWide) {
-                    if (effectiveQuery.isNotBlank() && !isWide) {
-                        searchListState.animateScrollToItem(listOfNotNull(header).size + 1)
-                    }
+                val updateSearchQuery: (String) -> Unit = { newQuery ->
+                    searchListState.preparePlaylistSearch(effectiveQuery, newQuery, isWide, listState)
+                    updateQuery(newQuery)
                 }
                 val leadingItems =
                     if (isWide) {
@@ -332,7 +345,7 @@ fun PlaylistContent(
                     } else {
                         160.dp
                     }
-                LaunchedEffect(isSearchOpen, isWide, loadingHeader) {
+                LaunchedEffect(isSearchOpen, activeListState, isWide, loadingHeader) {
                     if (isSearchOpen && !isWide) {
                         activeListState.animateScrollToItem(listOfNotNull(header).size + 1)
                     }
@@ -437,7 +450,7 @@ fun PlaylistContent(
                                         onSearchToggle = toggleSearch.takeIf { searchEnabled && !reorderMode && searchOpen == null },
                                         isSearchOpen = isSearchOpen,
                                         query = effectiveQuery,
-                                        onQueryChange = updateQuery,
+                                        onQueryChange = updateSearchQuery,
                                         onClose = toggleSearch,
                                         orderControls = orderControls,
                                         aboveOrderControls = aboveOrderControls,
@@ -631,7 +644,7 @@ fun PlaylistContent(
                                             onSearchToggle = toggleSearch.takeIf { searchEnabled && !reorderMode && searchOpen == null },
                                             isSearchOpen = isSearchOpen,
                                             query = effectiveQuery,
-                                            onQueryChange = updateQuery,
+                                            onQueryChange = updateSearchQuery,
                                             onClose = toggleSearch,
                                             orderControls = orderControls,
                                             aboveOrderControls = aboveOrderControls,

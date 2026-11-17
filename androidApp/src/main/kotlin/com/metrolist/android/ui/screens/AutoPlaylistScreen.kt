@@ -93,6 +93,7 @@ import com.metrolist.android.ui.menu.PlaylistMenu
 import com.metrolist.android.ui.menu.SongMenu
 import com.metrolist.android.viewmodels.AutoPlaylistPresentationInput
 import com.metrolist.android.viewmodels.prepareAutoPlaylistSongs
+import com.metrolist.android.viewmodels.withSongSorting
 import com.metrolist.shared.db.MusicDatabase
 import com.metrolist.shared.db.collectionPlayCounts
 import com.metrolist.shared.db.entities.CachedAudioEntity
@@ -138,11 +139,13 @@ import com.metrolist.shared.model.ArtistTiny
 import com.metrolist.shared.model.BuiltinPlaylist
 import com.metrolist.shared.model.CollectionSort
 import com.metrolist.shared.model.PlaylistItem
+import com.metrolist.shared.model.PlaylistSongSort
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.SortDirection
 import com.metrolist.shared.model.TopPlaylistPeriod
 import com.metrolist.shared.model.defaultDirection
 import com.metrolist.shared.model.indexOfPlaylistOccurrence
+import com.metrolist.shared.model.isReordering
 import com.metrolist.shared.model.toSongItem
 import com.metrolist.shared.settings.BlockedContent
 import com.metrolist.shared.settings.HiddenLibraryItem
@@ -305,7 +308,7 @@ fun AutoPlaylistScreen(
     }
     var topPeriod by remember { mutableStateOf(TopPlaylistPeriod.ALL_TIME) }
     var topDirection by remember { mutableStateOf(SortDirection.DESCENDING) }
-    var likedReorderMode by remember { mutableStateOf(false) }
+    val likedReorderMode = playlistSort.isReordering(Settings.shared.playlistEditLock, currentType == "liked")
     val addToPlaylist = LocalPlaylistAdder.current
     val selection = rememberSelectionState(currentType)
     val downloadFilter = rememberDownloadPlaylistFilter(database)
@@ -351,9 +354,11 @@ fun AutoPlaylistScreen(
             playlistSort = playlistSort,
             playlistDirection = playlistSortDirection,
             topDirection = topDirection,
-            reorder = likedReorderMode,
             likedSongRecency = if (isLikedCollection) SongLikeState.likedSongRecency else emptyList(),
             downloadFilter = downloadFilterState,
+        ).withSongSorting(
+            locked = Settings.shared.playlistEditLock,
+            listeningTimes = { SongMetadataState.listeningTimes },
         )
 
     var preparedSongs by remember(currentType) { mutableStateOf<List<SongItem>>(emptyList()) }
@@ -446,7 +451,6 @@ fun AutoPlaylistScreen(
         selection.exit()
         collectionQuery = ""
         collectionEntries = emptyList()
-        likedReorderMode = false
         when (currentType) {
             "liked" -> {
                 songs = BlockedContent.filterSongs(SongLikeState.likedSongs)
@@ -915,7 +919,7 @@ fun AutoPlaylistScreen(
                                         )
                                     },
                                     onReorderModeChange = {
-                                        likedReorderMode = it
+                                        Settings.shared.playlistEditLock = !it
                                     },
                                     modifier = Modifier.padding(vertical = 8.dp),
                                 )

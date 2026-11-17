@@ -92,6 +92,14 @@ private fun YTItem.withDownloadedState(downloadedKeys: Set<String>): YTItem =
 
 private fun YTItem.withLibraryMetadata(local: YTItem?): YTItem =
     when {
+        this is SongItem && local is SongItem -> {
+            copy(
+                downloadedAt = local.downloadedAt,
+                libraryAddedAt = local.libraryAddedAt ?: libraryAddedAt,
+                libraryUpdatedAt = local.libraryUpdatedAt ?: libraryUpdatedAt,
+            )
+        }
+
         this is ArtistItem && local is ArtistItem -> {
             copy(
                 songCount = local.songCount ?: songCount,
@@ -146,6 +154,7 @@ class LibraryViewModel(
     private val database: MusicDatabase? = null,
     private val downloadedSongIds: Flow<Set<String>>? = null,
     private val repository: YouTubeRepository = GlobalYouTubeRepository.instance,
+    private val downloadedSongDates: Flow<Map<String, Long>>? = null,
 ) {
     private val _uiState = MutableStateFlow(LibraryUiState(isLoading = database != null))
     private var downloadedKeys: Set<String> = emptySet()
@@ -201,6 +210,12 @@ class LibraryViewModel(
         searchRequest.value = request.copy(revision = request.revision + 1L)
     }
 
+    // Desktop keeps download dates outside Room, so search pages need the same hydration as library rows.
+    private suspend fun List<SongItem>.withDownloadDates(): List<SongItem> {
+        val dates = downloadedSongDates?.first() ?: return this
+        return map { it.copy(downloadedAt = dates[it.id]) }
+    }
+
     fun loadMoreContentMatches() {
         val request = loadedSearchRequest ?: return
         if (!localActive.value || !_contentSearchHasMore.value || searchPageJob?.isActive == true) return
@@ -216,6 +231,7 @@ class LibraryViewModel(
                                 descending = request.descending,
                             )
                         }.orEmpty()
+                        .withDownloadDates()
                 if (loadedSearchRequest == request && searchRequest.value == request) {
                     _contentMatchedSongs.value += page
                     _contentSearchHasMore.value = page.size == LIBRARY_SEARCH_PAGE_SIZE
@@ -311,6 +327,9 @@ class LibraryViewModel(
                 }
             }
             launch {
+                downloadedSongDates?.distinctUntilChanged()?.collect { localReloads.trySend(Unit) }
+            }
+            launch {
                 snapshotFlow { Settings.shared.historyPlaylistsEnabled }
                     .drop(1)
                     .collect { localReloads.trySend(Unit) }
@@ -320,7 +339,16 @@ class LibraryViewModel(
                     .debounce(LIBRARY_SEARCH_DEBOUNCE_MILLIS.milliseconds)
                     .distinctUntilChanged()
                     .collectLatest { request ->
-                        val page = database?.let { contentMatchedSongs(it, request.query, descending = request.descending) }.orEmpty()
+                        val page =
+                            database
+                                ?.let {
+                                    contentMatchedSongs(
+                                        it,
+                                        request.query,
+                                        descending = request.descending,
+                                    )
+                                }.orEmpty()
+                                .withDownloadDates()
                         if (searchRequest.value == request) {
                             loadedSearchRequest = request
                             _contentMatchedSongs.value = page
@@ -650,9 +678,12 @@ class LibraryViewModel(
                     customThumbnail = entity.customThumbnailUrl,
                 )
             }
+        val downloadDates = downloadedSongDates?.first()
         val songs =
             dao.songsByCreateDateAsc().first().filterNot { it.song.isEpisode }.map { song ->
-                song.toSongItem().copy(
+                val item = song.toSongItem()
+                item.copy(
+                    downloadedAt = if (downloadDates != null) downloadDates[song.id] else item.downloadedAt,
                     libraryAddedAt = song.song.inLibrary.toEpochMilliseconds(),
                     libraryUpdatedAt = song.song.inLibrary.toEpochMilliseconds(),
                 )

@@ -187,7 +187,7 @@ internal class AndroidQueueTransitions(
         }
 
         scope.launch {
-            snapshotFlow { Settings.shared.videoViewerVisible }
+            snapshotFlow { Triple(Settings.shared.videoViewerVisible, Settings.shared.crossfadeEnabled, Settings.shared.crossfadeGapless) }
                 .distinctUntilChanged()
                 .collect { cancelNextTrackPreload() }
         }
@@ -264,6 +264,7 @@ internal class AndroidQueueTransitions(
                         positionMs = 0L,
                         wantVideo = wantNextVideo,
                         cachedAudio = cachedAudio,
+                        sourceIsDownloaded = cachedAudio != null && audioCacheManager.isDownloaded(sourceSong.id),
                         allowCounterpartLookup =
                             PlaybackNetworkStateStore.current.connected && !AndroidDeviceConnect.manager.remote.isActive &&
                                 !AndroidListenTogetherManager.isGuestPlaybackLocked,
@@ -293,6 +294,8 @@ internal class AndroidQueueTransitions(
                             startPaused = true,
                             queueSongId = nextSong.id,
                             positionMs = playbackPositionMs,
+                            playbackSong = playbackSong,
+                            sourceSong = sourceSong,
                             onFailure = preloadFailureHandler(resource, playbackSong, wantNextVideo),
                         )
                     }
@@ -309,6 +312,8 @@ internal class AndroidQueueTransitions(
                                 startPaused = true,
                                 queueSongId = nextSong.id,
                                 positionMs = playbackPositionMs,
+                                playbackSong = playbackSong,
+                                sourceSong = sourceSong,
                                 onFailure = preloadFailureHandler(resource, playbackSong, wantNextVideo),
                             )
                         }

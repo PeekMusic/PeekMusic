@@ -720,12 +720,6 @@ class DefaultStreamResolver(
             }
         }
 
-        val extractHints =
-            hints.copy(
-                wantVideo = extractWantVideo,
-                isUploaded = if (extractVideoId != videoId) false else hints.isUploaded,
-            )
-
         val isLive = (hints.isLive == true || sourceSong?.isLive == true) && sourceSong?.duration?.let { it > 0L } != true
         if (isLive) {
             val hlsResource =
@@ -757,14 +751,28 @@ class DefaultStreamResolver(
             }
         }
 
+        // No live manifest means the live flag was stale or wrong, so resolve the track as a recording with the normal clients.
+        val liveOverride =
+            isLive && hints.playbackClientOverrideId == YouTubeClient.ANDROID.clientName &&
+                Settings.shared.devtoolsPlaybackClient != YouTubeClient.ANDROID.clientName
+        val extractHints =
+            hints.copy(
+                wantVideo = extractWantVideo,
+                isUploaded = if (extractVideoId != videoId) false else hints.isUploaded,
+                isLive = hints.isLive.takeUnless { isLive },
+                playbackClientOverrideId = hints.playbackClientOverrideId.takeUnless { liveOverride },
+            )
+
         val coolingClients =
-            if (hints.playbackClientOverrideId == null) {
+            if (extractHints.playbackClientOverrideId == null) {
                 clientHealthTracker.clientsInCooldown(ClientHealthScope.from(extractHints, innerTube.hasSapCookieAuth())) - excludedClients
             } else {
                 emptySet()
             }
         val deferredProfiles =
-            if (hints.playbackClientOverrideId == null || hints.playbackClientOverrideId == PlaybackClientCatalog.SABR_FIRST_ID) {
+            if (extractHints.playbackClientOverrideId == null ||
+                extractHints.playbackClientOverrideId == PlaybackClientCatalog.SABR_FIRST_ID
+            ) {
                 CUTOFF_PROFILES
             } else {
                 emptySet()
@@ -844,18 +852,22 @@ class DefaultStreamResolver(
                 }
             }
         var preferredTimedOut = deferredProfiles.isNotEmpty()
-        // When web PO tokens were just rejected, tokenless VISIONOS 0.1 is the client that keeps playing; try it first.
-        // Video needs tokenized streams, so music videos fall back to their audio until tokens work again.
+        // Prefer tokenless audio after rejected web tokens without bypassing video-capable clients.
         val tokenlessStream =
-            if (WebPoTokenHealth.tokensRejected() && !isLive && !extractHints.sabrFirst &&
+            if (WebPoTokenHealth.tokensRejected() && !extractHints.wantVideo && !isLive && !extractHints.sabrFirst &&
                 extractHints.playbackClientOverrideId == null &&
                 extractHints.isUploaded != true && WebPoTokenHealth.TOKENLESS_AUDIO_PROFILE !in excludedClients
             ) {
-                withTimeoutOrNull(TOKENLESS_AUDIO_TIMEOUT_MS) {
-                    extract(
-                        excludedClients,
-                        extractHints.copy(playbackClientOverrideId = WebPoTokenHealth.TOKENLESS_AUDIO_CLIENT, wantVideo = false),
-                    )
+                try {
+                    withTimeoutOrNull(TOKENLESS_AUDIO_TIMEOUT_MS) {
+                        extract(
+                            excludedClients,
+                            extractHints.copy(playbackClientOverrideId = WebPoTokenHealth.TOKENLESS_AUDIO_CLIENT, wantVideo = false),
+                        )
+                    }
+                } catch (error: StreamResolveException) {
+                    YtLogger.w(TAG, "tokenless audio preference failed; trying the remaining clients")
+                    null
                 }.also { if (it == null) lastSelectionFailure = null }
             } else {
                 null
@@ -984,7 +996,7 @@ class DefaultStreamResolver(
         // Keep the queue audio ID as the resource identity even when extracting its music-video counterpart.
         val resourceSessionFingerprint = playbackSessionFingerprint()
         val resource =
-            stream.toPlaybackResource(videoId, sourceSong?.duration, isLive, hints.isLive != false).copy(
+            stream.toPlaybackResource(videoId, sourceSong?.duration, confirmedLive = false, hints.isLive != false).copy(
                 counterpartSource = counterpartSource,
                 musicVideoId = if (extractVideoId != videoId) extractVideoId else null,
                 musicVideoPositionMap = counterpartPositionMap.takeIf { extractVideoId != videoId },
@@ -1194,7 +1206,10 @@ class DefaultStreamResolver(
                 audioUrl.contains("/hls_playlist/", ignoreCase = true) ||
                 audioUrl.contains("/hls_variant/", ignoreCase = true) ||
                 audioUrl.substringBefore('?').endsWith(".m3u8", ignoreCase = true)
-        val isLive = confirmedLive || (allowLiveHls && durationSeconds == null && sabrBootstrap == null && isHls)
+        // isLiveContent=false proves a recording even when an HLS fallback carries no duration.
+        val isLive =
+            confirmedLive ||
+                (allowLiveHls && mediaMetadata?.isLive != false && durationSeconds == null && sabrBootstrap == null && isHls)
         return PlaybackResource(
             videoId = videoId,
             url = audioUrl,

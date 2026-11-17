@@ -181,6 +181,7 @@ import com.metrolist.shared.generated.resources.liked_songs
 import com.metrolist.shared.generated.resources.ok
 import com.metrolist.shared.generated.resources.playback_error
 import com.metrolist.shared.generated.resources.technical_information
+import com.metrolist.shared.generated.resources.window_title_now_playing
 import com.metrolist.shared.generated.resources.youtube_session_expired_message
 import com.metrolist.shared.generated.resources.youtube_session_expired_title
 import com.metrolist.shared.scrobble.ScrobbleSessions
@@ -191,6 +192,7 @@ import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.settings.defaultOpenTabRoot
 import com.metrolist.shared.settings.defaultOpenTabScreen
 import com.metrolist.shared.settings.desktopDefaultOpenTab
+import com.metrolist.shared.settings.displayName
 import com.metrolist.shared.settings.flushDesktopCredentialWarnings
 import com.metrolist.shared.settings.flushDesktopSettings
 import com.metrolist.shared.settings.recoverDesktopCredentials
@@ -768,6 +770,8 @@ fun main() {
 }
 
 fun main(args: Array<String>) {
+    // The JDK reads this once when its default proxy selector initializes.
+    if (OsUtil.isWindows) System.getProperties().putIfAbsent("java.net.useSystemProxies", "true")
     runCatching { System.getProperty("metrolist.cds.cache")?.let { File(it).mkdirs() } }
     startup.trace("main")
     val recoveryIndex = args.indexOf(DesktopCrashRecovery.ARGUMENT)
@@ -853,6 +857,8 @@ private fun runDesktopApp(args: Array<String>) {
     )?.let { System.setProperty("skiko.renderApi", it) }
     if (OsUtil.isMac) {
         System.setProperty("apple.awt.enableTemplateImages", "true")
+        // Without this AppKit keeps the Aqua (light) title bar even in Dark Mode.
+        System.setProperty("apple.awt.application.appearance", "system")
         if (System.getProperty("skiko.renderApi") == null && System.getenv("SKIKO_RENDER_API") == null) {
             System.setProperty("skiko.renderApi", "METAL")
         }
@@ -1261,9 +1267,15 @@ private fun runDesktopApp(args: Array<String>) {
             }
         }
 
+        val appTitle = if (BuildConfig.DEBUG) "Metrolist Debug" else "Metrolist"
+        val windowTitle =
+            PlayerState.currentTrack?.takeIf { it.title.isNotBlank() }?.let { track ->
+                val artists = track.artists.joinToString { it.displayName }
+                if (artists.isBlank()) track.title else stringResource(Res.string.window_title_now_playing, track.title, artists)
+            } ?: appTitle
         Window(
             onCloseRequest = { minimizeToTrayOrClose() },
-            title = if (BuildConfig.DEBUG) "Metrolist Debug" else "Metrolist",
+            title = windowTitle,
             state = windowState,
             undecorated = isLinux && !useSystemWindowFrame,
             transparent = false,
