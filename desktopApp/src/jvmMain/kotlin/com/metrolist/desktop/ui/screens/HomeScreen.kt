@@ -58,6 +58,7 @@ import com.metrolist.shared.model.PodcastItem
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.YTItem
 import com.metrolist.shared.model.toSongItem
+import com.metrolist.shared.peek.PEEK_SONG_MENU_REFETCH
 import com.metrolist.shared.ui.components.ChipShelf
 import com.metrolist.shared.ui.components.DesktopHorizontalScrollControls
 import com.metrolist.shared.ui.components.HomeLoadingPlaceholder
@@ -194,8 +195,9 @@ fun HomeScreen() {
                         song = item,
                         expanded = contextMenu.expanded,
                         offset = contextMenu.offset,
+                        // PeekMusic: no "refetch" in song menus, as on Android (PEEK_SONG_MENU_REFETCH).
                         additionalActions =
-                            listOf(
+                            listOfNotNull(
                                 PlayerMenuAction(
                                     MetrolistIcons.Outlined.Refresh,
                                     stringResource(Res.string.refetch),
@@ -203,7 +205,7 @@ fun HomeScreen() {
                                 ) {
                                     HomeState.refetchSongMetadata(item)
                                     dismissContextMenu()
-                                },
+                                }.takeIf { PEEK_SONG_MENU_REFETCH },
                             ),
                         onDismiss = ::dismissContextMenu,
                     )

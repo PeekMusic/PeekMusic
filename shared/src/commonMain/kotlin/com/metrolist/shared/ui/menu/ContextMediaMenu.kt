@@ -35,7 +35,9 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Surface
@@ -93,6 +95,7 @@ import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.more_options
+import com.metrolist.shared.peek.rememberPeekPressSource
 import com.metrolist.shared.ui.components.AutoPlaylistThumbnail
 import com.metrolist.shared.ui.components.PlayerMenuAction
 import com.metrolist.shared.ui.components.PlayerMenuActionIcon
@@ -352,6 +355,7 @@ fun MediaContextMenu(
     preferSidePlacement: Boolean = false,
     tonalElevation: Dp = 0.dp,
     showHeader: Boolean = true, // PeekMusic: the desktop player menu leaves the song to the player, see PeekPlayerMenu.
+    headerActions: List<PlayerMenuAction> = emptyList(), // PeekMusic: e.g. the heart, at the header's end as on Android
 ) {
     val menuWidth = 360.dp
     CursorDropdownMenu(
@@ -377,6 +381,7 @@ fun MediaContextMenu(
                     isExplicit,
                     subtitleLinks,
                     thumbnailAspectRatio,
+                    headerActions,
                 )
             }
             ExpressiveMenuPrimaryActions(primaryActions)
@@ -397,7 +402,7 @@ fun MediaContextMenu(
     onDismiss: () -> Unit,
     thumbnailModifier: Modifier = Modifier.size(52.dp),
 ) {
-    val topActions = model.headerActions + model.primaryActions
+    // PeekMusic: header actions (the heart) sit in the header as on Android, not in the button row or a group.
     MediaContextMenu(
         expanded = expanded,
         offset = offset,
@@ -409,9 +414,10 @@ fun MediaContextMenu(
         thumbnailModifier = thumbnailModifier,
         thumbnailAspectRatio = model.thumbnailAspectRatio,
         isExplicit = model.isExplicit,
-        primaryActions = if (topActions.size <= 3) topActions else model.primaryActions,
-        actionGroups = if (topActions.size <= 3) model.actionGroups else listOf(model.headerActions) + model.actionGroups,
+        primaryActions = model.primaryActions,
+        actionGroups = model.actionGroups,
         subtitleLinks = model.subtitleLinks,
+        headerActions = model.headerActions,
     )
 }
 
@@ -424,17 +430,8 @@ fun MediaContextMenu(
 ) {
     CursorDropdownMenu(expanded, offset, onDismiss) {
         val menu = model()
-        val topActions = menu.headerActions + menu.primaryActions
-        val groups =
-            (
-                if (topActions.size <=
-                    3
-                ) {
-                    menu.actionGroups
-                } else {
-                    listOf(menu.headerActions) + menu.actionGroups
-                }
-            ).filter { it.isNotEmpty() }
+        // PeekMusic: header actions (the heart) sit in the header as on Android.
+        val groups = menu.actionGroups.filter { it.isNotEmpty() }
         Column(Modifier.width(360.dp).padding(horizontal = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             MediaContextMenuHeader(
                 menu.title,
@@ -445,8 +442,9 @@ fun MediaContextMenu(
                 menu.isExplicit,
                 menu.subtitleLinks,
                 menu.thumbnailAspectRatio,
+                menu.headerActions,
             )
-            ExpressiveMenuPrimaryActions(if (topActions.size <= 3) topActions else menu.primaryActions)
+            ExpressiveMenuPrimaryActions(menu.primaryActions)
             groups.forEachIndexed { index, actions -> ExpressiveMenuActionGroup(actions, index, groups.size) }
         }
     }
@@ -462,6 +460,7 @@ private fun MediaContextMenuHeader(
     isExplicit: Boolean,
     subtitleLinks: AnnotatedString?,
     thumbnailAspectRatio: Float = 1f,
+    headerActions: List<PlayerMenuAction> = emptyList(),
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
@@ -527,6 +526,23 @@ private fun MediaContextMenuHeader(
                 }
             }
         }
+        headerActions.forEach { action -> MediaMenuHeaderButton(action) }
+    }
+}
+
+/** PeekMusic: a round header button (the heart) like Android's song and album sheets. */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun MediaMenuHeaderButton(action: PlayerMenuAction) {
+    FilledTonalIconToggleButton(
+        checked = action.selected == true,
+        onCheckedChange = { action.onClick() },
+        enabled = action.enabled,
+        shapes = IconButtonDefaults.toggleableShapes(),
+        interactionSource = rememberPeekPressSource(),
+        modifier = Modifier.size(48.dp),
+    ) {
+        Icon(action.icon, contentDescription = action.title)
     }
 }
 

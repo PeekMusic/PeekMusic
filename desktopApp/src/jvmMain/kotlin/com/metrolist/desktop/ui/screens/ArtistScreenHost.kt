@@ -209,8 +209,9 @@ fun ArtistScreenHost() {
                 artist = menuArtist.forArtistScreenMenu(),
                 expanded = artistMenu.expanded,
                 offset = artistMenu.offset,
-                isSubscribed = ArtistState.artistIsSubscribed,
-                onToggleSubscription = if (artist != null) ArtistState::toggleArtistSubscription else null,
+                // PeekMusic: as on Android, the page's own buttons play and subscribe; the menu keeps shuffle,
+                // share, block, pin and hide.
+                onArtistPage = true,
                 onDismiss = artistMenu::dismiss,
             )
             val dismissItemMenu = {

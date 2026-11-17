@@ -356,6 +356,7 @@ fun ArtistContextMenu(
     isSubscribed: Boolean? = null,
     onToggleSubscription: (() -> Unit)? = null,
     additionalActions: List<PlayerMenuAction> = emptyList(),
+    onArtistPage: Boolean = false, // PeekMusic: no play, queue or subscribe; the artist page has those buttons
 ) {
     MediaContextMenu(expanded = expanded, offset = offset, onDismiss = onDismiss) {
         val playback = LocalPlaybackController.current
@@ -373,11 +374,11 @@ fun ArtistContextMenu(
             isPinned = isPinned,
             isBlocked = isBlocked,
             isSubscribed = isSubscribed,
-            onPlay = playbackActions::play,
+            onPlay = playbackActions::play.takeUnless { onArtistPage },
             onShuffle = playbackActions::shuffle,
             onShare = { AppState.copyToClipboard(ShareUrls.artist(artist.id)) },
-            onPlayNext = playbackActions::playNext,
-            onAddToQueue = playbackActions::addToQueue,
+            onPlayNext = playbackActions::playNext.takeUnless { onArtistPage },
+            onAddToQueue = playbackActions::addToQueue.takeUnless { onArtistPage },
             onTogglePin = {
                 if (isPinned) HomeState.unpinSpeedDialItem(artist.id) else HomeState.pinSpeedDialItem(artist)
             },
@@ -388,7 +389,7 @@ fun ArtistContextMenu(
                     PlayerState.blockArtist(ArtistTiny(artist.id, artist.title, artist.thumbnail))
                 }
             },
-            onToggleSubscription = onToggleSubscription,
+            onToggleSubscription = onToggleSubscription.takeUnless { onArtistPage },
             onHideFromLibrary = onHideFromLibrary,
             additionalActions = additionalActions,
         )
