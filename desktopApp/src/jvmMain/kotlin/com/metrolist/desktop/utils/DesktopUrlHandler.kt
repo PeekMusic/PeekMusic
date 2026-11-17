@@ -7,6 +7,7 @@ package com.metrolist.desktop.utils
 
 import com.metrolist.desktop.auth.DesktopDiscordLogin
 import com.metrolist.desktop.auth.parseDiscordLoginCallback
+import com.metrolist.desktop.peek.DesktopPeekFriends
 import com.metrolist.desktop.state.app.DesktopNavigation
 import com.metrolist.desktop.state.app.UiState
 import com.metrolist.desktop.state.content.ArtistState
@@ -16,6 +17,7 @@ import com.metrolist.desktop.state.content.SearchState
 import com.metrolist.desktop.state.playback.ListenTogetherState
 import com.metrolist.desktop.state.playback.PlayerState
 import com.metrolist.innertubex.utils.YouTubeUrlParser
+import com.metrolist.shared.peek.PeekLinks
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.utils.extractListenTogetherRoomCode
 import com.metrolist.shared.utils.isListenTogetherUrl
@@ -61,6 +63,7 @@ object DesktopUrlHandler {
         if (rawInput.isNullOrBlank()) return false
         val normalized = normalizeUrl(rawInput) ?: return false
         if (parseDiscordLoginCallback(normalized) != null) return true
+        if (PeekLinks.parseFriendLink(normalized) != null) return true // PeekMusic: PeekParty friend links
         if (isListenTogetherUrl(normalized)) return true
         return parseYouTubePodcastId(normalized) != null || parseYouTubeUrl(normalized) != null
     }
@@ -117,6 +120,12 @@ object DesktopUrlHandler {
     private fun executeOpenUrl(url: String) {
         ComposeTrayManager.showWindow()
         if (parseDiscordLoginCallback(url) != null && DesktopDiscordLogin.flow.handleCallback(url)) return
+
+        // PeekMusic: a PeekParty friend link asks to add that friend.
+        PeekLinks.parseFriendLink(url)?.let { code ->
+            DesktopPeekFriends.manager.openFriendLink(code)
+            return
+        }
 
         val roomCode = extractListenTogetherRoomCode(url)
         if (roomCode != null) {

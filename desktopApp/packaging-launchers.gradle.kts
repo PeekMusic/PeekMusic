@@ -53,7 +53,7 @@ StartupWMClass=PeekMusic
 Comment=PeekMusic music client
 Categories=AudioVideo;Player;
 Terminal=false
-MimeType=x-scheme-handler/metrolist;x-scheme-handler/metrolist-auth;
+MimeType=x-scheme-handler/metrolist;x-scheme-handler/metrolist-auth;x-scheme-handler/peekmusic;
             """.trimIndent(),
         )
 

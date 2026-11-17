@@ -92,6 +92,9 @@ import com.metrolist.desktop.deviceconnect.DesktopDeviceConnect
 import com.metrolist.desktop.di.composeStateModule
 import com.metrolist.desktop.input.DesktopShortcutLayer
 import com.metrolist.desktop.input.desktopScrollConfig
+import com.metrolist.desktop.peek.DesktopPeekFriends
+import com.metrolist.desktop.peek.DesktopPeekLinks
+import com.metrolist.desktop.peek.DesktopUpcomingPreCache
 import com.metrolist.desktop.state.DesktopLocaleManager
 import com.metrolist.desktop.state.app.AppState
 import com.metrolist.desktop.state.app.DesktopNavigation
@@ -214,6 +217,7 @@ import com.metrolist.shared.ui.components.LoadingScreen
 import com.metrolist.shared.ui.components.LocalDownloadedSongIds
 import com.metrolist.shared.ui.components.LocalVisualWorkActive
 import com.metrolist.shared.ui.components.PopupVisibility
+import com.metrolist.shared.ui.listentogether.LocalPeekFriends
 import com.metrolist.shared.ui.navigation.LocalNavigationContainerState
 import com.metrolist.shared.ui.navigation.LocalNavigator
 import com.metrolist.shared.ui.navigation.NavigationContentProvider
@@ -247,6 +251,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import sun.misc.Signal
 import sun.misc.SignalHandler
+import java.awt.Color as AwtColor
 import java.awt.Desktop
 import java.awt.EventQueue
 import java.awt.Frame
@@ -265,7 +270,6 @@ import javax.imageio.ImageIO
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import kotlin.system.exitProcess
-import java.awt.Color as AwtColor
 
 @Composable
 fun WindowScope.App(
@@ -285,6 +289,7 @@ fun WindowScope.App(
         LocalPlaybackController provides playbackController,
         LocalDownloadedSongIds provides downloadedSongIds,
         LocalMouseScrollFactors provides desktopMouseScrollFactors(LocalDensity.current),
+        LocalPeekFriends provides DesktopPeekFriends.manager, // PeekMusic: PeekParty friends
         desktopScrollConfig(),
     ) {
         AppContent(navigator, onMaximized, toggleWindowFullscreen, checkDarkMode, isLinux, integrationsReady)
@@ -1000,6 +1005,10 @@ private fun runDesktopApp(args: Array<String>) {
             LyricsState.currentLyricsEntries
             HomeState.setLikedSongsName(runBlocking { getString(Res.string.liked_songs) })
             ListenTogetherState.initialize()
+            DesktopPeekFriends.start() // PeekMusic: PeekParty friends online while the app runs
+            DesktopUpcomingPreCache.start() // PeekMusic: Storage › Song cache › Cache ahead
+            // PeekMusic: peekmusic:// links ("Open in PeekMusic" on listen.peekmusic.org) open this app.
+            AppState.scope.launch(Dispatchers.IO) { DesktopPeekLinks.register("PeekMusic") }
             if (OsUtil.isWindows) {
                 listOf("previous.ico", "play.ico", "pause.ico", "next.ico").forEach { IconResources.toTempFile(it) }
             }

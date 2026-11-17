@@ -12,6 +12,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntSize
+import com.metrolist.shared.api.artwork.YouTubeCanvasClip
 import com.metrolist.shared.playback.AnimatedCoverPlayer
 import com.metrolist.shared.playback.VideoFrame
 import com.metrolist.shared.ui.components.LocalVisualWorkActive
@@ -25,7 +26,11 @@ fun AnimatedCover(
     contentScale: ContentScale = ContentScale.Crop,
     active: Boolean = true,
     onFrameAvailabilityChanged: (Boolean) -> Unit = {},
+    headers: Map<String, String> = emptyMap(), // PeekMusic: for the YouTube music video canvas
+    clips: List<YouTubeCanvasClip> = emptyList(), // PeekMusic: YouTube canvas "short clips"
 ) {
+    val latestHeaders by rememberUpdatedState(headers)
+    val latestClips by rememberUpdatedState(clips)
     val visible = LocalVisualWorkActive.current
     val latestActive by rememberUpdatedState(active)
     val latestOnFrameAvailabilityChanged by rememberUpdatedState(onFrameAvailabilityChanged)
@@ -41,6 +46,8 @@ fun AnimatedCover(
         player.play(
             url = url,
             active = combine(snapshotFlow { latestActive }, visible) { playing, shown -> playing && shown },
+            headers = latestHeaders,
+            clips = latestClips,
         ) {
             val hadFrame = frame != null
             frame = it

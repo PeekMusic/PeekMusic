@@ -39,7 +39,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.metrolist.desktop.deviceconnect.DesktopDeviceConnect
+import com.metrolist.desktop.peek.DesktopPeekFriends
 import com.metrolist.desktop.state.app.AppState
+import com.metrolist.desktop.state.app.DesktopNavigation
 import com.metrolist.desktop.state.app.UiState
 import com.metrolist.desktop.state.content.ArtistState
 import com.metrolist.desktop.state.content.BrowseState
@@ -80,12 +82,14 @@ import com.metrolist.shared.ui.components.lyrics.LyricsTranslationSnackbar
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import com.metrolist.shared.ui.listentogether.ListenTogetherBlockedUsersScreen
 import com.metrolist.shared.ui.listentogether.ListenTogetherGlobalEvents
+import com.metrolist.shared.ui.listentogether.PeekFriendsGlobalEvents
 import com.metrolist.shared.ui.menu.ContentUndoHintsSnackbar
 import com.metrolist.shared.ui.menu.HiddenHomeItemsSnackbar
 import com.metrolist.shared.ui.menu.settingsPage
 import com.metrolist.shared.ui.navigation.LocalNavigator
 import com.metrolist.shared.ui.navigation.NavigationTransition
 import com.metrolist.shared.ui.navigation.Screen
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -123,6 +127,22 @@ fun AppContentHost(
     }
     LyricsTranslationSnackbar(AppState.snackbarHostState, LyricsState.lyricsTranslationFailures)
     ListenTogetherGlobalEvents(ListenTogetherState.listenTogetherManager) { AppState.snackbarHostState.showSnackbar(it) }
+    // PeekMusic: PeekParty friend requests and party invites, anywhere in the app, as on Android.
+    PeekFriendsGlobalEvents(
+        friends = DesktopPeekFriends.manager,
+        onMessage = { AppState.snackbarHostState.showSnackbar(it) },
+        onJoinInvite = { roomCode ->
+            PlayerState.closeFullscreenPlayer()
+            UiState.showSettings = false
+            DesktopNavigation.openListenTogetherInvitation(roomCode) { ListenTogetherState.listenTogetherManager.joinRoom(it) }
+        },
+    )
+    // PeekMusic: friends see a new PeekParty name right away.
+    LaunchedEffect(Unit) {
+        ListenTogetherState.listenTogetherManager.username
+            .drop(1)
+            .collect { DesktopPeekFriends.manager.refreshName() }
+    }
     val deviceConnectState by DesktopDeviceConnect.manager.state.collectAsState()
     DeviceConnectPairingHost(
         state = deviceConnectState,

@@ -1,5 +1,6 @@
 package com.metrolist.shared.playback
 
+import com.metrolist.shared.api.artwork.YouTubeCanvasClip
 import com.metrolist.shared.youtube.playback.PlaybackEventKind
 import com.metrolist.shared.youtube.playback.PlaybackEventLog
 import kotlinx.coroutines.CancellationException
@@ -9,9 +10,11 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -28,6 +31,8 @@ class AnimatedCoverPlayer {
     suspend fun play(
         url: String,
         active: Flow<Boolean>,
+        headers: Map<String, String> = emptyMap(), // PeekMusic: a YouTube music video canvas needs its request headers
+        clips: List<YouTubeCanvasClip> = emptyList(), // PeekMusic: YouTube canvas "short clips", as on Android
         onFrameChanged: (VideoFrame?) -> Unit,
     ) {
         session.withLock {
@@ -46,11 +51,13 @@ class AnimatedCoverPlayer {
                         ).also {
                             this.player = it
                             it.setTargetSize(targetWidth, targetHeight, fillViewport)
+                            // PeekMusic: a YouTube music video (it needs headers) is bigger than a canvas clip.
+                            it.peekAllDecoderThreads = headers.isNotEmpty() || clips.isNotEmpty()
                         }
                     }
                 val loaded =
                     coroutineScope {
-                        val loading = async(Dispatchers.IO) { player.load(url, positionProvider = { 0L }) }
+                        val loading = async(Dispatchers.IO) { player.load(url, headers, positionProvider = { 0L }) }
                         try {
                             loading.await()
                         } catch (error: CancellationException) {
@@ -67,9 +74,11 @@ class AnimatedCoverPlayer {
                                 if (playing) player.resume() else player.pause()
                             }
                         }
+                    val clipCycle = if (clips.isEmpty()) null else launch { cycleClips(player, clips, active) }
                     try {
                         ended.await()
                     } finally {
+                        clipCycle?.cancel()
                         activity.cancel()
                     }
                 }
@@ -88,6 +97,34 @@ class AnimatedCoverPlayer {
                 }
             }
         }
+    }
+
+    /**
+     * PeekMusic: plays the clips in turn like Android's runYouTubeCanvasPlaybackClock: each one for its length of
+     * playing time, then on to the next, round and round. Paused time does not count.
+     */
+    private suspend fun cycleClips(
+        player: VideoPlayer,
+        clips: List<YouTubeCanvasClip>,
+        active: Flow<Boolean>,
+    ) {
+        var index = 0
+        while (true) {
+            val clip = clips[index]
+            player.seekTo(clip.startMs)
+            var playedMs = 0L
+            val lengthMs = (clip.endMs - clip.startMs).coerceAtLeast(CLIP_TICK_MS)
+            while (playedMs < lengthMs) {
+                active.first { it }
+                delay(CLIP_TICK_MS)
+                playedMs += CLIP_TICK_MS
+            }
+            index = (index + 1) % clips.size
+        }
+    }
+
+    private companion object {
+        const val CLIP_TICK_MS = 100L
     }
 
     fun setTargetSize(
