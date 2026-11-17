@@ -357,7 +357,7 @@ actual fun PlayerConnectedButtonGroup(
                                             else -> {
                                                 ButtonGroupDefaults.connectedMiddleButtonShapes()
                                             }
-                                        }.let { it.copy(pressedShape = it.shape, checkedShape = it.shape) }.withStaticCorners(),
+                                        }.withStaticCorners(), // PeekMusic: keep the pressed/checked shape morph (bouncy buttons), as on Android
                                     colors =
                                         FilledTonalToggleButtonDefaults.colors(
                                             containerColor =
@@ -368,6 +368,7 @@ actual fun PlayerConnectedButtonGroup(
                                     contentPadding = PaddingValues(horizontal = if (action.text != null) 8.dp else 0.dp),
                                     modifier =
                                         Modifier
+                                            .animateWidth(interactionSource, 12.dp) // PeekMusic: as on Android
                                             .navigationPopupSource()
                                             .height(height)
                                             .then(

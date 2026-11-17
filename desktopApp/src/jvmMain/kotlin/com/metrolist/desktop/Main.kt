@@ -311,6 +311,11 @@ private fun WindowScope.AppContent(
                 !colorScheme.background.isLight()
             },
         )
+        // PeekMusic: before onboarding, whose feature pages already load images (player and artwork previews);
+        // set after it, Coil had created its default loader and the app crashed on finishing onboarding.
+        setSingletonImageLoaderFactory { context ->
+            DesktopImageLoader.create(context)
+        }
         var onboardingComplete by remember { mutableStateOf(Settings.shared.desktopOnboardingComplete) }
         if (!onboardingComplete) {
             DesktopOnboarding { sendCrashReports, openLogin ->
@@ -335,9 +340,6 @@ private fun WindowScope.AppContent(
         var isRootFocused by remember { mutableStateOf(false) }
         var isPlayerBackgroundFocused by remember { mutableStateOf(false) }
         val lastFmBrowser = remember { LastFmArtistBrowser().also { LastFM.renderedPageLoader = it::load } }
-        setSingletonImageLoaderFactory { context ->
-            DesktopImageLoader.create(context)
-        }
         UpdateArtworkTheme()
         LaunchedEffect(colorScheme) {
             try {

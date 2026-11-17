@@ -207,6 +207,7 @@ fun SongContextMenu(
     onMoveDown: (() -> Unit)? = null,
     onHideFromLibrary: (() -> Unit)? = null,
     additionalActions: List<PlayerMenuAction> = emptyList(),
+    currentAlbumId: String? = null, // PeekMusic: no "view album" for the album page this menu opens on
     onDismiss: () -> Unit,
 ) {
     var showDetails by remember(song.id) { mutableStateOf(false) }
@@ -284,7 +285,7 @@ fun SongContextMenu(
             onEdit = { showEditDialog = true },
             onGoToArtist = ArtistState::fetchArtistData,
             onGoToAlbum =
-                song.album?.id?.let { albumId ->
+                song.album?.id?.takeIf { it != currentAlbumId }?.let { albumId ->
                     {
                         if (song.podcastId != null) {
                             PodcastState.fetch(albumId)
@@ -310,6 +311,7 @@ fun AlbumContextMenu(
     onHideFromLibrary: (() -> Unit)? = null,
     pinnedId: String? = null,
     additionalActions: List<PlayerMenuAction> = emptyList(),
+    showDownload: Boolean = true, // PeekMusic: false on the album page, which has the header download button
 ) {
     MediaContextMenu(expanded = expanded, offset = offset, onDismiss = onDismiss) {
         val playback = LocalPlaybackController.current
@@ -335,7 +337,7 @@ fun AlbumContextMenu(
             onTogglePin = {
                 if (isPinned) HomeState.unpinSpeedDialItem(album.id) else HomeState.pinSpeedDialItem(album)
             },
-            onDownload = { withMediaSongs(album, songs) { loaded -> loaded.forEach(DownloadManager::download) } },
+            onDownload = { withMediaSongs(album, songs) { loaded -> loaded.forEach(DownloadManager::download) } }.takeIf { showDownload },
             onHideFromLibrary = onHideFromLibrary,
             onGoToArtist = ArtistState::fetchArtistData,
             additionalActions = additionalActions,
@@ -410,6 +412,7 @@ fun PlaylistContextMenu(
     pinnedId: String? = null,
     fallbackIcon: ImageVector? = null,
     additionalActions: List<PlayerMenuAction> = emptyList(),
+    showDownload: Boolean = true, // PeekMusic: false on the playlist page, which has the header download button
 ) {
     val playlist = localizedBuiltinPlaylist(playlist)
     var showExportDialog by remember(playlist.id) { mutableStateOf(false) }
@@ -504,7 +507,7 @@ fun PlaylistContextMenu(
                         DownloadManager.downloadPlaylist(playlist.id, playlistSongs)
                     }
                 }
-            },
+            }.takeIf { showDownload },
             onHideFromLibrary = onHideFromLibrary,
             hideFromLibraryLabel = hideFromLibraryLabel,
             onExport = { showExportDialog = true },
@@ -873,7 +876,7 @@ internal fun songDownloadAction(
     }
 }
 
-private fun withMediaSongs(
+internal fun withMediaSongs(
     item: YTItem,
     existingSongs: List<SongItem>,
     action: (List<SongItem>) -> Unit,

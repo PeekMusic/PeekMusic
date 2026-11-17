@@ -47,6 +47,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.metrolist.desktop.peek.rememberDesktopHeaderDownload
 import com.metrolist.desktop.state.app.AppState
 import com.metrolist.desktop.state.content.ArtistState
 import com.metrolist.desktop.state.content.HomeState
@@ -233,6 +234,21 @@ fun PlaylistScreen(colorScheme: ColorScheme) {
     val isLocal = playlistInfo?.isLocal == true || playlistInfo?.id?.startsWith("LP") == true
     val canRemoveFromLibrary = !isLocal && (PlaylistAlbumState.isPlaylistBookmarked || isEditable)
     val canEditSingle = playlistInfo?.canEdit == true
+    // PeekMusic: download button in the header instead of the ⋮ menu (loads the whole playlist first).
+    val headerDownload =
+        rememberDesktopHeaderDownload(
+            songs = songs,
+            onDownload = {
+                playlistInfo?.let { info ->
+                    PlaylistAlbumState.withCompletePlaylist { all -> DownloadManager.downloadPlaylist(info.id, all) }
+                }
+            },
+            onRemove = {
+                playlistInfo?.let { info ->
+                    PlaylistAlbumState.withCompletePlaylist { all -> DownloadManager.removePlaylistDownloads(info.id, all) }
+                }
+            },
+        ).takeIf { playlistInfo != null && !PlaylistAlbumState.isPlaylistLoading }
     var editError by remember { mutableStateOf<Throwable?>(null) }
     var coverError by remember { mutableStateOf(false) }
     val editCoverLabel = stringResource(Res.string.edit_playlist_cover)
@@ -467,6 +483,7 @@ fun PlaylistScreen(colorScheme: ColorScheme) {
                 PlaylistAlbumState::toggleSelectedPlaylistBookmark.takeUnless {
                     isLocal || isEditable || playlistInfo?.id == "LM"
                 },
+            headerDownload = headerDownload,
             onAddSong = if (isEditable) ({ showAddSongDialog = true }) else null,
             onTrackClick = { song, index ->
                 if (index >= displayedSongs.size) {
@@ -621,6 +638,7 @@ fun PlaylistScreen(colorScheme: ColorScheme) {
                 onFavorite = PlaylistAlbumState::toggleSelectedPlaylistBookmark.takeUnless { isLocal || isEditable || playlist.id == "LM" },
                 songs = songs.takeUnless { PlaylistAlbumState.playlistHasMore }.orEmpty(),
                 expanded = playlistActionsMenu.expanded,
+                showDownload = headerDownload == null,
                 offset = playlistActionsMenu.offset,
                 onRename =
                     if (isEditable) {

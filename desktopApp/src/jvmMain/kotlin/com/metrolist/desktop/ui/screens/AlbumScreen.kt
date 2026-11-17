@@ -55,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.metrolist.desktop.peek.rememberDesktopHeaderDownload
 import com.metrolist.desktop.state.app.AppState
 import com.metrolist.desktop.state.content.ArtistState
 import com.metrolist.desktop.state.content.HomeState
@@ -150,6 +151,13 @@ fun AlbumScreen(
             }
         }
     }
+    // PeekMusic: download button in the header instead of the ⋮ menu.
+    val headerDownload =
+        rememberDesktopHeaderDownload(
+            songs = songs,
+            onDownload = { DownloadManager.downloadAll(songs) },
+            onRemove = { stored -> DownloadManager.deleteDownloads(stored.map(SongItem::id)) },
+        ).takeIf { loaded != null }
     val displayedSongs =
         remember(songs, searchQuery) {
             songs.filterForPlaylistSearch(searchQuery)
@@ -187,6 +195,7 @@ fun AlbumScreen(
             onMoreOptions = { albumMenu.open() }.takeIf { loaded != null },
             isFavorite = isFavorite,
             onFavorite = onFavorite.takeIf { loaded != null },
+            headerDownload = headerDownload,
             onPlayAll = { queue -> queue.firstOrNull { !it.isUnavailable }?.let { PlayerState.playTrack(it, queue) } },
             onShuffle = { queue ->
                 PlayerState.shuffleQueue(queue)
@@ -259,12 +268,14 @@ fun AlbumScreen(
             expanded = albumMenu.expanded,
             offset = albumMenu.offset,
             onDismiss = albumMenu::dismiss,
+            showDownload = headerDownload == null,
         )
         menuSong?.let { song ->
             SongContextMenu(
                 song = song,
                 expanded = songMenu.expanded,
                 offset = songMenu.offset,
+                currentAlbumId = album.id,
                 onDismiss = songMenu::dismiss,
             )
         }

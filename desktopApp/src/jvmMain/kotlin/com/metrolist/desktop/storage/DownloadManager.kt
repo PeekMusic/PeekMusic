@@ -993,6 +993,22 @@ object DownloadManager {
             false
         }
 
+    /** PeekMusic: stops the queued and running downloads of these songs (header download); finished songs stay. */
+    fun stopDownloads(songIds: Collection<String>) {
+        synchronized(metadataLock) {
+            val ids = songIds.filter { activeJobs.containsKey(it) || pendingSongs.containsKey(it) }.toSet()
+            if (ids.isEmpty()) return
+            if (stoppedDownloadIds.addAll(ids)) saveStoppedDownloadIds()
+            ids.forEach { id ->
+                activeJobs.remove(id)?.cancel()
+                pendingSongs.remove(id)
+            }
+            _downloadStates.update { map -> map.filterNot { (id, state) -> id in ids && state != DownloadState.DOWNLOADED } }
+            _downloadProgress.update { it - ids }
+            _downloadTitles.update { it - ids }
+        }
+    }
+
     fun stopActiveDownloads() {
         synchronized(metadataLock) {
             if (stoppedDownloadIds.addAll(activeJobs.keys + pendingSongs.keys)) saveStoppedDownloadIds()
