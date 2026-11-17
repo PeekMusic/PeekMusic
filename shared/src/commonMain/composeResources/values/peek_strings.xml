@@ -7,6 +7,9 @@
     <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
     <string name="peek_settings_audio">Audio</string>
     <string name="peek_settings_audio_description">Quality, sound, crossfade and cast</string>
+    <string name="peek_settings_audio_description_no_cast">Quality, sound and crossfade</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Share the local log file, for example with a bug report</string>
     <string name="peek_settings_player_description">Design, background and mini player</string>
     <string name="peek_settings_home_library_description">Home sections, automatic playlists and hidden items</string>
     <string name="peek_settings_translation">Lyrics translation</string>

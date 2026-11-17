@@ -12,6 +12,7 @@ import com.metrolist.shared.generated.resources.appearance_player
 import com.metrolist.shared.generated.resources.peek_settings_appearance_description
 import com.metrolist.shared.generated.resources.peek_settings_audio
 import com.metrolist.shared.generated.resources.peek_settings_audio_description
+import com.metrolist.shared.generated.resources.peek_settings_audio_description_no_cast
 import com.metrolist.shared.generated.resources.peek_settings_home_library_description
 import com.metrolist.shared.generated.resources.peek_settings_player_description
 import com.metrolist.shared.generated.resources.peek_settings_privacy_description
@@ -34,6 +35,7 @@ import com.metrolist.shared.ui.settings.SettingsControl
 import com.metrolist.shared.ui.settings.SettingsGroupRegistration
 import com.metrolist.shared.ui.settings.SettingsItemRegistration
 import com.metrolist.shared.ui.settings.SettingsPageId
+import com.metrolist.shared.ui.settings.SettingsPlatform
 import com.metrolist.shared.ui.settings.SettingsRootGroupRegistration
 import com.metrolist.shared.ui.settings.SettingsUiRegistry
 import org.jetbrains.compose.resources.stringResource
@@ -94,7 +96,7 @@ internal object PeekSettingsLayout {
 
 /** Applies [PeekSettingsLayout] to upstream's organized registry. */
 @Composable
-internal fun SettingsUiRegistry.peekLayout(): SettingsUiRegistry {
+internal fun SettingsUiRegistry.peekLayout(platform: SettingsPlatform): SettingsUiRegistry {
     val moreSettings = stringResource(Res.string.settings_more_options)
     val player = stringResource(Res.string.appearance_player)
     val playerDescription = stringResource(Res.string.peek_settings_player_description)
@@ -118,7 +120,14 @@ internal fun SettingsUiRegistry.peekLayout(): SettingsUiRegistry {
         .retitlePage(
             SettingsPageId.PLAYER,
             stringResource(Res.string.peek_settings_audio),
-            stringResource(Res.string.peek_settings_audio_description),
+            // iOS has no cast, so its Audio page does not promise it.
+            stringResource(
+                if (platform == SettingsPlatform.IOS) {
+                    Res.string.peek_settings_audio_description_no_cast
+                } else {
+                    Res.string.peek_settings_audio_description
+                },
+            ),
             MetrolistIcons.Outlined.Headphones,
         ).retitlePage(
             SettingsPageId.PLAYER_QUEUE,

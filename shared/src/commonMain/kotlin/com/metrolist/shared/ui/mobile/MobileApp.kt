@@ -147,6 +147,7 @@ import com.metrolist.shared.generated.resources.logo
 import com.metrolist.shared.generated.resources.mysterious_fourth_tab
 import com.metrolist.shared.generated.resources.mysterious_fourth_tab_description
 import com.metrolist.shared.generated.resources.offline_mode
+import com.metrolist.shared.generated.resources.peek_export_logs_description
 import com.metrolist.shared.generated.resources.play
 import com.metrolist.shared.generated.resources.playback_error_no_playable_stream
 import com.metrolist.shared.generated.resources.playback_error_unable_to_play_link
@@ -156,7 +157,6 @@ import com.metrolist.shared.generated.resources.removed_downloads
 import com.metrolist.shared.generated.resources.retry
 import com.metrolist.shared.generated.resources.search
 import com.metrolist.shared.generated.resources.search_history_removal_failed
-import com.metrolist.shared.generated.resources.settings_diagnostic_logging_description
 import com.metrolist.shared.generated.resources.settings_storage_summary
 import com.metrolist.shared.generated.resources.shuffle
 import com.metrolist.shared.generated.resources.subscribed_to_artist
@@ -1417,7 +1417,7 @@ fun MobileApp(
                                             listOf(
                                                 rememberIosLogExportAction(
                                                     title = stringResource(Res.string.export_logs),
-                                                    description = stringResource(Res.string.settings_diagnostic_logging_description),
+                                                    description = stringResource(Res.string.peek_export_logs_description),
                                                 ),
                                             ),
                                         pageContent = { page, _, _ ->

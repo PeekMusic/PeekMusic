@@ -261,5 +261,5 @@ fun rememberMetrolistSettingsRegistry(
             .toTypedArray(),
     )
     // PeekMusic: fewer switches and the legacy app's page layout.
-    return organizeSettingsRegistry(builder.build()).peekLayout()
+    return organizeSettingsRegistry(builder.build()).peekLayout(host.platform)
 }

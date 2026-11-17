@@ -418,7 +418,12 @@ fun MetrolistIOSApp() {
                 darkTheme = Settings.shared.getCurrentThemeIsDark(),
                 pureBlack = Settings.shared.isPureBlackTheme(),
             ) {
-                IosOnboarding { consent, login, restore ->
+                IosOnboarding(
+                    contentLanguageChoices = localeChoices.first,
+                    contentCountryChoices = localeChoices.second,
+                    systemLanguage = systemLocale.first,
+                    systemCountry = systemLocale.second,
+                ) { consent, login, restore ->
                     if (isCrashReportingAvailable()) Settings.shared.sentryEnabled = consent
                     Settings.shared.iosOnboardingComplete = true
                     showOnboarding = false
