@@ -41,6 +41,7 @@ import com.metrolist.shared.generated.resources.sleep_timer
 import com.metrolist.shared.generated.resources.subtitles
 import com.metrolist.shared.generated.resources.video_viewer
 import com.metrolist.shared.model.RepeatMode
+import com.metrolist.shared.peek.rememberPeekPressSource
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import com.metrolist.shared.ui.navigation.navigationPopupSource
@@ -169,6 +170,8 @@ actual fun PlayerConnectedButtonGroup(
         actions.forEachIndexed { index, action ->
             customItem(
                 buttonGroupContent = {
+                    // PeekMusic: bouncy buttons like Android, the group widens the pressed item.
+                    val interactionSource = rememberPeekPressSource()
                     val shapes =
                         when (index) {
                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -177,6 +180,7 @@ actual fun PlayerConnectedButtonGroup(
                         }
                     ToggleButton(
                         checked = action.checked == true,
+                        interactionSource = interactionSource,
                         onCheckedChange = { action.onClick() },
                         enabled = action.enabled,
                         shapes = shapes.withStaticCorners(),
@@ -192,9 +196,9 @@ actual fun PlayerConnectedButtonGroup(
                             ),
                         modifier =
                             if (action.text != null) {
-                                Modifier.navigationPopupSource().widthIn(min = buttonWidth)
+                                Modifier.animateWidth(interactionSource, 12.dp).navigationPopupSource().widthIn(min = buttonWidth)
                             } else {
-                                Modifier.navigationPopupSource().width(buttonWidth)
+                                Modifier.animateWidth(interactionSource, 12.dp).navigationPopupSource().width(buttonWidth)
                             },
                     ) {
                         if (action.text != null) {
