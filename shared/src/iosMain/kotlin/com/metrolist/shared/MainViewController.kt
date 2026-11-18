@@ -86,7 +86,6 @@ import com.metrolist.shared.storage.ResizableImageDiskCache
 import com.metrolist.shared.ui.crash.CrashLogsScreen
 import com.metrolist.shared.ui.listentogether.listenTogetherPresentationMessages
 import com.metrolist.shared.ui.mobile.IosLoginScreen
-import com.metrolist.shared.ui.mobile.IosSpotifyLoginScreen
 import com.metrolist.shared.ui.mobile.MobileApp
 import com.metrolist.shared.ui.mobile.iosLyricsShareAction
 import com.metrolist.shared.ui.mobile.pickIosPlaylistCover
@@ -571,7 +570,6 @@ fun MetrolistIOSApp() {
                             IosLoginScreen(switching, onBack, onComplete, onTokenLogin)
                         },
                         peekFriends = peekFriends,
-                        spotifyLoginContent = { onBack, onComplete -> IosSpotifyLoginScreen(onBack, onComplete) },
                     )
                 }
             }
