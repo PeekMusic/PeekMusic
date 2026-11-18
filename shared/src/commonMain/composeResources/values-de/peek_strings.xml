@@ -109,4 +109,5 @@
     <string name="peek_youtube_canvas_desktop_hint">Braucht am Desktop mehr Leistung, vor allem über 480p. Ruckelt das Video, wähle eine niedrigere Qualität.</string>
     <string name="peek_animated_covers_desktop_desc">Zeigt animierte Album-Cover von Apple Music, wenn verfügbar. Braucht mehr Speicher und Daten.</string>
     <string name="peek_listen_together_ios_user">iPhone-Benutzer</string>
+    <string name="peek_youtube_canvas_ios_hint">Klappt auf dem iPhone nur, wenn YouTube das Video als H.264 anbietet. Das fehlt bei vielen Videos, deshalb bleibt es oft aus. Höchstens 720p.</string>
 </resources>

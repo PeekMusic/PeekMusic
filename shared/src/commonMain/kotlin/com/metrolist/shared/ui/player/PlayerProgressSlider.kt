@@ -89,17 +89,22 @@ internal fun PlayerProgressSlider(
             if (isProgressAnimating) {
                 var sampledPosition = currentPosition
                 var sampleFrameNanos = 0L
+                var positionAdvanced = false
                 while (true) {
                     withFrameNanos { frameNanos ->
                         val newSample = latestPosition
                         if (newSample != sampledPosition || sampleFrameNanos == 0L) {
+                            if (sampleFrameNanos != 0L) positionAdvanced = true
                             sampledPosition = newSample
                             sampleFrameNanos = frameNanos
                         }
+                        // PeekMusic: run ahead of the player only as far as its updates can lag. A track that still
+                        // loads while marked playing (iOS) kept the slider moving at 0:00, then it jumped back.
+                        val maxLeadMs = if (positionAdvanced) PLAYBACK_POSITION_MAX_LEAD_MS else PLAYBACK_POSITION_START_LEAD_MS
                         value =
                             interpolatePlaybackPosition(
                                 sampledPositionMs = sampledPosition,
-                                elapsedRealtimeMs = (frameNanos - sampleFrameNanos) / 1_000_000L,
+                                elapsedRealtimeMs = ((frameNanos - sampleFrameNanos) / 1_000_000L).coerceAtMost(maxLeadMs),
                                 playbackSpeed = latestSpeed,
                                 durationMs = latestDuration,
                             )
@@ -250,3 +255,9 @@ internal fun PlayerProgressSlider(
         }
     }
 }
+
+// Players publish their position about once a second; past this lead the player has stalled, so the slider waits.
+private const val PLAYBACK_POSITION_MAX_LEAD_MS = 1_500L
+
+// Until the position first moves after a start, seek or track change, the slider barely runs ahead.
+private const val PLAYBACK_POSITION_START_LEAD_MS = 250L

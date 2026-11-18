@@ -57,6 +57,9 @@ internal class IosPlayerPlatformServices(
         primaryArtist: String?,
     ): String? = canvasProvider.getSpotifyCanvas(title, artist, durationMs, album, primaryArtist)
 
+    // PeekMusic: above 720p YouTube rarely offers an H.264 stream AVPlayer can play, so the Canvas stops there.
+    override val maxMusicVideoCanvasHeight: Int = IOS_MAX_CANVAS_HEIGHT
+
     // AVPlayer only plays a plain video file here: no SABR or HLS for the Canvas video.
     override fun musicVideoCanvasHints(song: SongItem): ContentHints =
         song
@@ -64,3 +67,5 @@ internal class IosPlayerPlatformServices(
             .copy(sabrFirst = false)
             .withStreamCapabilities(allowHls = false, allowSabr = false, allowBoundedRange = true)
 }
+
+internal const val IOS_MAX_CANVAS_HEIGHT = 720

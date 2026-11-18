@@ -36,6 +36,7 @@ import com.metrolist.shared.settings.desktopDefaultOpenTab
 import com.metrolist.shared.settings.desktopDefaultOpenTabs
 import com.metrolist.shared.settings.isDesktopMac
 import com.metrolist.shared.settings.normalizeDefaultOpenTab
+import com.metrolist.shared.settings.targetHeight
 import com.metrolist.shared.settings.updateDefaultOpenTab
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import org.jetbrains.compose.resources.stringResource
@@ -825,32 +826,45 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                     "youtubeCanvas",
                     stringResource(Res.string.youtube_video_canvas),
                     // PeekMusic: the desktop decodes the music video in software, so it costs more CPU.
-                    stringResource(Res.string.peek_youtube_canvas_desktop_hint).takeIf { host.platform == SettingsPlatform.DESKTOP },
+                    when (host.platform) {
+                        SettingsPlatform.DESKTOP -> stringResource(Res.string.peek_youtube_canvas_desktop_hint)
+
+                        // PeekMusic: the iPhone only plays YouTube's H.264 streams, which many videos lack.
+                        SettingsPlatform.IOS -> stringResource(Res.string.peek_youtube_canvas_ios_hint)
+
+                        else -> null
+                    },
                     enabled = settings.isCanvasEnabled && settings.musicVideoPlaybackEnabled,
                 ) {
                     val canvasQualityChoices =
-                        MusicVideoQuality.entries.map { quality ->
-                            SettingsChoice(
-                                quality.name,
-                                if (quality == MusicVideoQuality.AUTO) {
-                                    stringResource(Res.string.music_video_quality_auto)
-                                } else {
-                                    stringResource(Res.string.music_video_quality_resolution, quality.name.drop(1))
-                                },
-                            )
-                        }
+                        MusicVideoQuality.entries
+                            .filter { host.platform != SettingsPlatform.IOS || (it.targetHeight ?: 0) <= IOS_CANVAS_MAX_HEIGHT }
+                            .map { quality ->
+                                SettingsChoice(
+                                    quality.name,
+                                    if (quality == MusicVideoQuality.AUTO) {
+                                        stringResource(Res.string.music_video_quality_auto)
+                                    } else {
+                                        stringResource(Res.string.music_video_quality_resolution, quality.name.drop(1))
+                                    },
+                                )
+                            }
                     val canvasModeChoices =
                         listOf(
                             SettingsChoice(YouTubeCanvasMode.SHORT_CLIPS.name, stringResource(Res.string.youtube_canvas_mode_short_clips)),
                             SettingsChoice(YouTubeCanvasMode.FULL_VIDEO.name, stringResource(Res.string.youtube_canvas_mode_full_video)),
                         )
+                    // A higher quality saved before the iOS limit shows (and plays) as 720p.
+                    val canvasQuality =
+                        settings.youtubeCanvasQuality.takeIf { quality -> canvasQualityChoices.any { it.id == quality.name } }
+                            ?: MusicVideoQuality.P720
                     choice(
                         id = "youtubeCanvasQuality",
                         title = stringResource(Res.string.youtube_canvas_quality),
                         description = stringResource(Res.string.youtube_canvas_quality_desc),
-                        valueLabel = canvasQualityChoices.first { it.id == settings.youtubeCanvasQuality.name }.label,
+                        valueLabel = canvasQualityChoices.first { it.id == canvasQuality.name }.label,
                         choices = canvasQualityChoices,
-                        selectedChoiceId = settings.youtubeCanvasQuality.name,
+                        selectedChoiceId = canvasQuality.name,
                     ) { settings.youtubeCanvasQuality = MusicVideoQuality.valueOf(it) }
                     choice(
                         id = "youtubeCanvasMode",
@@ -1033,3 +1047,6 @@ private fun SettingsGroupRegistryBuilder.videoPlaybackSettings(host: SharedSetti
         }
     }
 }
+
+// PeekMusic: keep in step with IosPlayerPlatformServices.maxMusicVideoCanvasHeight.
+private const val IOS_CANVAS_MAX_HEIGHT = 720

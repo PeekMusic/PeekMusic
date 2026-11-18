@@ -145,6 +145,9 @@ interface PlayerPlatformServices {
 
     fun musicVideoCanvasHints(song: SongItem): ContentHints
 
+    /** PeekMusic: highest music video Canvas quality the platform plays reliably; null for no limit (iOS: 720). */
+    val maxMusicVideoCanvasHeight: Int? get() = null
+
     suspend fun cachedMusicVideoCanvas(
         songId: String,
         mode: YouTubeCanvasMode,
@@ -833,7 +836,9 @@ class PlayerViewModel(
                 val resolver = GlobalYouTubeRepository.streamResolver ?: return@withContext null
                 val hints =
                     platform.musicVideoCanvasHints(target).let { hints ->
-                        hints.copy(maxVideoHeight = quality.targetHeight ?: hints.maxVideoHeight)
+                        val height = quality.targetHeight ?: hints.maxVideoHeight
+                        val limit = platform.maxMusicVideoCanvasHeight
+                        hints.copy(maxVideoHeight = if (height != null && limit != null) minOf(height, limit) else height ?: limit)
                     }
                 if (refresh) {
                     resolver.refresh(target.id, hints, AudioQuality.AUTO, sourceSong = target)

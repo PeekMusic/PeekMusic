@@ -201,6 +201,7 @@ import com.metrolist.shared.ui.components.COLLAPSED_ANCHOR
 import com.metrolist.shared.ui.components.ChipShelf
 import com.metrolist.shared.ui.components.EXPANDED_ANCHOR
 import com.metrolist.shared.ui.components.HomeLoadingPlaceholder
+import com.metrolist.shared.ui.components.LocalDownloadedSongIds
 import com.metrolist.shared.ui.components.MiniPlayer
 import com.metrolist.shared.ui.components.PopupContent
 import com.metrolist.shared.ui.components.PopupVisibility
@@ -822,6 +823,8 @@ fun MobileApp(
         NavigationContentProvider(
             LocalNavigationContainerState provides containers,
             LocalPlaybackController provides playbackController,
+            // PeekMusic: the downloaded check mark next to song titles, like Android.
+            LocalDownloadedSongIds provides downloadedSongIds,
             LocalContentObscured provides
                 (playerState.currentSong != null && playerSheetSettled),
         ) {

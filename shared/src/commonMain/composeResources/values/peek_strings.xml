@@ -135,4 +135,5 @@
     <string name="peek_youtube_canvas_desktop_hint">Needs more processing power on desktop, especially above 480p. If the video stutters, pick a lower quality.</string>
     <string name="peek_animated_covers_desktop_desc">Show animated album covers from Apple Music when available. Uses more storage and data.</string>
     <string name="peek_listen_together_ios_user">iPhone user</string>
+    <string name="peek_youtube_canvas_ios_hint">On iPhone this only works when YouTube offers an H.264 version of the video, which many videos lack, so it often stays off. Up to 720p.</string>
 </resources>
