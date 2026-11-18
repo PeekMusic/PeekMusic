@@ -28,7 +28,7 @@ fun upcomingPreCacheTargets(
     val current = queue[currentIndex].id
     return order
         .asSequence()
-        .filter { !it.isLocal && !it.id.startsWith("local_") && !it.isPodcast && it.id != current }
+        .filter { !it.isLocal && !it.id.startsWith("local_") && !it.isPodcast && !it.isUnavailable && it.id != current }
         .distinctBy { it.id }
         .take(count)
         .toList()

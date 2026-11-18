@@ -744,9 +744,9 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
             val isAndroid = host.platform == SettingsPlatform.ANDROID
             val canvasEnabled = settings.isCanvasEnabled
             group("animatedCovers", stringResource(Res.string.settings_playback)) {
-                // PeekMusic: desktop has its own Canvas switch too; there the canvas plays in the cover.
+                // PeekMusic: desktop and iOS have their own Canvas switch too; on desktop the canvas plays in the cover.
                 val isDesktop = host.platform == SettingsPlatform.DESKTOP
-                if (isAndroid || isDesktop) {
+                if (isAndroid || isDesktop || host.platform == SettingsPlatform.IOS) {
                     switch(
                         id = "playerCanvasEnabled",
                         title = stringResource(Res.string.canvas),
@@ -819,8 +819,8 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                     ) { settings.appleMusicArtistVideoResolution = AnimatedCoverResolution.valueOf(it) }
                 }
             }
-            // PeekMusic: the desktop plays the YouTube canvas too, with the same quality and clip settings.
-            if (host.platform == SettingsPlatform.ANDROID || host.platform == SettingsPlatform.DESKTOP) {
+            // PeekMusic: desktop and iOS play the YouTube canvas too, with the same quality and clip settings.
+            run {
                 group(
                     "youtubeCanvas",
                     stringResource(Res.string.youtube_video_canvas),

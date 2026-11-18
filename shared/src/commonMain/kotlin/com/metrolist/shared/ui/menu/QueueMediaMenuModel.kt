@@ -9,12 +9,9 @@ import androidx.compose.runtime.Composable
 import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.details
 import com.metrolist.shared.generated.resources.details_desc
-import com.metrolist.shared.generated.resources.listen_together
-import com.metrolist.shared.generated.resources.refetch
-import com.metrolist.shared.generated.resources.refetch_desc
 import com.metrolist.shared.generated.resources.remove_from_queue
 import com.metrolist.shared.model.ArtistTiny
-import com.metrolist.shared.settings.Settings
+import com.metrolist.shared.peek.peekSongMenuActionGroups
 import com.metrolist.shared.ui.components.PlayerMenuAction
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import org.jetbrains.compose.resources.stringResource
@@ -37,12 +34,12 @@ fun queueMediaMenuModel(
     onGoToArtist: ((String) -> Unit)?,
     onShare: (() -> Unit)?,
     onAltShare: (() -> Unit)?,
-    onRefetch: (() -> Unit)?,
     onShowInfo: (() -> Unit)?,
     onRemoveFromQueue: (() -> Unit)?,
-    onNavigateToListenTogether: (() -> Unit)?,
     onDislike: (() -> Unit)?,
     deleteUploadAction: PlayerMenuAction? = null,
+    onBlockArtist: (() -> Unit)? = null,
+    downloadState: MediaDownloadState = MediaDownloadState.NOT_DOWNLOADED,
 ): MediaMenuModel =
     MediaMenuModel(
         title = songTitle,
@@ -62,42 +59,36 @@ fun queueMediaMenuModel(
                 onShare = onShare,
                 onAltShare = onAltShare,
             ),
+        // PeekMusic: the same order as the song and player menus (see PeekSongMenu): queue, remove, artist and album,
+        // then download, dislike, block and details; no PeekParty and no refetch, as everywhere else.
         actionGroups =
-            listOf(
-                listOfNotNull(
-                    dislikeMenuAction(isDisliked, onDismiss, onDislike),
-                    onRemoveFromQueue?.let {
-                        action(MetrolistIcons.Outlined.Delete, stringResource(Res.string.remove_from_queue), onDismiss, it)
-                    },
-                ) + queueActions(onDismiss, onPlayNext, onAddToQueue),
-                listOfNotNull(downloadAction(MediaDownloadState.NOT_DOWNLOADED, 0, false, onDismiss, onDownload), deleteUploadAction),
-                listOfNotNull(
-                    onNavigateToListenTogether?.takeIf { Settings.shared.listenTogetherEnabled }?.let {
-                        action(MetrolistIcons.Outlined.Group, stringResource(Res.string.listen_together), onDismiss, it)
-                    },
-                ),
-                listOfNotNull(
-                    artistNavigationMenuAction(artists, onGoToArtist, onDismiss),
-                    albumNavigationMenuAction(onDismiss, onGoToAlbum.takeUnless { albumName.isNullOrBlank() }, albumName),
-                ),
-                listOfNotNull(
-                    onRefetch?.let {
-                        action(
-                            MetrolistIcons.Outlined.Refresh,
-                            stringResource(Res.string.refetch),
-                            onDismiss,
-                            it,
-                            stringResource(Res.string.refetch_desc),
-                        )
-                    },
-                    onShowInfo?.let {
-                        PlayerMenuAction(
-                            MetrolistIcons.Outlined.Info,
-                            stringResource(Res.string.details),
-                            stringResource(Res.string.details_desc),
-                            onClick = it,
-                        )
-                    },
-                ),
+            peekSongMenuActionGroups(
+                queue = queueActions(onDismiss, onPlayNext, onAddToQueue),
+                removal =
+                    listOfNotNull(
+                        onRemoveFromQueue?.let {
+                            action(MetrolistIcons.Outlined.Delete, stringResource(Res.string.remove_from_queue), onDismiss, it)
+                        },
+                    ),
+                navigation =
+                    listOfNotNull(
+                        artistNavigationMenuAction(artists, onGoToArtist, onDismiss),
+                        albumNavigationMenuAction(onDismiss, onGoToAlbum.takeUnless { albumName.isNullOrBlank() }, albumName),
+                    ),
+                library =
+                    listOfNotNull(
+                        downloadAction(downloadState, 0, false, onDismiss, onDownload),
+                        dislikeMenuAction(isDisliked, onDismiss, onDislike),
+                        blockArtistMenuAction(onDismiss, onBlockArtist),
+                        onShowInfo?.let {
+                            PlayerMenuAction(
+                                MetrolistIcons.Outlined.Info,
+                                stringResource(Res.string.details),
+                                stringResource(Res.string.details_desc),
+                                onClick = it,
+                            )
+                        },
+                    ),
+                extras = listOfNotNull(deleteUploadAction),
             ),
     )

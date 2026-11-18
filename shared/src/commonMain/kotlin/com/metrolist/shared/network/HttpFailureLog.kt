@@ -3,6 +3,7 @@ package com.metrolist.shared.network
 import com.metrolist.shared.youtube.playback.PlaybackEventKind
 import com.metrolist.shared.youtube.playback.PlaybackEventLog
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpClientPlugin
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.HttpSend
@@ -120,3 +121,6 @@ fun Throwable.hasHttpTransportFailureInCauseChain(): Boolean =
 fun Throwable.hasHttpRequestTimeoutInCauseChain(): Boolean =
     generateSequence(this) { it.cause?.takeUnless { cause -> cause === it } }
         .any { it is HttpRequestTimeoutException }
+
+/** True for the app's shared JVM engine, whose transport already logs failures. PeekMusic: lets spotlib run on iOS. */
+internal expect fun isSharedHttpEngine(engine: HttpClientEngine): Boolean

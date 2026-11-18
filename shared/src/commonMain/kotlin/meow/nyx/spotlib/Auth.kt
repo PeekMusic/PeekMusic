@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalUuidApi::class)
+
 package meow.nyx.spotlib
 
 import io.ktor.client.request.headers
@@ -13,7 +15,8 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
-import java.util.UUID
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 private const val TOKEN_URL = "https://open.spotify.com/api/token"
 private const val CLIENT_TOKEN_URL = "https://clienttoken.spotify.com/v1/clienttoken"
@@ -76,7 +79,7 @@ internal class AuthHttp(
     }
 
     suspend fun fetchClientToken(): String {
-        val deviceId = jar.cookieValue(Url(OPEN_HOST), "sp_t") ?: UUID.randomUUID().toString()
+        val deviceId = jar.cookieValue(Url(OPEN_HOST), "sp_t") ?: Uuid.random().toString()
         val payload =
             buildJsonObject {
                 put(

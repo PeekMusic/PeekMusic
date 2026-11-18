@@ -28,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.metrolist.shared.api.lyrics.LyricsUtils
 import com.metrolist.shared.generated.resources.Res
@@ -214,6 +213,18 @@ fun LyricsMenu(
                                 showSearchDialog = true
                             },
                         ),
+                        // PeekMusic: Copy is a button next to Sources, as on Android.
+                        PlayerMenuAction(
+                            icon = MetrolistIcons.Outlined.ContentCopy,
+                            title = stringResource(Res.string.copy),
+                            onClick = {
+                                val textToCopy = LyricsUtils.toPlainText(lyricsUiState.lyrics)
+                                coroutineScope.launch {
+                                    clipboard.setText(textToCopy)
+                                    snackbarHostState.showSnackbar(copiedMessage)
+                                }
+                            },
+                        ),
                     ),
             )
 
@@ -326,33 +337,6 @@ fun LyricsMenu(
                         } else {
                             null
                         },
-                        Material3MenuItemData(
-                            title = { Text(stringResource(Res.string.copy)) },
-                            description = {
-                                Text(
-                                    lyricsUiState.lyrics
-                                        .firstOrNull()
-                                        ?.text
-                                        .orEmpty(),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = MetrolistIcons.Outlined.ContentCopy,
-                                    contentDescription = null,
-                                )
-                            },
-                            onClick = {
-                                val textToCopy =
-                                    LyricsUtils.toPlainText(lyricsUiState.lyrics)
-                                coroutineScope.launch {
-                                    clipboard.setText(textToCopy)
-                                    snackbarHostState.showSnackbar(copiedMessage)
-                                }
-                            },
-                        ),
                     ),
             )
 

@@ -21,6 +21,7 @@ import com.metrolist.android.ui.component.Material3CardsGroup
 import com.metrolist.shared.db.MusicDatabase
 import com.metrolist.shared.model.ArtistTiny
 import com.metrolist.shared.model.SongItem
+import com.metrolist.shared.settings.BlockedContent
 import com.metrolist.shared.ui.LocalIsTv
 import com.metrolist.shared.ui.components.rememberModalSheetState
 import com.metrolist.shared.ui.menu.QueueMenuSheetContent
@@ -93,11 +94,11 @@ fun QueueMenu(
             onGoToArtist = onGoToArtist,
             onShare = onShare,
             onAltShare = onAltShare,
-            onRefetch = onRefetch,
             onShowInfo = showSongDetails,
             onRemoveFromQueue = onRemoveFromQueue,
-            onNavigateToListenTogether = onNavigateToListenTogether,
             onDislike = onDislike,
+            // PeekMusic: block the artist from the queue too, like the player menu.
+            onBlockArtist = artists.firstOrNull { it.id != null }?.let { artist -> { BlockedContent.blockArtist(artist) } },
         )
     MediaMenuBottomSheet(onDismissRequest = onDismiss, scrollContent = false, sheetState = menuSheetState) {
         QueueMenuSheetContent(model, duration, isLiked, onLike) { actions ->

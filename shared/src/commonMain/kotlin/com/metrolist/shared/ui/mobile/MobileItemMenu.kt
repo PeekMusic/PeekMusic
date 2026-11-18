@@ -26,9 +26,11 @@ import com.metrolist.shared.db.MusicDatabase
 import com.metrolist.shared.db.isHistoryPlaylistId
 import com.metrolist.shared.db.refreshHistoryPlaylist
 import com.metrolist.shared.generated.resources.Res
+import com.metrolist.shared.generated.resources.blocked_artists_count
 import com.metrolist.shared.generated.resources.dismiss
 import com.metrolist.shared.generated.resources.error_occurred
 import com.metrolist.shared.generated.resources.play
+import com.metrolist.shared.generated.resources.unblock
 import com.metrolist.shared.listentogether.ListenTogetherManager
 import com.metrolist.shared.listentogether.ListenTogetherRoomRole
 import com.metrolist.shared.model.AlbumItem
@@ -39,6 +41,7 @@ import com.metrolist.shared.model.PodcastItem
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.YTItem
 import com.metrolist.shared.model.toSongItem
+import com.metrolist.shared.peek.rememberPeekArtistMenuDetails
 import com.metrolist.shared.playback.PlayerSession
 import com.metrolist.shared.settings.BlockedContent
 import com.metrolist.shared.settings.HiddenLibraryItems
@@ -70,6 +73,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import com.metrolist.shared.db.entities.toSongItem as storedSongToSongItem
 import com.metrolist.shared.ui.components.rememberModalSheetState as rememberBottomSheetState
@@ -125,8 +129,13 @@ internal fun MobileItemMenu(
     currentAlbumId: String? = null, // PeekMusic: no "view album" for the album page that is open
     // PeekMusic: the open album or playlist page has the download button in its header, so its ⋮ menu drops it.
     currentCollectionId: String? = null,
+    // PeekMusic: add a whole album to a playlist, and hide items opened from the library, like Android.
+    onAddSongsToPlaylist: ((List<SongItem>) -> Unit)? = null,
+    fromLibrary: Boolean = false,
+    // PeekMusic: the songs of the open collection page; with them a built-in playlist gets the full menu, like Android.
+    collectionSongs: List<SongItem>? = null,
 ) {
-    if (item is PlaylistItem && item.id.startsWith("auto:") && item.id != "auto:liked") {
+    if (item is PlaylistItem && item.id.startsWith("auto:") && item.id != "auto:liked" && collectionSongs == null) {
         BuiltinPlaylistMenu(item, database, onDismiss)
         return
     }
@@ -209,6 +218,7 @@ internal fun MobileItemMenu(
                             onPlayNext = { playbackController.playNext(listOf(song)) },
                             onAddToQueue = { playbackController.addToQueue(listOf(song)) },
                             onTogglePin = pin.toggle,
+                            onHideFromLibrary = if (fromLibrary) ({ HiddenLibraryItems.hide(song) }) else null,
                             onAddToPlaylist = {
                                 onAddToPlaylist(song)
                                 onDismiss()
@@ -243,7 +253,7 @@ internal fun MobileItemMenu(
             val errorText = stringResource(Res.string.error_occurred)
             val bookmark = rememberPlaylistBookmark(item, database, scope) { onError(errorText) }
             val pin = rememberSpeedDialToggle(item, database)
-            var playlistSongs by remember(item, database) { mutableStateOf<List<SongItem>?>(null) }
+            var playlistSongs by remember(item, database) { mutableStateOf(collectionSongs) }
 
             suspend fun resolveSongs(): List<SongItem> = playlistSongs ?: loadPlaylistMenuSongs(item, database).also { playlistSongs = it }
             val playlistIsDownloaded =
@@ -323,13 +333,14 @@ internal fun MobileItemMenu(
                                         item,
                                     )
                                 }.takeUnless { item.id.startsWith("auto:") || isHistoryPlaylistId(item.id) },
+                            // PeekMusic: a local playlist has no link to share, as on Android.
                             onShare =
-                                if (item.id.startsWith("auto:")) {
+                                if (item.isLocal || item.id.startsWith("auto:")) {
                                     null
                                 } else {
                                     {
                                         onDismiss()
-                                        onCopyText(ShareUrls.playlist(item.id))
+                                        (onShareText ?: onCopyText).invoke(ShareUrls.playlist(item.id))
                                     }
                                 },
                         ),
@@ -405,9 +416,17 @@ internal fun MobileItemMenu(
                             onPlayNext = playbackActions::playNext,
                             onAddToQueue = playbackActions::addToQueue,
                             onTogglePin = pin.toggle,
+                            onAddToPlaylist =
+                                onAddSongsToPlaylist?.let { add ->
+                                    {
+                                        onDismiss()
+                                        scope.launch { withMediaMenuSongs(::resolveSongs, action = add) }
+                                    }
+                                },
+                            onHideFromLibrary = if (fromLibrary) ({ HiddenLibraryItems.hide(item) }) else null,
                             onShare = {
                                 onDismiss()
-                                onCopyText(ShareUrls.album(item.id))
+                                (onShareText ?: onCopyText).invoke(ShareUrls.album(item.id))
                             },
                             onGoToArtist = { artistId ->
                                 onDismiss()
@@ -421,6 +440,12 @@ internal fun MobileItemMenu(
 
         is ArtistItem -> {
             val pin = rememberSpeedDialToggle(item, database)
+            // PeekMusic: like Android, the description is fetched when missing, the artist can be blocked, and
+            // there are no play or queue rows (the artist page has its own buttons).
+            val details = rememberPeekArtistMenuDetails(item)
+            val isBlocked = BlockedContent.isArtistBlocked(item.id)
+            val unblockedText = stringResource(Res.string.unblock)
+            val blockedText = pluralStringResource(Res.plurals.blocked_artists_count, 1, 1)
             val playbackActions =
                 MediaMenuPlaybackActions(
                     item,
@@ -446,17 +471,25 @@ internal fun MobileItemMenu(
                 ) {
                     MediaMenuSheetContent(
                         artistMediaMenuModel(
-                            artist = item,
+                            artist = details,
                             onDismiss = { onDismiss() },
                             isPinned = pin.isPinned,
-                            onPlay = playbackActions::play,
+                            isBlocked = isBlocked,
                             onShuffle = playbackActions::shuffle,
-                            onPlayNext = playbackActions::playNext,
-                            onAddToQueue = playbackActions::addToQueue,
                             onTogglePin = pin.toggle,
+                            onBlock = {
+                                if (isBlocked) {
+                                    BlockedContent.unblockArtist(item.id)
+                                    onError(unblockedText)
+                                } else {
+                                    BlockedContent.blockArtist(id = item.id, name = item.title, thumbnail = item.thumbnail)
+                                    onError(blockedText)
+                                }
+                            },
+                            onHideFromLibrary = if (fromLibrary) ({ HiddenLibraryItems.hide(item) }) else null,
                             onShare = {
                                 onDismiss()
-                                onCopyText(ShareUrls.artist(item.id))
+                                (onShareText ?: onCopyText).invoke(ShareUrls.artist(item.id))
                             },
                         ),
                     )
@@ -502,7 +535,7 @@ internal fun MobileItemMenu(
                             onTogglePin = pin.toggle,
                             onShare = {
                                 onDismiss()
-                                onCopyText(ShareUrls.podcast(item.id))
+                                (onShareText ?: onCopyText).invoke(ShareUrls.podcast(item.id))
                             },
                         ),
                     )

@@ -86,3 +86,5 @@ actual fun createHttpClient(): HttpClient =
         }
         expectSuccess = false
     }
+
+internal actual fun isSharedHttpEngine(engine: HttpClientEngine): Boolean = engine === sharedHttpEngine

@@ -21,7 +21,7 @@ import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
-import java.time.Instant
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
 private const val PAGE_SIZE = 50
@@ -78,7 +78,7 @@ class SpotifyClient internal constructor(
                 currentSession =
                     currentSession.copy(
                         clientToken = auth.fetchClientToken(),
-                        clientTokenFetchedAtMs = System.currentTimeMillis(),
+                        clientTokenFetchedAtMs = Clock.System.now().toEpochMilliseconds(),
                     )
             }
         }
@@ -292,7 +292,7 @@ class SpotifyClient internal constructor(
                 )
             }
         return LibraryExport(
-            generatedAt = Instant.now().toString(),
+            generatedAt = Clock.System.now().toString(),
             account = runCatching { profile() }.getOrElse { AccountProfile() },
             totalPlaylists = exported.size,
             totalTracks = exported.sumOf { it.tracks.size },

@@ -2,6 +2,7 @@ package com.metrolist.shared.network
 
 import com.metrolist.shared.youtube.playback.ExtractionHttpCooldown
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.darwin.Darwin
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -38,3 +39,5 @@ actual fun createHttpClient(): HttpClient =
         }
         expectSuccess = false
     }
+
+internal actual fun isSharedHttpEngine(engine: HttpClientEngine): Boolean = false

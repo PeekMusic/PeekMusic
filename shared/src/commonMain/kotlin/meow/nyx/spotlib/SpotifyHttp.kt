@@ -1,7 +1,7 @@
 package meow.nyx.spotlib
 
 import com.metrolist.shared.network.HttpFailureLog
-import com.metrolist.shared.network.sharedHttpEngine
+import com.metrolist.shared.network.isSharedHttpEngine
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -32,7 +32,7 @@ internal object SpotifyHttp {
     fun create(config: SpotifyConfig): HttpClient {
         Log.configure(config.logger, config.logLevel)
         return HttpClient(config.engine) {
-            install(HttpFailureLog) { transportHandledByEngine = config.engine === sharedHttpEngine }
+            install(HttpFailureLog) { transportHandledByEngine = isSharedHttpEngine(config.engine) }
             defaultRequest {
                 header(HttpHeaders.UserAgent, config.userAgent)
             }

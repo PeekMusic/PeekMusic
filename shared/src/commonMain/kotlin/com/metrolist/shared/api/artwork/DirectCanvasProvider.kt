@@ -5,7 +5,9 @@ import com.metrolist.shared.network.HttpFailureLog
 import com.metrolist.shared.network.readTextLimited
 import com.metrolist.shared.network.sharedHttpTransportHandlesFailures
 import com.metrolist.shared.settings.Settings
-import com.metrolist.shared.utils.SystemLocale
+import com.metrolist.shared.utils.normalizeNfkd
+import com.metrolist.shared.utils.systemCountryCode
+import com.metrolist.shared.utils.systemLanguageTag
 import com.metrolist.shared.youtube.logging.YtLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
@@ -15,9 +17,11 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.prepareGet
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import io.ktor.http.Url
 import io.ktor.http.isSuccess
+import io.ktor.http.takeFrom
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -37,21 +41,23 @@ import meow.nyx.spotlib.LogLevel
 import meow.nyx.spotlib.SpotifyClient
 import meow.nyx.spotlib.SpotifyConfig
 import meow.nyx.spotlib.SpotifySession
-import java.net.URI
-import java.text.Normalizer
-import java.util.Base64
-import java.util.Locale
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
+import kotlin.time.Clock
+
+@OptIn(ExperimentalEncodingApi::class)
+private val jwtPartDecoder = Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL)
 
 class DirectCanvasProvider(
     client: HttpClient,
     private val session: () -> String = { Settings.shared.spotifySession },
     private val country: () -> String = {
-        Settings.shared.contentCountry.takeUnless { it == "SYSTEM" } ?: SystemLocale.current.country
+        Settings.shared.contentCountry.takeUnless { it == "SYSTEM" } ?: systemCountryCode()
     },
     private val language: () -> String = {
-        Settings.shared.contentLanguage.takeUnless { it == "SYSTEM" } ?: SystemLocale.current.toLanguageTag()
+        Settings.shared.contentLanguage.takeUnless { it == "SYSTEM" } ?: systemLanguageTag()
     },
-    private val now: () -> Long = System::currentTimeMillis,
+    private val now: () -> Long = { Clock.System.now().toEpochMilliseconds() },
     private val saveSession: (String) -> Unit = { Settings.shared.spotifySession = it },
 ) {
     private val http =
@@ -69,7 +75,9 @@ class DirectCanvasProvider(
     private val mutex = Mutex()
     private var token: Pair<String, Long>? = null
     private var anonymousSpotifySession = SpotifySession()
-    private val cache = LinkedHashMap<List<Any?>, Pair<DirectCanvasUrls, Long>>(32, 0.75f, true)
+
+    // Least recently used first: a hit moves its entry to the end (common LinkedHashMap has no access order).
+    private val cache = LinkedHashMap<List<Any?>, Pair<DirectCanvasUrls, Long>>()
 
     suspend fun getSpotifyCanvas(
         title: String,
@@ -97,12 +105,15 @@ class DirectCanvasProvider(
     ): DirectCanvasUrls {
         if (title.isBlank() || artist.isBlank()) return DirectCanvasUrls()
         val login = session()
-        val storefront = country().lowercase(Locale.ROOT)
+        val storefront = country().lowercase()
         val lang = language()
         val key = listOf(title, artist, primaryArtist, duration, album, storefront, lang, login.isNotBlank(), includeAppleMusic)
         // shortcut: One lock serializes cold lookups; use per-key jobs if artwork throughput becomes a problem.
         return mutex.withLock {
-            cache[key]?.takeIf { it.second > now() }?.let { return@withLock it.first }
+            cache.remove(key)?.takeIf { it.second > now() }?.let { hit ->
+                cache[key] = hit
+                return@withLock hit.first
+            }
             val result =
                 coroutineScope {
                     val spotify = async { attempt { spotify(title, artist, primaryArtist, album, duration, login) } }
@@ -357,7 +368,7 @@ class DirectCanvasProvider(
         var redirects = 0
         while (home.status.value in 300..399 && redirects++ < 2) {
             val location = home.headers[HttpHeaders.Location] ?: return null
-            val next = runCatching { URI(pageUrl).resolve(location).toString() }.getOrNull() ?: return null
+            val next = runCatching { URLBuilder(pageUrl).takeFrom(location).buildString() }.getOrNull() ?: return null
             if (!trustedHost(next, setOf("music.apple.com")) || Url(next).host != "music.apple.com") return null
             pageUrl = next
             home = http.prepareGet(pageUrl) { header("User-Agent", USER_AGENT) }.readTextLimited(4 * 1024 * 1024)
@@ -379,7 +390,7 @@ class DirectCanvasProvider(
                     val payload =
                         runCatching {
                             val part = match.value.split('.')[1]
-                            json.parseToJsonElement(String(Base64.getUrlDecoder().decode(part))).jsonObject
+                            json.parseToJsonElement(jwtPartDecoder.decode(part).decodeToString()).jsonObject
                         }.getOrNull() ?: return@mapNotNull null
                     val expiry = payload.text("exp")?.toLongOrNull()?.times(1_000) ?: return@mapNotNull null
                     match.value.takeIf { payload.text("iss") == "AMPWebPlay" && expiry > now() + 300_000 }?.let { it to expiry }
@@ -427,10 +438,9 @@ class DirectCanvasProvider(
             foundPrimaryArtist: String? = null,
         ): Boolean {
             fun words(value: String?): Set<String> =
-                Normalizer
-                    .normalize(value.orEmpty(), Normalizer.Form.NFKD)
+                normalizeNfkd(value.orEmpty())
                     .replace(Regex("\\p{M}+"), "")
-                    .lowercase(Locale.ROOT)
+                    .lowercase()
                     .split(Regex("[^\\p{L}\\p{N}]+"))
                     .filter { it.isNotBlank() && it !in setOf("feat", "ft", "featuring", "official", "video", "audio") }
                     .toSet()

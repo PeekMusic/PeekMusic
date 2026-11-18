@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
-import com.metrolist.desktop.peek.PeekPreCacheUpcomingCounts
 import com.metrolist.desktop.storage.DownloadManager
 import com.metrolist.desktop.storage.SongCacheManager
 import com.metrolist.desktop.utils.DesktopImageLoader
@@ -79,6 +78,7 @@ import com.metrolist.shared.generated.resources.settings_download_folder_summary
 import com.metrolist.shared.generated.resources.settings_reset_download_folder_summary
 import com.metrolist.shared.generated.resources.song_cache
 import com.metrolist.shared.generated.resources.unlimited
+import com.metrolist.shared.peek.PeekPreCacheUpcomingCounts
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.storage.DesktopAnimatedArtworkCache
 import com.metrolist.shared.storage.ResizableImageDiskCache

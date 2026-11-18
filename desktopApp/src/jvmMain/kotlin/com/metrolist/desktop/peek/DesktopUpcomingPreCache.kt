@@ -10,9 +10,8 @@ import com.metrolist.desktop.state.app.AppState
 import com.metrolist.desktop.state.playback.PlayerState
 import com.metrolist.desktop.storage.DownloadManager
 import com.metrolist.desktop.storage.SongCacheManager
-import com.metrolist.shared.model.RepeatMode
 import com.metrolist.shared.model.SongItem
-import com.metrolist.shared.model.isPodcast
+import com.metrolist.shared.peek.upcomingPreCacheTargets
 import com.metrolist.shared.settings.Settings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -20,31 +19,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-
-/** Settings › Storage › Song cache offers these counts for caching ahead; 0 is off. Same as Android. */
-val PeekPreCacheUpcomingCounts = listOf(0, 1, 2, 3, 5, 10)
-
-/**
- * The next [count] songs after [currentIndex] worth caching ahead: streamed songs only, wrapping round with repeat all,
- * none with repeat one. The desktop twin of Android's upcomingPreCacheTargets.
- */
-internal fun desktopPreCacheTargets(
-    queue: List<SongItem>,
-    currentIndex: Int,
-    count: Int,
-    repeatMode: RepeatMode,
-): List<SongItem> {
-    if (count <= 0 || repeatMode == RepeatMode.ONE || currentIndex !in queue.indices) return emptyList()
-    val ahead = queue.drop(currentIndex + 1)
-    val order = if (repeatMode == RepeatMode.ALL) ahead + queue.take(currentIndex) else ahead
-    val current = queue[currentIndex].id
-    return order
-        .asSequence()
-        .filter { !it.isLocal && !it.id.startsWith("local_") && !it.isPodcast && !it.isUnavailable && it.id != current }
-        .distinctBy { it.id }
-        .take(count)
-        .toList()
-}
 
 /**
  * PeekMusic: caches the next few queue songs into the song cache while music plays, like Android's
@@ -81,7 +55,7 @@ object DesktopUpcomingPreCache {
                 if (!limit.cacheEnabled) {
                     emptyList()
                 } else {
-                    desktopPreCacheTargets(queue.entries.map { it.song }, queue.currentIndex, limit.count, repeat)
+                    upcomingPreCacheTargets(queue.entries.map { it.song }, queue.currentIndex, limit.count, repeat)
                 }
             }.distinctUntilChanged { old, new -> old.map(SongItem::id) == new.map(SongItem::id) }
                 .collectLatest { targets ->

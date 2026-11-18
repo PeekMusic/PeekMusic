@@ -6,7 +6,9 @@ import coil3.SingletonImageLoader
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import com.metrolist.innertubex.extraction.ContentHints
+import com.metrolist.shared.api.artwork.DirectCanvasProvider
 import com.metrolist.shared.model.SongItem
+import com.metrolist.shared.state.GlobalYouTube
 import com.metrolist.shared.ui.settings.IosNativeFiles
 import com.metrolist.shared.ui.theme.ThemeColorExtractor
 import com.metrolist.shared.ui.theme.getGradientColors
@@ -21,6 +23,9 @@ import platform.UIKit.UIViewController
 internal class IosPlayerPlatformServices(
     private val presenter: UIViewController,
 ) : PlayerPlatformServices {
+    // PeekMusic: Spotify Canvas, the same lookup as Android and desktop (spotlib is shared now).
+    private val canvasProvider by lazy { DirectCanvasProvider(GlobalYouTube.client) }
+
     override suspend fun extractArtworkColors(
         songId: String,
         thumbnailUrl: String,
@@ -50,7 +55,12 @@ internal class IosPlayerPlatformServices(
         album: String?,
         durationMs: Long?,
         primaryArtist: String?,
-    ): String? = null
+    ): String? = canvasProvider.getSpotifyCanvas(title, artist, durationMs, album, primaryArtist)
 
-    override fun musicVideoCanvasHints(song: SongItem): ContentHints = song.toContentHints()
+    // AVPlayer only plays a plain video file here: no SABR or HLS for the Canvas video.
+    override fun musicVideoCanvasHints(song: SongItem): ContentHints =
+        song
+            .toContentHints(wantVideo = true)
+            .copy(sabrFirst = false)
+            .withStreamCapabilities(allowHls = false, allowSabr = false, allowBoundedRange = true)
 }

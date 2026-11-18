@@ -8,9 +8,6 @@
 package com.metrolist.android.ui.screens
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.speech.RecognizerIntent
 import android.widget.Toast
@@ -31,14 +28,12 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -56,7 +51,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -90,8 +84,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.metrolist.android.LocalMiniPlayerBottomInset
@@ -99,34 +91,17 @@ import com.metrolist.android.LocalPlayerExpanded
 import com.metrolist.android.LocalPlaylistAdder
 import com.metrolist.android.extensions.findActivity
 import com.metrolist.android.playback.LocalPlayerConnection
-import com.metrolist.android.ui.component.AdaptiveModalBottomSheet
-import com.metrolist.android.ui.component.Material3MenuGroup
-import com.metrolist.android.ui.component.Material3MenuItemData
 import com.metrolist.android.ui.component.SwipeGestureHandler
-import com.metrolist.android.ui.menu.AlbumMenu
-import com.metrolist.android.ui.menu.ArtistMenu
-import com.metrolist.android.ui.menu.PodcastMenu
 import com.metrolist.android.ui.menu.SongMenu
-import com.metrolist.android.ui.menu.rememberSpeedDialToggle
 import com.metrolist.android.ui.utils.playSong
 import com.metrolist.android.utils.startActivitySafely
 import com.metrolist.android.viewmodels.SearchViewModel
 import com.metrolist.innertubex.utils.YouTubeUrlParser
 import com.metrolist.shared.api.playlistSongs
 import com.metrolist.shared.generated.resources.Res
-import com.metrolist.shared.generated.resources.album_link
-import com.metrolist.shared.generated.resources.artist_link
-import com.metrolist.shared.generated.resources.pin_to_speed_dial
-import com.metrolist.shared.generated.resources.play_playlist
-import com.metrolist.shared.generated.resources.playlist_link
 import com.metrolist.shared.generated.resources.recognize_music
-import com.metrolist.shared.generated.resources.remove_from_speed_dial
 import com.metrolist.shared.generated.resources.search_history_removal_failed
-import com.metrolist.shared.generated.resources.share
-import com.metrolist.shared.generated.resources.share_podcast
 import com.metrolist.shared.generated.resources.share_song
-import com.metrolist.shared.generated.resources.shuffle_playlist
-import com.metrolist.shared.generated.resources.unable_to_load_podcast
 import com.metrolist.shared.generated.resources.voice_search_prompt
 import com.metrolist.shared.generated.resources.voice_search_unavailable
 import com.metrolist.shared.generated.resources.youtube_music
@@ -146,7 +121,6 @@ import com.metrolist.shared.ui.LocalIsTv
 import com.metrolist.shared.ui.components.CollectionPreviews
 import com.metrolist.shared.ui.components.PopupContent
 import com.metrolist.shared.ui.icons.MetrolistIcons
-import com.metrolist.shared.ui.menu.loadMediaItemSongs
 import com.metrolist.shared.ui.menu.rememberSongWithAlbum
 import com.metrolist.shared.ui.navigation.Navigator
 import com.metrolist.shared.ui.navigation.PredictiveNavigationContent
@@ -155,7 +129,6 @@ import com.metrolist.shared.ui.screens.SearchScreen
 import com.metrolist.shared.ui.screens.searchScreenText
 import com.metrolist.shared.utils.ShareUrls
 import com.metrolist.shared.utils.parseYouTubeUrl
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -173,9 +146,6 @@ fun SearchScreen(
     val voiceSearchPromptText = stringResource(Res.string.voice_search_prompt)
     val voiceSearchUnavailableText = stringResource(Res.string.voice_search_unavailable)
     val shareSongText = stringResource(Res.string.share_song)
-    val albumLinkText = stringResource(Res.string.album_link)
-    val artistLinkText = stringResource(Res.string.artist_link)
-    val playlistLinkText = stringResource(Res.string.playlist_link)
 
     val searchUiState by searchViewModel.shared.uiState.collectAsState()
     val query = searchUiState.query
@@ -213,30 +183,8 @@ fun SearchScreen(
 
     val addToPlaylist = LocalPlaylistAdder.current
     var showSongMenu by remember { mutableStateOf<SongItem?>(null) }
-    var showAlbumMenu by remember { mutableStateOf<AlbumItem?>(null) }
-    var showArtistMenu by remember { mutableStateOf<ArtistItem?>(null) }
-    var showPlaylistMenu by remember { mutableStateOf<PlaylistItem?>(null) }
-    var showPodcastMenu by remember { mutableStateOf<PodcastItem?>(null) }
-
-    fun withPodcastSongs(
-        podcast: PodcastItem,
-        action: (List<SongItem>) -> Unit,
-    ) {
-        scope.launch {
-            try {
-                val songs = loadMediaItemSongs(podcast)
-                if (songs.isEmpty()) {
-                    Toast.makeText(context, getString(Res.string.unable_to_load_podcast), Toast.LENGTH_SHORT).show()
-                } else {
-                    action(songs)
-                }
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (_: Exception) {
-                Toast.makeText(context, getString(Res.string.unable_to_load_podcast), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+    // PeekMusic: albums, artists, playlists and podcasts get the same ⋮ menus as on Home.
+    var collectionMenuItem by remember { mutableStateOf<YTItem?>(null) }
 
     val miniPlayerInset = LocalMiniPlayerBottomInset.current
     val isTv = LocalIsTv.current
@@ -518,10 +466,7 @@ fun SearchScreen(
                         onItemLongClick = { item ->
                             when (item) {
                                 is SongItem -> showSongMenu = item
-                                is AlbumItem -> showAlbumMenu = item
-                                is ArtistItem -> showArtistMenu = item
-                                is PlaylistItem -> showPlaylistMenu = item
-                                is PodcastItem -> showPodcastMenu = item
+                                is AlbumItem, is ArtistItem, is PlaylistItem, is PodcastItem -> collectionMenuItem = item
                                 else -> Unit
                             }
                         },
@@ -634,188 +579,12 @@ fun SearchScreen(
         )
     }
 
-    PopupContent(showAlbumMenu) { album ->
-        AlbumMenu(
-            album = album,
-            onDismiss = { showAlbumMenu = null },
-            onPlay = {
-                showAlbumMenu = null
-                playerConnection?.playAlbum(album.id, album.title)
-            },
-            onAddToQueue = {
-                showAlbumMenu = null
-                scope.launch {
-                    playerConnection?.addToQueue(
-                        GlobalYouTubeRepository.instance
-                            .getAlbum(album.id)
-                            ?.songs
-                            .orEmpty(),
-                    )
-                }
-            },
-            onShare = {
-                showAlbumMenu = null
-                context.copyTextToClipboard(albumLinkText, ShareUrls.album(album.id))
-            },
-        )
-    }
-
-    showArtistMenu?.let { artist ->
-        ArtistContextMenu(
-            artist = artist,
-            onDismiss = { showArtistMenu = null },
-            onShuffleArtist = {
-                showArtistMenu = null
-                scope.launch {
-                    GlobalYouTubeRepository.instance.getArtistSongs(artist.id).takeIf { it.isNotEmpty() }?.let {
-                        playerConnection?.shuffleQueue(it, artist.title, songsOnly = true)
-                    }
-                }
-            },
-            onShare = {
-                showArtistMenu = null
-                context.copyTextToClipboard(artistLinkText, ShareUrls.artist(artist.id))
-            },
-        )
-    }
-
-    showPodcastMenu?.let { podcast ->
-        val sharePodcastText = stringResource(Res.string.share_podcast)
-        PodcastMenu(
-            podcast = podcast,
-            onDismiss = { showPodcastMenu = null },
-            onPlay = { withPodcastSongs(podcast) { playerConnection?.playQueue(it, queueTitle = podcast.title, finite = true) } },
-            onShuffle = { withPodcastSongs(podcast) { playerConnection?.shuffleQueue(it, podcast.title, finite = true) } },
-            onPlayNext = { withPodcastSongs(podcast) { playerConnection?.addToQueue(it, playNext = true) } },
-            onAddToQueue = { withPodcastSongs(podcast) { playerConnection?.addToQueue(it) } },
-            onShare = {
-                context.startActivitySafely(
-                    Intent.createChooser(
-                        Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, ShareUrls.podcast(podcast.id))
-                        },
-                        sharePodcastText,
-                    ),
-                )
-            },
-        )
-    }
-
-    showPlaylistMenu?.let { playlist ->
-        PlaylistContextMenu(
-            playlist = playlist,
-            onDismiss = { showPlaylistMenu = null },
-            onPlayPlaylist = {
-                showPlaylistMenu = null
-                playerConnection?.playPlaylist(playlist.id, playlist.title)
-            },
-            onShufflePlaylist = {
-                showPlaylistMenu = null
-                playerConnection?.playPlaylist(playlist.id, playlist.title, shuffle = true)
-            },
-            onShare = {
-                showPlaylistMenu = null
-                context.copyTextToClipboard(
-                    playlistLinkText,
-                    ShareUrls.playlist(playlist.id),
-                )
-            },
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ArtistContextMenu(
-    artist: ArtistItem,
-    onDismiss: () -> Unit,
-    onShuffleArtist: () -> Unit,
-    onShare: () -> Unit,
-) {
-    ArtistMenu(
-        artist = artist,
-        onDismiss = onDismiss,
-        onShuffle = onShuffleArtist,
-        onShare = onShare,
+    HomeItemMenu(
+        selectedItem = collectionMenuItem,
+        onDismiss = { collectionMenuItem = null },
+        onNavigateToAlbum = { navigator.navigate(Screen.Album(it)) },
+        onNavigateToArtist = { navigator.navigate(Screen.Artist(it)) },
+        onNavigateToPodcast = { navigator.navigate(Screen.Podcast(it)) },
+        onSongMetadataUpdated = {},
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PlaylistContextMenu(
-    playlist: PlaylistItem,
-    onDismiss: () -> Unit,
-    onPlayPlaylist: () -> Unit,
-    onShufflePlaylist: () -> Unit,
-    onShare: () -> Unit,
-) {
-    val speedDialToggle = rememberSpeedDialToggle(playlist)
-    AdaptiveModalBottomSheet(onDismissRequest = onDismiss) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = playlist.title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 8.dp),
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Material3MenuGroup(
-                items =
-                    listOf(
-                        Material3MenuItemData(
-                            icon = { Icon(MetrolistIcons.Filled.PlayArrow, contentDescription = null) },
-                            title = { Text(stringResource(Res.string.play_playlist)) },
-                            onClick = onPlayPlaylist,
-                        ),
-                        Material3MenuItemData(
-                            icon = { Icon(MetrolistIcons.Rounded.Shuffle, contentDescription = null) },
-                            title = { Text(stringResource(Res.string.shuffle_playlist)) },
-                            onClick = onShufflePlaylist,
-                        ),
-                        Material3MenuItemData(
-                            icon = { Icon(MetrolistIcons.Outlined.Share, contentDescription = null) },
-                            title = { Text(stringResource(Res.string.share)) },
-                            onClick = onShare,
-                        ),
-                        Material3MenuItemData(
-                            icon = {
-                                Icon(
-                                    if (speedDialToggle.isPinned) MetrolistIcons.Outlined.KeepOff else MetrolistIcons.Filled.PushPin,
-                                    contentDescription = null,
-                                )
-                            },
-                            title = {
-                                Text(
-                                    stringResource(
-                                        if (speedDialToggle.isPinned) {
-                                            Res.string.remove_from_speed_dial
-                                        } else {
-                                            Res.string.pin_to_speed_dial
-                                        },
-                                    ),
-                                )
-                            },
-                            onClick = {
-                                speedDialToggle.toggle()
-                                onDismiss()
-                            },
-                        ),
-                    ),
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-    }
-}
-
-private fun Context.copyTextToClipboard(
-    label: String,
-    text: String,
-) {
-    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    clipboard.setPrimaryClip(ClipData.newPlainText(label, text))
 }

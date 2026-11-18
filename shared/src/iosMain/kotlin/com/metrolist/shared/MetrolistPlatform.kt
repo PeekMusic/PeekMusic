@@ -36,6 +36,8 @@ object MetrolistPlatform {
         // PeekMusic: our defaults and the fixed values of hidden settings, as on Android and desktop.
         PeekDefaults.apply()
         PeekDefaults.pinHidden()
+        // PeekMusic: Canvas has its own switch, separate from animated covers, as on Android and desktop.
+        Settings.shared.hasCanvasToggle = true
         startKoin {
             modules(
                 coreModule,

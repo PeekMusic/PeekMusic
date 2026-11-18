@@ -107,13 +107,8 @@ internal fun CanvasContentOrderSetting(
     val settings = Settings.shared
     val contentOrder = CanvasContentSource.parseOrder(settings.canvasContentOrder)
     val availableSources =
-        contentOrder.filter {
-            when (platform) {
-                SettingsPlatform.ANDROID -> true
-                SettingsPlatform.DESKTOP -> true // PeekMusic: the desktop plays the YouTube music video as canvas too
-                SettingsPlatform.IOS -> it == CanvasContentSource.APPLE_MUSIC
-            }
-        }
+        // PeekMusic: every platform offers every source; desktop and iOS play the YouTube music video as canvas too.
+        contentOrder
     val enabledSources = CanvasContentSource.parseEnabled(settings.canvasEnabledSources)
 
     fun move(

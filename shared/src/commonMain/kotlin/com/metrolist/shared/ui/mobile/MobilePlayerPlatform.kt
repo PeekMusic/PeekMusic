@@ -30,7 +30,7 @@ import com.metrolist.shared.generated.resources.equalizer
 import com.metrolist.shared.generated.resources.listen_together
 import com.metrolist.shared.generated.resources.playback_pitch
 import com.metrolist.shared.generated.resources.playback_speed
-import com.metrolist.shared.generated.resources.sleep_timer
+import com.metrolist.shared.generated.resources.remove_from_queue
 import com.metrolist.shared.generated.resources.tempo_and_pitch
 import com.metrolist.shared.generated.resources.unavailable
 import com.metrolist.shared.listentogether.ListenTogetherManager
@@ -46,7 +46,6 @@ import com.metrolist.shared.ui.components.ModalBottomSheet
 import com.metrolist.shared.ui.components.ModalSheetState
 import com.metrolist.shared.ui.components.PlayerMenuAction
 import com.metrolist.shared.ui.components.PopupVisibility
-import com.metrolist.shared.ui.components.SleepTimerDialog
 import com.metrolist.shared.ui.components.TempoPitchControls
 import com.metrolist.shared.ui.components.rememberModalSheetState
 import com.metrolist.shared.ui.equalizer.EqualizerDialog
@@ -142,13 +141,14 @@ internal class MobilePlayerPlatform(
         onFrame: ((ImageBitmap?) -> Unit)?,
         modifier: Modifier,
     ) {
-        if (playbackResource != null || videoBytes != null || clips.isNotEmpty()) {
+        if (videoBytes != null || playbackResource?.isDirectMobileCanvasVideo() == false || url.isBlank()) {
             LaunchedEffect(url) { onError?.invoke() }
             return
         }
         MobileAnimatedCoverVideo(
             url = url,
             headers = headers,
+            clip = clips.firstOrNull(),
             playing = playing,
             onError = onError,
             onReadyChanged = onReadyChanged,
@@ -239,22 +239,6 @@ internal class MobilePlayerPlatform(
                 confirmButton = {},
             )
         }
-        var showSleepTimer by remember { mutableStateOf(false) }
-        if (playerSession != null) {
-            PopupVisibility(visible = showSleepTimer) {
-                val timerState by playerSession.sleepTimerState.collectAsState()
-                SleepTimerDialog(
-                    state = timerState,
-                    onDismiss = {
-                        showSleepTimer = false
-                        onDismiss()
-                    },
-                    onStart = playerSession::startSleepTimer,
-                    onStopAfterCurrentSong = playerSession::stopAfterCurrentSong,
-                    onCancelTimer = playerSession::cancelSleepTimer,
-                )
-            }
-        }
         MenuSheet(onDismiss, sheetState = menuSheetState) {
             MediaMenuSheetContent(
                 songMediaMenuModel(
@@ -289,16 +273,10 @@ internal class MobilePlayerPlatform(
                                         if (menuSheetState.hide()) showEqualizer = true
                                     }
                                 },
-                                showDescription = false,
+                                showDescription = true, // PeekMusic: as on Android
                             ),
                             tempoPitchMenuAction(varispeed = Settings.shared.varispeed) { showTempoPitch = true },
-                            playerSession?.takeUnless { isGuest }?.let {
-                                PlayerMenuAction(
-                                    icon = MetrolistIcons.Outlined.Bedtime,
-                                    title = stringResource(Res.string.sleep_timer),
-                                    onClick = { showSleepTimer = true },
-                                )
-                            },
+                            // PeekMusic: no sleep timer row, as on Android; the player's button group has it.
                             PlayerMenuAction(
                                 icon = MetrolistIcons.Outlined.Group,
                                 title = stringResource(Res.string.listen_together),
@@ -476,6 +454,11 @@ internal class MobilePlayerPlatform(
                         scope.launch { if (menuSheetState.hide()) showDetails = true }
                     },
                     onRemove = onRemoveFromQueue,
+                    removeLabel = stringResource(Res.string.remove_from_queue), // PeekMusic: not "remove from playlist"
+                    onBlockArtist =
+                        song.artists.firstOrNull { it.id != null }?.let { artist ->
+                            { BlockedContent.blockArtist(artist) }
+                        },
                     onGoToArtist = onGoToArtist,
                     onGoToAlbum = onGoToAlbum,
                     onAddToPlaylist = {

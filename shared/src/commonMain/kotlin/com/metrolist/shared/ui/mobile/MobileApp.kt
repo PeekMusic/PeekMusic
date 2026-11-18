@@ -462,6 +462,7 @@ fun MobileApp(
 
     var menuItem by remember { mutableStateOf<Pair<YTItem, (() -> Unit)?>?>(null) }
     var menuRemoveLabel by remember { mutableStateOf<String?>(null) }
+    var menuCollectionSongs by remember { mutableStateOf<List<SongItem>?>(null) }
     val playlistWorkflow = rememberMobilePlaylistWorkflow(database, scope)
     val pickPlaylistCover = rememberUpdatedState(onPickPlaylistCover)
     val savePlaylistCover = rememberUpdatedState(onSavePlaylistCover)
@@ -1681,7 +1682,10 @@ fun MobileApp(
                                     database = database,
                                     playbackController = playbackController,
                                     onBack = ::back,
-                                    onMoreOptions = { menuItem = it to null },
+                                    onMoreOptions = { item, songs ->
+                                        menuItem = item to null
+                                        menuCollectionSongs = songs
+                                    },
                                     onSongMenu = { song, remove, removeLabel ->
                                         menuItem = song to remove
                                         menuRemoveLabel = removeLabel
@@ -1763,7 +1767,10 @@ fun MobileApp(
                                         database = database,
                                         playbackController = playbackController,
                                         onBack = ::back,
-                                        onMoreOptions = { menuItem = it to null },
+                                        onMoreOptions = { item, songs ->
+                                            menuItem = item to null
+                                            menuCollectionSongs = songs
+                                        },
                                         onSongMenu = { song, remove, removeLabel ->
                                             menuItem = song to remove
                                             menuRemoveLabel = removeLabel
@@ -1852,6 +1859,7 @@ fun MobileApp(
                     onDismiss = {
                         menuItem = null
                         menuRemoveLabel = null
+                        menuCollectionSongs = null
                     },
                     onAddToPlaylist = playlistWorkflow::select,
                     onOpenItem = ::openItem,
@@ -1868,6 +1876,9 @@ fun MobileApp(
                             is MobileRoute.SongCollection -> route.localPlaylistId
                             else -> null
                         },
+                    onAddSongsToPlaylist = { songs -> playlistWorkflow.select(songs) },
+                    fromLibrary = currentRoute == MobileRoute.Library,
+                    collectionSongs = menuCollectionSongs,
                 )
             }
 

@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
+import com.metrolist.shared.api.artwork.YouTubeCanvasClip
 import com.metrolist.shared.playback.IosAnimatedCoverPlayer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.delay
@@ -32,12 +33,13 @@ import kotlin.time.TimeSource
 internal actual fun MobileAnimatedCoverVideo(
     url: String,
     headers: Map<String, String>,
+    clip: YouTubeCanvasClip?,
     playing: Boolean,
     onError: (() -> Unit)?,
     onReadyChanged: ((Boolean) -> Unit)?,
     modifier: Modifier,
 ) {
-    val cover = remember(url, headers) { IosAnimatedCoverPlayer(url, headers) }
+    val cover = remember(url, headers, clip) { IosAnimatedCoverPlayer(url, headers, clip) }
     val currentOnError by rememberUpdatedState(onError)
     val currentOnReadyChanged by rememberUpdatedState(onReadyChanged)
     var foreground by remember {

@@ -308,8 +308,24 @@ fun songMediaMenuModel(
     val pin = pinAction(isPinned, onDismiss, onTogglePin)
     val hide = hideAction(onDismiss, onHideFromLibrary)
     val dislike = dislikeMenuAction(isDisliked, onDismiss, onDislike)
-    val blockArtist = blockArtistMenuAction(onDismiss, onBlockArtist)
-    val albumAction = albumNavigationMenuAction(onDismiss, onGoToAlbum, isPodcast = song.podcastId != null)
+    // PeekMusic: the player menu names the artist and album under those rows, as on Android.
+    val blockArtist =
+        blockArtistMenuAction(
+            onDismiss,
+            onBlockArtist,
+            description =
+                song.artists
+                    .firstOrNull { it.id != null }
+                    ?.displayName
+                    ?.takeIf { isPlayerMenu },
+        )
+    val albumAction =
+        albumNavigationMenuAction(
+            onDismiss,
+            onGoToAlbum,
+            description = song.album?.name?.takeIf { isPlayerMenu },
+            isPodcast = song.podcastId != null,
+        )
     val actionGroups =
         if (!isPlayerMenu) {
             // PeekMusic: same order as the player menu, without subtitles and without edit.

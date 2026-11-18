@@ -1,6 +1,7 @@
 package com.metrolist.shared.playback
 
 import com.metrolist.shared.api.artwork.CanvasPlaybackWatchdog
+import com.metrolist.shared.api.artwork.YouTubeCanvasClip
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AVFoundation.AVLayerVideoGravityResizeAspectFill
 import platform.AVFoundation.AVPlayerItem
@@ -17,12 +18,15 @@ import platform.AVFoundation.pause
 import platform.AVFoundation.play
 import platform.AVFoundation.status
 import platform.CoreMedia.CMTimeGetSeconds
+import platform.CoreMedia.CMTimeMake
+import platform.CoreMedia.CMTimeRangeMake
 import platform.Foundation.NSURL
 
 @OptIn(ExperimentalForeignApi::class)
 internal class IosAnimatedCoverPlayer(
     url: String,
     headers: Map<String, String>,
+    clip: YouTubeCanvasClip? = null,
 ) {
     internal val player = AVQueuePlayer()
     val layer = AVPlayerLayer.playerLayerWithPlayer(player)
@@ -43,7 +47,19 @@ internal class IosAnimatedCoverPlayer(
                         uRL = nativeUrl,
                         options = headers.takeIf { it.isNotEmpty() }?.let { mapOf("AVURLAssetHTTPHeaderFieldsKey" to it) },
                     )
-                AVPlayerLooper.playerLooperWithPlayer(player, AVPlayerItem(asset = asset))
+                val item = AVPlayerItem(asset = asset)
+                // A YouTube music video Canvas loops one short clip instead of the whole video.
+                clip?.takeIf { it.endMs > it.startMs }?.let {
+                    AVPlayerLooper.playerLooperWithPlayer(
+                        player = player,
+                        templateItem = item,
+                        timeRange =
+                            CMTimeRangeMake(
+                                start = CMTimeMake(value = it.startMs, timescale = 1000),
+                                duration = CMTimeMake(value = it.endMs - it.startMs, timescale = 1000),
+                            ),
+                    )
+                } ?: AVPlayerLooper.playerLooperWithPlayer(player, item)
             }
     }
 

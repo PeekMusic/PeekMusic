@@ -385,7 +385,8 @@ internal fun MobileSongCollectionScreen(
     database: MusicDatabase,
     playbackController: PlaybackController,
     onBack: () -> Unit,
-    onMoreOptions: (PlaylistItem) -> Unit,
+    // PeekMusic: the page hands its songs along, so built-in playlists get the full menu.
+    onMoreOptions: (PlaylistItem, List<SongItem>) -> Unit,
     onSongMenu: (SongItem, (() -> Unit)?, String?) -> Unit,
     onDownload: (List<SongItem>) -> Unit,
     onRemoveDownloads: (List<String>) -> Unit,
@@ -825,11 +826,11 @@ internal fun MobileSongCollectionScreen(
                 onMoreOptions =
                     when {
                         localPlaylistId != null -> {
-                            { onMoreOptions(playlist.copy(isLocal = true)) }
+                            { onMoreOptions(playlist.copy(isLocal = true), songs) }
                         }
 
                         else -> {
-                            { onMoreOptions(playlist.copy(id = "auto:$type")) }
+                            { onMoreOptions(playlist.copy(id = "auto:$type"), songs) }
                         }
                     },
                 onTrackClick = { song, index ->
