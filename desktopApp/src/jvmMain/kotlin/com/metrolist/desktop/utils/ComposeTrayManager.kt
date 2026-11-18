@@ -15,6 +15,7 @@ import com.metrolist.desktop.state.playback.ListenTogetherState
 import com.metrolist.desktop.state.playback.PlayerState
 import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.tray_by
+import com.metrolist.shared.generated.resources.tray_hide_miniplayer
 import com.metrolist.shared.generated.resources.tray_hide_window
 import com.metrolist.shared.generated.resources.tray_next_track
 import com.metrolist.shared.generated.resources.tray_pause
@@ -161,6 +162,7 @@ object ComposeTrayManager {
         val strHideWindow = stringResource(Res.string.tray_hide_window)
         val strShowWindow = stringResource(Res.string.tray_show_window)
         val strShowMiniplayer = stringResource(Res.string.tray_show_miniplayer)
+        val strHideMiniplayer = stringResource(Res.string.tray_hide_miniplayer)
         val strSettings = stringResource(Res.string.tray_settings)
         val strQuitMetrolist = stringResource(Res.string.tray_quit_metrolist)
         val strTrayByTemplate = stringResource(Res.string.tray_by)
@@ -185,6 +187,7 @@ object ComposeTrayManager {
         val currentTitleLabel = currentTrack?.title?.takeIf { it.isNotBlank() } ?: strUnknownTitle
         val playPauseLabel = if (isPlaying) strPause else strPlay
         val windowToggleLabel = if (isWindowVisible.value) strHideWindow else strShowWindow
+        val miniplayerToggleLabel = if (PlayerState.showMiniplayer) strHideMiniplayer else strShowMiniplayer
         val onTrayAction: () -> Unit = {
             if (Settings.shared.desktopTrayToggleOnClick) {
                 if (isWindowVisible.value) {
@@ -244,7 +247,7 @@ object ComposeTrayManager {
                     }
 
                     Item(text = windowToggleLabel, onClick = { toggleWindow() })
-                    Item(text = strShowMiniplayer, onClick = { PlayerState.showMiniplayer = true })
+                    Item(text = miniplayerToggleLabel, onClick = { PlayerState.showMiniplayer = !PlayerState.showMiniplayer })
                     Separator()
                     Item(
                         text = strSettings,
@@ -298,7 +301,7 @@ object ComposeTrayManager {
                     }
 
                     Item(label = windowToggleLabel) { toggleWindow() }
-                    Item(label = strShowMiniplayer) { PlayerState.showMiniplayer = true }
+                    Item(label = miniplayerToggleLabel) { PlayerState.showMiniplayer = !PlayerState.showMiniplayer }
                     Divider()
                     Item(label = strSettings) {
                         UiState.showSettings = true

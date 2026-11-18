@@ -100,6 +100,7 @@ import com.metrolist.shared.model.isPodcast
 import com.metrolist.shared.model.isVideoSong
 import com.metrolist.shared.model.previewThumbnailUrl
 import com.metrolist.shared.peek.PeekPlayerMenu
+import com.metrolist.shared.playback.MusicQueueEntry
 import com.metrolist.shared.playback.PauseOnMuteController
 import com.metrolist.shared.playback.PlaybackErrorContext
 import com.metrolist.shared.playback.PlaybackFailure
@@ -1255,6 +1256,16 @@ class MusicService :
             )
             return
         }
+        if (isCorruptCachedAudioFailure(player.currentPlaybackResource.value, failure.cause)) {
+            val removed = audioCacheManager.removeCorruptCache(videoId)
+            PlaybackEventLog.warn(
+                PlaybackEventKind.RECOVERY,
+                "Android cached audio could not be parsed.",
+                videoId = videoId,
+                details = mapOf("cacheRemoved" to removed.toString()),
+                error = failure.cause,
+            )
+        }
         transitions.cancelAndroidCrossfade()
         transitions.cancelNextTrackPreload()
         if (!PlaybackRecoveryPolicy.canRecover(failure)) {
@@ -1715,7 +1726,11 @@ class MusicService :
                         cachedAudio = cachedAudio,
                         sourceIsDownloaded = cachedAudio != null && audioCacheManager.isDownloaded(sourceSong.id),
                         allowCounterpartLookup =
-                            PlaybackNetworkStateStore.current.connected && !AndroidListenTogetherManager.isGuestPlaybackLocked,
+                            canSwapToAudioCounterpart(
+                                videoPlaybackEnabled = Settings.shared.musicVideoPlaybackEnabled,
+                                networkConnected = PlaybackNetworkStateStore.current.connected,
+                                guestPlaybackLocked = AndroidListenTogetherManager.isGuestPlaybackLocked,
+                            ),
                         isCounterpartAllowed = { !BlockedContent.isBlocked(it) },
                         resolveMusicTrack = musicVideoResolver::resolveMusicTrack,
                     )
@@ -2670,9 +2685,12 @@ class MusicService :
 
     fun extendPlaylistBeforeSkip(resumePlayback: Boolean? = null): Boolean = queueCoordinator.extendPlaylistBeforeSkip(resumePlayback)
 
-    fun playMix(seed: SongItem) {
+    fun playMix(
+        seed: SongItem,
+        startPlaying: Boolean,
+    ) {
         playbackBenchmark.cancel()
-        queueCoordinator.playMix(seed)
+        queueCoordinator.playMix(seed, startPlaying)
     }
 
     fun updatePendingRestorePosition(position: Long) = queueCoordinator.updatePendingRestorePosition(position)
@@ -2798,6 +2816,13 @@ class MusicService :
         }
     }
 
+    private fun automotiveQueueItem(entry: MusicQueueEntry): MediaItem =
+        automotiveLibrary
+            .playableItem(entry.song)
+            .buildUpon()
+            .setMediaId(AutomotiveMediaIds.queueSong(entry.key, entry.song.id))
+            .build()
+
     private suspend fun resolveVoicePlayback(
         request: VoiceSearchRequest,
         generation: Long,
@@ -2807,33 +2832,23 @@ class MusicService :
             val state = player.queueState.value
             val current = state.entries.getOrNull(state.currentIndex)
             if (current != null && !PlaybackNetworkStateStore.current.connected) {
-                val playable =
-                    offlineAutomotiveQueue(
-                        AutomotiveSongResolution(state.entries.map { it.song }, state.currentIndex),
-                        false,
-                        offlineAvailability(),
-                    )
-                if (playable != null) {
+                val index = offlineQueueEntryIndex(state.entries, state.currentIndex, offlineAvailability())
+                if (index != null) {
                     return automotivePlaybackRequestGate.resolve(
                         generation,
-                        playable.songs.map(automotiveLibrary::playableItem),
-                        playable.startIndex,
-                        if (playable.songs[playable.startIndex].id == current.song.id) player.currentPosition.value else C.TIME_UNSET,
+                        listOf(automotiveQueueItem(state.entries[index])),
+                        0,
+                        if (index == state.currentIndex) player.currentPosition.value else C.TIME_UNSET,
+                        replacesQueue = false,
                         canApply = !AndroidListenTogetherManager.isGuestPlaybackLocked,
                     )
                 }
             }
             if (current != null && !BlockedContent.isBlocked(current.song) && PlaybackNetworkStateStore.current.connected) {
                 Settings.shared.pendingContinuePlayback = false
-                val item =
-                    automotiveLibrary
-                        .playableItem(current.song)
-                        .buildUpon()
-                        .setMediaId(AutomotiveMediaIds.queueSong(current.key, current.song.id))
-                        .build()
                 return automotivePlaybackRequestGate.resolve(
                     generation,
-                    listOf(item),
+                    listOf(automotiveQueueItem(current)),
                     0,
                     player.currentPosition.value,
                     replacesQueue = false,
@@ -2893,9 +2908,9 @@ class MusicService :
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        playbackBenchmark.cancel()
-        super.onTaskRemoved(rootIntent)
+        // The lifetime observer retains loading and remote playback; Media3 stops non-playing sessions immediately.
         if (!::player.isInitialized) return
+        playbackBenchmark.cancel()
         saveFinalPlaybackState()
         flushPodcastProgress()
         taskRemoved.value = true
@@ -2903,13 +2918,25 @@ class MusicService :
 
     override fun onDestroy() {
         AndroidPeekFriends.setPlaying(false) // PeekMusic
-        playbackBenchmark.cancel()
         if (!::player.isInitialized) {
             podcastWriterScope.cancel()
             serviceScope.cancel()
             super.onDestroy()
             return
         }
+        playbackBenchmark.cancel()
+        // A failure while saving state must not leak the session, or the next service fails with a duplicate session ID.
+        try {
+            releasePlaybackState()
+        } finally {
+            mediaSession?.release()
+            MediaArtworkProvider.currentArtwork = null
+            player.release()
+            super.onDestroy()
+        }
+    }
+
+    private fun releasePlaybackState() {
         val checkpoint = saveFinalPlaybackState()
         updatePodcastProgress()
         val podcastWrite = podcastProgress.flush()
@@ -2930,10 +2957,6 @@ class MusicService :
         castManager.closeImmediately()
         serviceScope.cancel()
         contentResolver.unregisterContentObserver(volumeMuteObserver)
-        mediaSession?.release()
-        MediaArtworkProvider.currentArtwork = null
-        player.release()
-        super.onDestroy()
     }
 
     private data class PlaybackFetchResult(
@@ -3150,7 +3173,7 @@ class MusicService :
                     if (AndroidListenTogetherManager.isGuestPlaybackLocked) {
                         return Futures.immediateFuture(SessionResult(SessionError.ERROR_PERMISSION_DENIED))
                     }
-                    player.currentSong.value?.let(::playMix)
+                    player.currentSong.value?.let { playMix(it, startPlaying = true) }
                 }
 
                 else -> {
@@ -3379,18 +3402,15 @@ class MusicService :
                 if (queueSelection != null) {
                     val activeQueueIndex = automotiveQueueIndex(selectedItem.mediaId, player.queueState.value.entries)
                     if (activeQueueIndex != null && !PlaybackNetworkStateStore.current.connected) {
-                        val playable =
-                            offlineAutomotiveQueue(
-                                AutomotiveSongResolution(player.songQueue.value, activeQueueIndex),
-                                false,
-                                offlineAvailability(),
-                            )
+                        val entries = player.queueState.value.entries
+                        val index = offlineQueueEntryIndex(entries, activeQueueIndex, offlineAvailability())
                         return@future automotivePlaybackRequestGate.resolve(
                             requestGeneration,
-                            playable?.songs.orEmpty().map(automotiveLibrary::playableItem),
-                            playable?.startIndex ?: 0,
-                            startPositionMs,
-                            canApply = playable != null && !AndroidListenTogetherManager.isGuestPlaybackLocked,
+                            listOfNotNull(index?.let { automotiveQueueItem(entries[it]) }),
+                            0,
+                            if (index == activeQueueIndex) startPositionMs else C.TIME_UNSET,
+                            replacesQueue = false,
+                            canApply = index != null && !AndroidListenTogetherManager.isGuestPlaybackLocked,
                         )
                     }
                     return@future automotivePlaybackRequestGate.resolve(

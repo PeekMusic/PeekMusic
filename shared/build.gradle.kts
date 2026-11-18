@@ -379,7 +379,7 @@ kotlin {
         getByName("androidHostTest") {
             dependsOn(jvmSharedTest)
             dependencies {
-                implementation("org.robolectric:robolectric:4.17")
+                implementation("org.robolectric:robolectric:4.18")
             }
         }
         getByName("androidDeviceTest") {

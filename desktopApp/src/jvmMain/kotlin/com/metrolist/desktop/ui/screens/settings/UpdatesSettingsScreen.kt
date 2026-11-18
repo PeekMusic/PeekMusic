@@ -54,11 +54,14 @@ import com.metrolist.shared.generated.resources.updates_error
 import com.metrolist.shared.generated.resources.updates_install
 import com.metrolist.shared.generated.resources.updates_installing_title
 import com.metrolist.shared.generated.resources.updates_last_check
+import com.metrolist.shared.generated.resources.updates_nightly_builds
+import com.metrolist.shared.generated.resources.updates_nightly_builds_desc
 import com.metrolist.shared.generated.resources.updates_no_updates
 import com.metrolist.shared.generated.resources.updates_notifications
 import com.metrolist.shared.generated.resources.updates_release_notes_title
 import com.metrolist.shared.generated.resources.updates_retry
 import com.metrolist.shared.generated.resources.updates_size
+import com.metrolist.shared.peek.PeekFork
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.ui.components.AlertDialog
 import com.metrolist.shared.ui.components.PopupContent
@@ -68,6 +71,9 @@ import com.metrolist.shared.ui.update.GitHubMarkdown
 import com.metrolist.shared.ui.update.UpdateInfo
 import com.metrolist.shared.ui.utils.rememberFileSizeFormatter
 import com.metrolist.shared.ui.utils.verticalScrollWithDrag
+import com.metrolist.shared.update.UPDATE_CHANNEL_NIGHTLY
+import com.metrolist.shared.update.UPDATE_CHANNEL_STABLE
+import com.metrolist.shared.update.followsNightlyUpdates
 import org.jetbrains.compose.resources.stringResource
 import java.text.DateFormat
 import java.util.Date
@@ -80,6 +86,7 @@ fun UpdatesSettingsScreen(colorScheme: ColorScheme) {
     val progress by DesktopUpdateManager.downloadProgress.collectAsState()
     val pending = UiState.availableUpdate
     val busy = UiState.isCheckingForUpdates || UiState.isDownloadingUpdate || UiState.updateManagerStarted
+    val nightlyBuilds = followsNightlyUpdates(Settings.shared.updateChannel, BuildConfig.APP_VERSION)
 
     LaunchedEffect(Unit) {
         if (!UiState.hasCheckedForUpdates) AppState.checkForUpdates()
@@ -179,7 +186,7 @@ fun UpdatesSettingsScreen(colorScheme: ColorScheme) {
             title = stringResource(Res.string.general),
             colorScheme = colorScheme,
             items =
-                listOf(
+                listOfNotNull(
                     Material3SettingsItem(
                         title = { Text(stringResource(Res.string.updates_auto_check)) },
                         checked = Settings.shared.checkForUpdates,
@@ -195,6 +202,16 @@ fun UpdatesSettingsScreen(colorScheme: ColorScheme) {
                         onClick = { Settings.shared.updateNotifications = !Settings.shared.updateNotifications },
                         trailingContent = { SettingsSwitch(checked = Settings.shared.updateNotifications) },
                     ),
+                    Material3SettingsItem(
+                        title = { Text(stringResource(Res.string.updates_nightly_builds)) },
+                        description = { Text(stringResource(Res.string.updates_nightly_builds_desc)) },
+                        checked = nightlyBuilds,
+                        onClick = {
+                            Settings.shared.updateChannel = if (nightlyBuilds) UPDATE_CHANNEL_STABLE else UPDATE_CHANNEL_NIGHTLY
+                            AppState.checkForUpdates()
+                        },
+                        trailingContent = { SettingsSwitch(checked = nightlyBuilds) },
+                    ).takeIf { PeekFork.NIGHTLY_BUILDS_AVAILABLE }, // PeekMusic: no nightly builds
                 ),
         )
         if (UiState.updateReleases.isNotEmpty()) {

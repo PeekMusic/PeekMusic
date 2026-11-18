@@ -230,7 +230,8 @@ fun songMediaMenuModel(
     val moveUpLabel = stringResource(Res.string.move_up)
     val moveDownLabel = stringResource(Res.string.move_down)
     val removeFromPlaylistLabel = stringResource(Res.string.remove_from_playlist)
-    val artistAction = artistNavigationMenuAction(song.artists, onGoToArtist, onDismiss)
+    val navigation = songMenuNavigation(song)
+    val artistAction = artistNavigationMenuAction(navigation.artists, onGoToArtist, onDismiss)
     val download =
         downloadAction(downloadState, downloadProgress, false, onDismiss, onDownload)?.let {
             it.copy(enabled = it.enabled && (!song.isUnavailable || downloadState == MediaDownloadState.DOWNLOADED))
@@ -322,7 +323,7 @@ fun songMediaMenuModel(
     val albumAction =
         albumNavigationMenuAction(
             onDismiss,
-            onGoToAlbum,
+            onGoToAlbum.takeIf { navigation.albumId != null },
             description = song.album?.name?.takeIf { isPlayerMenu },
             isPodcast = song.podcastId != null,
         )
@@ -370,6 +371,17 @@ fun songMediaMenuModel(
         actionGroups = actionGroups,
     )
 }
+
+internal data class SongMenuNavigation(
+    val artists: List<ArtistTiny>,
+    val albumId: String?,
+)
+
+internal fun songMenuNavigation(song: SongItem): SongMenuNavigation =
+    SongMenuNavigation(
+        artists = song.artists.filter { !it.id.isNullOrBlank() }.distinctBy { it.id },
+        albumId = song.album?.id?.takeIf(String::isNotBlank),
+    )
 
 internal fun <T> songMenuActionGroups(
     queue: List<T>,

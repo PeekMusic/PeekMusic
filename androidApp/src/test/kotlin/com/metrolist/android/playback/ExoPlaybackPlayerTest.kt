@@ -112,23 +112,23 @@ class ExoPlaybackPlayerTest {
 
     @Test
     fun cancellingASilentPreloadDoesNotNotifySystemAudioEffects() {
-        val context = RuntimeEnvironment.getApplication()
+        val notifications = effectNotifications()
         val incoming =
             ExoPlaybackPlayer::class.java
-                .getDeclaredMethod("createPlayer", Int::class.javaPrimitiveType, AndroidPlaybackPlayerRole::class.java)
-                .apply { isAccessible = true }
-                .invoke(player, 2_000, AndroidPlaybackPlayerRole.SECONDARY) as ExoPlayer
-        incoming.setAudioSessionId(42)
+                .getDeclaredMethod(
+                    "createPlayer",
+                    Int::class.javaPrimitiveType,
+                    AndroidPlaybackPlayerRole::class.java,
+                    Int::class.javaPrimitiveType,
+                ).apply { isAccessible = true }
+                .invoke(player, 2_000, AndroidPlaybackPlayerRole.SECONDARY, player.getAudioSessionId()) as ExoPlayer
         ReflectionHelpers.setField(player, "nextPlayer", incoming)
         val sessionId = incoming.audioSessionId
         assertTrue(sessionId > 0)
+        assertEquals(player.getAudioSessionId(), sessionId)
         player.cancelNext()
         shadowOf(Looper.getMainLooper()).idle()
-        assertFalse(
-            shadowOf(context).broadcastIntents.any {
-                it.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, 0) == sessionId
-            },
-        )
+        assertEquals(notifications, effectNotifications())
     }
 
     @Test
@@ -184,9 +184,13 @@ class ExoPlaybackPlayerTest {
         runTest {
             val incoming =
                 ExoPlaybackPlayer::class.java
-                    .getDeclaredMethod("createPlayer", Int::class.javaPrimitiveType, AndroidPlaybackPlayerRole::class.java)
-                    .apply { isAccessible = true }
-                    .invoke(player, 2_000, AndroidPlaybackPlayerRole.SECONDARY) as ExoPlayer
+                    .getDeclaredMethod(
+                        "createPlayer",
+                        Int::class.javaPrimitiveType,
+                        AndroidPlaybackPlayerRole::class.java,
+                        Int::class.javaPrimitiveType,
+                    ).apply { isAccessible = true }
+                    .invoke(player, 2_000, AndroidPlaybackPlayerRole.SECONDARY, player.getAudioSessionId()) as ExoPlayer
             ReflectionHelpers.setField(player, "nextPlayer", incoming)
             player.setCrossfadeVolumes(100f, 0f)
             runCurrent()
@@ -338,7 +342,7 @@ class ExoPlaybackPlayerTest {
     fun outputRecoveryCreatesFreshSessionAndRetainsPausedQueuePositionAndGains() = verifyReplacement(freshAudioSession = true)
 
     @Test
-    fun ordinaryWarmReplacementKeepsItsOwnSessionAndRetainsPausedQueuePositionAndGains() = verifyReplacement(freshAudioSession = false)
+    fun ordinaryWarmReplacementKeepsSharedSessionAndRetainsPausedQueuePositionAndGains() = verifyReplacement(freshAudioSession = false)
 
     private fun verifyReplacement(freshAudioSession: Boolean) {
         player.releaseAndAwaitScope()
@@ -352,6 +356,8 @@ class ExoPlaybackPlayerTest {
             val resource = downloadedResource()
             assertTrue(player.prepareAndPlay(songs[1], resource, positionMs = 500, resumePlayback = false))
             val previous = underlyingPlayer()
+            val previousSession = player.getAudioSessionId()
+            val notifications = effectNotifications()
             val instance = player.currentPlaybackInstanceId
             val queue = player.queueSnapshot()
             val replacement =
@@ -378,7 +384,13 @@ class ExoPlaybackPlayerTest {
             val current = underlyingPlayer()
             assertNotSame(previous, current)
             assertTrue(current.audioSessionId > 0)
-            assertTrue(current.audioSessionId != previous.audioSessionId)
+            if (freshAudioSession) {
+                assertTrue(current.audioSessionId != previousSession)
+                assertEquals(notifications + listOf("close" to previousSession, "open" to current.audioSessionId), effectNotifications())
+            } else {
+                assertEquals(previousSession, current.audioSessionId)
+                assertEquals(notifications, effectNotifications())
+            }
             assertEquals(current.audioSessionId, player.getAudioSessionId())
             assertEquals(queue, player.queueSnapshot())
             assertSame(resource, player.currentPlaybackResource.value)
@@ -501,7 +513,6 @@ class ExoPlaybackPlayerTest {
             assertEquals(first, player.currentSong.value)
             assertEquals(instanceId, player.currentPlaybackInstanceId)
             assertTrue(player.isPreloadedPlaybackActive(token))
-            assertEquals(null, ReflectionHelpers.getField<ExoPlayer?>(player, "nextPlayer"))
             assertEquals(
                 AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED,
                 native.trackSelectionParameters.audioOffloadPreferences.audioOffloadMode,
@@ -520,7 +531,7 @@ class ExoPlaybackPlayerTest {
             assertEquals(1, player.currentMediaItemIndex.value)
             assertEquals(token.playerInstanceId, player.currentPlaybackInstanceId)
             assertFalse(player.isPreloadedPlaybackActive(token))
-            assertTrue(ReflectionHelpers.getField<Boolean>(stalls, "sleepingForOffload"))
+            assertTrue(stalls.shouldDisableOffload(outputPosition = 123L, expectProgress = true, nowMs = 2_000L))
         }
 
     @Test
@@ -766,7 +777,6 @@ class ExoPlaybackPlayerTest {
                 assertEquals(token.playerInstanceId, player.currentPlaybackInstanceId)
                 assertTrue(previousInstance != player.currentPlaybackInstanceId)
                 assertEquals(selected, player.currentSong.value)
-                assertEquals(selected, ReflectionHelpers.getField<SongItem>(player, "currentSongValue"))
                 assertEquals(1, player.currentMediaItemIndex.value)
                 assertEquals(
                     occurrenceKey,
@@ -995,7 +1005,6 @@ class ExoPlaybackPlayerTest {
                     val nextResource = resource.copy(videoId = songs[index].id, perceptualLoudnessDb = if (index % 2 == 0) -3.0 else -6.0)
                     val token = checkNotNull(player.prepareNextTrack(nextResource, startPaused = true, queueSongId = songs[index].id))
                     assertEquals(2, native.mediaItemCount)
-                    assertEquals(1, ReflectionHelpers.getField<Int>(player, "nextPlaylistIndex"))
                     val completedInstance = player.currentPlaybackInstanceId
                     val oldPosition =
                         Player.PositionInfo(null, 0, native.getMediaItemAt(0), null, 0, 20_000L, 20_000L, C.INDEX_UNSET, C.INDEX_UNSET)
@@ -1009,7 +1018,6 @@ class ExoPlaybackPlayerTest {
                         assertEquals(completedInstance, it)
                         assertEquals(1, native.mediaItemCount)
                         assertEquals(0, native.currentMediaItemIndex)
-                        assertEquals(0, ReflectionHelpers.getField<Int>(player, "nextPlaylistIndex"))
                         assertTrue(player.startNextPlayback())
                     }
 
@@ -1051,6 +1059,127 @@ class ExoPlaybackPlayerTest {
                 }
             } finally {
                 collector.cancel()
+            }
+        }
+
+    @Test
+    fun disablingVideoPlaybackRejectsAlreadyPreparedNextVideo() = checkPreparedPlaybackMode("consume")
+
+    @Test
+    fun disablingVideoPlaybackRejectsAlreadyPreparedVideoAtEof() = checkPreparedPlaybackMode("eof")
+
+    @Test
+    fun disablingVideoPlaybackRejectsAlreadyPreparedVideoCrossfade() = checkPreparedPlaybackMode("crossfade")
+
+    @Test
+    fun unchangedVideoModeAcceptsPreparedAudioFallback() = checkPreparedPlaybackMode("fallback")
+
+    @Test
+    fun enablingVideoModeRejectsAlreadyPreparedAudio() = checkPreparedPlaybackMode("enable")
+
+    private fun checkPreparedPlaybackMode(action: String) =
+        runBlocking {
+            player.releaseAndAwaitScope()
+            Dispatchers.resetMain()
+            val context = RuntimeEnvironment.getApplication()
+            player = ExoPlaybackPlayer(context)
+            Settings.shared.musicVideoPlaybackEnabled = true
+            Settings.shared.videoViewerVisible = action != "enable"
+            val database = Room.inMemoryDatabaseBuilder(context, MusicDatabase::class.java).setDriver(AndroidSQLiteDriver()).build()
+            val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+            try {
+                val resolver = MusicVideoResolver(counterpartLookup = { null }, search = { _, _ -> SearchResultPage(emptyList()) })
+                val coordinator =
+                    AndroidQueueCoordinator(
+                        context,
+                        player,
+                        scope,
+                        MutableStateFlow(Player.REPEAT_MODE_OFF),
+                        MutableStateFlow(false),
+                        {},
+                        {},
+                    )
+                val first = song()
+                val second = first.copy(id = "next-video", musicVideoType = "MUSIC_VIDEO_TYPE_OMV")
+                player.setQueue(listOf(first, second), preparePlayback = false)
+                val audio = downloadedResource()
+                assertTrue(player.prepareAndPlay(first, audio, resumePlayback = false))
+                awaitPlaybackReady(underlyingPlayer())
+                val instance = player.currentPlaybackInstanceId
+                val requestedVideo = action != "enable"
+                val nextResource =
+                    audio.copy(
+                        videoId = second.id,
+                        videoUrl = audio.url.takeIf { requestedVideo && action != "fallback" },
+                    )
+                val transitions =
+                    AndroidQueueTransitions(
+                        player,
+                        scope,
+                        AudioCacheManager(context, database),
+                        resolver,
+                        coordinator,
+                        { _, wantVideo ->
+                            assertEquals(requestedVideo, wantVideo)
+                            nextResource
+                        },
+                        { _, _, _, _ -> },
+                        {},
+                        episodeResumePosition = { _, _ -> 0L },
+                    )
+                coordinator.transitions = transitions
+                transitions.scheduleNextTrackPreload(NextTrackPreloadTrigger(instance, second.id, true, false, 0L))
+                withTimeout(10_000) {
+                    while (ReflectionHelpers.getField<AndroidPlaybackPlayer.PlaybackPreloadToken?>(transitions, "nextTrackPreloadToken") ==
+                        null
+                    ) {
+                        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(10))
+                        delay(10)
+                    }
+                }
+                val token = ReflectionHelpers.getField<AndroidPlaybackPlayer.PlaybackPreloadToken>(transitions, "nextTrackPreloadToken")
+                assertTrue(player.isPreloadedPlaybackActive(token))
+                val mode = AndroidVideoModeController(context, player, scope, resolver, { it() }, { _, _ -> null }, {}, { false })
+                // The current song has no video, matching a failed counterpart lookup with the viewer preference still on.
+                assertFalse(mode.isVideoModeActive.value)
+                when (action) {
+                    "fallback" -> {
+                        assertTrue(transitions.consumePreloadedNext(instance))
+                        assertEquals(second.id, player.currentSong.value?.id)
+                    }
+
+                    "enable" -> {
+                        Settings.shared.videoViewerVisible = true
+                        assertFalse(transitions.consumePreloadedNext(instance))
+                        assertEquals(first.id, player.currentSong.value?.id)
+                    }
+
+                    else -> {
+                        Settings.shared.musicVideoPlaybackEnabled = false
+                        mode.setVideoMode(false)
+                        assertFalse(Settings.shared.videoViewerVisible)
+                        when (action) {
+                            "consume" -> {
+                                assertFalse(transitions.consumePreloadedNext(instance))
+                            }
+
+                            "eof" -> {
+                                assertFalse(transitions.startPreloadedNextAtEof(instance))
+                            }
+
+                            "crossfade" -> {
+                                transitions.startAndroidCrossfade()
+                                assertFalse(transitions.isCrossfading)
+                            }
+                        }
+                        assertEquals(first.id, player.currentSong.value?.id)
+                    }
+                }
+                assertFalse(player.isPreloadedPlaybackActive(token))
+                assertFalse(player.currentPlaybackResource.value?.hasVideo == true)
+            } finally {
+                scope.cancel()
+                database.close()
             }
         }
 
@@ -1183,7 +1312,12 @@ class ExoPlaybackPlayerTest {
         }
 
     @Test
-    fun preloadedTrackKeepsItsOwnEffectsSessionDuringOverlapAndAfterPromotion() {
+    fun preloadedTrackKeepsSharedEffectsSessionDuringOverlapAndAfterPromotion() = verifyPreloadedEffectsSession(overlap = true)
+
+    @Test
+    fun silentPreloadKeepsSharedEffectsSessionOnPromotion() = verifyPreloadedEffectsSession(overlap = false)
+
+    private fun verifyPreloadedEffectsSession(overlap: Boolean) {
         player.releaseAndAwaitScope()
         Dispatchers.resetMain()
         player = ExoPlaybackPlayer(RuntimeEnvironment.getApplication())
@@ -1196,6 +1330,8 @@ class ExoPlaybackPlayerTest {
             val nextResource = resource.copy(videoId = second.id)
             assertTrue(player.prepareAndPlay(first, resource, positionMs = 6_183L, resumePlayback = false))
             val previous = underlyingPlayer()
+            val sessionId = player.getAudioSessionId()
+            val notifications = effectNotifications()
             val preparation =
                 async(Dispatchers.Main.immediate) {
                     player.prepareNextTrack(
@@ -1220,7 +1356,7 @@ class ExoPlaybackPlayerTest {
                     it.get(player) as ExoPlayer
                 }
             assertTrue(incoming.audioSessionId > 0)
-            assertTrue(incoming.audioSessionId != previous.audioSessionId)
+            assertEquals(sessionId, incoming.audioSessionId)
             assertEquals(6_183L, player.getRealtimePositionMs())
             assertEquals(
                 AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED,
@@ -1230,7 +1366,7 @@ class ExoPlaybackPlayerTest {
                 player.applyAudioPreferences()
                 player.setVolume(0.8f)
                 assertEquals(
-                    "A paused preload with its own session must not evict the primary offload output",
+                    "A paused preload must not evict the primary offload output",
                     AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_DISABLED,
                     incoming.trackSelectionParameters.audioOffloadPreferences.audioOffloadMode,
                 )
@@ -1238,55 +1374,28 @@ class ExoPlaybackPlayerTest {
             assertNotSame(normalizationProcessors()[previous], normalizationProcessors()[incoming])
             assertSame(resource, normalizationProcessors().getValue(previous).resource)
             assertSame(nextResource, normalizationProcessors().getValue(incoming).resource)
-            assertFalse(
-                "Preparing a silent track must not reconfigure system effects during the current song",
-                shadowOf(RuntimeEnvironment.getApplication()).broadcastIntents.any {
-                    it.action == AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION &&
-                        it.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, 0) == incoming.audioSessionId
-                },
-            )
+            assertEquals("Preparing a silent track must not reconfigure system effects", notifications, effectNotifications())
             player.setVolume(0.8f)
             player.setSleepTimerGain(0.5f)
-            assertTrue(player.startNextPlayback())
-            player.setCrossfadeVolumes(75f, 25f)
-            assertEquals(0.3f, previous.volume, 0.00001f)
-            assertEquals(0.1f, incoming.volume, 0.00001f)
-            val previousSession = previous.audioSessionId
-            val incomingSession = incoming.audioSessionId
-            val broadcasts = shadowOf(RuntimeEnvironment.getApplication()).broadcastIntents
-            assertTrue(
-                broadcasts.any {
-                    it.action == AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION &&
-                        it.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, 0) == incomingSession
-                },
-            )
-            assertFalse(
-                broadcasts.any {
-                    it.action == AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION &&
-                        it.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, 0) == incomingSession
-                },
-            )
+            if (overlap) {
+                assertTrue(player.startNextPlayback())
+                player.setCrossfadeVolumes(75f, 25f)
+                assertEquals(0.3f, previous.volume, 0.00001f)
+                assertEquals(0.1f, incoming.volume, 0.00001f)
+            } else {
+                assertEquals(0f, incoming.volume, 0f)
+            }
+            assertEquals(notifications, effectNotifications())
             assertTrue(player.swapToPreloadedQueueNext(token, nextResource, second, transitionGain = 1f))
             assertSame(incoming, underlyingPlayer())
-            assertEquals(incomingSession, player.getAudioSessionId())
+            assertEquals(sessionId, player.getAudioSessionId())
             assertEquals(
                 AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED,
                 incoming.trackSelectionParameters.audioOffloadPreferences.audioOffloadMode,
             )
             assertEquals(0.4f, incoming.volume, 0.00001f)
             assertSame(nextResource, normalizationProcessors().getValue(incoming).resource)
-            assertTrue(
-                shadowOf(RuntimeEnvironment.getApplication()).broadcastIntents.any {
-                    it.action == AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION &&
-                        it.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, 0) == previousSession
-                },
-            )
-            assertFalse(
-                shadowOf(RuntimeEnvironment.getApplication()).broadcastIntents.any {
-                    it.action == AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION &&
-                        it.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, 0) == incomingSession
-                },
-            )
+            assertEquals(notifications, effectNotifications())
             player.pause()
         }
     }
@@ -1301,6 +1410,8 @@ class ExoPlaybackPlayerTest {
             player.setQueue(listOf(song()), preparePlayback = false)
             assertTrue(player.prepareAndPlay(song(), resource, positionMs = 6_183L, resumePlayback = false))
             for (freshSession in listOf(false, true, false)) {
+                val previousSession = player.getAudioSessionId()
+                val notifications = effectNotifications()
                 val instance = player.currentPlaybackInstanceId
                 val replacement =
                     async(Dispatchers.Main.immediate) {
@@ -1321,6 +1432,14 @@ class ExoPlaybackPlayerTest {
                 }
                 assertTrue("The recovery must finish", replacement.isCompleted)
                 assertTrue(replacement.await())
+                val sessionId = player.getAudioSessionId()
+                if (freshSession) {
+                    assertTrue(sessionId != previousSession)
+                    assertEquals(notifications + listOf("close" to previousSession, "open" to sessionId), effectNotifications())
+                } else {
+                    assertEquals(previousSession, sessionId)
+                    assertEquals(notifications, effectNotifications())
+                }
                 assertEquals(6_183L, underlyingPlayer().currentPosition)
                 assertEquals(6_183L, player.getRealtimePositionMs())
                 underlyingPlayer().seekTo(0L)
@@ -1389,6 +1508,8 @@ class ExoPlaybackPlayerTest {
             assertTrue(player.prepareAndPlay(song(), resource, positionMs = 6_183L, resumePlayback = false))
             player.resume()
             val outgoing = underlyingPlayer()
+            val sessionId = player.getAudioSessionId()
+            val notifications = effectNotifications()
             val instance = player.currentPlaybackInstanceId
             val replacement =
                 async(Dispatchers.Main.immediate) {
@@ -1409,6 +1530,8 @@ class ExoPlaybackPlayerTest {
             assertTrue(replacement.isCompleted)
             assertFalse(replacement.await())
             assertSame(outgoing, underlyingPlayer())
+            assertEquals(sessionId, player.getAudioSessionId())
+            assertEquals(notifications, effectNotifications())
             assertSame(resource, player.currentPlaybackResource.value)
             assertEquals(instance, player.currentPlaybackInstanceId)
             assertTrue(outgoing.playWhenReady)
@@ -1934,7 +2057,6 @@ class ExoPlaybackPlayerTest {
 
         assertFalse(underlyingPlayer().playWhenReady)
         assertFalse(incoming.playWhenReady)
-        assertEquals(null, focusRecovery.get(player))
     }
 
     @Test
@@ -2140,6 +2262,17 @@ class ExoPlaybackPlayerTest {
         ExoPlaybackPlayer::class.java.getDeclaredField("exo").let {
             it.isAccessible = true
             it.get(player) as ExoPlayer
+        }
+
+    private fun effectNotifications(): List<Pair<String, Int>> =
+        shadowOf(RuntimeEnvironment.getApplication()).broadcastIntents.mapNotNull { intent ->
+            val action =
+                when (intent.action) {
+                    AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION -> "open"
+                    AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION -> "close"
+                    else -> return@mapNotNull null
+                }
+            action to intent.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, 0)
         }
 
     private fun song() = SongItem("song", "Song", null, emptyList(), null, duration = 120L)

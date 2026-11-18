@@ -153,6 +153,7 @@ fun PlayerMenu(
     onNavigateToArtist: (String) -> Unit = {},
     onNavigateToListenTogether: () -> Unit = {},
     onShowSongDetails: () -> Unit = onDismiss,
+    extraActions: List<PlayerMenuAction> = emptyList(),
 ) {
     val suggestedToHostText = stringResource(Res.string.suggested_to_host)
 
@@ -307,6 +308,10 @@ fun PlayerMenu(
                                             },
                                     )
                                 }
+                            }
+
+                            if (extraActions.isNotEmpty()) {
+                                item { PlayerMenuActionGroup(actions = extraActions) }
                             }
 
                             // PeekMusic: no volume slider, see PeekPlayerMenu.

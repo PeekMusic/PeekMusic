@@ -164,6 +164,7 @@ internal class MobilePlayerPlatform(
         onNavigateToArtist: (String) -> Unit,
         onNavigateToListenTogether: () -> Unit,
         onShowSongDetails: () -> Unit,
+        extraActions: List<PlayerMenuAction>,
     ) {
         val uiState by viewModel.uiState.collectAsState()
         val song = uiState.currentSong?.toSongItem() ?: return onDismiss()
@@ -266,26 +267,27 @@ internal class MobilePlayerPlatform(
                     isPlayerMenu = true,
                     onShowDetails = onShowSongDetails,
                     additionalActions =
-                        listOfNotNull(
-                            equalizerMenuAction(
-                                onOpen = {
-                                    scope.launch {
-                                        if (menuSheetState.hide()) showEqualizer = true
-                                    }
-                                },
-                                showDescription = true, // PeekMusic: as on Android
+                        extraActions +
+                            listOfNotNull(
+                                equalizerMenuAction(
+                                    onOpen = {
+                                        scope.launch {
+                                            if (menuSheetState.hide()) showEqualizer = true
+                                        }
+                                    },
+                                    showDescription = true, // PeekMusic: as on Android
+                                ),
+                                tempoPitchMenuAction(varispeed = Settings.shared.varispeed) { showTempoPitch = true },
+                                // PeekMusic: no sleep timer row, as on Android; the player's button group has it.
+                                PlayerMenuAction(
+                                    icon = MetrolistIcons.Outlined.Group,
+                                    title = stringResource(Res.string.listen_together),
+                                    onClick = {
+                                        onDismiss()
+                                        onNavigateToListenTogether()
+                                    },
+                                ).takeIf { PeekPlayerMenu.SHOW_LISTEN_TOGETHER && Settings.shared.listenTogetherEnabled },
                             ),
-                            tempoPitchMenuAction(varispeed = Settings.shared.varispeed) { showTempoPitch = true },
-                            // PeekMusic: no sleep timer row, as on Android; the player's button group has it.
-                            PlayerMenuAction(
-                                icon = MetrolistIcons.Outlined.Group,
-                                title = stringResource(Res.string.listen_together),
-                                onClick = {
-                                    onDismiss()
-                                    onNavigateToListenTogether()
-                                },
-                            ).takeIf { PeekPlayerMenu.SHOW_LISTEN_TOGETHER && Settings.shared.listenTogetherEnabled },
-                        ),
                 ),
                 showHeader = PeekPlayerMenu.SHOW_HEADER, // PeekMusic: as on Android
             )

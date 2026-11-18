@@ -178,6 +178,8 @@ import com.metrolist.shared.generated.resources.share
 import com.metrolist.shared.generated.resources.sleep_timer
 import com.metrolist.shared.generated.resources.small_album_art
 import com.metrolist.shared.generated.resources.song
+import com.metrolist.shared.generated.resources.switch_to_audio
+import com.metrolist.shared.generated.resources.switch_to_video
 import com.metrolist.shared.generated.resources.unknown
 import com.metrolist.shared.generated.resources.unlike
 import com.metrolist.shared.generated.resources.video
@@ -203,6 +205,7 @@ import com.metrolist.shared.ui.components.EXPANDED_ANCHOR
 import com.metrolist.shared.ui.components.LiquidBackground
 import com.metrolist.shared.ui.components.LoadingScreen
 import com.metrolist.shared.ui.components.LocalPlayerArtworkPrefetchUrls
+import com.metrolist.shared.ui.components.PlayerMenuAction
 import com.metrolist.shared.ui.components.PlayerPrimaryControls
 import com.metrolist.shared.ui.components.PopupVisibility
 import com.metrolist.shared.ui.components.SleepTimerDialog
@@ -875,6 +878,8 @@ fun PlayerScreen(
                 }
             val useTabletLayout = isTv && useLandscapeLayout && minOf(screenWidth, maxHeight) >= 600.dp
             val compactPortraitHeight = !useLandscapeLayout && maxHeight < 560.dp
+            // Short split-screen windows shrink the centred artwork to a sliver; show it beside the title as lyrics do.
+            val artworkBesideTitle = !useLandscapeLayout && !isTv && !usesFullscreenThumbnail && maxHeight < ArtworkBesideTitleMaxHeight
             val primaryControlSize = if (compactPortraitHeight) 64.dp else 72.dp
             val showFullscreenThumbnailBackground = usesFullscreenThumbnail
             val navigationBarBottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -925,6 +930,47 @@ fun PlayerScreen(
                 derivedStateOf { !useLandscapeLayout && queueSheetState.progress > 0.2f }
             }
             val landscapeQueueVisible = useLandscapeLayout && !queueSheetState.isCollapsed
+            // Phone landscape has no room above the controls, so cast and the audio/video switch move into the player menu.
+            val landscapeMenuActions =
+                if (useLandscapeLayout && !isTv && !landscapeQueueVisible) {
+                    buildList {
+                        if (showVideoButton) {
+                            add(
+                                PlayerMenuAction(
+                                    icon =
+                                        if (isVideoModeActive) {
+                                            MetrolistIcons.Outlined.Headphones
+                                        } else {
+                                            MetrolistIcons.Outlined.SmartDisplay
+                                        },
+                                    title =
+                                        stringResource(
+                                            if (isVideoModeActive) Res.string.switch_to_audio else Res.string.switch_to_video,
+                                        ),
+                                    isLoading = isVideoModeResolving,
+                                    onClick = {
+                                        showPlayerMenu = false
+                                        playerConnection?.setVideoMode(!isVideoModeActive)
+                                    },
+                                ),
+                            )
+                        }
+                        if (!isListenTogetherGuest && platform.supportsCasting && Settings.shared.isPlayerCastButtonVisible) {
+                            add(
+                                PlayerMenuAction(
+                                    icon = if (castState.isConnected) MetrolistIcons.Filled.Cast else MetrolistIcons.Outlined.Cast,
+                                    title = stringResource(Res.string.cast),
+                                    onClick = {
+                                        showPlayerMenu = false
+                                        openCastDialog()
+                                    },
+                                ),
+                            )
+                        }
+                    }
+                } else {
+                    emptyList()
+                }
             val queuePanelWidth = minOf(480.dp, screenWidth / 2)
             val queuePanelSlidePx = with(LocalDensity.current) { queuePanelWidth.toPx() } / 2f
             val queueSlideDirection = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1f else 1f
@@ -1297,7 +1343,6 @@ fun PlayerScreen(
                                     playerType = playerType,
                                     playPauseFocusRequester = playPauseFocusRequester,
                                     showVideoSurface = showVideoSurface,
-                                    onOpenCast = openCastDialog,
                                     castState = castState,
                                     showVideoButton = showVideoButton,
                                     isVideoModeActive = isVideoModeActive,
@@ -1745,6 +1790,7 @@ fun PlayerScreen(
                                                     } else if (
                                                         !usesFullscreenThumbnail &&
                                                         !usesCanvasThumbnail &&
+                                                        !artworkBesideTitle &&
                                                         currentSong?.displayThumbnail != null &&
                                                         !(
                                                             isVideoModeActive &&
@@ -1848,7 +1894,7 @@ fun PlayerScreen(
                                     ) {
                                         AnimatedVisibility(
                                             visible =
-                                                (usesCanvasThumbnail || uiState.isLyricsVisible) &&
+                                                (usesCanvasThumbnail || uiState.isLyricsVisible || artworkBesideTitle) &&
                                                     currentSong?.displayThumbnail != null,
                                             enter = expandHorizontally(clip = false) + fadeIn(),
                                             exit = shrinkHorizontally(clip = false) + fadeOut(),
@@ -2042,7 +2088,6 @@ fun PlayerScreen(
                                             )
                                         } else {
                                             PlayerActionRow(
-                                                contentColor = textBackgroundColor,
                                                 isLyricsVisible = uiState.isLyricsVisible,
                                                 isLyricsExpanded = uiState.isLyricsExpanded,
                                                 onToggleLyricsExpanded = {
@@ -2490,6 +2535,7 @@ fun PlayerScreen(
                                 showPlayerMenu = false
                                 showSongDetails = true
                             },
+                            extraActions = landscapeMenuActions,
                         )
                     }
 
@@ -2536,3 +2582,4 @@ private fun FullscreenBackgroundBounds(
 }
 
 private val MinPortraitPlayerHeight = 420.dp
+private val ArtworkBesideTitleMaxHeight = 600.dp

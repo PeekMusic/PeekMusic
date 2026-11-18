@@ -65,6 +65,7 @@ import com.metrolist.shared.model.playlistOccurrenceKey
 import com.metrolist.shared.model.playlistSearchIndices
 import com.metrolist.shared.model.sortedForPlaylist
 import com.metrolist.shared.model.toSongItem
+import com.metrolist.shared.model.withDownloadsPlayable
 import com.metrolist.shared.peek.rememberPeekMobileHeaderDownload
 import com.metrolist.shared.playback.fullArtistShelfQueue
 import com.metrolist.shared.playlist.PlaylistChanges
@@ -173,7 +174,10 @@ internal fun MobileAlbumScreen(
 
         else -> {
             val loaded = albumPage
-            val page = remember(loaded, blockedVersion) { BlockedContent.filterAlbumPage(loaded) }
+            val page =
+                remember(loaded, blockedVersion, downloadedSongIds) {
+                    BlockedContent.filterAlbumPage(loaded).let { it.copy(songs = it.songs.withDownloadsPlayable(downloadedSongIds)) }
+                }
             val headerDownload =
                 onRemoveDownloads?.let { rememberPeekMobileHeaderDownload(page.songs, downloadedSongIds, onDownload, it) }
             AlbumContent(

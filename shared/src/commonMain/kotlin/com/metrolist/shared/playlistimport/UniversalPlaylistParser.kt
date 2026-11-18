@@ -3,7 +3,9 @@ package com.metrolist.shared.playlistimport
 import io.ktor.http.Url
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
 
 object UniversalPlaylistParser {
@@ -41,7 +43,7 @@ object UniversalPlaylistParser {
 
         if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
             val fromJson = parseJson(trimmed, resolveLocalReference)
-            if (fromJson.isNotEmpty()) return fromJson
+            if (fromJson != null) return fromJson
         }
 
         if (trimmed.startsWith("#EXTM3U", ignoreCase = true) || trimmed.contains("#EXTINF:", ignoreCase = true)) {
@@ -85,7 +87,7 @@ object UniversalPlaylistParser {
     private fun parseJson(
         text: String,
         resolveLocalReference: (String) -> String?,
-    ): List<PlaylistImportManager.CsvTrack> =
+    ): List<PlaylistImportManager.CsvTrack>? =
         try {
             val root = json.parseToJsonElement(text)
             val items =
@@ -93,14 +95,18 @@ object UniversalPlaylistParser {
                     is JsonArray -> root
                     is JsonObject -> root["tracks"] ?: root["songs"] ?: root["items"] ?: root["data"]
                     else -> null
-                } as? JsonArray ?: return emptyList()
+                } as? JsonArray ?: return null
 
-            items
-                .mapNotNull { element ->
-                    (element as? JsonObject)?.let { extractTrackFromJsonObject(it, resolveLocalReference) }
-                }.take(PlaylistImportManager.MAX_PLAYLIST_TRACKS)
+            val tracks =
+                items
+                    .mapNotNull { element ->
+                        (element as? JsonObject)?.let { extractTrackFromJsonObject(it, resolveLocalReference) }
+                    }.take(PlaylistImportManager.MAX_PLAYLIST_TRACKS)
+            // Lenient JSON also accepts plain titles such as [Intro], which are not track objects.
+            if (tracks.isEmpty() && items.any { it !is JsonObject && it != JsonNull }) return null
+            tracks
         } catch (_: Exception) {
-            emptyList()
+            null
         }
 
     private fun extractTrackFromJsonObject(
@@ -117,9 +123,9 @@ object UniversalPlaylistParser {
                             value
                                 .mapNotNull { item ->
                                     if (item is JsonObject) {
-                                        item["name"]?.let { runCatching { it.jsonPrimitive.content }.getOrNull() }
+                                        item["name"]?.let { runCatching { it.jsonPrimitive.contentOrNull }.getOrNull() }
                                     } else {
-                                        runCatching { item.jsonPrimitive.content }.getOrNull()
+                                        runCatching { item.jsonPrimitive.contentOrNull }.getOrNull()
                                     }
                                 }.takeIf(List<String>::isNotEmpty)
                                 ?.joinToString(", ")
@@ -130,7 +136,7 @@ object UniversalPlaylistParser {
                         }
 
                         else -> {
-                            runCatching { value.jsonPrimitive.content.trim() }.getOrNull()?.takeIf(String::isNotBlank)
+                            runCatching { value.jsonPrimitive.contentOrNull?.trim() }.getOrNull()?.takeIf(String::isNotBlank)
                         }
                     }
                 }.orEmpty()
@@ -158,7 +164,7 @@ object UniversalPlaylistParser {
     ): String? =
         keys.firstNotNullOfOrNull { key ->
             obj[key]
-                ?.let { runCatching { it.jsonPrimitive.content.trim() }.getOrNull() }
+                ?.let { runCatching { it.jsonPrimitive.contentOrNull?.trim() }.getOrNull() }
                 ?.takeIf(String::isNotBlank)
         }
 

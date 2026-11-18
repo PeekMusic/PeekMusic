@@ -81,6 +81,7 @@ import com.metrolist.shared.generated.resources.more_options
 import com.metrolist.shared.generated.resources.queued_songs
 import com.metrolist.shared.generated.resources.retry
 import com.metrolist.shared.model.SongItem
+import com.metrolist.shared.model.withDownloadsPlayable
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.SongLikeState
 import com.metrolist.shared.ui.components.CollectionLoadingPlaceholder
@@ -134,7 +135,6 @@ fun AlbumScreen(
     val albumPage by viewModel.albumPage
     val albumInfo = albumPage?.album
     val preview = remember(albumId) { CollectionPreviews.album(albumId) }
-    val songs = albumPage?.songs ?: emptyList()
     val isLoading by viewModel.isLoading
     val isLoadingMore by viewModel.isLoadingMore
     val error by viewModel.errorMessage
@@ -155,6 +155,7 @@ fun AlbumScreen(
                 withContext(Dispatchers.Default) { ids.toSet() }
             }
         }.collectAsState(emptySet())
+    val songs = remember(albumPage, downloadedSongIds) { albumPage?.songs.orEmpty().withDownloadsPlayable(downloadedSongIds) }
 
     val currentSong by playerConnection?.currentSong?.collectAsState(initial = null)
         ?: remember { mutableStateOf(null) }
@@ -468,8 +469,12 @@ fun AlbumScreen(
                     showMenu = false
                 },
                 onDownload = { withAllSongs(::downloadSongs) },
-                onPlayNext = { withAllSongs { all -> playerConnection?.addToQueue(all, playNext = true) } },
-                onAddToQueue = { withAllSongs { all -> playerConnection?.addToQueue(all) } },
+                onPlayNext = {
+                    withAllSongs { all ->
+                        playerConnection?.addDownloadedAlbumToQueue(all, downloadedSongIds, playNext = true)
+                    }
+                },
+                onAddToQueue = { withAllSongs { all -> playerConnection?.addDownloadedAlbumToQueue(all, downloadedSongIds) } },
                 onShare = {
                     context.startActivity(
                         Intent.createChooser(

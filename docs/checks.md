@@ -33,6 +33,8 @@ Live YouTube tests are opt-in and never run in CI. See [InnerTube live tests](in
 
 ### Focus and navigation
 
+On desktop, enable Floating search and open it with Ctrl+K and the search bar. The popup and scrim must appear, and typing must work without another click. Dismiss with Escape, an outside click and submission, then reopen. Toggle Ctrl+K rapidly and verify navigation works after closing. Repeat on Linux JVM and native builds; an invisible popup must not intercept input.
+
 For keyboard and Android TV focus, traverse Home, Library, Search, album/artist/playlist pages, mini and full players, app bars, navigation bars/rails, chips, menus, settings and dialogs. Check both directions through carousel edges, nested card actions and player controls, then return from menus and the queue. Check light, dark, pure-black, dynamic and album-color backgrounds, including artwork behind controls. Focus outlines must remain visible without moving content; switching to touch must hide them. Verify press motion, marquee focus reveal, carousel snapping and player/queue focus recovery.
 
 On Android TV, in song and player menus, Radio and Add to playlist share the primary row with no Share action. Check full, landscape, tablet and fullscreen video players in Standard, Classic and Vintage. Cast and Share stay hidden, Like still works, and D-pad traversal skips removed controls. Repeat with Portuguese labels, lyrics, menus and the queue. Phones, tablets, Automotive, desktop and iOS keep their existing controls.
@@ -44,6 +46,8 @@ After Activity, Lifecycle, Navigation3 or Adaptive updates, verify cold starts, 
 In Settings > Appearance > Navigation and gestures, toggle Slim bottom navigation bar, Force bottom navigation bar, Floating navigation bar and each navigation tab. The page, scroll position and Back path must stay intact while the preferences apply. Repeat slim and forced-bottom changes in a wide Android layout, resize desktop between bottom navigation and sidebar layouts, and check slim and floating navigation on iOS. With floating navigation on iOS, check the bar clears the home indicator, each mini-player style sits above it, and content has no extra bottom gap with playback dismissed. Open a detail page and return, disable floating navigation, rotate the device and resize an iPad window into a rail layout. Check the bottom spacing follows the visible navigation and the setting persists after relaunch. Check that navigation fades, selected icons and settings page transitions animate.
 
 For Android lookahead crashes, repeat portrait/landscape rotation, background/resume and Wi-Fi/mobile/offline changes while playback starts and while the player is expanded or collapsed. Use floating, slim and standard navigation, cross the bar/rail window-size breakpoint, and toggle the navigation preferences from a scrolled settings page. Search, submit and go Back after each change. The page, scroll position and Back path must survive; bars keep their expand/shrink motion, icon transitions, shadows and spacing. Resize the desktop sidebar and verify its width animation. Repeat the shared navigation checks on iOS.
+
+For desktop startup and miniplayer changes, test a fresh profile through onboarding and relaunch an already-onboarded profile with the miniplayer hidden. Toggle the miniplayer from the tray, close and reopen it, switch focus mode, and hide/show the main window while the miniplayer remains responsive. Repeat on JVM and native builds; each window must provide its own theme after its window composition is established.
 
 ### Collections and pages
 
@@ -63,9 +67,11 @@ For playlist headers on Android, desktop and iOS, tap or click a truncated title
 
 For album and playlist headers, scroll the title out of view in narrow and medium layouts. The title fades into the top bar and fades out when the header returns. Check long titles, search, selection and wide layouts.
 
-For album and playlist search, open the field below a large cover with the keyboard visible. The search row scrolls to the top and shows results below it. In narrow and medium layouts, typing the first character keeps that position when the filtered list takes over, including while the keyboard resizes the viewport. Check clearing and closing the field, repeated searches, large fonts, narrow and wide desktop layouts and duplicate songs. The unfiltered position returns when the query clears, and wide results start at the first match even after scrolling the unfiltered list or an earlier search.
+For album and playlist search, open the field below a large cover with the keyboard visible. The search row scrolls to the top and shows results below it. In narrow and medium layouts, typing the first character keeps that position when the filtered list takes over, including while the keyboard resizes the viewport. Add and delete characters to switch between many, few and no matches in Downloaded, albums and local and online playlists. The search row must stay at the top without bringing the artwork back into view. Check clearing and closing the field, repeated searches, large fonts, narrow and wide desktop layouts and duplicate songs. The unfiltered position returns when the query clears, and wide results start at the first match even after scrolling the unfiltered list or an earlier search.
 
 Scroll Android's Liked songs, Downloads, Cached and Uploaded collections past the cover. The fixed back, edit and menu controls have an opaque background so rows do not show through them. Enter and exit selection, then open and close search. Check desktop playlists at narrow and wide widths; their navigation row keeps its reserved space above the list.
+
+Open a song menu by holding a row and by tapping its three-dot button in Liked songs, Downloads, Cached and Uploaded. Artist and album entries open the same destinations as the song menu elsewhere. Check multiple artists, uploads with and without browse IDs, and cache entries with stored song metadata. Missing artist or album IDs omit only that entry. Repeat on desktop and iOS.
 
 For current-song rows, check playlists, albums, queue, search and wide artist tracklists in light, dark and dynamic color themes. The current row has a full pill shape, scalloped artwork and readable title, metadata and overflow icon. Check metadata links on hover and keyboard focus. Pause, resume and change tracks, including duplicate queue entries. Check that current-row colors fade in and out, artwork has no dark playback scrim or moving bars, and screen readers announce the current playing or paused state. Repeat rapid track changes and disabled system animations. Check the first, middle and last collection rows, missing and video artwork, selection, reordering, large fonts and RTL. Album artwork uses the number slot without shifting the title. Queue spacing, handles and controls keep their layout.
 
@@ -90,6 +96,8 @@ On desktop Home, check arrow buttons on Speed Dial, Quick picks, artwork, video,
 For artwork menus, check Home shelves (including Keep listening and New releases), expanded Home sections, artist album/single/EP cards, expanded release pages and Statistics on Android, desktop and iOS. Artwork cards have no overflow overlay. Touch long-press, desktop right-click, the Menu key or Shift+F10, and the More options accessibility action open the same item menu without playing or navigating. Check keyboard access after moving focus between cards, including after dismissing another card's menu. List rows keep their overflow buttons. The artist latest-release card uses the same artwork-menu gestures and accessibility action without an overflow button; check it on iOS even when no Play button is supplied.
 
 ### Artist pages
+
+On Android, enable Swipe song gesture, expand an artist's Top songs or Songs shelf, and swipe a row left to add it to the queue and right to play it next. Repeat after loading more rows and on expanded video shelves shown as song lists. Check that taps, menus and the swipe return animation still work. Disable the setting and repeat; rows must not swipe. Unavailable songs and Listen Together guests must not allow queue swipes. Album and single cards keep their existing gestures.
 
 Open an uncached artist from Home, Search, an album and each name in the player with a slow connection. The loading page keeps known names and artwork, shows a shimmering header, actions, latest release and five track rows, and keeps Back and More usable. Check ID-only links, failed requests and Retry, then refresh a loaded page. Loaded content stays visible during refresh. Compare the loading and loaded header and row positions at narrow and wide widths, with large text and RTL. TalkBack and VoiceOver announce Loading once without exposing placeholder content; Back and More stay accessible. Check hidden and resumed pages and reduced motion.
 
@@ -321,3 +329,17 @@ Preserve these rules when changing workflows:
 - Measure cache changes on hosted runners with cold and repeated warm runs. Local timings do not establish CI speedups.
 
 Arch verification restores the unprivileged builder's Gradle caches and wrapper from a separate OS, architecture and dependency-scoped cache. Only successful pushes to main save it. It does not persist the project configuration cache.
+
+When importing a custom playlist cover on Android 7/8 and Android 9+, select camera JPEGs with rotated and mirrored EXIF orientations. The saved cover should match the photo viewer orientation, remain at most 1024 pixels on either side, and keep its orientation after restarting. Also check an ordinary PNG.
+
+On Android, play a live broadcast and inspect media notifications and Android Auto. The session should report a live item without a seek bar or rewind/fast-forward commands, while Play/Pause and track navigation remain available. Switch to an ordinary track or an ended broadcast with a known duration and verify seeking returns. Repeat while casting.
+
+### Desktop direct-audio read ahead
+
+Play an uncached direct HTTP audio stream on a throttled connection that is faster than the encoded audio bitrate. Check continuous playback across range boundaries, then seek forwards and backwards, pause/resume, and switch tracks during a pending read. Repeat with a short file and a fully cached/downloaded track. Range requests stay bounded, obsolete requests stop when playback closes, and read ahead does not change the playback position. SABR playback and video range sizing remain unchanged.
+
+### Android TV root exit
+
+With Stop music on task clear enabled, confirm Back twice at the root on Android TV removes the task and stops active playback. With the setting disabled, playback should continue. Leaving a nested screen or closing the player must not exit; phone Back-exit behavior remains unchanged.
+
+For Android upgrades from v13, test a local playlist whose custom thumbnail still points to its own `FileProvider/cache/playlist_cover_crop_<timestamp>.jpg`. With surviving cache bytes, opening the library must copy the image into persistent playlist-cover storage, keep the original cache file, and preserve the recovered reference on a second open. Missing/unreadable files, other authorities, path traversal, remote playlists and newer custom covers must remain untouched. `LegacyPlaylistCoverRecoveryTest` covers these cases plus copy/database failure retries. This does not recover bytes already removed from the cache or make backup images portable.

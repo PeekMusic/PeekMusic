@@ -61,6 +61,7 @@ import com.metrolist.shared.settings.ContentUndoHints
 import com.metrolist.shared.settings.ContentUndoPage
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.utils.ShareUrls
+import com.metrolist.shared.utils.redactDiagnosticText
 import com.metrolist.shared.youtube.playback.PlaybackEventKind
 import com.metrolist.shared.youtube.playback.PlaybackEventLog
 import io.ktor.client.HttpClient
@@ -136,6 +137,7 @@ class ListenTogetherManager(
         const val STEADY_PING_INTERVAL_MS = 15_000L
         const val INITIAL_CLOCK_SAMPLE_COUNT = 5
         const val CAPABILITY_TIMEOUT_MS = 5_000L
+        const val CLOSE_REASON_TIMEOUT_MS = 1_000L
         const val SEND_TIMEOUT_MS = 5_000L
         const val ROOM_REQUEST_TIMEOUT_MS = 5 * 60_000L
         const val PLAYER_OBSERVER_INTERVAL_MS = 800L
@@ -469,6 +471,10 @@ class ListenTogetherManager(
                         if (generation != connectionGeneration || socket !== session) break
                         if (frame is Frame.Binary) handleBinary(frame.data, generation)
                     }
+                    if (generation == connectionGeneration && socket === session) {
+                        val reason = withTimeoutOrNull(CLOSE_REASON_TIMEOUT_MS.milliseconds) { session.closeReason.await() }
+                        log(ListenTogetherLogLevel.WARNING, "Transport closed: ${reason ?: "no close frame"}")
+                    }
                 } catch (cancelled: CancellationException) {
                     throw cancelled
                 } catch (error: Exception) {
@@ -480,7 +486,7 @@ class ListenTogetherManager(
                             error,
                         )
                     }
-                    log(ListenTogetherLogLevel.ERROR, "Transport connection failed")
+                    log(ListenTogetherLogLevel.ERROR, "Transport connection failed: ${transportFailureSummary(error)}")
                 } finally {
                     transport?.cancel()
                     if (generation == connectionGeneration) {
@@ -2579,3 +2585,14 @@ internal fun ListenTogetherMessageCodec.decodeServerCapabilities(data: ByteArray
     if (type != MessageTypes.SERVER_CAPABILITIES) return null
     return decodePayload(type, payloadBytes) as? ServerCapabilities
 }
+
+/** Exception chain for the shareable connection log, e.g. "SSLHandshakeException: ... <- EOFException: ...". */
+internal fun transportFailureSummary(error: Throwable): String =
+    redactDiagnosticText(
+        generateSequence(error) { current -> current.cause?.takeUnless { it === current } }
+            .take(4)
+            .joinToString(" <- ") { current ->
+                val type = current::class.simpleName ?: "Throwable"
+                current.message?.let { "$type: $it" } ?: type
+            },
+    )

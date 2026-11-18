@@ -179,10 +179,7 @@ fun FloatingSearchOverlay(
     LaunchedEffect(isVisible, searchFieldPlaced) {
         if (isVisible && searchFieldPlaced) focusRequester.requestFocus()
     }
-    LaunchedEffect(transition.currentState, transition.targetState, transition.isRunning) {
-        // PeekMusic: also require !isVisible. The entry effect above sets isVisible and hasBeenVisible in the same frame,
-        // before the transition's target follows, so this check closed the overlay right after it opened and left an
-        // invisible layer that swallowed every click until Escape (upstream #4699, still on Linux after 15c530d64).
+    LaunchedEffect(isVisible, transition.currentState, transition.targetState, transition.isRunning) {
         if (hasBeenVisible && !isVisible && !transition.currentState && !transition.targetState && !transition.isRunning) onDismiss()
     }
     val animateDismiss = {

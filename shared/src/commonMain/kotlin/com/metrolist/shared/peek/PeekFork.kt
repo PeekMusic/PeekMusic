@@ -48,4 +48,7 @@ object PeekFork {
 
     /** Upstream refuses to start on Omarchy, and Ryoku's Omarchy compatibility trips that check too. PeekMusic runs anywhere. */
     const val DESKTOP_BLOCKS_OMARCHY = false
+
+    /** PeekMusic publishes no nightly builds, so the updates settings hide upstream's nightly switch. */
+    const val NIGHTLY_BUILDS_AVAILABLE = false
 }

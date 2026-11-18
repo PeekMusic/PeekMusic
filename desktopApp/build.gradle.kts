@@ -336,6 +336,7 @@ kotlin {
         getByName("jvmTest") {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(libs.multiplatform.settings.test)
                 implementation(libs.ktor.client.mock)
                 // Only the transcoder test reads M4A tags back through JavaCV.
                 implementation("org.bytedeco:javacv:${libs.versions.javacv.get()}") {
@@ -763,7 +764,7 @@ compose.desktop {
                 } else {
                     versionComponents.joinToString(".")
                 }
-            description = "PeekMusic music player"
+            description = "PeekMusic"
             copyright = "© 2026 PeekMusic, based on Metrolist"
             vendor = "PeekMusic"
 
@@ -813,6 +814,8 @@ compose.desktop {
             }
             macOS {
                 bundleID = "com.peekmusic.desktop"
+                // Bytedeco's FFmpeg dylibs are built for macOS 15; older systems fail to load them at playback.
+                minimumSystemVersion = "15.0"
                 infoPlist {
                     extraKeysRawXml =
                         """

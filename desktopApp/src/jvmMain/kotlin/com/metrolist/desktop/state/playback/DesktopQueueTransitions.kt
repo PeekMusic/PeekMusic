@@ -216,59 +216,26 @@ internal class DesktopQueueTransitions(
         isCrossfading = true
         player.isCrossfading = true
         video.stopVideo()
-        val startPosition = player.currentPosition.value
-        val clock = DesktopCrossfadeClock(startPosition, fadeDurationMs)
-        var progress = 0f
-        var promoted = false
-        // PeekMusic: a real crossfade as on Android: the next song starts right away under the current one.
-        if (!player.startNextForCrossfade(token)) {
+        player.setNextVolume(0f)
+        if (!player.startNextPlayback(token)) {
             abortCrossfade()
             return
         }
+        val startPosition = player.currentPosition.value
+        val clock = DesktopCrossfadeClock(startPosition, fadeDurationMs)
+        var progress = 0f
         while (progress < 1f) {
-            if (!allowed() || (!promoted && (!hasCurrentTarget() || !player.isPreloadedNextActive(token)))) {
+            if (!allowed() || !hasCurrentTarget() || !player.isPreloadedNextActive(token) || player.nextPlayerFailed) {
                 abortCrossfade()
                 return
             }
             val sampledPosition = player.currentPosition.value
             val sampledPlaying = player.isPlaying.value
             progress = maxOf(progress, clock.sample(sampledPosition, player.playbackSpeed.value, sampledPlaying, pendingEof))
-            val (outgoingGain, incomingGain) = playbackCrossfadeGains(progress)
-            if (promoted) {
-                player.setTransitionVolume(incomingGain * 100f)
-            } else {
+            if (sampledPlaying || pendingEof) {
+                val (outgoingGain, incomingGain) = playbackCrossfadeGains(progress)
                 player.setTransitionVolume(outgoingGain * 100f)
                 player.setNextVolume(incomingGain * 100f)
-                // PeekMusic: hand over once the outgoing song has faded out (upstream swaps at the first incoming sound).
-                if (progress >= 1f || outgoingGain <= PEEK_CROSSFADE_HANDOVER_GAIN) {
-                    val incomingStartPosition = player.nextPlayerPosition
-                    promoted =
-                        player.swapToNext(
-                            token,
-                            resource,
-                            beforeResume = {
-                                queue.getNext()
-                                player.setCurrentSong(next, resource)
-                            },
-                            initialTransitionGain = incomingGain,
-                        )
-                    if (!promoted) {
-                        player.setTransitionVolume(100f)
-                        abortCrossfade()
-                        return
-                    }
-                    clock.rebase(incomingStartPosition)
-                    preloadToken = null
-                    preloadSong = null
-                    preloadResource = null
-                    targetKey = null
-                    targetSongId = null
-                    onSongChanged(next, resource, originalSong?.id)
-                    originalSong = null
-                    originalResource = null
-                    originalInstanceId = 0L
-                    pendingEof = false
-                }
             }
             if (progress < 1f) {
                 combine(
@@ -277,14 +244,30 @@ internal class DesktopQueueTransitions(
                     player.playbackStateChanges,
                     pendingEofState,
                 ) { position, playing, _, eof ->
-                    position != sampledPosition || playing != sampledPlaying || eof || (!promoted && player.nextPlayerFailed)
+                    position != sampledPosition || playing != sampledPlaying || eof || player.nextPlayerFailed
                 }.first { it }
             }
         }
+        val promoted =
+            player.swapToNext(
+                token,
+                resource,
+                startPlaying = pendingEof || player.wantsPlayback,
+                beforeResume = {
+                    queue.getNext()
+                    player.setCurrentSong(next, resource)
+                },
+            )
         if (!promoted) {
             abortCrossfade()
             return
         }
+        preloadToken = null
+        preloadSong = null
+        preloadResource = null
+        targetKey = null
+        targetSongId = null
+        onSongChanged(next, resource, originalSong?.id)
         player.setTransitionVolume(100f)
         player.setNextVolume(0f)
         player.setCrossfadeSampling(null)
@@ -321,9 +304,6 @@ internal class DesktopQueueTransitions(
     }
 }
 
-/** PeekMusic: outgoing gain below which the crossfade hands the player over to the next song. */
-private const val PEEK_CROSSFADE_HANDOVER_GAIN = 0.02f
-
 internal fun desktopRemainingOutputMs(
     positionMs: Long,
     durationMs: Long,
@@ -335,10 +315,6 @@ internal class DesktopCrossfadeClock(
     private val durationMs: Long,
 ) {
     private var elapsedMs = 0.0
-
-    fun rebase(positionMs: Long) {
-        lastPositionMs = positionMs
-    }
 
     fun sample(
         positionMs: Long,
