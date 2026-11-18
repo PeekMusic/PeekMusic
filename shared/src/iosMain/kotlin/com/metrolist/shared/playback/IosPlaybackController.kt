@@ -368,6 +368,8 @@ internal class IosPlaybackController(
 
     init {
         player.playbackCache = audioStorage?.playbackCache
+        // PeekMusic: Settings › Storage › Cache ahead.
+        audioStorage?.let { PeekIosUpcomingPreCache(scope, player, repeatMode, it).start() }
         restorePersistedPlayback()
         scope.launch {
             sleepTimerController.state.collect { timer ->

@@ -8,8 +8,8 @@ package com.metrolist.android.playback
 import android.os.SystemClock
 import androidx.compose.runtime.snapshotFlow
 import androidx.media3.common.Player
+import com.metrolist.shared.model.RepeatMode
 import com.metrolist.shared.model.SongItem
-import com.metrolist.shared.model.isPodcast
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.youtube.playback.PlaybackNetworkStateStore
 import com.metrolist.shared.youtube.playback.PlaybackResource
@@ -23,31 +23,25 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.metrolist.shared.peek.upcomingPreCacheTargets as sharedUpcomingPreCacheTargets
 
-/** Settings › Storage › Song cache offers these counts for caching ahead; 0 is off. */
-val PeekPreCacheUpcomingCounts = listOf(0, 1, 2, 3, 5, 10)
-
-/**
- * The next [count] songs after [currentIndex] worth caching ahead: streamed songs only, wrapping round with repeat all,
- * none with repeat one.
- */
+/** Android's repeat modes for the shared [sharedUpcomingPreCacheTargets]. */
 internal fun upcomingPreCacheTargets(
     queue: List<SongItem>,
     currentIndex: Int,
     count: Int,
     repeatMode: Int,
-): List<SongItem> {
-    if (count <= 0 || repeatMode == Player.REPEAT_MODE_ONE || currentIndex !in queue.indices) return emptyList()
-    val ahead = queue.drop(currentIndex + 1)
-    val order = if (repeatMode == Player.REPEAT_MODE_ALL) ahead + queue.take(currentIndex) else ahead
-    val current = queue[currentIndex].id
-    return order
-        .asSequence()
-        .filter { !it.isLocal && !it.id.startsWith("local_") && !it.isPodcast && it.id != current }
-        .distinctBy { it.id }
-        .take(count)
-        .toList()
-}
+): List<SongItem> =
+    sharedUpcomingPreCacheTargets(
+        queue,
+        currentIndex,
+        count,
+        when (repeatMode) {
+            Player.REPEAT_MODE_ONE -> RepeatMode.ONE
+            Player.REPEAT_MODE_ALL -> RepeatMode.ALL
+            else -> RepeatMode.OFF
+        },
+    )
 
 /**
  * PeekMusic: caches the next few queue songs into the song cache while music plays, one at a time, so a patchy

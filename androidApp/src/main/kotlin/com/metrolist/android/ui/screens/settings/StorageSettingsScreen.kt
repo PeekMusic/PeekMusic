@@ -52,7 +52,6 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.imageLoader
 import com.metrolist.android.R
 import com.metrolist.android.playback.AudioCacheManager
-import com.metrolist.android.playback.PeekPreCacheUpcomingCounts
 import com.metrolist.android.playback.SongDownloadManager
 import com.metrolist.android.ui.player.CanvasCache
 import com.metrolist.shared.api.artwork.AnimatedArtworkService
@@ -115,6 +114,7 @@ import com.metrolist.shared.generated.resources.song_cache_location_shared_media
 import com.metrolist.shared.generated.resources.song_cache_location_shared_media_desc
 import com.metrolist.shared.generated.resources.storage
 import com.metrolist.shared.generated.resources.unlimited
+import com.metrolist.shared.peek.PeekPreCacheUpcomingCounts
 import com.metrolist.shared.settings.MusicVideoQuality
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.storage.ResizableImageDiskCache

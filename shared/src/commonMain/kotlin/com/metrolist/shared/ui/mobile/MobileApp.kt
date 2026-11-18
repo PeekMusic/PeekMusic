@@ -171,6 +171,8 @@ import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.YTItem
 import com.metrolist.shared.model.isAvailableOffline
 import com.metrolist.shared.model.toSongItem
+import com.metrolist.shared.peek.PeekLinks
+import com.metrolist.shared.peek.friends.PeekFriendsManager
 import com.metrolist.shared.playback.LocalPlayerSession
 import com.metrolist.shared.playlist.PlaylistPartiallyUpdatedException
 import com.metrolist.shared.playlist.deleteStoredPlaylist
@@ -211,6 +213,8 @@ import com.metrolist.shared.ui.components.rememberBottomSheetState
 import com.metrolist.shared.ui.design.expressive.components.ExpressiveMiniPlayerHeight
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import com.metrolist.shared.ui.listentogether.ListenTogetherGlobalEvents
+import com.metrolist.shared.ui.listentogether.LocalPeekFriends
+import com.metrolist.shared.ui.listentogether.PeekFriendsGlobalEvents
 import com.metrolist.shared.ui.menu.ContentUndoHintsSnackbar
 import com.metrolist.shared.ui.menu.HiddenHomeItemsSnackbar
 import com.metrolist.shared.ui.menu.settingsPage
@@ -331,6 +335,8 @@ fun MobileApp(
         onComplete: () -> Unit,
         onTokenLogin: () -> Unit,
     ) -> Unit,
+    // PeekMusic: PeekParty friends (requests, invites, friend links); null where the platform has none.
+    peekFriends: PeekFriendsManager? = null,
 ) {
     var detailsSong by remember { mutableStateOf<SongItem?>(null) }
     val formatFileSize = rememberFileSizeFormatter()
@@ -614,8 +620,26 @@ fun MobileApp(
         }
     }
 
+    peekFriends?.let { friends ->
+        // PeekMusic: friends see a new name right away; requests and party invites show anywhere in the app.
+        LaunchedEffect(listenTogetherManager, friends) { listenTogetherManager.username.drop(1).collect { friends.refreshName() } }
+        PeekFriendsGlobalEvents(
+            friends = friends,
+            onMessage = { snackbarHostState.showSnackbar(it) },
+            onJoinInvite = { roomCode ->
+                // Join right away; in another party already, the screen asks whether to leave it first.
+                open(if (listenTogetherManager.joinRoom(roomCode)) MobileRoute.ListenTogether() else MobileRoute.ListenTogether(roomCode))
+            },
+        )
+    }
+
     LaunchedEffect(oauthCallbackUrls) {
         oauthCallbackUrls.collect { callback ->
+            PeekLinks.parseFriendLink(callback)?.let { code ->
+                peekFriends?.openFriendLink(code)
+                open(MobileRoute.ListenTogether())
+                return@collect
+            }
             val link = resolveMobileDeepLink(callback)
             if (account.handleDiscordCallback(callback)) return@collect
             if (link != null) {
@@ -1289,16 +1313,18 @@ fun MobileApp(
                             }
 
                             is MobileRoute.ListenTogether -> {
-                                MobileListenTogetherScreen(
-                                    manager = listenTogetherManager,
-                                    initialRoomCode = route.initialRoomCode,
-                                    initialBlockedUsers = route.initialBlockedUsers,
-                                    onBack = ::back,
-                                    onCopyText = { _, text -> scope.launch { clipboard.setText(text) } },
-                                    onShareText = playerServices::shareText,
-                                    onMessage = onSwipeFeedback,
-                                    bottomInset = padding.calculateBottomPadding(),
-                                )
+                                CompositionLocalProvider(LocalPeekFriends provides peekFriends) {
+                                    MobileListenTogetherScreen(
+                                        manager = listenTogetherManager,
+                                        initialRoomCode = route.initialRoomCode,
+                                        initialBlockedUsers = route.initialBlockedUsers,
+                                        onBack = ::back,
+                                        onCopyText = { _, text -> scope.launch { clipboard.setText(text) } },
+                                        onShareText = playerServices::shareText,
+                                        onMessage = onSwipeFeedback,
+                                        bottomInset = padding.calculateBottomPadding(),
+                                    )
+                                }
                             }
 
                             MobileRoute.Integrations -> {
@@ -1645,6 +1671,7 @@ fun MobileApp(
                                 MobileSongCollectionScreen(
                                     bottomContentPadding = playerContentPadding,
                                     onDownload = downloadSongs,
+                                    downloadedSongIds = downloadedSongIds,
                                     onRemoveDownloads = removeDownloads,
                                     onAddToPlaylist = playlistWorkflow::select,
                                     onSwipeFeedback = onSwipeFeedback,
@@ -1834,6 +1861,13 @@ fun MobileApp(
                     onShareText = playerServices::shareText,
                     scope = scope,
                     currentAlbumId = (currentRoute as? MobileRoute.Album)?.id,
+                    currentCollectionId =
+                        when (val route = currentRoute) {
+                            is MobileRoute.Album -> route.id
+                            is MobileRoute.Playlist -> route.id
+                            is MobileRoute.SongCollection -> route.localPlaylistId
+                            else -> null
+                        },
                 )
             }
 

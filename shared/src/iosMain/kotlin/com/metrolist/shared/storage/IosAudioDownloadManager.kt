@@ -449,6 +449,37 @@ class IosAudioDownloadManager(
         }
     }
 
+    /**
+     * PeekMusic: downloads an upcoming queue song whole into the song cache before it plays, so the queue keeps going
+     * on a patchy connection. [cacheSong] only keeps what playback captured; this fetches the file itself.
+     * True once the song is stored, as a download or in the cache.
+     */
+    suspend fun preCacheUpcomingSong(song: SongItem): Boolean {
+        ready.await()
+        if (!Settings.shared.songCacheEnabled || Settings.shared.maxSongCacheSize == 0 || song.id.isBlank()) return false
+        if (isStored(song.id)) return true
+        val generation = cacheGeneration
+        val resource = resolvePlaybackResource(song, refresh = false)
+        saveAudio(
+            song,
+            resource,
+            KIND_CACHE,
+            cacheMayPublish = {
+                cacheGeneration == generation && Settings.shared.songCacheEnabled && Settings.shared.maxSongCacheSize != 0
+            },
+        )
+        evictCache()
+        return isStored(song.id)
+    }
+
+    private suspend fun isStored(songId: String): Boolean =
+        withContext(Dispatchers.Default) {
+            database.dao().cachedAudio(songId)?.let { entry ->
+                (entry.kind == KIND_DOWNLOAD && isValidAudio(entry.filePath, KIND_DOWNLOAD)) ||
+                    (entry.kind == KIND_CACHE && isValidAudio(entry.filePath, KIND_CACHE))
+            } == true
+        }
+
     suspend fun storageUsage(): IosStorageUsage {
         ready.await()
         return withContext(Dispatchers.Default) {

@@ -123,6 +123,8 @@ internal fun MobileItemMenu(
     scope: CoroutineScope,
     onShareText: ((String) -> Unit)? = null,
     currentAlbumId: String? = null, // PeekMusic: no "view album" for the album page that is open
+    // PeekMusic: the open album or playlist page has the download button in its header, so its ⋮ menu drops it.
+    currentCollectionId: String? = null,
 ) {
     if (item is PlaylistItem && item.id.startsWith("auto:") && item.id != "auto:liked") {
         BuiltinPlaylistMenu(item, database, onDismiss)
@@ -309,7 +311,7 @@ internal fun MobileItemMenu(
                             onDismiss = { onDismiss() },
                             isPinned = pin.isPinned,
                             downloadState = playlistDownloadState,
-                            onDownload = downloadPlaylistAction,
+                            onDownload = downloadPlaylistAction.takeUnless { item.id == currentCollectionId },
                             onPlay = playbackActions::play,
                             onShuffle = playbackActions::shuffle,
                             onPlayNext = playbackActions::playNext,
@@ -397,7 +399,7 @@ internal fun MobileItemMenu(
                             isPinned = pin.isPinned,
                             downloadState =
                                 if (albumIsDownloaded) MediaDownloadState.DOWNLOADED else MediaDownloadState.NOT_DOWNLOADED,
-                            onDownload = downloadAlbumAction,
+                            onDownload = downloadAlbumAction.takeUnless { item.id == currentCollectionId },
                             onPlay = playbackActions::play,
                             onShuffle = playbackActions::shuffle,
                             onPlayNext = playbackActions::playNext,

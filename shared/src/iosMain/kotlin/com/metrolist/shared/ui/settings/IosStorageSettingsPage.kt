@@ -1,6 +1,11 @@
 package com.metrolist.shared.ui.settings
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,8 +46,16 @@ import com.metrolist.shared.generated.resources.library_offline_songs
 import com.metrolist.shared.generated.resources.max_image_cache_size
 import com.metrolist.shared.generated.resources.max_song_cache_size
 import com.metrolist.shared.generated.resources.ok
+import com.metrolist.shared.generated.resources.peek_precache_upcoming
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_count
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_desc
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_off
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_one
+import com.metrolist.shared.generated.resources.peek_precache_wifi_only
+import com.metrolist.shared.generated.resources.peek_precache_wifi_only_desc
 import com.metrolist.shared.generated.resources.song_cache
 import com.metrolist.shared.generated.resources.unlimited
+import com.metrolist.shared.peek.PeekPreCacheUpcomingCounts
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.storage.IosAudioDownloadManager
 import com.metrolist.shared.storage.ResizableImageDiskCache
@@ -92,6 +105,9 @@ fun IosStorageSettingsPage(
     var maxImageMb by remember { mutableIntStateOf(Settings.shared.maxImageCacheSize) }
     var cacheEnabled by remember { mutableStateOf(Settings.shared.songCacheEnabled) }
     var autoDownloadOnLike by remember { mutableStateOf(Settings.shared.autoDownloadOnLike) }
+    var preCacheUpcomingCount by remember { mutableIntStateOf(Settings.shared.peekPreCacheUpcomingCount) }
+    var preCacheWifiOnly by remember { mutableStateOf(Settings.shared.peekPreCacheWifiOnly) }
+    var preCacheMenuOpen by remember { mutableStateOf(false) }
     var confirmation by remember { mutableStateOf<StorageConfirmation?>(null) }
     var busy by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
@@ -298,7 +314,55 @@ fun IosStorageSettingsPage(
                 revision = sliderRevision,
                 enabled = !busy && usage != null,
                 isFirst = false,
+                isLast = false,
+            )
+            // PeekMusic: cache the next queue songs ahead, like Android.
+            val preCacheAvailable = cacheEnabled && maxCacheMb != 0
+            val preCacheLabel: @Composable (Int) -> String = { count ->
+                when (count) {
+                    0 -> stringResource(Res.string.peek_precache_upcoming_off)
+                    1 -> stringResource(Res.string.peek_precache_upcoming_one)
+                    else -> stringResource(Res.string.peek_precache_upcoming_count, count)
+                }
+            }
+            StorageSettingRow(
+                stringResource(Res.string.peek_precache_upcoming),
+                if (preCacheUpcomingCount == 0) {
+                    stringResource(Res.string.peek_precache_upcoming_desc)
+                } else {
+                    preCacheLabel(preCacheUpcomingCount)
+                },
+                enabled = preCacheAvailable,
+                onClick = { preCacheMenuOpen = true },
+                trailingContent = {
+                    Box {
+                        Text(preCacheLabel(preCacheUpcomingCount), color = MaterialTheme.colorScheme.primary)
+                        DropdownMenu(expanded = preCacheMenuOpen, onDismissRequest = { preCacheMenuOpen = false }) {
+                            PeekPreCacheUpcomingCounts.forEach { count ->
+                                DropdownMenuItem(
+                                    text = { Text(preCacheLabel(count)) },
+                                    onClick = {
+                                        preCacheMenuOpen = false
+                                        preCacheUpcomingCount = count
+                                        Settings.shared.peekPreCacheUpcomingCount = count
+                                    },
+                                )
+                            }
+                        }
+                    }
+                },
+            )
+            StorageSettingRow(
+                stringResource(Res.string.peek_precache_wifi_only),
+                stringResource(Res.string.peek_precache_wifi_only_desc),
+                enabled = preCacheAvailable && preCacheUpcomingCount != 0,
+                checked = preCacheWifiOnly,
+                onClick = {
+                    preCacheWifiOnly = !preCacheWifiOnly
+                    Settings.shared.peekPreCacheWifiOnly = preCacheWifiOnly
+                },
                 isLast = true,
+                trailingContent = { Switch(preCacheWifiOnly, onCheckedChange = null) },
             )
         }
         StorageSection(imageTitle) {

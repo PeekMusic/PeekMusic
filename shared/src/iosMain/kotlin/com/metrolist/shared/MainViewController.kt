@@ -61,6 +61,7 @@ import com.metrolist.shared.listentogether.ListenTogetherPresentationText
 import com.metrolist.shared.listentogether.ListenTogetherTrackResolver
 import com.metrolist.shared.listentogether.toSongItem
 import com.metrolist.shared.network.createHttpClient
+import com.metrolist.shared.peek.friends.PeekFriendsManager
 import com.metrolist.shared.playback.IosPlaybackController
 import com.metrolist.shared.playback.IosPlayerPlatformServices
 import com.metrolist.shared.playback.MusicPlayer
@@ -208,6 +209,9 @@ fun MetrolistIOSApp() {
             )
         }
     IosDiscordPresenceEffect(playbackController.state, player.playbackSpeed)
+    // PeekMusic: PeekParty friends, online while the app is in front or music plays, like Android.
+    val peekFriends = remember { PeekFriendsManager(callerScope = scope, httpClient = createHttpClient()) }
+    PeekFriendsPresenceEffect(peekFriends, player.isPlaying)
     val listenTogetherClient = remember(appScope) { createHttpClient() }
     val listenTogetherMessages by rememberUpdatedState(listenTogetherPresentationMessages())
     val listenTogetherManager =
@@ -551,6 +555,7 @@ fun MetrolistIOSApp() {
                     loginContent = { switching, onBack, onComplete, onTokenLogin ->
                         IosLoginScreen(switching, onBack, onComplete, onTokenLogin)
                     },
+                    peekFriends = peekFriends,
                 )
             }
             IosUpdateNotice()

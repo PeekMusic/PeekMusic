@@ -97,6 +97,7 @@ import com.metrolist.shared.model.presentCollection
 import com.metrolist.shared.model.sortedForLikedPlaylist
 import com.metrolist.shared.model.sortedForPlaylist
 import com.metrolist.shared.model.sortedForTopPlaylist
+import com.metrolist.shared.peek.rememberPeekMobileHeaderDownload
 import com.metrolist.shared.playlist.addSongToStoredPlaylist
 import com.metrolist.shared.playlist.moveSongInLocalPlaylist
 import com.metrolist.shared.playlist.removeSongFromLocalPlaylist
@@ -392,6 +393,8 @@ internal fun MobileSongCollectionScreen(
     onSwipeFeedback: (String) -> Unit,
     modifier: Modifier = Modifier,
     bottomContentPadding: Dp = 0.dp,
+    // PeekMusic: header download button for local playlists, see PeekHeaderDownload.
+    downloadedSongIds: Set<String> = emptySet(),
 ) {
     val scope = rememberCoroutineScope()
     var showAddSong by remember(localPlaylistId) { mutableStateOf(false) }
@@ -794,7 +797,14 @@ internal fun MobileSongCollectionScreen(
                     null,
                 )
             }
+            val headerDownload =
+                if (localPlaylistId != null) {
+                    rememberPeekMobileHeaderDownload(baseSongs, downloadedSongIds, onDownload, onRemoveDownloads)
+                } else {
+                    null
+                }
             PlaylistContent(
+                headerDownload = headerDownload,
                 isTrackSelected = { selection.isSelected(key(it)) },
                 trackContainer = { song, _, content ->
                     SongSwipeActions(song, onSwipeFeedback, enabled = !playlistReorderMode, content = content)
