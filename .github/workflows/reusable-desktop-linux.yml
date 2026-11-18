@@ -3,6 +3,12 @@ name: Desktop Linux
 on:
   workflow_call:
     inputs:
+      include-arm64:
+        # PeekMusic: lets a test build skip the slower ARM64 package.
+        description: Also build the ARM64 package
+        required: false
+        default: true
+        type: boolean
       run-verification:
         description: Run tests and launch checks, disabled only after the release gate succeeds
         required: false
@@ -55,11 +61,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - arch: x64
-            runner: blacksmith-4vcpu-ubuntu-2404
-          - arch: arm64
-            runner: blacksmith-8vcpu-ubuntu-2404-arm
+        # PeekMusic: GitHub-hosted runners (we have no Blacksmith ones); ARM64 only when asked.
+        include: ${{ fromJSON(format('[{{"arch":"x64","runner":"ubuntu-24.04"}}{0}]', inputs.include-arm64 && ',{"arch":"arm64","runner":"ubuntu-24.04-arm"}' || '')) }}
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -116,9 +119,9 @@ jobs:
           set -euo pipefail
           version=""
           while IFS='=' read -r key value; do
-            if [[ "$key" == "appVersion" ]]; then version="$value"; break; fi
+            if [[ "$key" == "peekVersion" ]]; then version="$value"; break; fi # PeekMusic: desktop ships peekVersion
           done < gradle.properties
-          source="dist/Metrolist.AppImage"
+          source="dist/PeekMusic.AppImage"
           test -x "$source" || { echo "Linux AppImage was not produced or is not executable" >&2; exit 1; }
           description="$(file -b "$source")"
           case "${{ matrix.arch }}" in
@@ -126,7 +129,7 @@ jobs:
             arm64) grep -Eiq 'aarch64|ARM64' <<< "$description" || { echo "Expected aarch64 AppImage, got: $description" >&2; exit 1; } ;;
             *) echo "Unsupported Linux artifact architecture: ${{ matrix.arch }}" >&2; exit 1 ;;
           esac
-          output="dist/metrolist-desktop-linux-${{ matrix.arch }}-${version}.AppImage"
+          output="dist/peekmusic-desktop-linux-${{ matrix.arch }}-${version}.AppImage"
           mv "$source" "$output"
           echo "path=$output" >> "$GITHUB_OUTPUT"
 
