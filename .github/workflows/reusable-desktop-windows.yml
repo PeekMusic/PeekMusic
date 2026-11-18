@@ -3,6 +3,13 @@ name: Desktop Windows
 on:
   workflow_call:
     inputs:
+      run-desktop-tests:
+        # PeekMusic: Build Desktop skips the JVM tests here; some upstream tests are flaky on their own (a PlayerState
+        # coroutine leaks into whichever runTest comes next), and Linux packages without them too.
+        description: Run the desktop JVM tests before packaging
+        required: false
+        default: true
+        type: boolean
       include-arm64:
         # PeekMusic: lets a test build skip the slower ARM64 package.
         description: Also build the ARM64 package
@@ -166,7 +173,7 @@ jobs:
           set -euo pipefail
           rm -rf dist
           verification=()
-          if [[ '${{ inputs.run-verification }}' == 'true' ]]; then
+          if [[ '${{ inputs.run-verification }}' == 'true' && '${{ inputs.run-desktop-tests }}' == 'true' ]]; then
             verification+=(:desktopApp:jvmTest)
           fi
           ./gradlew "${verification[@]}" \

@@ -69,6 +69,9 @@ class SentryManagerTest {
         val nativeSummary = AtomicReference<String>()
         Sentry.init { options ->
             configureDesktopSentry(options, desktopSentryRelease("test"), "test")
+            // PeekMusic: our builds have no DSN (crash reports off), which disables Sentry; the fake transport below
+            // never sends, so a placeholder DSN only lets this test check the sanitizing.
+            options.dsn = "https://public@o0.ingest.sentry.io/0"
             options.isEnableUncaughtExceptionHandler = false
             options.setTransportFactory(
                 ITransportFactory { transportOptions, _ ->

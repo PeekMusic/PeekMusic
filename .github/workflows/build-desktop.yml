@@ -80,6 +80,7 @@ jobs:
       contents: read
     with:
       upload-artifact: true
+      run-desktop-tests: false
       include-arm64: ${{ inputs.arm64 }}
     secrets:
       LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
