@@ -33,6 +33,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.metrolist.desktop.peek.DesktopCanvasBackground
+import com.metrolist.desktop.peek.DesktopCanvasState
 import com.metrolist.desktop.state.app.AppState
 import com.metrolist.desktop.state.app.UiState
 import com.metrolist.desktop.state.playback.LyricsState
@@ -102,6 +105,23 @@ fun FullscreenContentLayout(
                 Modifier
                     .fillMaxSize(),
         ) {
+            // PeekMusic: a Canvas plays behind the player as on Android: next to the big lyrics only on the player's
+            // side, without them across the whole player.
+            val canvasUrl =
+                PlayerState.animatedCoverUrl?.takeIf { PlayerState.animatedCoverIsCanvas && Settings.shared.peekDesktopCanvasFullPage }
+            if (canvasUrl != null) {
+                DesktopCanvasBackground(
+                    url = canvasUrl,
+                    headers = PlayerState.animatedCoverHeaders,
+                    clips = PlayerState.animatedCoverClips,
+                    active = PlayerState.isPlaying && !UiState.videoFullscreenObscuresPlayer,
+                    fadeEnd = isWide && lyricsFraction > 0.001f,
+                    modifier = if (isWide) Modifier.fillMaxHeight().width(playerWidth) else Modifier.fillMaxSize(),
+                    onFrameAvailabilityChanged = { DesktopCanvasState.backgroundShowing = it },
+                )
+            } else {
+                SideEffect { DesktopCanvasState.backgroundShowing = false }
+            }
             if (isWide) {
                 Row(
                     modifier = Modifier.fillMaxSize(),

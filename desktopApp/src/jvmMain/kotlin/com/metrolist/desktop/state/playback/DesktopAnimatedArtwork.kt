@@ -14,6 +14,7 @@ import com.metrolist.innertubex.extraction.AudioQuality
 import com.metrolist.shared.api.artwork.CanvasContentSource
 import com.metrolist.shared.api.artwork.YouTubeCanvasClip
 import com.metrolist.shared.api.artwork.isEnabled
+import com.metrolist.shared.api.artwork.youtubeCanvasClips
 import com.metrolist.shared.api.artwork.youtubeCanvasPlaybackClips
 import com.metrolist.shared.api.musicvideo.MusicVideoResolver
 import com.metrolist.shared.api.musicvideo.MusicVideoResult
@@ -21,6 +22,7 @@ import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.artworkExplicitness
 import com.metrolist.shared.model.isVideoSong
 import com.metrolist.shared.settings.Settings
+import com.metrolist.shared.settings.YouTubeCanvasMode
 import com.metrolist.shared.settings.targetHeight
 import com.metrolist.shared.state.GlobalYouTubeRepository
 import com.metrolist.shared.youtube.extraction.models.toContentHints
@@ -51,6 +53,10 @@ internal class DesktopAnimatedArtwork(
     var animatedCoverHeaders: Map<String, String> by mutableStateOf(emptyMap())
         private set
 
+    /** PeekMusic: true for a Canvas (Spotify or YouTube), which plays behind the player; false for an animated cover. */
+    var animatedCoverIsCanvas: Boolean by mutableStateOf(false)
+        private set
+
     /** PeekMusic: the YouTube canvas clips to cycle through ("short clips" mode); empty plays the whole video. */
     var animatedCoverClips: List<YouTubeCanvasClip> by mutableStateOf(emptyList())
         private set
@@ -76,6 +82,7 @@ internal class DesktopAnimatedArtwork(
                 _animatedCoverUrl = null
                 animatedCoverHeaders = emptyMap()
                 animatedCoverClips = emptyList()
+                animatedCoverIsCanvas = false
                 animatedCoverSongId = null
                 if (Settings.shared.isAnimatedArtworkOrCanvasEnabled) currentTrack?.let(::fetchAnimatedCover)
             }
@@ -105,6 +112,7 @@ internal class DesktopAnimatedArtwork(
         if (retainedCoverUrl == null) {
             animatedCoverHeaders = emptyMap()
             animatedCoverClips = emptyList()
+            animatedCoverIsCanvas = false
         }
         animatedCoverSongId = if (retainedCoverUrl != null) effectiveTrack?.id else null
 
@@ -119,6 +127,7 @@ internal class DesktopAnimatedArtwork(
             _animatedCoverUrl = null
             animatedCoverHeaders = emptyMap()
             animatedCoverClips = emptyList()
+            animatedCoverIsCanvas = false
             animatedCoverSongId = null
             return
         }
@@ -177,13 +186,14 @@ internal class DesktopAnimatedArtwork(
                                 .filter { it in desktopArtworkSources() }
                                 .firstNotNullOfOrNull { source ->
                                     when (source) {
-                                        CanvasContentSource.SPOTIFY_CANVAS -> spotify?.let { DesktopVideoCanvas(it) }
+                                        CanvasContentSource.SPOTIFY_CANVAS -> spotify?.let { DesktopVideoCanvas(it, isCanvas = true) }
                                         CanvasContentSource.APPLE_MUSIC -> appleMusic?.let { DesktopVideoCanvas(it) }
                                         CanvasContentSource.YOUTUBE_MUSIC_VIDEO -> youtube
                                     }
                                 }
                         }
                     _animatedCoverUrl = chosen?.url
+                    animatedCoverIsCanvas = chosen?.isCanvas == true
                     animatedCoverHeaders = chosen?.headers.orEmpty()
                     animatedCoverClips = chosen?.clips.orEmpty()
                     animatedCoverSongId = songId
@@ -210,10 +220,17 @@ private class DesktopVideoCanvas(
     val url: String,
     val headers: Map<String, String> = emptyMap(),
     val clips: List<YouTubeCanvasClip> = emptyList(),
+    val isCanvas: Boolean = false,
 )
 
 /** Video height for the YouTube canvas when the quality is Auto: it plays small inside the cover, and pixels cost CPU. */
 private const val DESKTOP_VIDEO_CANVAS_AUTO_HEIGHT = 480
+
+/**
+ * Upper limit for the YouTube canvas on desktop: software decoding can't keep 1080p smooth, and the canvas is drawn
+ * at most 540 px high anyway (DesktopCanvasBackground), so 1080p would only cost CPU.
+ */
+private const val DESKTOP_VIDEO_CANVAS_MAX_HEIGHT = 720
 
 /**
  * PeekMusic: the song's YouTube music video as a direct video stream (no SABR, so the looping cover player can read
@@ -231,10 +248,24 @@ private suspend fun desktopMusicVideoCanvas(song: SongItem): DesktopVideoCanvas?
     val hints =
         target
             .toContentHints(wantVideo = true)
-            .copy(maxVideoHeight = Settings.shared.youtubeCanvasQuality.targetHeight ?: DESKTOP_VIDEO_CANVAS_AUTO_HEIGHT)
+            .copy(
+                maxVideoHeight =
+                    (Settings.shared.youtubeCanvasQuality.targetHeight ?: DESKTOP_VIDEO_CANVAS_AUTO_HEIGHT)
+                        .coerceAtMost(DESKTOP_VIDEO_CANVAS_MAX_HEIGHT),
+            )
             .withStreamCapabilities(allowHls = false, allowSabr = false, allowBoundedRange = true)
     val resource = resolver.resolve(target.id, hints, AudioQuality.AUTO, sourceSong = target)
     val url = resource.videoUrl?.takeIf { resource.hasDirectVideo && it.startsWith("http") } ?: return null
-    // Short clips (Android's default) or the whole video, from the same YouTube canvas settings as Android.
-    return DesktopVideoCanvas(url, resource.headers, youtubeCanvasPlaybackClips(Settings.shared.youtubeCanvasMode, resource))
+    // Short clips (Android's default) or the whole video, from the same YouTube canvas settings as Android. Without
+    // a duration in the stream there would be no clips and the video would just run from the start, so the song's
+    // length stands in for it.
+    val clips =
+        youtubeCanvasPlaybackClips(Settings.shared.youtubeCanvasMode, resource).ifEmpty {
+            if (Settings.shared.youtubeCanvasMode == YouTubeCanvasMode.SHORT_CLIPS) {
+                youtubeCanvasClips(target.duration?.toLong()?.times(1_000L))
+            } else {
+                emptyList()
+            }
+        }
+    return DesktopVideoCanvas(url, resource.headers, clips, isCanvas = true)
 }

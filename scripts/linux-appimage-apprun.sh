@@ -17,7 +17,7 @@ install_desktop_entry() {
     old_ifs="$IFS"
     IFS=:
     for directory in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
-        if [ -f "$directory/applications/Metrolist.desktop" ]; then
+        if [ -f "$directory/applications/PeekMusic.desktop" ]; then
             IFS="$old_ifs"
             return 0
         fi
@@ -28,18 +28,18 @@ install_desktop_entry() {
         *'
 '*|*"$cr"*) return 1 ;;
     esac
-    target="$data_home/applications/Metrolist.desktop"
+    target="$data_home/applications/PeekMusic.desktop"
     # Leave entries the user or another tool created alone.
-    if [ -f "$target" ] && ! grep -qx 'X-Metrolist-AppImage=true' "$target"; then
+    if [ -f "$target" ] && ! grep -qx 'X-PeekMusic-AppImage=true' "$target"; then
         return 0
     fi
-    icon="$data_home/icons/hicolor/512x512/apps/Metrolist.png"
+    icon="$data_home/icons/hicolor/512x512/apps/PeekMusic.png"
     mkdir -p "$data_home/applications" "$(dirname "$icon")" || return 1
-    cp "$APPDIR/Metrolist.png" "$icon" || return 1
+    cp "$APPDIR/PeekMusic.png" "$icon" || return 1
     # Desktop entries unescape strings before parsing quoted Exec arguments.
     launcher="$(printf '%s' "$APPIMAGE" | sed -e 's/\\/\\\\\\\\/g' -e 's/["`$]/\\\\&/g' -e 's/%/%%/g')"
     icon="$(printf '%s' "$icon" | sed 's/\\/\\\\/g')"
-    entry="$(mktemp "$data_home/applications/.Metrolist.XXXXXX")" || return 1
+    entry="$(mktemp "$data_home/applications/.PeekMusic.XXXXXX")" || return 1
     if ! {
         while IFS= read -r line || [ -n "$line" ]; do
             case "$line" in
@@ -47,13 +47,18 @@ install_desktop_entry() {
                 Icon=*) printf 'Icon=%s\n' "$icon" ;;
                 *) printf '%s\n' "$line" ;;
             esac
-        done < "$APPDIR/Metrolist.desktop" > "$entry" &&
-            printf '%s\n' 'X-Metrolist-AppImage=true' >> "$entry"
+        done < "$APPDIR/PeekMusic.desktop" > "$entry" &&
+            printf '%s\n' 'X-PeekMusic-AppImage=true' >> "$entry"
     } || ! chmod 644 "$entry" || ! mv -f "$entry" "$target"; then
         rm -f "$entry"
         return 1
     fi
+    # PeekMusic: GIO (browsers, gio open) finds scheme handlers only through mimeinfo.cache, so peekmusic:// links
+    # from listen.peekmusic.org would not open the app without it.
+    if command -v update-desktop-database >/dev/null 2>&1; then
+        update-desktop-database -q "$data_home/applications" 2>/dev/null || true
+    fi
 }
 
-install_desktop_entry || printf '%s\n' 'Metrolist could not install its AppImage desktop entry' >&2
-exec "$APPDIR/bin/Metrolist" "$@"
+install_desktop_entry || printf '%s\n' 'PeekMusic could not install its AppImage desktop entry' >&2
+exec "$APPDIR/bin/PeekMusic" "$@"

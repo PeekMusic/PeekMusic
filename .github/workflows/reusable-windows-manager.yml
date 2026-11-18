@@ -19,12 +19,12 @@ on:
 jobs:
   build:
     name: Windows manager
-    runs-on: blacksmith-2vcpu-windows-2025
+    runs-on: windows-2025 # PeekMusic: GitHub-hosted
     timeout-minutes: 20
     permissions:
       contents: read
     steps:
-      - name: Check out Metrolist
+      - name: Check out PeekMusic
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
@@ -36,6 +36,11 @@ jobs:
           ref: 18d2846bcc95847f08ea969d707222c1566d9f65
           path: manager-source
           persist-credentials: false
+
+      # PeekMusic: upstream's manager installs Metrolist; rename it to what our app and updater expect.
+      - name: Rebrand manager as PeekMusic
+        shell: pwsh
+        run: python scripts/peek_rebrand_manager.py manager-source
 
       - name: Download portable artifact
         if: inputs.run-verification
@@ -61,9 +66,9 @@ jobs:
           const (
               TargetVersion = "$env:APP_VERSION"
               ReleaseTag = "v$env:APP_VERSION"
-              DesktopAssetName = "Metrolist-Desktop-windows.zip"
-              RepositoryOwner = "MetrolistGroup"
-              RepositoryName = "Metrolist"
+              DesktopAssetName = "PeekMusic-Desktop-windows.zip"
+              RepositoryOwner = "PeekMusic"
+              RepositoryName = "PeekMusic"
           )
           "@
           Set-Content -Path "manager-source/internal/buildconfig/config.go" -Value $config -Encoding utf8
@@ -82,7 +87,7 @@ jobs:
         shell: pwsh
         env:
           APP_VERSION: ${{ inputs.version }}
-        run: go run ./cmd/validate-payload "../release-input/Metrolist-Desktop-Windows.zip" "$env:APP_VERSION"
+        run: go run ./cmd/validate-payload "../release-input/PeekMusic-Desktop-Windows.zip" "$env:APP_VERSION"
 
       - name: Embed Windows resources
         working-directory: manager-source
@@ -101,7 +106,7 @@ jobs:
           APP_VERSION: ${{ inputs.version }}
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
-          go build -trimpath -ldflags "-s -w -H=windowsgui" -o "dist/metrolist-installer-windows-x64-$env:APP_VERSION.exe" .
+          go build -trimpath -ldflags "-s -w -H=windowsgui" -o "dist/peekmusic-installer-windows-x64-$env:APP_VERSION.exe" .
 
       - name: Install, repair and uninstall end to end
         if: inputs.run-verification
@@ -110,8 +115,8 @@ jobs:
         env:
           APP_VERSION: ${{ inputs.version }}
         run: |
-          $env:METROLIST_MANAGER_E2E_BINARY = (Resolve-Path "dist/metrolist-installer-windows-x64-$env:APP_VERSION.exe").Path
-          $env:METROLIST_MANAGER_E2E_PAYLOAD = (Resolve-Path "../release-input/Metrolist-Desktop-Windows.zip").Path
+          $env:METROLIST_MANAGER_E2E_BINARY = (Resolve-Path "dist/peekmusic-installer-windows-x64-$env:APP_VERSION.exe").Path
+          $env:METROLIST_MANAGER_E2E_PAYLOAD = (Resolve-Path "../release-input/PeekMusic-Desktop-Windows.zip").Path
           $env:METROLIST_MANAGER_E2E_VERSION = $env:APP_VERSION
           go test -run TestEndToEndInstallUpdateAndUninstall -count=1 -v .
 
@@ -119,6 +124,6 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: release-windows-manager
-          path: manager-source/dist/metrolist-installer-windows-x64-${{ inputs.version }}.exe
+          path: manager-source/dist/peekmusic-installer-windows-x64-${{ inputs.version }}.exe
           if-no-files-found: error
           retention-days: 4

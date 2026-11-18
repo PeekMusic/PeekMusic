@@ -131,7 +131,11 @@
     <string name="peek_download_cancel_message">Songs that are already downloaded stay on your device.</string>
     <string name="peek_download_cancel_confirm">Stop download</string>
     <string name="peek_download_cancel_keep">Keep downloading</string>
-    <string name="peek_canvas_desktop_desc">Play Spotify Canvas and YouTube music videos, muted, in the player's cover when available. Uses more storage and data.</string>
+    <string name="peek_canvas_desktop_desc">Play Spotify Canvas and YouTube music videos, muted, behind the player or in its cover when available. Uses more storage and data.</string>
+    <string name="peek_canvas_placement">Canvas placement</string>
+    <string name="peek_canvas_placement_page">Whole player</string>
+    <string name="peek_canvas_placement_cover">Cover only</string>
+    <string name="peek_lyrics_view_off">Off</string>
     <string name="peek_youtube_canvas_desktop_hint">Needs more processing power on desktop, especially above 480p. If the video stutters, pick a lower quality.</string>
     <string name="peek_animated_covers_desktop_desc">Show animated album covers from Apple Music when available. Uses more storage and data.</string>
     <string name="peek_listen_together_ios_user">iPhone user</string>

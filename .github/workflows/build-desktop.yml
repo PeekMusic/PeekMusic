@@ -1,99 +1,154 @@
 name: Build Desktop
 
+# PeekMusic: one manual workflow for all desktop packages on GitHub's runners (we have no Blacksmith ones).
+# It builds the Linux AppImage, the Windows ZIP plus installer and, if asked, the macOS DMGs and ARM64 packages.
+# With a release tag it also attaches them to that existing GitHub release under the names the updater expects.
+
 on:
   workflow_dispatch:
     inputs:
-      macos-x64-use-intel-runner:
-        description: Build the x64 DMG on Intel instead of Apple Silicon with Rosetta
+      arm64:
+        description: Also build the ARM64 AppImage and Windows ZIP (slower)
         required: false
         default: false
         type: boolean
-      windows-manager:
-        description: Build and test the Windows installer against its portable package
+      macos:
+        description: Also build the macOS DMGs (unsigned)
         required: false
         default: false
         type: boolean
+      release-tag:
+        description: Attach the packages to this existing release (e.g. v2.0.0); empty = workflow artifacts only
+        required: false
+        default: ''
+        type: string
 
 concurrency:
-  group: desktop-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: desktop-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  changes:
+  version:
     name: Read package version
-    runs-on: blacksmith-2vcpu-ubuntu-2604
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
       contents: read
     outputs:
       version: ${{ steps.version.outputs.value }}
     steps:
-      - name: Check out repository history
+      - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          fetch-depth: 0
           persist-credentials: false
-      - name: Read installer version
+      - name: Read desktop version
         id: version
-        run: echo "value=$(sed -n 's/^appVersion=//p' gradle.properties)" >> "$GITHUB_OUTPUT"
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ inputs.release-tag }}
+        run: |
+          set -euo pipefail
+          # The desktop app ships peekVersion, not upstream's appVersion.
+          version="$(sed -n 's/^peekVersion=//p' gradle.properties)"
+          test -n "$version" || { echo "peekVersion is missing in gradle.properties" >&2; exit 1; }
+          if [[ -n "$RELEASE_TAG" && "$RELEASE_TAG" != "v$version" ]]; then
+            echo "Release tag $RELEASE_TAG does not match peekVersion $version" >&2
+            exit 1
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
 
-  macos:
-    name: macOS packages
-    if: github.event_name == 'workflow_dispatch' && !inputs.windows-manager
-    uses: ./.github/workflows/reusable-desktop-macos.yml
+  linux:
+    name: Linux
+    needs: version
+    uses: ./.github/workflows/reusable-desktop-linux.yml
     permissions:
       contents: read
     with:
       upload-artifact: true
-      artifact-prefix: verify-
-      cache-read-only: ${{ github.ref != 'refs/heads/main' }}
-      x64-use-intel-runner: ${{ inputs.macos-x64-use-intel-runner || vars.MACOS_X64_USE_INTEL_RUNNER == 'true' }}
+      include-arm64: ${{ inputs.arm64 }}
     secrets:
-      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
       LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
       LYPRIO_BASE_URL: ${{ secrets.LYPRIO_BASE_URL }}
       LYPRIO_HMAC_KEY: ${{ secrets.LYPRIO_HMAC_KEY }}
 
   windows:
-    name: Windows package
-    if: github.event_name == 'workflow_dispatch' && inputs.windows-manager
+    name: Windows
+    needs: version
     uses: ./.github/workflows/reusable-desktop-windows.yml
     permissions:
       contents: read
     with:
       upload-artifact: true
-      cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+      run-desktop-tests: false
+      include-arm64: ${{ inputs.arm64 }}
     secrets:
-      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
       LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
       LYPRIO_BASE_URL: ${{ secrets.LYPRIO_BASE_URL }}
       LYPRIO_HMAC_KEY: ${{ secrets.LYPRIO_HMAC_KEY }}
 
   windows-manager:
-    name: Verify Windows installer
-    if: github.event_name == 'workflow_dispatch' && inputs.windows-manager
-    needs: [changes, windows]
+    name: Windows installer
+    needs: [version, windows]
     uses: ./.github/workflows/reusable-windows-manager.yml
     permissions:
       contents: read
     with:
-      version: ${{ needs.changes.outputs.version }}
+      version: ${{ needs.version.outputs.version }}
       portable-artifact: desktop-windows
 
-  build:
-    needs: changes
-    name: Desktop
-    uses: ./.github/workflows/reusable-desktop-verify.yml
+  macos:
+    name: macOS
+    needs: version
+    if: inputs.macos
+    uses: ./.github/workflows/reusable-desktop-macos.yml
     permissions:
       contents: read
     with:
-      include-arm64: true
-      cache-read-only: ${{ github.event_name == 'pull_request' }}
+      upload-artifact: true
     secrets:
-      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
       LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
       LYPRIO_BASE_URL: ${{ secrets.LYPRIO_BASE_URL }}
       LYPRIO_HMAC_KEY: ${{ secrets.LYPRIO_HMAC_KEY }}
+
+  publish:
+    name: Attach to release
+    needs: [version, linux, windows, windows-manager, macos]
+    if: >-
+      always() && inputs.release-tag != '' &&
+      needs.linux.result == 'success' && needs.windows.result == 'success' &&
+      needs.windows-manager.result == 'success' && needs.macos.result != 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          path: artifacts
+
+      - name: Upload release assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release-tag }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir packages
+          # Only the packages; the smoke-test evidence artifacts stay out of the release.
+          find artifacts -type f \( -name '*.AppImage' -o -name '*.zip' -o -name '*.exe' -o -name '*.dmg' \) \
+            -not -path 'artifacts/desktop-smoke-*' -exec mv -t packages {} +
+          cd packages
+          # The installer downloads the portable ZIP under this exact name.
+          mv PeekMusic-Desktop-Windows.zip PeekMusic-Desktop-windows.zip
+          if [[ -f PeekMusic-Desktop-Windows-arm64.zip ]]; then
+            mv PeekMusic-Desktop-Windows-arm64.zip "peekmusic-desktop-windows-arm64-${VERSION}.zip"
+          fi
+          ls -la
+          test -f "peekmusic-installer-windows-x64-${VERSION}.exe"
+          test -f "peekmusic-desktop-linux-x64-${VERSION}.AppImage"
+          gh release upload "$RELEASE_TAG" ./* --clobber --repo "$GITHUB_REPOSITORY"

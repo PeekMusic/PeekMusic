@@ -745,7 +745,7 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
             val isAndroid = host.platform == SettingsPlatform.ANDROID
             val canvasEnabled = settings.isCanvasEnabled
             group("animatedCovers", stringResource(Res.string.settings_playback)) {
-                // PeekMusic: desktop and iOS have their own Canvas switch too; on desktop the canvas plays in the cover.
+                // PeekMusic: desktop and iOS have their own Canvas switch too (desktop: behind the player or in the cover).
                 val isDesktop = host.platform == SettingsPlatform.DESKTOP
                 if (isAndroid || isDesktop || host.platform == SettingsPlatform.IOS) {
                     switch(
@@ -755,6 +755,19 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                             stringResource(if (isDesktop) Res.string.peek_canvas_desktop_desc else Res.string.player_canvas_desc),
                         checked = settings.playerCanvasEnabled,
                     ) { settings.playerCanvasEnabled = it }
+                }
+                // PeekMusic, desktop: the Canvas behind the whole player (like Android) or only in the cover.
+                if (isDesktop) {
+                    val fullPage = stringResource(Res.string.peek_canvas_placement_page)
+                    val coverOnly = stringResource(Res.string.peek_canvas_placement_cover)
+                    choice(
+                        id = "peekDesktopCanvasFullPage",
+                        title = stringResource(Res.string.peek_canvas_placement),
+                        valueLabel = if (settings.peekDesktopCanvasFullPage) fullPage else coverOnly,
+                        choices = listOf(SettingsChoice("page", fullPage), SettingsChoice("cover", coverOnly)),
+                        selectedChoiceId = if (settings.peekDesktopCanvasFullPage) "page" else "cover",
+                        enabled = settings.playerCanvasEnabled,
+                    ) { settings.peekDesktopCanvasFullPage = it == "page" }
                 }
                 switch(
                     id = "animatedCovers",
@@ -836,9 +849,11 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                     },
                     enabled = settings.isCanvasEnabled && settings.musicVideoPlaybackEnabled,
                 ) {
+                    // PeekMusic: the desktop decodes in software and the iPhone only plays H.264, so both stop at 720p.
+                    val limitCanvas = host.platform == SettingsPlatform.DESKTOP || host.platform == SettingsPlatform.IOS
                     val canvasQualityChoices =
                         MusicVideoQuality.entries
-                            .filter { host.platform != SettingsPlatform.IOS || (it.targetHeight ?: 0) <= IOS_CANVAS_MAX_HEIGHT }
+                            .filter { !limitCanvas || (it.targetHeight ?: 0) <= LIMITED_CANVAS_MAX_HEIGHT }
                             .map { quality ->
                                 SettingsChoice(
                                     quality.name,
@@ -854,7 +869,7 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                             SettingsChoice(YouTubeCanvasMode.SHORT_CLIPS.name, stringResource(Res.string.youtube_canvas_mode_short_clips)),
                             SettingsChoice(YouTubeCanvasMode.FULL_VIDEO.name, stringResource(Res.string.youtube_canvas_mode_full_video)),
                         )
-                    // A higher quality saved before the iOS limit shows (and plays) as 720p.
+                    // A higher quality saved before the limit shows (and plays) as 720p.
                     val canvasQuality =
                         settings.youtubeCanvasQuality.takeIf { quality -> canvasQualityChoices.any { it.id == quality.name } }
                             ?: MusicVideoQuality.P720
@@ -1049,4 +1064,4 @@ private fun SettingsGroupRegistryBuilder.videoPlaybackSettings(host: SharedSetti
 }
 
 // PeekMusic: keep in step with IosPlayerPlatformServices.maxMusicVideoCanvasHeight.
-private const val IOS_CANVAS_MAX_HEIGHT = 720
+private const val LIMITED_CANVAS_MAX_HEIGHT = 720

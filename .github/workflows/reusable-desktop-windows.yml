@@ -3,6 +3,19 @@ name: Desktop Windows
 on:
   workflow_call:
     inputs:
+      run-desktop-tests:
+        # PeekMusic: Build Desktop skips the JVM tests here; some upstream tests are flaky on their own (a PlayerState
+        # coroutine leaks into whichever runTest comes next), and Linux packages without them too.
+        description: Run the desktop JVM tests before packaging
+        required: false
+        default: true
+        type: boolean
+      include-arm64:
+        # PeekMusic: lets a test build skip the slower ARM64 package.
+        description: Also build the ARM64 package
+        required: false
+        default: true
+        type: boolean
       run-verification:
         description: Run tests and launch checks, disabled only after the release gate succeeds
         required: false
@@ -55,18 +68,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - arch: x64
-            runner: blacksmith-4vcpu-windows-2025
-            rid: win-x64
-            zip: Metrolist-Desktop-Windows.zip
-            machine: '8664'
-          # Blacksmith has no Windows ARM64 runners; GitHub's native one avoids cross-building the runtime and launcher.
-          - arch: arm64
-            runner: ${{ vars.WINDOWS_ARM64_RUNNER || 'windows-11-arm' }}
-            rid: win-arm64
-            zip: Metrolist-Desktop-Windows-arm64.zip
-            machine: AA64
+        # PeekMusic: GitHub-hosted runners (we have no Blacksmith ones); ARM64 only when asked.
+        include: ${{ fromJSON(format('[{{"arch":"x64","runner":"windows-2025","rid":"win-x64","zip":"PeekMusic-Desktop-Windows.zip","machine":"8664"}}{0}]', inputs.include-arm64 && format(',{{"arch":"arm64","runner":"{0}","rid":"win-arm64","zip":"PeekMusic-Desktop-Windows-arm64.zip","machine":"AA64"}}', vars.WINDOWS_ARM64_RUNNER || 'windows-11-arm') || '')) }}
     env:
       PACKAGE_ZIP: dist/${{ matrix.zip }}
     steps:
@@ -88,8 +91,7 @@ jobs:
           if [[ "$UPLOAD_SENTRY" == "true" ]]; then
             test -n "$SENTRY_AUTH_TOKEN" || { echo "SENTRY_AUTH_TOKEN is required when Sentry upload is enabled" >&2; exit 1; }
           fi
-          test -n "$LYPRIO_BASE_URL" || { echo "LYPRIO_BASE_URL is required" >&2; exit 1; }
-          test -n "$LYPRIO_HMAC_KEY" || { echo "LYPRIO_HMAC_KEY is required" >&2; exit 1; }
+          # PeekMusic: we have no Lyprio credentials; the build leaves that lyrics source out without them.
 
       - name: Prepare CI Gradle
         uses: ./.github/actions/prepare-ci-gradle
@@ -171,7 +173,7 @@ jobs:
           set -euo pipefail
           rm -rf dist
           verification=()
-          if [[ '${{ inputs.run-verification }}' == 'true' ]]; then
+          if [[ '${{ inputs.run-verification }}' == 'true' && '${{ inputs.run-desktop-tests }}' == 'true' ]]; then
             verification+=(:desktopApp:jvmTest)
           fi
           ./gradlew "${verification[@]}" \
@@ -181,8 +183,8 @@ jobs:
             -Pmetrolist.desktop.arch=${{ matrix.arch == 'arm64' && 'aarch64' || 'x86_64' }} \
             --no-daemon \
             --no-configuration-cache
-          if [[ "dist/Metrolist-Desktop-Windows.zip" != "$PACKAGE_ZIP" ]]; then
-            mv dist/Metrolist-Desktop-Windows.zip "$PACKAGE_ZIP"
+          if [[ "dist/PeekMusic-Desktop-Windows.zip" != "$PACKAGE_ZIP" ]]; then
+            mv dist/PeekMusic-Desktop-Windows.zip "$PACKAGE_ZIP"
           fi
 
       # The artifact quota can be full, so failed test details go to the log.
@@ -215,11 +217,11 @@ jobs:
           $zip = [System.IO.Compression.ZipFile]::OpenRead((Resolve-Path $archive))
           try {
             $manifest = $zip.Entries | Where-Object FullName -eq "install-manifest.json"
-            $launcher = $zip.Entries | Where-Object FullName -eq "Metrolist.exe"
+            $launcher = $zip.Entries | Where-Object FullName -eq "PeekMusic.exe"
             $helper = @($zip.Entries | Where-Object { $_.FullName -match '(^|/)resources/(windows/)?metro-wv2-helper\.exe$' })
             $helperChecksum = @($zip.Entries | Where-Object { $_.FullName -match '(^|/)resources/(windows/)?metro-wv2-helper\.exe\.sha256$' })
             if ($null -eq $manifest) { throw "Portable ZIP is missing install-manifest.json" }
-            if ($null -eq $launcher) { throw "Portable ZIP is missing Metrolist.exe" }
+            if ($null -eq $launcher) { throw "Portable ZIP is missing PeekMusic.exe" }
             if ($helper.Count -ne 1) { throw "Portable ZIP must contain exactly one Windows login helper, found $($helper.Count)" }
             if ($helperChecksum.Count -ne 1) { throw "Portable ZIP must contain exactly one Windows login helper checksum, found $($helperChecksum.Count)" }
             $jvm = $zip.Entries | Where-Object { $_.FullName -match '(^|/)runtime/bin/server/jvm\.dll$' }

@@ -5,6 +5,7 @@ package com.metrolist.desktop.ui.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,6 +59,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.metrolist.desktop.deviceconnect.DesktopDeviceConnect
+import com.metrolist.desktop.peek.DesktopCanvasState
 import com.metrolist.desktop.peek.DesktopPeekLyricsLine
 import com.metrolist.desktop.state.app.UiState
 import com.metrolist.desktop.state.content.ArtistState
@@ -75,9 +77,9 @@ import com.metrolist.shared.generated.resources.play
 import com.metrolist.shared.generated.resources.previous
 import com.metrolist.shared.generated.resources.view_album
 import com.metrolist.shared.model.SongItem
-import com.metrolist.shared.peek.PeekCanvasLikeButtons
 import com.metrolist.shared.model.isLive
 import com.metrolist.shared.model.previewAspectRatio
+import com.metrolist.shared.peek.PeekCanvasLikeButtons
 import com.metrolist.shared.settings.PlayerBackgroundStyle
 import com.metrolist.shared.settings.PlayerType
 import com.metrolist.shared.settings.Settings
@@ -159,8 +161,12 @@ fun PlayerCoreContent(
         }
 
     val content = @Composable {
+        // PeekMusic: with a Canvas behind the player the cover steps aside, as on Android; animated covers stay in it.
+        val canvasBehindPlayer = PlayerState.animatedCoverIsCanvas && Settings.shared.peekDesktopCanvasFullPage
+        val canvasInBackground = canvasBehindPlayer && DesktopCanvasState.backgroundShowing
+        val coverAlpha by animateFloatAsState(if (canvasInBackground) 0f else 1f, label = "peekCanvasCover")
         Box(
-            modifier = Modifier.desktopPlayerArtwork(currentTrack?.id),
+            modifier = Modifier.desktopPlayerArtwork(currentTrack?.id).alpha(coverAlpha),
             contentAlignment = Alignment.Center,
         ) {
             var hasAnimatedFrame by remember(PlayerState.animatedCoverUrl) { mutableStateOf(false) }
@@ -176,7 +182,7 @@ fun PlayerCoreContent(
                 contentScale = if (Settings.shared.cropAlbumArt) ContentScale.Crop else ContentScale.Fit,
             )
             AnimatedCover(
-                url = PlayerState.animatedCoverUrl,
+                url = PlayerState.animatedCoverUrl.takeUnless { canvasBehindPlayer },
                 headers = PlayerState.animatedCoverHeaders,
                 clips = PlayerState.animatedCoverClips,
                 active = PlayerState.isPlaying && !UiState.videoFullscreenObscuresPlayer,
