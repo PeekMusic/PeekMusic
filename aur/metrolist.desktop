@@ -7,4 +7,4 @@ Icon=metrolist
 Terminal=false
 StartupWMClass=Metrolist
 Categories=AudioVideo;Player;
-MimeType=x-scheme-handler/metrolist;x-scheme-handler/metrolist-auth;
+MimeType=x-scheme-handler/metrolist;x-scheme-handler/metrolist-auth;x-scheme-handler/peekmusic;

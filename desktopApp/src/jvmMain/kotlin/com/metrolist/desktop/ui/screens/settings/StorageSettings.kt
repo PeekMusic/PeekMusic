@@ -1,6 +1,7 @@
 package com.metrolist.desktop.ui.screens.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,10 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,8 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
+import com.metrolist.desktop.peek.PeekPreCacheUpcomingCounts
 import com.metrolist.desktop.storage.DownloadManager
 import com.metrolist.desktop.storage.SongCacheManager
 import com.metrolist.desktop.utils.DesktopImageLoader
@@ -62,6 +68,11 @@ import com.metrolist.shared.generated.resources.max_image_cache_size
 import com.metrolist.shared.generated.resources.max_song_cache_size
 import com.metrolist.shared.generated.resources.music_video_cache
 import com.metrolist.shared.generated.resources.ok
+import com.metrolist.shared.generated.resources.peek_precache_upcoming
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_count
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_desc
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_off
+import com.metrolist.shared.generated.resources.peek_precache_upcoming_one
 import com.metrolist.shared.generated.resources.reset
 import com.metrolist.shared.generated.resources.select_download_directory
 import com.metrolist.shared.generated.resources.settings_download_folder_summary
@@ -481,8 +492,9 @@ fun StorageSettingsScreen(
                     revision = sliderRevision,
                     enabled = !busy && maxSongMb != null,
                     isFirst = false,
-                    isLast = true,
+                    isLast = false,
                 )
+                PeekPreCacheUpcomingRow(enabled = Settings.shared.songCacheEnabled && maxSongMb != 0L)
             }
             DesktopStorageSection(imageTitle, listOf("image", "cache")) {
                 StorageSliderRow(
@@ -545,5 +557,47 @@ private fun DesktopStorageSection(
     val query = LocalSettingsSearchQuery.current.trim().lowercase()
     if (query.isEmpty() || title.lowercase().contains(query) || keywords.any { it.contains(query) || query.contains(it) }) {
         StorageSection(title, content)
+    }
+}
+
+/** PeekMusic: Storage › Song cache › Cache ahead, as on Android (DesktopUpcomingPreCache). */
+@Composable
+private fun PeekPreCacheUpcomingRow(enabled: Boolean) {
+    var expanded by remember { mutableStateOf(false) }
+    val count = Settings.shared.peekPreCacheUpcomingCount
+    val off = stringResource(Res.string.peek_precache_upcoming_off)
+    val one = stringResource(Res.string.peek_precache_upcoming_one)
+    val countLabel: @Composable (Int) -> String = { n ->
+        when (n) {
+            0 -> off
+            1 -> one
+            else -> stringResource(Res.string.peek_precache_upcoming_count, n)
+        }
+    }
+    // StorageSettingRow only blocks the click when disabled; grey it out like Android's disabled row.
+    Box(Modifier.alpha(if (enabled) 1f else 0.38f)) {
+        StorageSettingRow(
+            stringResource(Res.string.peek_precache_upcoming),
+            if (count == 0) stringResource(Res.string.peek_precache_upcoming_desc) else countLabel(count),
+            isLast = true,
+            enabled = enabled,
+            onClick = { expanded = true },
+            trailingContent = {
+                Box {
+                    Text(countLabel(count), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        PeekPreCacheUpcomingCounts.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(countLabel(option)) },
+                                onClick = {
+                                    Settings.shared.peekPreCacheUpcomingCount = option
+                                    expanded = false
+                                },
+                            )
+                        }
+                    }
+                }
+            },
+        )
     }
 }

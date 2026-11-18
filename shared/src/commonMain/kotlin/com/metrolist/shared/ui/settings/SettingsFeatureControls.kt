@@ -110,7 +110,7 @@ internal fun CanvasContentOrderSetting(
         contentOrder.filter {
             when (platform) {
                 SettingsPlatform.ANDROID -> true
-                SettingsPlatform.DESKTOP -> it != CanvasContentSource.YOUTUBE_MUSIC_VIDEO
+                SettingsPlatform.DESKTOP -> true // PeekMusic: the desktop plays the YouTube music video as canvas too
                 SettingsPlatform.IOS -> it == CanvasContentSource.APPLE_MUSIC
             }
         }

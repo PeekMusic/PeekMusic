@@ -177,6 +177,8 @@ fun PlayerCoreContent(
             )
             AnimatedCover(
                 url = PlayerState.animatedCoverUrl,
+                headers = PlayerState.animatedCoverHeaders,
+                clips = PlayerState.animatedCoverClips,
                 active = PlayerState.isPlaying && !UiState.videoFullscreenObscuresPlayer,
                 modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(28.dp)),
                 contentScale = ContentScale.Crop,

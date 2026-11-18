@@ -819,10 +819,13 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                     ) { settings.appleMusicArtistVideoResolution = AnimatedCoverResolution.valueOf(it) }
                 }
             }
-            if (host.platform == SettingsPlatform.ANDROID) {
+            // PeekMusic: the desktop plays the YouTube canvas too, with the same quality and clip settings.
+            if (host.platform == SettingsPlatform.ANDROID || host.platform == SettingsPlatform.DESKTOP) {
                 group(
                     "youtubeCanvas",
                     stringResource(Res.string.youtube_video_canvas),
+                    // PeekMusic: the desktop decodes the music video in software, so it costs more CPU.
+                    stringResource(Res.string.peek_youtube_canvas_desktop_hint).takeIf { host.platform == SettingsPlatform.DESKTOP },
                     enabled = settings.isCanvasEnabled && settings.musicVideoPlaybackEnabled,
                 ) {
                     val canvasQualityChoices =

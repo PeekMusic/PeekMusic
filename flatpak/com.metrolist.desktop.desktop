@@ -8,4 +8,4 @@ Terminal=false
 Categories=AudioVideo;Player;Music;
 StartupWMClass=Metrolist
 Keywords=music;player;youtube;streaming;
-MimeType=x-scheme-handler/metrolist;x-scheme-handler/metrolist-auth;
+MimeType=x-scheme-handler/metrolist;x-scheme-handler/metrolist-auth;x-scheme-handler/peekmusic;

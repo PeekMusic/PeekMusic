@@ -832,6 +832,7 @@ compose.desktop {
                                 <array>
                                     <string>metrolist</string>
                                     <string>metrolist-auth</string>
+                                    <string>peekmusic</string>
                                 </array>
                             </dict>
                         </array>

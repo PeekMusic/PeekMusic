@@ -62,8 +62,14 @@ internal fun applyVideoDecoderConfiguration(
     optimalThreads: String,
     options: MutableMap<String, String>,
     videoOptions: MutableMap<String, String>,
+    allDecoderThreads: Boolean = false, // PeekMusic: YouTube canvas, see VideoPlayer.peekAllDecoderThreads
 ): Int {
-    if (looping) {
+    if (looping && allDecoderThreads) {
+        // PeekMusic: a looping music video (YouTube canvas) jumps between clips; one thread can't decode from the
+        // keyframe to the jump target fast enough above 480p and the picture hangs. Software decoding stays.
+        options.remove("hwaccel")
+        videoOptions["threads"] = optimalThreads
+    } else if (looping) {
         options.remove("hwaccel")
         videoOptions["threads"] = "1"
     } else {
@@ -123,8 +129,12 @@ actual class VideoPlayer actual constructor(
                 OPTIMAL_VIDEO_THREADS,
                 options,
                 videoOptions,
+                peekAllDecoderThreads,
             )
     }
+
+    /** PeekMusic: a looping player that decodes with all threads (YouTube canvas); set before [load]. */
+    var peekAllDecoderThreads = false
 
     private var grabber: FFmpegFrameGrabber? = null
     private var seekableSource: SeekableMediaSource? = null

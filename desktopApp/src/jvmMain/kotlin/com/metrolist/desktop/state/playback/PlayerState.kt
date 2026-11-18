@@ -13,6 +13,7 @@ import com.metrolist.desktop.deviceconnect.DesktopDeviceConnect
 import com.metrolist.desktop.history.HistoryEntry
 import com.metrolist.desktop.history.HistoryRepository
 import com.metrolist.desktop.history.HistoryStat
+import com.metrolist.desktop.peek.DesktopPeekFriends
 import com.metrolist.desktop.playback.PlaybackErrorReporter
 import com.metrolist.desktop.state.app.AppState
 import com.metrolist.desktop.state.app.UiState
@@ -654,6 +655,7 @@ object PlayerState {
         }
         deviceConnect.detach(deviceConnectPlayback)
         ListenTogetherState.close()
+        DesktopPeekFriends.close() // PeekMusic
         playbackTransitionJob?.cancel()
         videoModeRequestJob?.cancel()
         runCatching { video.close() }
@@ -714,6 +716,8 @@ object PlayerState {
     private val artwork = DesktopAnimatedArtwork(scope)
     val animatedCoverSongId: String? get() = artwork.animatedCoverSongId
     val animatedCoverUrl: String? get() = artwork.animatedCoverUrl
+    val animatedCoverHeaders: Map<String, String> get() = artwork.animatedCoverHeaders // PeekMusic: YouTube canvas
+    val animatedCoverClips get() = artwork.animatedCoverClips // PeekMusic: YouTube canvas "short clips"
     val currentArtworkUrl: String? get() = currentTrack?.previewThumbnailUrl
     internal var artworkPreview by mutableStateOf(PlayerArtworkPreview())
         private set
