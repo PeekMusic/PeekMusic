@@ -57,7 +57,8 @@ class AnimatedCoverPlayer {
                     }
                 val loaded =
                     coroutineScope {
-                        val loading = async(Dispatchers.IO) { player.load(url, headers, positionProvider = { 0L }) }
+                        // PeekMusic: a YouTube canvas starts right at its first clip, not at 0:00.
+                        val loading = async(Dispatchers.IO) { player.load(url, headers, positionProvider = { clips.firstOrNull()?.startMs ?: 0L }) }
                         try {
                             loading.await()
                         } catch (error: CancellationException) {
@@ -109,9 +110,12 @@ class AnimatedCoverPlayer {
         active: Flow<Boolean>,
     ) {
         var index = 0
+        var started = false
         while (true) {
             val clip = clips[index]
-            player.seekTo(clip.startMs)
+            // The player already starts at the first clip; seeking there again would show its start twice.
+            if (started) player.seekTo(clip.startMs)
+            started = true
             var playedMs = 0L
             val lengthMs = (clip.endMs - clip.startMs).coerceAtLeast(CLIP_TICK_MS)
             while (playedMs < lengthMs) {

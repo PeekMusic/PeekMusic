@@ -718,6 +718,7 @@ object PlayerState {
     val animatedCoverUrl: String? get() = artwork.animatedCoverUrl
     val animatedCoverHeaders: Map<String, String> get() = artwork.animatedCoverHeaders // PeekMusic: YouTube canvas
     val animatedCoverClips get() = artwork.animatedCoverClips // PeekMusic: YouTube canvas "short clips"
+    val animatedCoverIsCanvas: Boolean get() = artwork.animatedCoverIsCanvas // PeekMusic: plays behind the player
     val currentArtworkUrl: String? get() = currentTrack?.previewThumbnailUrl
     internal var artworkPreview by mutableStateOf(PlayerArtworkPreview())
         private set

@@ -401,6 +401,9 @@ class Settings(
 
     var playerCanvasEnabled by preference(false)
 
+    /** PeekMusic, desktop: the Canvas plays behind the whole player (true) or only inside the cover (false). */
+    var peekDesktopCanvasFullPage by preference(true)
+
     var hasCanvasToggle = false
 
     val isCanvasEnabled: Boolean

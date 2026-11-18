@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
@@ -28,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +40,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -66,6 +71,7 @@ import com.metrolist.shared.generated.resources.follow_agent_positioning_hints
 import com.metrolist.shared.generated.resources.fullscreen
 import com.metrolist.shared.generated.resources.hide_lyrics
 import com.metrolist.shared.generated.resources.hide_queue
+import com.metrolist.shared.generated.resources.lyrics
 import com.metrolist.shared.generated.resources.lyrics_offset
 import com.metrolist.shared.generated.resources.lyrics_respect_agent_positioning
 import com.metrolist.shared.generated.resources.lyrics_romanization_show_original
@@ -74,6 +80,7 @@ import com.metrolist.shared.generated.resources.lyrics_show_translations
 import com.metrolist.shared.generated.resources.manual_translate_this_track
 import com.metrolist.shared.generated.resources.no_provider_results_found
 import com.metrolist.shared.generated.resources.no_track_playing
+import com.metrolist.shared.generated.resources.peek_lyrics_view_off
 import com.metrolist.shared.generated.resources.peek_title
 import com.metrolist.shared.generated.resources.peek_translation_source_builtin
 import com.metrolist.shared.generated.resources.peek_translation_source_google
@@ -95,6 +102,8 @@ import com.metrolist.shared.generated.resources.view_song_info
 import com.metrolist.shared.listentogether.ListenTogetherRoomRole
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.peek.PeekBuiltInTranslations
+import com.metrolist.shared.peek.PeekPlayerMenu
+import com.metrolist.shared.peek.rememberPeekPressSource
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.settings.displayName
 import com.metrolist.shared.ui.components.AlertDialog
@@ -121,7 +130,6 @@ import com.metrolist.shared.ui.menu.songPrimaryActions
 import com.metrolist.shared.ui.menu.suggestToHostMenuAction
 import com.metrolist.shared.ui.menu.tempoPitchMenuAction
 import com.metrolist.shared.ui.playback.LocalPlaybackController
-import com.metrolist.shared.peek.PeekPlayerMenu
 import com.metrolist.shared.utils.ShareUrls
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.context.GlobalContext
@@ -284,21 +292,20 @@ fun LyricsActionsMenuCard(
             }
 
             if (showViewToggles) {
-                LyricsToggleRow(
-                    icon = MetrolistIcons.Outlined.Lyrics,
-                    title = stringResource(Res.string.show_lyrics),
-                    checked = UiState.showLyricsDrawer,
-                    colorScheme = colorScheme,
-                    onCheckedChange = { if (it != UiState.showLyricsDrawer) LyricsState.toggleLyricsDrawer() },
-                )
-                LyricsToggleRow(
-                    icon = MetrolistIcons.Outlined.Lyrics,
-                    title = stringResource(Res.string.peek_title),
-                    checked = peekOn,
-                    colorScheme = colorScheme,
-                    onCheckedChange = {
-                        peekOn = it
-                        Settings.shared.showLyricsOnPlayer = it
+                // PeekMusic: one choice instead of two switches: the big lyrics, the Peek line, or neither.
+                PeekLyricsViewChoice(
+                    selected =
+                        when {
+                            UiState.showLyricsDrawer -> PeekLyricsView.LYRICS
+                            peekOn -> PeekLyricsView.PEEK
+                            else -> PeekLyricsView.OFF
+                        },
+                    onSelect = { view ->
+                        if ((view == PeekLyricsView.LYRICS) != UiState.showLyricsDrawer) LyricsState.toggleLyricsDrawer()
+                        if (view != PeekLyricsView.LYRICS) {
+                            peekOn = view == PeekLyricsView.PEEK
+                            Settings.shared.showLyricsOnPlayer = peekOn
+                        }
                     },
                 )
             }
@@ -714,4 +721,44 @@ private fun formatSleepTime(ms: Long): String {
     val m = totalSeconds / 60
     val s = totalSeconds % 60
     return if (m > 0) "${m}m ${s}s" else "${s}s"
+}
+
+/** PeekMusic: what the full player shows of the lyrics. */
+private enum class PeekLyricsView { LYRICS, PEEK, OFF }
+
+/** PeekMusic: Lyrics / Peek / Off as connected buttons that bounce like the player's. */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun PeekLyricsViewChoice(
+    selected: PeekLyricsView,
+    onSelect: (PeekLyricsView) -> Unit,
+) {
+    val labels =
+        mapOf(
+            PeekLyricsView.LYRICS to stringResource(Res.string.lyrics),
+            PeekLyricsView.PEEK to stringResource(Res.string.peek_title),
+            PeekLyricsView.OFF to stringResource(Res.string.peek_lyrics_view_off),
+        )
+    val views = PeekLyricsView.entries
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+    ) {
+        views.forEachIndexed { index, view ->
+            ToggleButton(
+                checked = view == selected,
+                onCheckedChange = { onSelect(view) },
+                shapes =
+                    when (index) {
+                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                        views.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                    },
+                interactionSource = rememberPeekPressSource(),
+                modifier = Modifier.weight(1f).semantics { role = Role.RadioButton },
+            ) {
+                Text(labels.getValue(view), maxLines = 1)
+            }
+        }
+    }
 }

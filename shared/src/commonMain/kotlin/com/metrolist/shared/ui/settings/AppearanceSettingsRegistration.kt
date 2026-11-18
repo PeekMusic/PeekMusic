@@ -36,6 +36,7 @@ import com.metrolist.shared.settings.desktopDefaultOpenTab
 import com.metrolist.shared.settings.desktopDefaultOpenTabs
 import com.metrolist.shared.settings.isDesktopMac
 import com.metrolist.shared.settings.normalizeDefaultOpenTab
+import com.metrolist.shared.settings.targetHeight
 import com.metrolist.shared.settings.updateDefaultOpenTab
 import com.metrolist.shared.ui.icons.MetrolistIcons
 import org.jetbrains.compose.resources.stringResource
@@ -744,7 +745,7 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
             val isAndroid = host.platform == SettingsPlatform.ANDROID
             val canvasEnabled = settings.isCanvasEnabled
             group("animatedCovers", stringResource(Res.string.settings_playback)) {
-                // PeekMusic: desktop has its own Canvas switch too; there the canvas plays in the cover.
+                // PeekMusic: desktop has its own Canvas switch too (behind the player or in the cover, see below).
                 val isDesktop = host.platform == SettingsPlatform.DESKTOP
                 if (isAndroid || isDesktop) {
                     switch(
@@ -754,6 +755,19 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                             stringResource(if (isDesktop) Res.string.peek_canvas_desktop_desc else Res.string.player_canvas_desc),
                         checked = settings.playerCanvasEnabled,
                     ) { settings.playerCanvasEnabled = it }
+                }
+                // PeekMusic, desktop: the Canvas behind the whole player (like Android) or only in the cover.
+                if (isDesktop) {
+                    val fullPage = stringResource(Res.string.peek_canvas_placement_page)
+                    val coverOnly = stringResource(Res.string.peek_canvas_placement_cover)
+                    choice(
+                        id = "peekDesktopCanvasFullPage",
+                        title = stringResource(Res.string.peek_canvas_placement),
+                        valueLabel = if (settings.peekDesktopCanvasFullPage) fullPage else coverOnly,
+                        choices = listOf(SettingsChoice("page", fullPage), SettingsChoice("cover", coverOnly)),
+                        selectedChoiceId = if (settings.peekDesktopCanvasFullPage) "page" else "cover",
+                        enabled = settings.playerCanvasEnabled,
+                    ) { settings.peekDesktopCanvasFullPage = it == "page" }
                 }
                 switch(
                     id = "animatedCovers",
@@ -828,8 +842,15 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                     stringResource(Res.string.peek_youtube_canvas_desktop_hint).takeIf { host.platform == SettingsPlatform.DESKTOP },
                     enabled = settings.isCanvasEnabled && settings.musicVideoPlaybackEnabled,
                 ) {
+                    // PeekMusic: the desktop plays the YouTube canvas at most in 720p (software decoding), so it
+                    // offers nothing above that; a higher stored value shows as the 720p it plays.
+                    val desktopCanvas = host.platform == SettingsPlatform.DESKTOP
+                    val canvasQuality =
+                        settings.youtubeCanvasQuality.let {
+                            if (desktopCanvas && (it.targetHeight ?: 0) > 720) MusicVideoQuality.P720 else it
+                        }
                     val canvasQualityChoices =
-                        MusicVideoQuality.entries.map { quality ->
+                        MusicVideoQuality.entries.filter { !desktopCanvas || (it.targetHeight ?: 0) <= 720 }.map { quality ->
                             SettingsChoice(
                                 quality.name,
                                 if (quality == MusicVideoQuality.AUTO) {
@@ -848,9 +869,9 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                         id = "youtubeCanvasQuality",
                         title = stringResource(Res.string.youtube_canvas_quality),
                         description = stringResource(Res.string.youtube_canvas_quality_desc),
-                        valueLabel = canvasQualityChoices.first { it.id == settings.youtubeCanvasQuality.name }.label,
+                        valueLabel = canvasQualityChoices.first { it.id == canvasQuality.name }.label,
                         choices = canvasQualityChoices,
-                        selectedChoiceId = settings.youtubeCanvasQuality.name,
+                        selectedChoiceId = canvasQuality.name,
                     ) { settings.youtubeCanvasQuality = MusicVideoQuality.valueOf(it) }
                     choice(
                         id = "youtubeCanvasMode",
