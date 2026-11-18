@@ -135,7 +135,7 @@ jobs:
 
       - name: Install launch smoke dependencies
         if: inputs.run-verification
-        timeout-minutes: 3
+        timeout-minutes: 10 # PeekMusic: GitHub's Ubuntu mirrors can take longer than 3 minutes
         shell: bash
         run: |
           sudo apt-get update
