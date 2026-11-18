@@ -1276,6 +1276,19 @@ internal class IosPlaybackController(
         sleepTimerController.cancel()
     }
 
+    override fun dismissPlayback(): Boolean {
+        if (guestLocked) return false
+        resolveJob?.cancel()
+        preResolveJob?.cancel()
+        audioQualityReloadJob?.cancel()
+        pendingPlayback.value = null
+        playbackError.value = null
+        clearRadioState()
+        player.clearPlayback()
+        savePlaybackState()
+        return true
+    }
+
     private fun clearRadioState() {
         radioJob?.cancel()
         radioJob = null

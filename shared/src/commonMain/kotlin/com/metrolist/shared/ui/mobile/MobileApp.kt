@@ -2076,6 +2076,8 @@ fun MobileApp(
                                     }
                                 },
                             collapsedHeaderHeight = miniPlayerHeight,
+                            // PeekMusic: swiping the mini player down stops playback and hides it, like Android.
+                            prepareDismissal = { { playbackController.dismissPlayback() } },
                             isCollapsedContentClickable = false,
                             preserveContentWhenCollapsed = true,
                             morphCollapsedContainer = true,

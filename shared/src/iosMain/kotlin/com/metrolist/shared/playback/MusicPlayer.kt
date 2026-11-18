@@ -1136,6 +1136,16 @@ class MusicPlayer internal constructor(
         MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = null
     }
 
+    /** PeekMusic: stops and empties the queue; the mini player disappears with the current song. */
+    fun clearPlayback() {
+        stop()
+        queue.setQueue(emptyList(), startIndex = -1)
+        _currentSong.value = null
+        metadataDurationSeconds = null
+        _duration.value = 0L
+        updateNowPlayingInfo()
+    }
+
     fun seekTo(position: Long) {
         _currentPosition.value = currentPositionMs()
         sampleChanges.trySend(Unit)

@@ -162,6 +162,12 @@ interface PlaybackController {
 
     fun stopCastDiscovery() = Unit
 
+    /**
+     * PeekMusic: stops playback and empties the queue, so the mini player goes away (swipe it down). Platforms
+     * without it return false and the mini player springs back.
+     */
+    fun dismissPlayback(): Boolean = false
+
     fun castTo(device: CastDevice) = Unit
 
     fun disconnectCast() = Unit
