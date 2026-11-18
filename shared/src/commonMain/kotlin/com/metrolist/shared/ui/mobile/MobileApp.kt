@@ -337,6 +337,8 @@ fun MobileApp(
     ) -> Unit,
     // PeekMusic: PeekParty friends (requests, invites, friend links); null where the platform has none.
     peekFriends: PeekFriendsManager? = null,
+    // PeekMusic: Spotify sign-in page for Spotify Canvas; null hides the sign-in button.
+    spotifyLoginContent: (@Composable (onBack: () -> Unit, onComplete: () -> Unit) -> Unit)? = null,
 ) {
     var detailsSong by remember { mutableStateOf<SongItem?>(null) }
     val formatFileSize = rememberFileSizeFormatter()
@@ -1382,6 +1384,7 @@ fun MobileApp(
                                 SharedSettingsScreen(
                                     SharedSettingsHost(
                                         platform = SettingsPlatform.IOS,
+                                        onSpotifySignIn = spotifyLoginContent?.let { { open(MobileRoute.SpotifyLogin) } },
                                         lyricsPreview = { modifier -> PlayerLyricsSettingsPreview(playerViewModel, modifier) },
                                         initialPage = route.initialPage,
                                         isAudioProcessingAvailable = playerState.isAudioProcessingAvailable,
@@ -1592,6 +1595,11 @@ fun MobileApp(
                                         open(MobileRoute.TokenLogin)
                                     },
                                 )
+                            }
+
+                            MobileRoute.SpotifyLogin -> {
+                                val content = spotifyLoginContent
+                                if (content != null) content(::back, ::back) else LaunchedEffect(Unit) { back() }
                             }
 
                             MobileRoute.TokenLogin -> {

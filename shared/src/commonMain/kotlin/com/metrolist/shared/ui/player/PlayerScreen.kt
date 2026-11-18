@@ -778,6 +778,7 @@ fun PlayerScreen(
 
     LaunchedEffect(
         currentSong?.id,
+        uiState.lyricsGeneration,
         shouldLoadLyrics,
         shouldFetchLyrics,
         Settings.shared.lyricsProviderOrder,

@@ -16,7 +16,6 @@ import androidx.compose.foundation.gestures.DraggableState
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
-import androidx.compose.foundation.gestures.verticalDrag
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -57,8 +56,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerId
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.input.pointer.positionChangeIgnoreConsumed
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.layout.layout
@@ -211,11 +214,13 @@ fun BottomSheet(
                     state.isDragging = true
                     var completed = false
                     try {
+                        // PeekMusic: once the sheet owns the drag it keeps it. Changes are taken in the Initial pass, before
+                        // children see them, so a pager or swipe row under the finger can no longer claim a slightly
+                        // diagonal pull and cancel it, which snapped the sheet back however far it was dragged.
                         completed =
-                            verticalDrag(drag.id) { change ->
+                            followSheetDrag(drag.id) { change ->
                                 velocityTracker.addPointerInputChange(change)
-                                state.dispatchRawDelta(change.positionChange().y)
-                                change.consume()
+                                state.dispatchRawDelta(change.positionChangeIgnoreConsumed().y)
                             }
                     } finally {
                         state.isDragging = false
@@ -747,4 +752,27 @@ fun rememberBottomSheetState(
         state.updateBounds(dismissedBound, expandedBound, collapsedBound, previousAnchor)
     }
     return state
+}
+
+/**
+ * Follows the pointer [pointerId] until it lifts (true) or the gesture ends without it (false), handing every move to
+ * [onMove] and consuming it in the Initial pass so children never act on the drag.
+ */
+private suspend fun AwaitPointerEventScope.followSheetDrag(
+    pointerId: PointerId,
+    onMove: (PointerInputChange) -> Unit,
+): Boolean {
+    var id = pointerId
+    while (true) {
+        val event = awaitPointerEvent(PointerEventPass.Initial)
+        val change = event.changes.firstOrNull { it.id == id } ?: return false
+        if (!change.pressed) {
+            // Another finger still down takes over the drag, like verticalDrag does.
+            val next = event.changes.firstOrNull { it.pressed } ?: return true.also { change.consume() }
+            id = next.id
+            continue
+        }
+        onMove(change)
+        change.consume()
+    }
 }

@@ -98,6 +98,10 @@ class IosAudioDownloadManager(
     private val storageUsageRefreshes = Channel<Unit>(Channel.CONFLATED)
     private val mutableStorageUsage = MutableStateFlow<IosStorageUsage?>(null)
     val storageUsageUpdates = mutableStorageUsage.asStateFlow()
+
+    // PeekMusic: queued and running downloads with their share done (0..1), for the header download progress ring.
+    private val mutableActiveDownloads = MutableStateFlow<Map<String, Float>>(emptyMap())
+    val activeDownloads = mutableActiveDownloads.asStateFlow()
     private var cacheGeneration = 0L
     private val json =
         Json {
@@ -966,6 +970,7 @@ class IosAudioDownloadManager(
         transform: (IosDownloadQueueRequest) -> IosDownloadQueueRequest,
     ) {
         if (!downloadQueue.update(songId, transform)) return
+        publishActiveDownloadsLocked()
         if (persistImmediately) {
             persistQueueLocked()
         } else if (queuePersistenceJob?.isActive != true) {
@@ -987,7 +992,24 @@ class IosAudioDownloadManager(
         persistQueueLocked()
     }
 
+    private fun publishActiveDownloadsLocked() {
+        mutableActiveDownloads.value =
+            readQueue()
+                .filter { it.state == IosDownloadQueueState.QUEUED || it.state == IosDownloadQueueState.RUNNING }
+                .associate { request ->
+                    val total = request.totalBytes?.takeIf { it > 0L }
+                    val share =
+                        if (request.state == IosDownloadQueueState.RUNNING && total != null) {
+                            (request.downloadedBytes.toFloat() / total).coerceIn(0f, 1f)
+                        } else {
+                            0f
+                        }
+                    request.song.id to share
+                }
+    }
+
     private fun persistQueueLocked() {
+        publishActiveDownloadsLocked()
         queuePersistenceJob?.cancel()
         queuePersistenceJob = null
         Settings.shared.downloadQueueJson = downloadQueue.encode()

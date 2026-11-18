@@ -45,6 +45,9 @@ internal sealed interface MobileRoute {
 
     data object TokenLogin : MobileRoute
 
+    // PeekMusic: Spotify sign-in for Spotify Canvas.
+    data object SpotifyLogin : MobileRoute
+
     data object About : MobileRoute
 
     data class Album(
@@ -344,6 +347,7 @@ internal val MobileRoute.motionScreen: Screen
             is MobileRoute.ListenTogether -> Screen.ListenTogether
             is MobileRoute.Login -> if (isSwitchingChannel) Screen.SwitchChannel else Screen.Login
             MobileRoute.TokenLogin -> Screen.TokenLogin
+            MobileRoute.SpotifyLogin -> Screen.Settings
             MobileRoute.About -> Screen.About
             is MobileRoute.Album -> Screen.Album(id)
             is MobileRoute.Artist -> Screen.Artist(id)

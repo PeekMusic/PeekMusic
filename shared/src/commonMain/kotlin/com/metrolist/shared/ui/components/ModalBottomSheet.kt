@@ -1,6 +1,7 @@
 package com.metrolist.shared.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -243,7 +244,11 @@ fun ModalBottomSheet(
                                         dragHandle()
                                     }
                                 }
-                                content()
+                                // PeekMusic: no rubber-band overscroll in sheets. On iOS it stretched the list instead of
+                                // passing a pull at the top on to the sheet, so menus often would not close on swipe down.
+                                CompositionLocalProvider(LocalOverscrollFactory provides null) {
+                                    content()
+                                }
                             }
                         }
                     },

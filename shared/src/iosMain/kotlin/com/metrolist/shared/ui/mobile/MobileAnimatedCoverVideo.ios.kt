@@ -33,13 +33,13 @@ import kotlin.time.TimeSource
 internal actual fun MobileAnimatedCoverVideo(
     url: String,
     headers: Map<String, String>,
-    clip: YouTubeCanvasClip?,
+    clips: List<YouTubeCanvasClip>,
     playing: Boolean,
     onError: (() -> Unit)?,
     onReadyChanged: ((Boolean) -> Unit)?,
     modifier: Modifier,
 ) {
-    val cover = remember(url, headers, clip) { IosAnimatedCoverPlayer(url, headers, clip) }
+    val cover = remember(url, headers, clips) { IosAnimatedCoverPlayer(url, headers, clips) }
     val currentOnError by rememberUpdatedState(onError)
     val currentOnReadyChanged by rememberUpdatedState(onReadyChanged)
     var foreground by remember {
@@ -77,6 +77,7 @@ internal actual fun MobileAnimatedCoverVideo(
                 currentOnError?.invoke()
                 break
             }
+            cover.advanceClip()
             val ready = cover.ready
             if (ready != wasReady) {
                 wasReady = ready

@@ -5,12 +5,12 @@ import androidx.compose.ui.Modifier
 import com.metrolist.shared.api.artwork.YouTubeCanvasClip
 import com.metrolist.shared.youtube.playback.PlaybackResource
 
-/** Plays [url] muted on a loop; with [clip], only that part of the video. */
+/** Plays [url] muted on a loop; with [clips], those parts one after another. */
 @Composable
 internal expect fun MobileAnimatedCoverVideo(
     url: String,
     headers: Map<String, String>,
-    clip: YouTubeCanvasClip?,
+    clips: List<YouTubeCanvasClip>,
     playing: Boolean,
     onError: (() -> Unit)?,
     onReadyChanged: ((Boolean) -> Unit)?,

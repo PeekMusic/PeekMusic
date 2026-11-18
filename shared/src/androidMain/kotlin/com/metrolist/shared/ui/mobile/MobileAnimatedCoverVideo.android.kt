@@ -9,7 +9,7 @@ import com.metrolist.shared.api.artwork.YouTubeCanvasClip
 internal actual fun MobileAnimatedCoverVideo(
     url: String,
     headers: Map<String, String>,
-    clip: YouTubeCanvasClip?,
+    clips: List<YouTubeCanvasClip>,
     playing: Boolean,
     onError: (() -> Unit)?,
     onReadyChanged: ((Boolean) -> Unit)?,

@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -53,6 +54,7 @@ import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.back
 import com.metrolist.shared.generated.resources.backup_filename_prefix
 import com.metrolist.shared.generated.resources.import_playlist
+import com.metrolist.shared.generated.resources.peek_listen_together_ios_user
 import com.metrolist.shared.listentogether.IosListenTogetherPlayback
 import com.metrolist.shared.listentogether.ListenTogetherLogLevel
 import com.metrolist.shared.listentogether.ListenTogetherLogger
@@ -61,6 +63,9 @@ import com.metrolist.shared.listentogether.ListenTogetherPresentationText
 import com.metrolist.shared.listentogether.ListenTogetherTrackResolver
 import com.metrolist.shared.listentogether.toSongItem
 import com.metrolist.shared.network.createHttpClient
+import com.metrolist.shared.peek.LocalPeekActiveDownloads
+import com.metrolist.shared.peek.PeekActiveDownloads
+import com.metrolist.shared.peek.ensurePeekListenTogetherUsername
 import com.metrolist.shared.peek.friends.PeekFriendsManager
 import com.metrolist.shared.playback.IosPlaybackController
 import com.metrolist.shared.playback.IosPlayerPlatformServices
@@ -81,6 +86,7 @@ import com.metrolist.shared.storage.ResizableImageDiskCache
 import com.metrolist.shared.ui.crash.CrashLogsScreen
 import com.metrolist.shared.ui.listentogether.listenTogetherPresentationMessages
 import com.metrolist.shared.ui.mobile.IosLoginScreen
+import com.metrolist.shared.ui.mobile.IosSpotifyLoginScreen
 import com.metrolist.shared.ui.mobile.MobileApp
 import com.metrolist.shared.ui.mobile.iosLyricsShareAction
 import com.metrolist.shared.ui.mobile.pickIosPlaylistCover
@@ -214,8 +220,11 @@ fun MetrolistIOSApp() {
     PeekFriendsPresenceEffect(peekFriends, player.isPlaying)
     val listenTogetherClient = remember(appScope) { createHttpClient() }
     val listenTogetherMessages by rememberUpdatedState(listenTogetherPresentationMessages())
+    // PeekMusic: a default PeekParty name like Android, so joining never fails on an empty name.
+    val defaultListenTogetherName = stringResource(Res.string.peek_listen_together_ios_user)
     val listenTogetherManager =
         remember(playbackController, appScope, listenTogetherClient) {
+            ensurePeekListenTogetherUsername(defaultListenTogetherName)
             val monotonicOrigin = TimeSource.Monotonic.markNow()
             val timestampFormatter =
                 NSDateFormatter().apply {
@@ -443,120 +452,128 @@ fun MetrolistIOSApp() {
             DisposableEffect(Unit) {
                 onDispose { latestPendingDispose?.complete(Unit) }
             }
+            val activeDownloadProgress by downloadManager.activeDownloads.collectAsState()
+            val activeDownloads =
+                remember(activeDownloadProgress) {
+                    PeekActiveDownloads(activeDownloadProgress) { ids -> appScope.launch { ids.forEach { downloadManager.cancel(it) } } }
+                }
             key(appGeneration) {
-                MobileApp(
-                    onExportStatistics = { IosNativeFiles.shareImage(presenter, it) },
-                    onPickPlaylistCover = { pickIosPlaylistCover(presenter) },
-                    onSavePlaylistCover = { playlist, bytes ->
-                        try {
-                            val repository = GlobalYouTubeRepository.instance
-                            if (playlist.isLocal) {
-                                val entity = checkNotNull(database.dao().findPlaylistEntity(playlist.id))
-                                storeIosPlaylistCover(bytes, entity.customThumbnailUrl) { path ->
-                                    if (path == null) {
-                                        removeStoredPlaylistCover(database, repository, playlist.id).getOrThrow()
-                                    } else {
-                                        setStoredPlaylistCover(database, repository, playlist.id, path).getOrThrow()
-                                    }
-                                }
-                            } else if (bytes == null) {
-                                removeStoredPlaylistCover(database, repository, playlist.id, playlist).getOrThrow()
-                            } else {
-                                uploadStoredPlaylistCover(database, repository, playlist.id, bytes, playlist).getOrThrow()
-                            }
-                            Result.success(Unit)
-                        } catch (error: CancellationException) {
-                            throw error
-                        } catch (error: Exception) {
-                            Result.failure(error)
-                        }
-                    },
-                    database = database,
-                    initialSettingsPage = initialSettingsPage,
-                    playbackController = playbackController,
-                    listenTogetherManager = listenTogetherManager,
-                    playerServices = remember(presenter) { IosPlayerPlatformServices(presenter) },
-                    lyricsShareAction = { iosLyricsShareAction(it, presenter) },
-                    touchExplorationEnabled = rememberVoiceOverEnabled(),
-                    resolveAndPlayVideo = playbackController::resolveAndPlayVideo,
-                    systemLanguage = systemLocale.first,
-                    systemCountry = systemLocale.second,
-                    contentLanguageChoices = localeChoices.first,
-                    contentCountryChoices = localeChoices.second,
-                    appLanguageChoices = localeChoices.first,
-                    storageTotalBytes = storageUsage?.totalBytes,
-                    storageFreeBytes = storageUsage?.freeBytes,
-                    onRemoveDownloads = { ids -> appScope.async { ids.count { downloadManager.removeDownload(it) } }.await() },
-                    onDownloadSongs = { songs -> appScope.async { downloadManager.downloadAll(songs) }.await() },
-                    onDownloadPlaylist = { playlistId -> appScope.async { downloadManager.downloadPlaylist(playlistId) }.await() },
-                    onRemovePlaylistDownloads = { playlistId, ids ->
-                        appScope
-                            .async {
-                                downloadManager.stopTrackingPlaylist(playlistId)
-                                ids.count { downloadManager.removeDownload(it) }
-                            }.await()
-                    },
-                    iosSettingsPageContent = { page, onDownloads ->
-                        when (page) {
-                            SettingsPageId.STORAGE -> {
-                                Column(
-                                    Modifier
-                                        .fillMaxSize()
-                                        .verticalScroll(
-                                            rememberScrollState(),
-                                        ).padding(bottom = LocalSettingsPageBottomPadding.current),
-                                ) {
-                                    IosStorageSettingsPage(downloadManager, onDownloads)
-                                }
-                            }
-
-                            SettingsPageId.BACKUP_RESTORE -> {
-                                Column(
-                                    Modifier
-                                        .fillMaxSize()
-                                        .verticalScroll(
-                                            rememberScrollState(),
-                                        ).padding(bottom = LocalSettingsPageBottomPadding.current),
-                                ) {
-                                    if (showPlaylistImporter) {
-                                        TextButton(onClick = { showPlaylistImporter = false }, shapes = ButtonDefaults.shapes()) {
-                                            Text(stringResource(Res.string.back))
-                                        }
-                                        IosPlaylistImportSettings(
-                                            database = database,
-                                            onPickPlaylistFile = ::pickPlaylistFile,
-                                            scrollable = false,
-                                        )
-                                    } else {
-                                        BackupRestorePage(
-                                            onExport = ::exportBackup,
-                                            onImport = ::importBackup,
-                                            status = backupStatus,
-                                            failure = backupFailure,
-                                        )
-                                        Button(
-                                            onClick = { showPlaylistImporter = true },
-                                            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                                            enabled = !backupBusy,
-                                            shapes = ButtonDefaults.shapes(),
-                                        ) {
-                                            Text(stringResource(Res.string.import_playlist))
+                CompositionLocalProvider(LocalPeekActiveDownloads provides activeDownloads) {
+                    MobileApp(
+                        onExportStatistics = { IosNativeFiles.shareImage(presenter, it) },
+                        onPickPlaylistCover = { pickIosPlaylistCover(presenter) },
+                        onSavePlaylistCover = { playlist, bytes ->
+                            try {
+                                val repository = GlobalYouTubeRepository.instance
+                                if (playlist.isLocal) {
+                                    val entity = checkNotNull(database.dao().findPlaylistEntity(playlist.id))
+                                    storeIosPlaylistCover(bytes, entity.customThumbnailUrl) { path ->
+                                        if (path == null) {
+                                            removeStoredPlaylistCover(database, repository, playlist.id).getOrThrow()
+                                        } else {
+                                            setStoredPlaylistCover(database, repository, playlist.id, path).getOrThrow()
                                         }
                                     }
+                                } else if (bytes == null) {
+                                    removeStoredPlaylistCover(database, repository, playlist.id, playlist).getOrThrow()
+                                } else {
+                                    uploadStoredPlaylistCover(database, repository, playlist.id, bytes, playlist).getOrThrow()
+                                }
+                                Result.success(Unit)
+                            } catch (error: CancellationException) {
+                                throw error
+                            } catch (error: Exception) {
+                                Result.failure(error)
+                            }
+                        },
+                        database = database,
+                        initialSettingsPage = initialSettingsPage,
+                        playbackController = playbackController,
+                        listenTogetherManager = listenTogetherManager,
+                        playerServices = remember(presenter) { IosPlayerPlatformServices(presenter) },
+                        lyricsShareAction = { iosLyricsShareAction(it, presenter) },
+                        touchExplorationEnabled = rememberVoiceOverEnabled(),
+                        resolveAndPlayVideo = playbackController::resolveAndPlayVideo,
+                        systemLanguage = systemLocale.first,
+                        systemCountry = systemLocale.second,
+                        contentLanguageChoices = localeChoices.first,
+                        contentCountryChoices = localeChoices.second,
+                        appLanguageChoices = localeChoices.first,
+                        storageTotalBytes = storageUsage?.totalBytes,
+                        storageFreeBytes = storageUsage?.freeBytes,
+                        onRemoveDownloads = { ids -> appScope.async { ids.count { downloadManager.removeDownload(it) } }.await() },
+                        onDownloadSongs = { songs -> appScope.async { downloadManager.downloadAll(songs) }.await() },
+                        onDownloadPlaylist = { playlistId -> appScope.async { downloadManager.downloadPlaylist(playlistId) }.await() },
+                        onRemovePlaylistDownloads = { playlistId, ids ->
+                            appScope
+                                .async {
+                                    downloadManager.stopTrackingPlaylist(playlistId)
+                                    ids.count { downloadManager.removeDownload(it) }
+                                }.await()
+                        },
+                        iosSettingsPageContent = { page, onDownloads ->
+                            when (page) {
+                                SettingsPageId.STORAGE -> {
+                                    Column(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .verticalScroll(
+                                                rememberScrollState(),
+                                            ).padding(bottom = LocalSettingsPageBottomPadding.current),
+                                    ) {
+                                        IosStorageSettingsPage(downloadManager, onDownloads)
+                                    }
+                                }
+
+                                SettingsPageId.BACKUP_RESTORE -> {
+                                    Column(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .verticalScroll(
+                                                rememberScrollState(),
+                                            ).padding(bottom = LocalSettingsPageBottomPadding.current),
+                                    ) {
+                                        if (showPlaylistImporter) {
+                                            TextButton(onClick = { showPlaylistImporter = false }, shapes = ButtonDefaults.shapes()) {
+                                                Text(stringResource(Res.string.back))
+                                            }
+                                            IosPlaylistImportSettings(
+                                                database = database,
+                                                onPickPlaylistFile = ::pickPlaylistFile,
+                                                scrollable = false,
+                                            )
+                                        } else {
+                                            BackupRestorePage(
+                                                onExport = ::exportBackup,
+                                                onImport = ::importBackup,
+                                                status = backupStatus,
+                                                failure = backupFailure,
+                                            )
+                                            Button(
+                                                onClick = { showPlaylistImporter = true },
+                                                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                                                enabled = !backupBusy,
+                                                shapes = ButtonDefaults.shapes(),
+                                            ) {
+                                                Text(stringResource(Res.string.import_playlist))
+                                            }
+                                        }
+                                    }
+                                }
+
+                                else -> {
                                 }
                             }
-
-                            else -> {
-                            }
-                        }
-                    },
-                    formatHistoryMonth = { formatHistoryMonth(it) },
-                    oauthCallbackUrls = oauthCallbackUrls,
-                    loginContent = { switching, onBack, onComplete, onTokenLogin ->
-                        IosLoginScreen(switching, onBack, onComplete, onTokenLogin)
-                    },
-                    peekFriends = peekFriends,
-                )
+                        },
+                        formatHistoryMonth = { formatHistoryMonth(it) },
+                        oauthCallbackUrls = oauthCallbackUrls,
+                        loginContent = { switching, onBack, onComplete, onTokenLogin ->
+                            IosLoginScreen(switching, onBack, onComplete, onTokenLogin)
+                        },
+                        peekFriends = peekFriends,
+                        spotifyLoginContent = { onBack, onComplete -> IosSpotifyLoginScreen(onBack, onComplete) },
+                    )
+                }
             }
             IosUpdateNotice()
         }

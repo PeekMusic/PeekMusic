@@ -311,6 +311,7 @@ class PlayerViewModel(
                     rawLyricsProvider = if (isNewSong) null else _uiState.value.rawLyricsProvider,
                     lyricsUserSelected = !isNewSong && _uiState.value.lyricsUserSelected,
                     isLyricsLoading = if (isNewSong) false else _uiState.value.isLyricsLoading,
+                    lyricsGeneration = if (isNewSong) lyricsRequestId else _uiState.value.lyricsGeneration,
                     lyricsProvider = if (isNewSong) null else _uiState.value.lyricsProvider,
                     lyricsQueryTitle = if (isNewSong) null else _uiState.value.lyricsQueryTitle,
                     lyricsQueryArtist = if (isNewSong) null else _uiState.value.lyricsQueryArtist,
@@ -1443,7 +1444,11 @@ class PlayerViewModel(
             viewModelScope.launch {
                 previousFetchJob?.join()
                 previousRetimeJob?.join()
-                if (!isCurrentLyricsRequest(songId, requestId)) return@launch
+                if (!isCurrentLyricsRequest(songId, requestId)) {
+                    // PeekMusic: a request for a song the player is not on yet must not block the same request later.
+                    if (requestId == lyricsRequestId) lyricsRequestKey = null
+                    return@launch
+                }
                 _uiState.value = _uiState.value.copy(isLyricsLoading = skipCache || _uiState.value.lyrics.isEmpty())
                 var loaded = false
                 try {
@@ -2086,6 +2091,11 @@ class PlayerViewModel(
         val rawLyricsProvider: String? = null,
         val lyricsUserSelected: Boolean = false,
         val isLyricsLoading: Boolean = false,
+        /**
+         * PeekMusic: changes whenever a new track resets the lyrics. The player reloads on it, so a reset that keeps
+         * the song id (a brief null song between tracks) no longer leaves the Peek on "no lyrics found".
+         */
+        val lyricsGeneration: Long = 0L,
         val lyricsProvider: String? = null,
         val lyricsQueryTitle: String? = null,
         val lyricsQueryArtist: String? = null,

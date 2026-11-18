@@ -148,7 +148,7 @@ internal class MobilePlayerPlatform(
         MobileAnimatedCoverVideo(
             url = url,
             headers = headers,
-            clip = clips.firstOrNull(),
+            clips = clips,
             playing = playing,
             onError = onError,
             onReadyChanged = onReadyChanged,

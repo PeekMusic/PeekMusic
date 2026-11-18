@@ -16,8 +16,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.cancel
+import com.metrolist.shared.generated.resources.peek_download_cancel_confirm
+import com.metrolist.shared.generated.resources.peek_download_cancel_keep
+import com.metrolist.shared.generated.resources.peek_download_cancel_message
+import com.metrolist.shared.generated.resources.peek_download_cancel_title
 import com.metrolist.shared.generated.resources.remove
 import com.metrolist.shared.generated.resources.stored_remove_selected_message
 import com.metrolist.shared.generated.resources.stored_remove_selected_title
@@ -27,9 +32,20 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * The album/playlist header download button for the shared mobile UI (iOS), built from the downloaded song ids alone.
- * Without a download queue to watch there is no progress ring; a tap downloads the missing songs, or asks before
- * removing the downloads once every song is stored. Android builds its own with progress (PeekCollectionDownloadProgress).
+ * PeekMusic: queued and running downloads (song id to share done, 0..1) and how to stop them. iOS provides it from its
+ * download queue; without it the mobile header button shows no progress ring.
+ */
+class PeekActiveDownloads(
+    val progress: Map<String, Float>,
+    val cancel: (List<String>) -> Unit,
+)
+
+val LocalPeekActiveDownloads = staticCompositionLocalOf<PeekActiveDownloads?> { null }
+
+/**
+ * The album/playlist header download button for the shared mobile UI (iOS). While songs of the collection are queued
+ * or downloading it shows a progress ring like Android, and a tap asks to stop them (finished songs stay). Otherwise a
+ * tap downloads the missing songs, or asks before removing the downloads once every song is stored.
  */
 @Composable
 internal fun rememberPeekMobileHeaderDownload(
@@ -40,6 +56,41 @@ internal fun rememberPeekMobileHeaderDownload(
 ): PeekHeaderDownload? {
     val storable = songs.filterNot { it.isLocal }
     var pendingRemoval by remember { mutableStateOf<List<String>?>(null) }
+    var confirmCancel by remember { mutableStateOf(false) }
+    val activeDownloads = LocalPeekActiveDownloads.current
+    val active =
+        storable.mapNotNull { song ->
+            song.id.takeIf { it !in downloadedSongIds }?.let { id -> activeDownloads?.progress?.get(id)?.let { id to it } }
+        }
+    val progress =
+        if (active.isEmpty()) {
+            null
+        } else {
+            ((storable.count { it.id in downloadedSongIds } + active.sumOf { it.second.toDouble() }) / storable.size)
+                .toFloat()
+                .coerceIn(0f, 1f)
+        }
+    if (confirmCancel) {
+        AlertDialog(
+            onDismissRequest = { confirmCancel = false },
+            title = { Text(stringResource(Res.string.peek_download_cancel_title)) },
+            text = { Text(stringResource(Res.string.peek_download_cancel_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        confirmCancel = false
+                        activeDownloads?.cancel(active.map { it.first })
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) { Text(stringResource(Res.string.peek_download_cancel_confirm)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmCancel = false }, shapes = ButtonDefaults.shapes()) {
+                    Text(stringResource(Res.string.peek_download_cancel_keep))
+                }
+            },
+        )
+    }
     pendingRemoval?.let { ids ->
         AlertDialog(
             onDismissRequest = { pendingRemoval = null },
@@ -65,8 +116,11 @@ internal fun rememberPeekMobileHeaderDownload(
     val isDownloaded = storable.all { it.id in downloadedSongIds }
     return PeekHeaderDownload(
         isDownloaded = isDownloaded,
+        progress = progress,
         onClick = {
-            if (isDownloaded) {
+            if (progress != null) {
+                confirmCancel = true
+            } else if (isDownloaded) {
                 pendingRemoval = storable.map { it.id }
             } else {
                 onDownload(storable.filter { it.id !in downloadedSongIds })

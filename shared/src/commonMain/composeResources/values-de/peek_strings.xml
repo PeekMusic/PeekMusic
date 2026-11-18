@@ -108,4 +108,5 @@
     <string name="peek_canvas_desktop_desc">Spielt Spotify-Canvas und YouTube-Musikvideos stumm im Cover des Players, wenn verfügbar. Braucht mehr Speicher und Daten.</string>
     <string name="peek_youtube_canvas_desktop_hint">Braucht am Desktop mehr Leistung, vor allem über 480p. Ruckelt das Video, wähle eine niedrigere Qualität.</string>
     <string name="peek_animated_covers_desktop_desc">Zeigt animierte Album-Cover von Apple Music, wenn verfügbar. Braucht mehr Speicher und Daten.</string>
+    <string name="peek_listen_together_ios_user">iPhone-Benutzer</string>
 </resources>
