@@ -228,6 +228,7 @@ import com.metrolist.shared.ui.navigation.Navigator
 import com.metrolist.shared.ui.navigation.Screen
 import com.metrolist.shared.ui.navigation.rememberNavigationState
 import com.metrolist.shared.ui.playback.LocalPlaybackController
+import com.metrolist.shared.ui.screens.SupportPrompt
 import com.metrolist.shared.ui.settings.SettingsPageId
 import com.metrolist.shared.ui.utils.LocalMouseScrollFactors
 import com.metrolist.shared.ui.utils.desktopMouseScrollFactors
@@ -350,6 +351,7 @@ private fun WindowScope.AppContent(
         var isPlayerBackgroundFocused by remember { mutableStateOf(false) }
         val lastFmBrowser = remember { LastFmArtistBrowser().also { LastFM.renderedPageLoader = it::load } }
         UpdateArtworkTheme()
+        SupportPrompt()
         val matugenEnabled = Settings.shared.matugenTheme
         LaunchedEffect(matugenEnabled) {
             if (matugenEnabled) MatugenColors.watch()
@@ -498,8 +500,8 @@ private fun WindowScope.AppContent(
                         TextButton(
                             onClick = {
                                 ScrobbleSessions.dismissLastFmExpiredNotice()
-                                UiState.selectedSettingsPage = SettingsPageId.LAST_FM
-                                UiState.showSettings = true
+                                UiState.integrationsInitialPage = SettingsPageId.LAST_FM
+                                UiState.showIntegrationsSettings = true
                             },
                             shapes = ButtonDefaults.shapes(),
                         ) {
@@ -1121,6 +1123,7 @@ private fun runDesktopApp(args: Array<String>) {
         startup.appFrame.await()
         applicationScope.launch(Dispatchers.IO) {
             if (settings.desktopOnboardingComplete) SentryManager.initialize()
+            SentryManager.reportPlaybackClientStats()
         }
         applicationScope.launch {
             observeDiscordInitialization { DiscordRpcManager.init(GlobalYouTube.client) }

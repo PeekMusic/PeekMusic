@@ -108,6 +108,7 @@ sealed interface AppUpdateState {
         val release: GitHubRelease,
         val file: File,
         val installing: Boolean = false,
+        val verified: Boolean = true,
     ) : AppUpdateState
 
     data class Error(
@@ -121,6 +122,7 @@ enum class UpdateFailure { CHECK, NO_APK, DOWNLOAD, DIGEST, INSTALL }
 object AppUpdateManager {
     const val CHANNEL_ID = "updates"
     private const val RELEASES_URL = "${PeekFork.RELEASES_API_URL}?per_page=50"
+    private const val NIGHTLY_RELEASE_URL = "${PeekFork.RELEASES_API_URL}/tags/$NIGHTLY_TAG"
     private const val NOTIFICATION_ID = 1400
     private const val MAX_APK_BYTES = 512L * 1024 * 1024
     private const val MIN_FREE_SPACE_BYTES = 16L * 1024 * 1024
@@ -145,6 +147,7 @@ object AppUpdateManager {
         context: Context,
         networkEnabled: Boolean,
     ): GitHubRelease? {
+        if (!BuildConfig.UPDATER_ENABLED) return null
         if (Settings.shared.updateCacheSource != CACHE_SOURCE) {
             Settings.shared.updateCacheSource = CACHE_SOURCE
             Settings.shared.lastUpdateCheckAttemptTimestamp = 0L
@@ -184,6 +187,7 @@ object AppUpdateManager {
     ): GitHubRelease? =
         withContext(Dispatchers.IO) {
             operationMutex.withLock {
+                if (!BuildConfig.UPDATER_ENABLED) return@withLock null
                 when (val active = mutableState.value) {
                     is AppUpdateState.Downloading -> {
                         return@withLock active.release
@@ -242,12 +246,48 @@ object AppUpdateManager {
             }
         }
 
-    @SuppressLint("UsableSpace")
     suspend fun download(
         context: Context,
         release: GitHubRelease,
         crashRecovery: Boolean = false,
+        skipVerification: Boolean = false,
+    ) {
+        if (!downloadOnce(context, release, crashRecovery, skipVerification) || !release.isNightly) return
+        // A nightly rebuilt after the check replaced its asset. The fresh digest still comes from the GitHub API,
+        // and the signing-key check still applies to the new package.
+        val fresh = withContext(Dispatchers.IO) { runCatching(::fetchNightlyRelease).getOrNull() } ?: return
+        if (fresh.apk?.digest == null || fresh.updateKey == release.updateKey) return
+        if (!crashRecovery) Settings.shared.cachedAvailableUpdateJson = json.encodeToString(fresh)
+        downloadOnce(context, fresh, crashRecovery, skipVerification)
+    }
+
+    private fun fetchNightlyRelease(): GitHubRelease? {
+        val request =
+            Request
+                .Builder()
+                .url(NIGHTLY_RELEASE_URL)
+                .header("Accept", "application/vnd.github+json")
+                .header("X-GitHub-Api-Version", "2022-11-28")
+                .header("User-Agent", "Metrolist/${BuildConfig.VERSION_NAME}")
+                .build()
+        return client
+            .newCall(request)
+            .execute()
+            .use { response ->
+                check(response.isSuccessful) { "GitHub returned ${response.code}" }
+                json.decodeFromString<GitHubRelease>(checkNotNull(response.body).string())
+            }.takeIf(GitHubRelease::isNightly)
+    }
+
+    /** Returns true when the package did not match the release's size or digest. */
+    @SuppressLint("UsableSpace")
+    private suspend fun downloadOnce(
+        context: Context,
+        release: GitHubRelease,
+        crashRecovery: Boolean,
+        skipVerification: Boolean,
     ) = withContext(Dispatchers.IO) {
+        var packageMismatch = false
         operationMutex.withLock {
             when (val active = mutableState.value) {
                 is AppUpdateState.Downloading -> if (active.release.updateKey == release.updateKey) return@withLock
@@ -277,7 +317,10 @@ object AppUpdateManager {
                     check(response.isSuccessful) { "Download returned ${response.code}" }
                     val body = checkNotNull(response.body)
                     val responseLength = body.contentLength()
-                    check(responseLength < 0 || responseLength == asset.size) { "Update response size mismatch" }
+                    if (responseLength >= 0 && responseLength != asset.size) {
+                        packageMismatch = true
+                        error("Update response size mismatch")
+                    }
                     check(updateDir.usableSpace > asset.size + MIN_FREE_SPACE_BYTES) { "Insufficient space for update" }
                     val total = asset.size.takeIf { it > 0 } ?: body.contentLength()
                     body.byteStream().use { input ->
@@ -286,6 +329,7 @@ object AppUpdateManager {
                             while (true) {
                                 val count = input.read(buffer)
                                 if (count < 0) break
+                                if (downloaded + count > asset.size) packageMismatch = true
                                 check(downloaded + count <= asset.size && downloaded + count <= MAX_APK_BYTES) {
                                     "Update exceeded the expected size"
                                 }
@@ -298,19 +342,21 @@ object AppUpdateManager {
                         }
                     }
                 }
-                if (downloaded != asset.size || !verifyDigest(partial, asset.digest)) {
+                if (downloaded != asset.size || (!skipVerification && !verifyDigest(partial, asset.digest))) {
+                    packageMismatch = true
                     partial.delete()
                     mutableState.value = AppUpdateState.Error(UpdateFailure.DIGEST, release)
                     return@runCatching
                 }
                 check(partial.renameTo(output)) { "Could not finalize update" }
-                if (!verifyApkIdentity(context, output)) {
+                // Android's installer still rejects an update signed by a different key.
+                if (!skipVerification && !verifyApkIdentity(context, output)) {
                     output.delete()
                     mutableState.value = AppUpdateState.Error(UpdateFailure.DIGEST, release)
                     return@runCatching
                 }
                 if (!crashRecovery) Settings.shared.pendingUpdateReleaseJson = json.encodeToString(release)
-                mutableState.value = AppUpdateState.Downloaded(release, output)
+                mutableState.value = AppUpdateState.Downloaded(release, output, verified = !skipVerification)
             }.onFailure {
                 mutableState.value =
                     if (activeDownload?.isCanceled() == true) {
@@ -321,6 +367,7 @@ object AppUpdateManager {
             }
             activeDownload = null
         }
+        packageMismatch
     }
 
     fun cancelDownload() {
@@ -338,7 +385,7 @@ object AppUpdateManager {
     ): Boolean =
         withContext(Dispatchers.IO) {
             mutableState.value = downloaded.copy(installing = true)
-            if (!downloaded.file.isFile || !verifyApkIdentity(context, downloaded.file)) {
+            if (!downloaded.file.isFile || (downloaded.verified && !verifyApkIdentity(context, downloaded.file))) {
                 downloaded.file.delete()
                 mutableState.value = AppUpdateState.Available(downloaded.release)
                 return@withContext false
@@ -492,7 +539,8 @@ object AppUpdateManager {
             val packageManager = context.packageManager
             val flags =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    PackageManager.GET_SIGNING_CERTIFICATES
+                    // Android 9 and 10 only read archive signers when GET_SIGNATURES is set.
+                    PackageManager.GET_SIGNING_CERTIFICATES or PackageManager.GET_SIGNATURES
                 } else {
                     @Suppress("DEPRECATION")
                     PackageManager.GET_SIGNATURES

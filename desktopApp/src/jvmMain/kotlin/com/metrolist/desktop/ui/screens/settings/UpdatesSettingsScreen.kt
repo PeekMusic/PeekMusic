@@ -71,8 +71,6 @@ import com.metrolist.shared.ui.update.GitHubMarkdown
 import com.metrolist.shared.ui.update.UpdateInfo
 import com.metrolist.shared.ui.utils.rememberFileSizeFormatter
 import com.metrolist.shared.ui.utils.verticalScrollWithDrag
-import com.metrolist.shared.update.UPDATE_CHANNEL_NIGHTLY
-import com.metrolist.shared.update.UPDATE_CHANNEL_STABLE
 import com.metrolist.shared.update.followsNightlyUpdates
 import org.jetbrains.compose.resources.stringResource
 import java.text.DateFormat
@@ -206,10 +204,7 @@ fun UpdatesSettingsScreen(colorScheme: ColorScheme) {
                         title = { Text(stringResource(Res.string.updates_nightly_builds)) },
                         description = { Text(stringResource(Res.string.updates_nightly_builds_desc)) },
                         checked = nightlyBuilds,
-                        onClick = {
-                            Settings.shared.updateChannel = if (nightlyBuilds) UPDATE_CHANNEL_STABLE else UPDATE_CHANNEL_NIGHTLY
-                            AppState.checkForUpdates()
-                        },
+                        onClick = { AppState.setFollowNightlyUpdates(!nightlyBuilds) },
                         trailingContent = { SettingsSwitch(checked = nightlyBuilds) },
                     ).takeIf { PeekFork.NIGHTLY_BUILDS_AVAILABLE }, // PeekMusic: no nightly builds
                 ),

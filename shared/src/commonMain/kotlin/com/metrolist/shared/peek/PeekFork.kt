@@ -51,4 +51,7 @@ object PeekFork {
 
     /** PeekMusic publishes no nightly builds, so the updates settings hide upstream's nightly switch. */
     const val NIGHTLY_BUILDS_AVAILABLE = false
+
+    /** Upstream's launch dialog asks for donations to Metrolist's developers; PeekMusic does not show it. */
+    const val SUPPORT_PROMPT_AVAILABLE = false
 }

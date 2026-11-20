@@ -746,6 +746,9 @@
     <string name="open_github_profile">Open GitHub profile</string>
     <!-- Translators: Label for sponsor developer in the About screen. -->
     <string name="sponsor_developer">Sponsor developer</string>
+    <string name="support_prompt_title">Enjoying the app?</string>
+    <string name="support_prompt_message">Support Metrolist's development by supporting the developers behind it. Tap someone to open their support page.</string>
+    <string name="support_prompt_never_show">Never show this again</string>
     <!-- Translators: Label for credits collaborator; retained for translation compatibility but not currently referenced by app code. -->
     <!-- Translators: Label for discord in the multiple app screens. -->
     <string name="brand_discord" translatable="false">Discord</string>
@@ -1712,6 +1715,8 @@
     <string name="updates_install">Install</string>
     <!-- Translators: Imperative action label for retry in the update settings. -->
     <string name="updates_retry">Try again</string>
+    <!-- Translators: Button that installs a downloaded update without checking its checksum or signature first. -->
+    <string name="updates_force_install">Install anyway</string>
     <!-- Translators: Heading for available in the update settings. %1$s is the available app version. -->
     <string name="updates_available_title">Metrolist %1$s is available</string>
     <!-- Translators: Dialog or notice body text for available in the update settings. -->
@@ -5381,6 +5386,7 @@
     <string name="crash_updates_pending_title" translatable="false">Pending update</string>
     <string name="crash_updates_release_unavailable" translatable="false">This release does not include a compatible APK.</string>
     <string name="crash_updates_retry" translatable="false">Try again</string>
+    <string name="crash_updates_force_install" translatable="false">Install anyway</string>
     <string name="crash_updates_size" translatable="false">Update size</string>
     <string name="crash_updates_version" translatable="false">Metrolist version</string>
     <string name="crash_upload" translatable="false">Upload</string>

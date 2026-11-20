@@ -2450,12 +2450,25 @@ object PlayerState {
 
     internal val mediaControls =
         combine(
-            snapshotFlow { Triple(currentTrack != null, isPlaybackResolving, isListenTogetherGuest()) },
+            snapshotFlow { Triple(currentTrack, isPlaybackResolving, isListenTogetherGuest()) },
             queue.state,
             playbackPosition,
             snapshotFlow { repeatMode to Settings.shared.autoLoadMore },
-        ) { (hasTrack, loading, guest), queueState, position, (repeat, autoplay) ->
-            desktopMediaControls(hasTrack, loading, guest, queueState.entries.size, queueState.currentIndex, position, repeat, autoplay)
+            combine(player.currentSong, player.currentPlaybackResource) { song, resource ->
+                song?.isLive == true || resource?.isLive == true
+            },
+        ) { (track, loading, guest), queueState, position, (repeat, autoplay), backendIsLive ->
+            desktopMediaControls(
+                hasTrack = track != null,
+                loading = loading,
+                guest = guest,
+                queueSize = queueState.entries.size,
+                currentIndex = queueState.currentIndex,
+                positionMs = position,
+                isLiveStream = track?.isLive == true || backendIsLive,
+                repeatMode = repeat,
+                autoLoadMore = autoplay,
+            )
         }.stateIn(scope, SharingStarted.Eagerly, DesktopMediaControls())
 
     var showMiniplayer by Settings.shared::showMiniplayer
@@ -3391,34 +3404,25 @@ object PlayerState {
             }
         cancelCrossfadeForManualAction()
         val currentPos = currentMediaPositionMs()
-        val restartPosition = desktopPreviousRestartPosition(pendingResumePosition, currentPos, isLiveStream, queue.hasPrevious())
+
+        fun previousIndex(isLive: Boolean): Int? =
+            queue.state.value.let { desktopPreviousQueueIndex(it.currentIndex, it.entries.lastIndex, repeatMode, isLive) }
+
+        val isLive = isLiveStream
+        val restartPosition = desktopPreviousRestartPosition(pendingResumePosition, currentPos, isLive, previousIndex(isLive) != null)
         val generation = beginPlaybackTransition(resumePosition = restartPosition, preserveCast = true)
         desiredPlayback.value = startPlaying
         playbackTransitionJob =
             scope.launch {
-                val isLive = isLiveStream
-                if (isLive) {
-                    val prev = queue.getPrevious()
-                    if (prev != null) {
-                        val resource = withContext(Dispatchers.IO) { fetchSelectedPlaybackResource(prev, generation) }
-                        if (resource != null && isCurrentPlaybackTransition(generation)) {
-                            playQueueTrack(prev, resource, generation, startPlaying)
-                        }
+                val live = isLiveStream
+                val previous = if (live || currentPos <= 3_000L) previousIndex(live)?.let(queue::skipTo) else null
+                if (previous != null) {
+                    val resource = withContext(Dispatchers.IO) { fetchSelectedPlaybackResource(previous, generation) }
+                    if (resource != null && isCurrentPlaybackTransition(generation)) {
+                        playQueueTrack(previous, resource, generation, startPlaying)
                     }
-                    return@launch
-                }
-                if (currentPos > 3000) {
+                } else if (!live) {
                     seekToPositionInternal(0)
-                } else {
-                    val prev = queue.getPrevious()
-                    if (prev != null) {
-                        val resource = withContext(Dispatchers.IO) { fetchSelectedPlaybackResource(prev, generation) }
-                        if (resource != null && isCurrentPlaybackTransition(generation)) {
-                            playQueueTrack(prev, resource, generation, startPlaying)
-                        }
-                    } else {
-                        seekToPositionInternal(0)
-                    }
                 }
             }
     }
@@ -4118,7 +4122,7 @@ object PlayerState {
     ) {
         automaticCacheJob?.cancel()
         if (
-            (!resource.isDirectFile && !resource.isSabr) || resource.clientName == "local" ||
+            (!resource.isDirectFile && !resource.isSabr) || resource.isMuxedProgressive || resource.clientName == "local" ||
             !automaticCacheAllowedForCurrentTrack ||
             !automaticCachingEnabled()
         ) {

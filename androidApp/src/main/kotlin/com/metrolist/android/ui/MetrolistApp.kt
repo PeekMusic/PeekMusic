@@ -365,6 +365,7 @@ import com.metrolist.shared.ui.playback.LocalPlaybackController
 import com.metrolist.shared.ui.player.LocalPlayerPlatform
 import com.metrolist.shared.ui.player.PlayerScreen
 import com.metrolist.shared.ui.player.shouldShowMusicVideoSurface
+import com.metrolist.shared.ui.screens.SupportPrompt
 import com.metrolist.shared.ui.screens.pageKey
 import com.metrolist.shared.ui.screens.toHomeSection
 import com.metrolist.shared.ui.settings.SettingsPageId
@@ -625,7 +626,9 @@ fun MetrolistApp(
                     AppUpdateManager.pendingReleaseForInstalledVersion()
                         ?: AppUpdateManager.releaseForInstalledVersion()
             }
-            if (!wasUpdated || installedReleaseNotes != null || AppUpdateManager.releases.value.isNotEmpty()) {
+            if (!BuildConfig.UPDATER_ENABLED || !wasUpdated || installedReleaseNotes != null ||
+                AppUpdateManager.releases.value.isNotEmpty()
+            ) {
                 Settings.shared.lastRunAppVersion = BuildConfig.VERSION_NAME
             }
         }
@@ -637,6 +640,8 @@ fun MetrolistApp(
                 if (Settings.shared.checkForUpdates) AppUpdateManager.checkAtStartup(context, networkEnabled = true)
             }
         }
+
+        SupportPrompt()
 
         PopupContent(updatePrompt) { release ->
             AlertDialog(

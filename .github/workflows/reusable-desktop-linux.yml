@@ -3,12 +3,6 @@ name: Desktop Linux
 on:
   workflow_call:
     inputs:
-      include-arm64:
-        # PeekMusic: lets a test build skip the slower ARM64 package.
-        description: Also build the ARM64 package
-        required: false
-        default: true
-        type: boolean
       run-verification:
         description: Run tests and launch checks, disabled only after the release gate succeeds
         required: false
@@ -39,6 +33,11 @@ on:
         required: false
         default: false
         type: boolean
+      architectures:
+        description: JSON list of architectures to package, from x64 and arm64
+        required: false
+        default: '["x64", "arm64"]'
+        type: string
     secrets:
       GRADLE_ENCRYPTION_KEY:
         required: false
@@ -56,13 +55,14 @@ on:
 jobs:
   package:
     name: ${{ matrix.arch }} AppImage
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     timeout-minutes: 45
     strategy:
       fail-fast: false
+      # Per-architecture values are expressions: include entries would add jobs for architectures left out.
       matrix:
-        # PeekMusic: GitHub-hosted runners (we have no Blacksmith ones); ARM64 only when asked.
-        include: ${{ fromJSON(format('[{{"arch":"x64","runner":"ubuntu-24.04"}}{0}]', inputs.include-arm64 && ',{"arch":"arm64","runner":"ubuntu-24.04-arm"}' || '')) }}
+        # PeekMusic: GitHub-hosted runners (we have no Blacksmith ones), see runs-on.
+        arch: ${{ fromJSON(inputs.architectures) }}
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

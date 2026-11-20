@@ -535,7 +535,11 @@ class MusicService :
             SleepTimerController(
                 scope = serviceScope,
                 player =
-                    MusicSleepTimerPlayer(player, pausePlayback = { media3Player?.pause() }) {
+                    MusicSleepTimerPlayer(
+                        player,
+                        pausePlayback = { media3Player?.pause() },
+                        hasRemotePlaybackRoute = { castManager.state.value.isConnected || AndroidDeviceConnect.manager.remote.isFollowing },
+                    ) {
                         transitions.cancelAndroidCrossfade()
                         transitions.cancelNextTrackPreload()
                     },
@@ -653,15 +657,27 @@ class MusicService :
     }
 
     private fun handleDeviceVolumeChanged() {
+        fun ownsLocalPlayback() =
+            !castManager.state.value.isConnected &&
+                !AndroidDeviceConnect.manager.remote.isFollowing &&
+                !AndroidListenTogetherManager.isGuestPlaybackLocked
+
         val muted =
             audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0 ||
                 audioManager.isStreamMute(AudioManager.STREAM_MUSIC)
         pauseOnMute.onVolumeChanged(
             muted = muted,
             enabled = Settings.shared.pauseOnMute,
-            playing = player.isPlaying.value,
+            playing =
+                playbackActiveForDeviceMute(
+                    isPlaying = player.isPlaying.value,
+                    wantsPlayback = player.wantsPlayback,
+                    playbackState = player.playbackState,
+                    hasSong = player.currentSong.value != null,
+                    isLocalPlayback = ::ownsLocalPlayback,
+                ),
             pause = player::pause,
-            resume = { if (!castManager.state.value.isConnected) player.resume() },
+            resume = { if (ownsLocalPlayback()) player.resume() },
         )
     }
 
@@ -1598,8 +1614,9 @@ class MusicService :
                     )
             }
         podcastProgress.flush()?.join()
+        if (stagedShouldCommit == null && !isCurrentRequest()) return false
         val requestedPosition =
-            if (stagedShouldCommit == null) queueCoordinator.takeRestorePosition(request.song, request.positionMs) else request.positionMs
+            if (stagedShouldCommit == null) queueCoordinator.takeRestorePosition(request.positionMs) else request.positionMs
         val targetPosition =
             withContext(Dispatchers.IO) {
                 PodcastLibrary.resumePosition(
@@ -2315,6 +2332,7 @@ class MusicService :
                 currentPosition = media3Player?.currentPosition ?: player.getRealtimePositionMs(),
                 idleTitle = getString(R.string.not_playing),
                 idleArtist = getString(R.string.tap_to_play),
+                unknownArtist = getString(R.string.unknown_artist),
             )
         widgetManager.updateWidgets(
             title = state.title,
@@ -2469,12 +2487,8 @@ class MusicService :
                 }
         }
         serviceScope.launch(Dispatchers.IO) {
-            for (request in playbackPersistenceRequests) {
-                try {
-                    playbackPersistenceWriter.write(request)
-                } catch (error: Exception) {
-                    Timber.e(error, "Failed to persist playback")
-                }
+            writePendingPlaybackCheckpoints(playbackPersistenceRequests, playbackPersistenceWriter::write) { error ->
+                Timber.e(error, "Failed to persist playback")
             }
         }
         serviceScope.launch {

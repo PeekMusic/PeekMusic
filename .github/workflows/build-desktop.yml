@@ -65,7 +65,7 @@ jobs:
       contents: read
     with:
       upload-artifact: true
-      include-arm64: ${{ inputs.arm64 }}
+      architectures: ${{ inputs.arm64 && '["x64", "arm64"]' || '["x64"]' }}
     secrets:
       LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
       LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
@@ -81,7 +81,7 @@ jobs:
     with:
       upload-artifact: true
       run-desktop-tests: false
-      include-arm64: ${{ inputs.arm64 }}
+      architectures: ${{ inputs.arm64 && '["x64", "arm64"]' || '["x64"]' }}
     secrets:
       LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
       LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
