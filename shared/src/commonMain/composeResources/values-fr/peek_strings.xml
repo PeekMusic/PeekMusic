@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Paroles non synchronisées disponibles</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Audio</string>
+    <string name="peek_settings_audio_description">Qualité, son, fondu enchaîné et diffusion</string>
+    <string name="peek_settings_audio_description_no_cast">Qualité, son et fondu enchaîné</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Partage le fichier journal local, par exemple avec un rapport de bug</string>
+    <string name="peek_settings_player_description">Design, arrière-plan et mini-lecteur</string>
+    <string name="peek_settings_home_library_description">Sections d'accueil, playlists automatiques et éléments masqués</string>
+    <string name="peek_settings_translation">Traduction des paroles</string>
+    <string name="peek_settings_translation_description">Traduit automatiquement les paroles avec Google Traduction</string>
+    <string name="peek_settings_appearance_description">Thème, couleurs, polices et densité</string>
+    <string name="peek_settings_queue_description">Lecture aléatoire, titres similaires, doublons et téléchargements</string>
+    <string name="peek_settings_privacy_description">Historique d'écoute et de recherche</string>
+    <string name="peek_translation_failed">Échec de la traduction, réessayez plus tard</string>
+    <string name="peek_about_developer_role">Développeur de PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Vidéos</string>
+    <string name="peek_video_filter_description">Les vidéos affichées dans la recherche, les playlists et les recommandations. Le bouton audio/vidéo du lecteur reste disponible</string>
+    <string name="peek_video_filter_all">Toutes les vidéos</string>
+    <string name="peek_video_filter_music">Clips musicaux uniquement</string>
+    <string name="peek_video_filter_none">Aucune vidéo</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Fournie avec les paroles de %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Votre bibliothèque PeekMusic 1.x est là</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Nous avons trouvé votre bibliothèque de PeekMusic 1.x. Transférez vos playlists, votre historique, vos j'aime et les données de votre bibliothèque vers cette version. Vous pouvez récupérer la base de données d'origine si la migration échoue.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Votre compte, vos playlists, votre historique, vos j'aime et les données de votre bibliothèque sont prêts dans PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Vos playlists, votre historique, vos j'aime et les données de votre bibliothèque sont prêts dans PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Ouvrez les Paramètres depuis le menu en haut à droite pour personnaliser PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Nouveau</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Quelques choix rapides, et PeekMusic ressemble et sonne comme vous l'aimez.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Langue et région</string>
+    <string name="peek_onboarding_language_description">Choisissez la langue de l'application et la provenance de vos recommandations.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">À votre image</string>
+    <string name="peek_onboarding_look_description">Clair, sombre ou noir pur, avec les couleurs de votre fond d'écran ou de la pochette en cours de lecture.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Lecteur</string>
+    <string name="peek_onboarding_player_description">Choisissez un design de lecteur, son arrière-plan et l'apparence du mini-lecteur.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Paroles et Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek affiche la ligne chantée directement dans le lecteur. Les traductions et la transcription en alphabet latin apparaissent en dessous.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas et vidéos</string>
+    <string name="peek_onboarding_artwork_description">Pochettes animées, boucles Canvas et clips musicaux, dans la qualité de votre choix.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Son</string>
+    <string name="peek_onboarding_sound_description">Qualité audio, volume homogène entre les titres et transitions fluides.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Ce que vous voyez</string>
+    <string name="peek_onboarding_content_description">Masquez ce que vous ne voulez jamais voir dans la recherche, les recommandations et la radio.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Haute qualité</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, pochettes animées, vidéos d'artistes et clips musicaux en 1080p. Consomme plus de données. Chacun peut être réglé séparément dans les Paramètres.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Désactivé</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Introuvable. Connectez-vous à Spotify pour en trouver davantage.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Non disponible pour ce titre</string>
+    <string name="peek_friends_title">Amis</string>
+    <string name="peek_friends_your_code">Votre code ami</string>
+    <string name="peek_friends_code_hint">Vos amis vous ajoutent avec ce code.</string>
+    <string name="peek_friends_connecting">Connexion…</string>
+    <string name="peek_friends_copy_code">Copier le code</string>
+    <string name="peek_friends_add_label">Code ami</string>
+    <string name="peek_friends_add">Ajouter</string>
+    <string name="peek_friends_requests">Demandes d'ami</string>
+    <string name="peek_friends_accept">Accepter</string>
+    <string name="peek_friends_decline">Refuser</string>
+    <string name="peek_friends_sent">Demandes envoyées</string>
+    <string name="peek_friends_withdraw">Annuler</string>
+    <string name="peek_friends_waiting">En attente d'acceptation</string>
+    <string name="peek_friends_empty">Pas encore d'amis. Partagez votre code ou ajoutez celui d'un ami.</string>
+    <string name="peek_friends_online">En ligne</string>
+    <string name="peek_friends_offline">Hors ligne</string>
+    <string name="peek_friends_in_party">Dans une soirée</string>
+    <string name="peek_friends_join">Rejoindre</string>
+    <string name="peek_friends_remove">Retirer l'ami</string>
+    <string name="peek_friends_remove_confirm">Retirer %1$s de vos amis ?</string>
+    <string name="peek_friends_request_sent">Demande d'ami envoyée à %1$s</string>
+    <string name="peek_friends_added">%1$s et vous êtes maintenant amis</string>
+    <string name="peek_friends_request_received">%1$s vous a envoyé une demande d'ami</string>
+    <string name="peek_friends_error_unknown">Personne n'a ce code ami</string>
+    <string name="peek_friends_error_own">C'est votre propre code ami</string>
+    <string name="peek_friends_error_limit">Trop de tentatives. Réessayez dans une minute.</string>
+    <string name="peek_friends_error_offline">La fonction Amis n'est pas connectée pour le moment</string>
+    <string name="peek_friends_add_failed">Impossible d'ajouter l'ami : %1$s</string>
+    <string name="peek_friends_invite_title">Invitation à une soirée</string>
+    <string name="peek_friends_invite_text">%1$s vous invite à sa soirée.</string>
+    <string name="peek_friends_invite">Inviter des amis</string>
+    <string name="peek_friends_invite_action">Inviter</string>
+    <string name="peek_friends_invited">Invitation envoyée à %1$s</string>
+    <string name="peek_friends_invite_none">Aucun de vos amis n'est en ligne pour le moment</string>
+    <string name="peek_friends_delete">Supprimer les données PeekParty</string>
+    <string name="peek_friends_delete_desc">Supprime du serveur votre code ami, vos amis et vos demandes</string>
+    <string name="peek_friends_delete_confirm">Votre code ami, vos amis et vos demandes en attente sont supprimés du serveur. Vous recevez ensuite un nouveau code.</string>
+    <string name="peek_friends_deleted">Données PeekParty supprimées</string>
+    <string name="peek_party_rooms">Salons</string>
+    <string name="peek_friends_invite_decline">Refuser</string>
+    <string name="peek_friends_invite_declined">%1$s a refusé votre invitation</string>
+    <string name="peek_party_based_on">Basé sur Listen Together de Metrolist</string>
+    <string name="peek_friends_share_link">Partager le lien</string>
+    <string name="peek_friends_link_title">Ajouter cet ami ?</string>
+    <string name="peek_friends_link_text">Envoyer une demande d'ami à %1$s ?</string>
+    <string name="peek_precache_upcoming">Mise en cache anticipée</string>
+    <string name="peek_precache_upcoming_desc">Télécharge les prochains titres de la file d'attente pendant la lecture, pour que la musique continue avec une connexion faible</string>
+    <string name="peek_precache_upcoming_off">Désactivé</string>
+    <string name="peek_precache_upcoming_count">%1$d prochains titres</string>
+    <string name="peek_precache_upcoming_one">Prochain titre</string>
+    <string name="peek_precache_wifi_only">Mise en cache anticipée en Wi-Fi uniquement</string>
+    <string name="peek_precache_wifi_only_desc">N'utilise pas les données mobiles pour les titres qui ne sont pas encore en lecture</string>
+    <string name="peek_listen_together_location_germany">Allemagne</string>
+    <string name="peek_translation_rate_limited">Google Traduction bloque actuellement les requêtes de votre réseau. Réessayez plus tard ou utilisez un VPN.</string>
+    <string name="peek_download_cancel_title">Annuler le téléchargement ?</string>
+    <string name="peek_download_cancel_message">Les titres déjà téléchargés restent sur votre appareil.</string>
+    <string name="peek_download_cancel_confirm">Arrêter le téléchargement</string>
+    <string name="peek_download_cancel_keep">Continuer le téléchargement</string>
+    <string name="peek_canvas_desktop_desc">Lit les Canvas Spotify et les clips YouTube, sans le son, derrière le lecteur ou dans sa pochette lorsqu'ils sont disponibles. Consomme plus d'espace de stockage et de données.</string>
+    <string name="peek_canvas_placement">Emplacement du Canvas</string>
+    <string name="peek_canvas_placement_page">Tout le lecteur</string>
+    <string name="peek_canvas_placement_cover">Pochette uniquement</string>
+    <string name="peek_lyrics_view_off">Désactivé</string>
+    <string name="peek_youtube_canvas_desktop_hint">Demande plus de puissance sur ordinateur, surtout au-delà de 480p. Si la vidéo saccade, choisissez une qualité inférieure.</string>
+    <string name="peek_animated_covers_desktop_desc">Affiche les pochettes animées d'Apple Music lorsqu'elles sont disponibles. Consomme plus d'espace de stockage et de données.</string>
+    <string name="peek_listen_together_ios_user">Utilisateur iPhone</string>
+    <string name="peek_youtube_canvas_ios_hint">Sur iPhone, cela ne fonctionne que si YouTube propose une version H.264 de la vidéo, ce qui manque à beaucoup de vidéos, donc c'est souvent désactivé. Jusqu'à 720p.</string>
+</resources>

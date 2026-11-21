@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Pieejams nesinhronizēts dziesmas teksts</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Audio</string>
+    <string name="peek_settings_audio_description">Kvalitāte, skaņa, pārejas efekts un apraide</string>
+    <string name="peek_settings_audio_description_no_cast">Kvalitāte, skaņa un pārejas efekts</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Kopīgot lokālo žurnāla failu, piemēram, ar kļūdas ziņojumu</string>
+    <string name="peek_settings_player_description">Dizains, fons un miniatskaņotājs</string>
+    <string name="peek_settings_home_library_description">Sākumlapas sadaļas, automātiskie atskaņošanas saraksti un paslēptie vienumi</string>
+    <string name="peek_settings_translation">Dziesmu tekstu tulkojums</string>
+    <string name="peek_settings_translation_description">Automātiski tulko dziesmu tekstus ar Google tulkotāju</string>
+    <string name="peek_settings_appearance_description">Motīvs, krāsas, fonti un blīvums</string>
+    <string name="peek_settings_queue_description">Jaukšana, līdzīgas dziesmas, dublikāti un lejupielādes</string>
+    <string name="peek_settings_privacy_description">Klausīšanās un meklēšanas vēsture</string>
+    <string name="peek_translation_failed">Tulkošana neizdevās, mēģini vēlāk vēlreiz</string>
+    <string name="peek_about_developer_role">PeekMusic izstrādātājs</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Video</string>
+    <string name="peek_video_filter_description">Kuri video tiek rādīti meklēšanā, atskaņošanas sarakstos un ieteikumos. Audio/video slēdzis atskaņotājā paliek</string>
+    <string name="peek_video_filter_all">Visi video</string>
+    <string name="peek_video_filter_music">Tikai mūzikas video</string>
+    <string name="peek_video_filter_none">Bez video</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Iekļauts dziesmas tekstā no %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Tava PeekMusic 1.x bibliotēka ir šeit</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Mēs atradām tavu PeekMusic 1.x bibliotēku. Pārvieto atskaņošanas sarakstus, vēsturi, patīk atzīmes un bibliotēkas datus uz šo versiju. Ja migrācija neizdodas, vari atjaunot sākotnējo datubāzi.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Tavs konts, atskaņošanas saraksti, vēsture, patīk atzīmes un bibliotēkas dati ir gatavi PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Tavi atskaņošanas saraksti, vēsture, patīk atzīmes un bibliotēkas dati ir gatavi PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Atver Iestatījumus izvēlnē augšējā labajā stūrī, lai pielāgotu PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Jauns</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Dažas ātras izvēles, un PeekMusic izskatās un skan tā, kā tev patīk.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Valoda un reģions</string>
+    <string name="peek_onboarding_language_description">Izvēlies lietotnes valodu un to, no kurienes nāk tavi ieteikumi.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Pielāgo sev</string>
+    <string name="peek_onboarding_look_description">Gaišs, tumšs vai tīri melns, ar krāsām no fona attēla vai atskaņotā vāciņa.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Atskaņotājs</string>
+    <string name="peek_onboarding_player_description">Izvēlies atskaņotāja dizainu, fonu un miniatskaņotāja izskatu.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Dziesmu teksti un Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek rāda dziedāto rindu tieši atskaņotājā. Tulkojumi un latīņu raksts parādās zem tās.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas un video</string>
+    <string name="peek_onboarding_artwork_description">Kustīgi vāciņi, Canvas cilpas un mūzikas video vēlamajā kvalitātē.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Skaņa</string>
+    <string name="peek_onboarding_sound_description">Skaņas kvalitāte, vienmērīgs skaļums starp dziesmām un vienmērīgas pārejas.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Ko tu redzi</string>
+    <string name="peek_onboarding_content_description">Paslēp to, ko nekad nevēlies redzēt meklēšanā, ieteikumos un radio.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Augsta kvalitāte</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, kustīgi vāciņi, mākslinieku video un mūzikas video 1080p kvalitātē. Izmanto vairāk datu. Katru var iestatīt atsevišķi Iestatījumos.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Izslēgts</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Nav atrasts. Pēc pieteikšanās Spotify atradīsies vairāk.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Šai dziesmai nav pieejams</string>
+    <string name="peek_friends_title">Draugi</string>
+    <string name="peek_friends_your_code">Tavs drauga kods</string>
+    <string name="peek_friends_code_hint">Draugi tevi pievieno ar šo kodu.</string>
+    <string name="peek_friends_connecting">Notiek savienošana…</string>
+    <string name="peek_friends_copy_code">Kopēt kodu</string>
+    <string name="peek_friends_add_label">Drauga kods</string>
+    <string name="peek_friends_add">Pievienot</string>
+    <string name="peek_friends_requests">Draudzības pieprasījumi</string>
+    <string name="peek_friends_accept">Pieņemt</string>
+    <string name="peek_friends_decline">Noraidīt</string>
+    <string name="peek_friends_sent">Nosūtītie pieprasījumi</string>
+    <string name="peek_friends_withdraw">Atsaukt</string>
+    <string name="peek_friends_waiting">Gaida apstiprinājumu</string>
+    <string name="peek_friends_empty">Vēl nav draugu. Kopīgo savu kodu vai pievieno drauga kodu.</string>
+    <string name="peek_friends_online">Tiešsaistē</string>
+    <string name="peek_friends_offline">Bezsaistē</string>
+    <string name="peek_friends_in_party">Ballītē</string>
+    <string name="peek_friends_join">Pievienoties</string>
+    <string name="peek_friends_remove">Noņemt draugu</string>
+    <string name="peek_friends_remove_confirm">Vai noņemt %1$s no draugiem?</string>
+    <string name="peek_friends_request_sent">Draudzības pieprasījums nosūtīts: %1$s</string>
+    <string name="peek_friends_added">Tu un %1$s tagad esat draugi</string>
+    <string name="peek_friends_request_received">Jauns draudzības pieprasījums: %1$s</string>
+    <string name="peek_friends_error_unknown">Nevienam nav šī drauga koda</string>
+    <string name="peek_friends_error_own">Tas ir tavs paša drauga kods</string>
+    <string name="peek_friends_error_limit">Pārāk daudz mēģinājumu. Mēģini vēlreiz pēc minūtes.</string>
+    <string name="peek_friends_error_offline">Draugi pašlaik nav savienoti</string>
+    <string name="peek_friends_add_failed">Neizdevās pievienot draugu: %1$s</string>
+    <string name="peek_friends_invite_title">Ielūgums uz ballīti</string>
+    <string name="peek_friends_invite_text">%1$s aicina tevi uz ballīti.</string>
+    <string name="peek_friends_invite">Uzaicināt draugus</string>
+    <string name="peek_friends_invite_action">Uzaicināt</string>
+    <string name="peek_friends_invited">Ielūgums nosūtīts: %1$s</string>
+    <string name="peek_friends_invite_none">Pašlaik neviens no taviem draugiem nav tiešsaistē</string>
+    <string name="peek_friends_delete">Dzēst PeekParty datus</string>
+    <string name="peek_friends_delete_desc">No servera noņem tavu drauga kodu, draugus un pieprasījumus</string>
+    <string name="peek_friends_delete_confirm">Tavs drauga kods, draugi un gaidošie pieprasījumi tiek dzēsti no servera. Pēc tam saņemsi jaunu kodu.</string>
+    <string name="peek_friends_deleted">PeekParty dati ir dzēsti</string>
+    <string name="peek_party_rooms">Telpas</string>
+    <string name="peek_friends_invite_decline">Noraidīt</string>
+    <string name="peek_friends_invite_declined">Ielūgumu noraidīja: %1$s</string>
+    <string name="peek_party_based_on">Balstīts uz Metrolist funkciju Listen Together</string>
+    <string name="peek_friends_share_link">Kopīgot saiti</string>
+    <string name="peek_friends_link_title">Vai pievienot draugu?</string>
+    <string name="peek_friends_link_text">Vai nosūtīt draudzības pieprasījumu: %1$s?</string>
+    <string name="peek_precache_upcoming">Iepriekšēja kešošana</string>
+    <string name="peek_precache_upcoming_desc">Atskaņošanas laikā lejupielādē nākamās dziesmas rindā, lai mūzika turpinātos arī ar vāju savienojumu</string>
+    <string name="peek_precache_upcoming_off">Izslēgts</string>
+    <string name="peek_precache_upcoming_count">Nākamās dziesmas: %1$d</string>
+    <string name="peek_precache_upcoming_one">Nākamā dziesma</string>
+    <string name="peek_precache_wifi_only">Iepriekšēja kešošana tikai Wi-Fi tīklā</string>
+    <string name="peek_precache_wifi_only_desc">Neizmantot mobilos datus dziesmām, kas vēl netiek atskaņotas</string>
+    <string name="peek_listen_together_location_germany">Vācija</string>
+    <string name="peek_translation_rate_limited">Google tulkotājs pašlaik bloķē pieprasījumus no tava tīkla. Mēģini vēlāk vai izmanto VPN.</string>
+    <string name="peek_download_cancel_title">Vai atcelt lejupielādi?</string>
+    <string name="peek_download_cancel_message">Jau lejupielādētās dziesmas paliek ierīcē.</string>
+    <string name="peek_download_cancel_confirm">Apturēt lejupielādi</string>
+    <string name="peek_download_cancel_keep">Turpināt lejupielādi</string>
+    <string name="peek_canvas_desktop_desc">Atskaņo Spotify Canvas un YouTube mūzikas video bez skaņas aiz atskaņotāja vai vāciņā, ja tie ir pieejami. Izmanto vairāk krātuves un datu.</string>
+    <string name="peek_canvas_placement">Canvas novietojums</string>
+    <string name="peek_canvas_placement_page">Viss atskaņotājs</string>
+    <string name="peek_canvas_placement_cover">Tikai vāciņš</string>
+    <string name="peek_lyrics_view_off">Izslēgts</string>
+    <string name="peek_youtube_canvas_desktop_hint">Datorā prasa vairāk jaudas, īpaši virs 480p. Ja video raustās, izvēlies zemāku kvalitāti.</string>
+    <string name="peek_animated_covers_desktop_desc">Rāda kustīgus albumu vāciņus no Apple Music, ja tie ir pieejami. Izmanto vairāk krātuves un datu.</string>
+    <string name="peek_listen_together_ios_user">iPhone lietotājs</string>
+    <string name="peek_youtube_canvas_ios_hint">iPhone ierīcē tas darbojas tikai tad, ja YouTube piedāvā video H.264 versiju. Daudziem video tās nav, tāpēc tas bieži paliek izslēgts. Līdz 720p.</string>
+</resources>

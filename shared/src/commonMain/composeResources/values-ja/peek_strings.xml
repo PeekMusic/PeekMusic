@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">同期されていない歌詞があります</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">オーディオ</string>
+    <string name="peek_settings_audio_description">音質、サウンド、クロスフェード、キャスト</string>
+    <string name="peek_settings_audio_description_no_cast">音質、サウンド、クロスフェード</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">ローカルのログファイルを共有します（バグ報告時など）</string>
+    <string name="peek_settings_player_description">デザイン、背景、ミニプレーヤー</string>
+    <string name="peek_settings_home_library_description">ホームのセクション、自動プレイリスト、非表示の項目</string>
+    <string name="peek_settings_translation">歌詞の翻訳</string>
+    <string name="peek_settings_translation_description">Google 翻訳で歌詞を自動的に翻訳します</string>
+    <string name="peek_settings_appearance_description">テーマ、色、フォント、表示密度</string>
+    <string name="peek_settings_queue_description">シャッフル、似た曲、重複、ダウンロード</string>
+    <string name="peek_settings_privacy_description">再生履歴と検索履歴</string>
+    <string name="peek_translation_failed">翻訳に失敗しました。しばらくしてからもう一度お試しください</string>
+    <string name="peek_about_developer_role">PeekMusic の開発者</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">動画</string>
+    <string name="peek_video_filter_description">検索、プレイリスト、おすすめに表示する動画。プレーヤーの音声/動画切り替えはそのまま使えます</string>
+    <string name="peek_video_filter_all">すべての動画</string>
+    <string name="peek_video_filter_music">ミュージックビデオのみ</string>
+    <string name="peek_video_filter_none">動画なし</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">%1$s の歌詞に含まれています</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">PeekMusic 1.x のライブラリが見つかりました</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">PeekMusic 1.x のライブラリが見つかりました。プレイリスト、履歴、高評価、ライブラリのデータをこのバージョンに移行します。移行に失敗した場合は、元のデータベースを復元できます。</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">アカウント、プレイリスト、履歴、高評価、ライブラリのデータを PeekMusic 2 で使えるようになりました。</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">プレイリスト、履歴、高評価、ライブラリのデータを PeekMusic 2 で使えるようになりました。</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">右上のメニューから設定を開くと、PeekMusic をカスタマイズできます。</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">新機能</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">いくつか選ぶだけで、PeekMusic の見た目と音をお好みに合わせられます。</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">言語と地域</string>
+    <string name="peek_onboarding_language_description">アプリの言語と、おすすめの地域を選んでください。</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">自分好みに</string>
+    <string name="peek_onboarding_look_description">ライト、ダーク、ピュアブラック。色は壁紙か再生中のジャケットから取れます。</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">プレーヤー</string>
+    <string name="peek_onboarding_player_description">プレーヤーのデザイン、背景、ミニプレーヤーの見た目を選べます。</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">歌詞と Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek は歌われている行をプレーヤーに直接表示します。翻訳とローマ字はその下に表示されます。</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas と動画</string>
+    <string name="peek_onboarding_artwork_description">動くジャケット、Canvas のループ、ミュージックビデオをお好みの画質で。</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">サウンド</string>
+    <string name="peek_onboarding_sound_description">音質、曲ごとの音量の均一化、なめらかな曲間。</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">表示する内容</string>
+    <string name="peek_onboarding_content_description">検索、おすすめ、ラジオで見たくないものを非表示にできます。</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">高画質</string>
+    <string name="peek_onboarding_high_quality_description">Canvas、動くジャケット、アーティスト動画、ミュージックビデオを 1080p で表示します。データ使用量が増えます。それぞれ設定で個別に変更できます。</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">オフ</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">見つかりません。Spotify にログインすると見つかりやすくなります。</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">この曲では利用できません</string>
+    <string name="peek_friends_title">フレンド</string>
+    <string name="peek_friends_your_code">あなたのフレンドコード</string>
+    <string name="peek_friends_code_hint">このコードでフレンドがあなたを追加できます。</string>
+    <string name="peek_friends_connecting">接続中…</string>
+    <string name="peek_friends_copy_code">コードをコピー</string>
+    <string name="peek_friends_add_label">フレンドコード</string>
+    <string name="peek_friends_add">追加</string>
+    <string name="peek_friends_requests">フレンドリクエスト</string>
+    <string name="peek_friends_accept">承認</string>
+    <string name="peek_friends_decline">拒否</string>
+    <string name="peek_friends_sent">送信済みのリクエスト</string>
+    <string name="peek_friends_withdraw">取り消す</string>
+    <string name="peek_friends_waiting">承認待ち</string>
+    <string name="peek_friends_empty">まだフレンドがいません。コードを共有するか、フレンドのコードを追加してください。</string>
+    <string name="peek_friends_online">オンライン</string>
+    <string name="peek_friends_offline">オフライン</string>
+    <string name="peek_friends_in_party">パーティー中</string>
+    <string name="peek_friends_join">参加</string>
+    <string name="peek_friends_remove">フレンドを削除</string>
+    <string name="peek_friends_remove_confirm">%1$s をフレンドから削除しますか？</string>
+    <string name="peek_friends_request_sent">%1$s にフレンドリクエストを送信しました</string>
+    <string name="peek_friends_added">%1$s とフレンドになりました</string>
+    <string name="peek_friends_request_received">%1$s からフレンドリクエストが届きました</string>
+    <string name="peek_friends_error_unknown">このフレンドコードのユーザーはいません</string>
+    <string name="peek_friends_error_own">これはあなた自身のフレンドコードです</string>
+    <string name="peek_friends_error_limit">試行回数が多すぎます。1 分後にもう一度お試しください。</string>
+    <string name="peek_friends_error_offline">現在フレンド機能に接続されていません</string>
+    <string name="peek_friends_add_failed">フレンドを追加できませんでした: %1$s</string>
+    <string name="peek_friends_invite_title">パーティーへの招待</string>
+    <string name="peek_friends_invite_text">%1$s があなたをパーティーに招待しています。</string>
+    <string name="peek_friends_invite">フレンドを招待</string>
+    <string name="peek_friends_invite_action">招待</string>
+    <string name="peek_friends_invited">%1$s に招待を送信しました</string>
+    <string name="peek_friends_invite_none">現在オンラインのフレンドはいません</string>
+    <string name="peek_friends_delete">PeekParty のデータを削除</string>
+    <string name="peek_friends_delete_desc">フレンドコード、フレンド、リクエストをサーバーから削除します</string>
+    <string name="peek_friends_delete_confirm">フレンドコード、フレンド、保留中のリクエストがサーバーから削除されます。その後、新しいコードが発行されます。</string>
+    <string name="peek_friends_deleted">PeekParty のデータを削除しました</string>
+    <string name="peek_party_rooms">ルーム</string>
+    <string name="peek_friends_invite_decline">辞退</string>
+    <string name="peek_friends_invite_declined">%1$s が招待を辞退しました</string>
+    <string name="peek_party_based_on">Metrolist の Listen Together をベースにしています</string>
+    <string name="peek_friends_share_link">リンクを共有</string>
+    <string name="peek_friends_link_title">フレンドに追加しますか？</string>
+    <string name="peek_friends_link_text">%1$s にフレンドリクエストを送信しますか？</string>
+    <string name="peek_precache_upcoming">先読みキャッシュ</string>
+    <string name="peek_precache_upcoming_desc">再生中にキューの次の曲をダウンロードし、回線が弱くても再生が途切れないようにします</string>
+    <string name="peek_precache_upcoming_off">オフ</string>
+    <string name="peek_precache_upcoming_count">次の %1$d 曲</string>
+    <string name="peek_precache_upcoming_one">次の曲</string>
+    <string name="peek_precache_wifi_only">Wi-Fi 接続時のみ先読み</string>
+    <string name="peek_precache_wifi_only_desc">まだ再生していない曲にモバイルデータを使いません</string>
+    <string name="peek_listen_together_location_germany">ドイツ</string>
+    <string name="peek_translation_rate_limited">現在 Google 翻訳があなたのネットワークからのリクエストをブロックしています。しばらくしてから再度お試しいただくか、VPN をご利用ください。</string>
+    <string name="peek_download_cancel_title">ダウンロードをキャンセルしますか？</string>
+    <string name="peek_download_cancel_message">ダウンロード済みの曲はデバイスに残ります。</string>
+    <string name="peek_download_cancel_confirm">ダウンロードを停止</string>
+    <string name="peek_download_cancel_keep">ダウンロードを続ける</string>
+    <string name="peek_canvas_desktop_desc">利用可能な場合、Spotify Canvas と YouTube のミュージックビデオを無音でプレーヤーの背景またはジャケットに再生します。ストレージとデータの使用量が増えます。</string>
+    <string name="peek_canvas_placement">Canvas の表示位置</string>
+    <string name="peek_canvas_placement_page">プレーヤー全体</string>
+    <string name="peek_canvas_placement_cover">ジャケットのみ</string>
+    <string name="peek_lyrics_view_off">オフ</string>
+    <string name="peek_youtube_canvas_desktop_hint">デスクトップでは、特に 480p を超えると処理能力が必要です。動画がカクつく場合は画質を下げてください。</string>
+    <string name="peek_animated_covers_desktop_desc">利用可能な場合、Apple Music の動くアルバムジャケットを表示します。ストレージとデータの使用量が増えます。</string>
+    <string name="peek_listen_together_ios_user">iPhone ユーザー</string>
+    <string name="peek_youtube_canvas_ios_hint">iPhone では、YouTube が動画の H.264 版を提供している場合のみ動作します。多くの動画にはないため、オフのままになることがよくあります。最大 720p。</string>
+</resources>

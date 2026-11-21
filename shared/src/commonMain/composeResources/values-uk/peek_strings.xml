@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Доступний несинхронізований текст</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Звук</string>
+    <string name="peek_settings_audio_description">Якість, звук, плавний перехід і трансляція</string>
+    <string name="peek_settings_audio_description_no_cast">Якість, звук і плавний перехід</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Поділитися локальним файлом журналу, наприклад разом зі звітом про помилку</string>
+    <string name="peek_settings_player_description">Дизайн, фон і мініплеєр</string>
+    <string name="peek_settings_home_library_description">Розділи головної, автоматичні плейлисти та приховані елементи</string>
+    <string name="peek_settings_translation">Переклад текстів</string>
+    <string name="peek_settings_translation_description">Автоматично перекладає тексти за допомогою Google Перекладача</string>
+    <string name="peek_settings_appearance_description">Тема, кольори, шрифти та щільність</string>
+    <string name="peek_settings_queue_description">Перемішування, схожі треки, дублікати та завантаження</string>
+    <string name="peek_settings_privacy_description">Історія прослуховування та пошуку</string>
+    <string name="peek_translation_failed">Не вдалося перекласти, спробуйте пізніше</string>
+    <string name="peek_about_developer_role">Розробник PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Відео</string>
+    <string name="peek_video_filter_description">Які відео показуються в пошуку, плейлистах і рекомендаціях. Перемикач аудіо/відео в плеєрі залишається</string>
+    <string name="peek_video_filter_all">Усі відео</string>
+    <string name="peek_video_filter_music">Лише кліпи</string>
+    <string name="peek_video_filter_none">Без відео</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Входить у текст від %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Ваша медіатека PeekMusic 1.x тут</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Ми знайшли вашу медіатеку з PeekMusic 1.x. Перенесіть плейлисти, історію, вподобання та дані медіатеки в цю версію. Якщо перенесення не вдасться, оригінальну базу даних можна відновити.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Ваш акаунт, плейлисти, історія, вподобання та дані медіатеки готові в PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Ваші плейлисти, історія, вподобання та дані медіатеки готові в PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Відкрийте Налаштування в меню праворуч угорі, щоб налаштувати PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Нове</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Кілька швидких кроків, і PeekMusic виглядатиме й звучатиме так, як вам подобається.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Мова та регіон</string>
+    <string name="peek_onboarding_language_description">Виберіть мову застосунку та звідки беруться ваші рекомендації.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Під себе</string>
+    <string name="peek_onboarding_look_description">Світла, темна або чисто чорна тема з кольорами шпалер чи поточної обкладинки.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Плеєр</string>
+    <string name="peek_onboarding_player_description">Виберіть дизайн плеєра, його фон і вигляд мініплеєра.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Тексти та Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek показує рядок, що звучить, прямо в плеєрі. Переклади та латиниця з'являються під ним.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas і відео</string>
+    <string name="peek_onboarding_artwork_description">Анімовані обкладинки, цикли Canvas і кліпи в потрібній якості.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Звук</string>
+    <string name="peek_onboarding_sound_description">Якість звуку, рівна гучність між треками та плавні переходи.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Що ви бачите</string>
+    <string name="peek_onboarding_content_description">Приховайте те, чого не хочете бачити в пошуку, рекомендаціях і радіо.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Висока якість</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, анімовані обкладинки, відео виконавців і кліпи в 1080p. Витрачає більше трафіку. Кожен пункт можна налаштувати окремо в Налаштуваннях.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Вимк.</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Не знайдено. Після входу в Spotify знайдеться більше.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Недоступно для цього треку</string>
+    <string name="peek_friends_title">Друзі</string>
+    <string name="peek_friends_your_code">Ваш код друга</string>
+    <string name="peek_friends_code_hint">Друзі додають вас за цим кодом.</string>
+    <string name="peek_friends_connecting">Підключення…</string>
+    <string name="peek_friends_copy_code">Копіювати код</string>
+    <string name="peek_friends_add_label">Код друга</string>
+    <string name="peek_friends_add">Додати</string>
+    <string name="peek_friends_requests">Запити в друзі</string>
+    <string name="peek_friends_accept">Прийняти</string>
+    <string name="peek_friends_decline">Відхилити</string>
+    <string name="peek_friends_sent">Надіслані запити</string>
+    <string name="peek_friends_withdraw">Відкликати</string>
+    <string name="peek_friends_waiting">Очікує підтвердження</string>
+    <string name="peek_friends_empty">Поки немає друзів. Поділіться своїм кодом або додайте код друга.</string>
+    <string name="peek_friends_online">У мережі</string>
+    <string name="peek_friends_offline">Не в мережі</string>
+    <string name="peek_friends_in_party">На вечірці</string>
+    <string name="peek_friends_join">Приєднатися</string>
+    <string name="peek_friends_remove">Видалити з друзів</string>
+    <string name="peek_friends_remove_confirm">Видалити %1$s з друзів?</string>
+    <string name="peek_friends_request_sent">Запит у друзі надіслано: %1$s</string>
+    <string name="peek_friends_added">Тепер ви з %1$s друзі</string>
+    <string name="peek_friends_request_received">Новий запит у друзі: %1$s</string>
+    <string name="peek_friends_error_unknown">Такого коду друга немає</string>
+    <string name="peek_friends_error_own">Це ваш власний код друга</string>
+    <string name="peek_friends_error_limit">Забагато спроб. Спробуйте через хвилину.</string>
+    <string name="peek_friends_error_offline">Друзі зараз не підключені</string>
+    <string name="peek_friends_add_failed">Не вдалося додати друга: %1$s</string>
+    <string name="peek_friends_invite_title">Запрошення на вечірку</string>
+    <string name="peek_friends_invite_text">%1$s запрошує вас на вечірку.</string>
+    <string name="peek_friends_invite">Запросити друзів</string>
+    <string name="peek_friends_invite_action">Запросити</string>
+    <string name="peek_friends_invited">Запрошення надіслано: %1$s</string>
+    <string name="peek_friends_invite_none">Зараз нікого з друзів немає в мережі</string>
+    <string name="peek_friends_delete">Видалити дані PeekParty</string>
+    <string name="peek_friends_delete_desc">Видаляє з сервера ваш код друга, друзів і запити</string>
+    <string name="peek_friends_delete_confirm">Ваш код друга, друзі та запити в очікуванні буде видалено з сервера. Потім ви отримаєте новий код.</string>
+    <string name="peek_friends_deleted">Дані PeekParty видалено</string>
+    <string name="peek_party_rooms">Кімнати</string>
+    <string name="peek_friends_invite_decline">Відхилити</string>
+    <string name="peek_friends_invite_declined">Запрошення відхилено: %1$s</string>
+    <string name="peek_party_based_on">На основі Listen Together з Metrolist</string>
+    <string name="peek_friends_share_link">Поділитися посиланням</string>
+    <string name="peek_friends_link_title">Додати в друзі?</string>
+    <string name="peek_friends_link_text">Надіслати запит у друзі: %1$s?</string>
+    <string name="peek_precache_upcoming">Попереднє завантаження</string>
+    <string name="peek_precache_upcoming_desc">Завантажує наступні треки черги під час відтворення, щоб музика не переривалася при слабкому з'єднанні</string>
+    <string name="peek_precache_upcoming_off">Вимк.</string>
+    <string name="peek_precache_upcoming_count">Наступні треки: %1$d</string>
+    <string name="peek_precache_upcoming_one">Наступний трек</string>
+    <string name="peek_precache_wifi_only">Попереднє завантаження лише через Wi-Fi</string>
+    <string name="peek_precache_wifi_only_desc">Не використовувати мобільний інтернет для треків, які ще не грають</string>
+    <string name="peek_listen_together_location_germany">Німеччина</string>
+    <string name="peek_translation_rate_limited">Google Перекладач зараз блокує запити з вашої мережі. Спробуйте пізніше або скористайтеся VPN.</string>
+    <string name="peek_download_cancel_title">Скасувати завантаження?</string>
+    <string name="peek_download_cancel_message">Уже завантажені треки залишаться на пристрої.</string>
+    <string name="peek_download_cancel_confirm">Зупинити завантаження</string>
+    <string name="peek_download_cancel_keep">Продовжити завантаження</string>
+    <string name="peek_canvas_desktop_desc">Відтворює Spotify Canvas і кліпи YouTube без звуку за плеєром або в обкладинці, якщо вони є. Займає більше місця й трафіку.</string>
+    <string name="peek_canvas_placement">Розташування Canvas</string>
+    <string name="peek_canvas_placement_page">Увесь плеєр</string>
+    <string name="peek_canvas_placement_cover">Лише обкладинка</string>
+    <string name="peek_lyrics_view_off">Вимк.</string>
+    <string name="peek_youtube_canvas_desktop_hint">На комп'ютері потребує більше ресурсів, особливо понад 480p. Якщо відео підгальмовує, виберіть нижчу якість.</string>
+    <string name="peek_animated_covers_desktop_desc">Показує анімовані обкладинки з Apple Music, якщо вони є. Займає більше місця й трафіку.</string>
+    <string name="peek_listen_together_ios_user">Користувач iPhone</string>
+    <string name="peek_youtube_canvas_ios_hint">На iPhone це працює, лише якщо YouTube пропонує версію відео в H.264. Багато відео її не мають, тому функція часто залишається вимкненою. До 720p.</string>
+</resources>

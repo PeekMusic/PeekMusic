@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Osynkad låttext tillgänglig</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Ljud</string>
+    <string name="peek_settings_audio_description">Kvalitet, ljud, crossfade och casting</string>
+    <string name="peek_settings_audio_description_no_cast">Kvalitet, ljud och crossfade</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Dela den lokala loggfilen, till exempel med en felrapport</string>
+    <string name="peek_settings_player_description">Design, bakgrund och minispelare</string>
+    <string name="peek_settings_home_library_description">Startsidans avsnitt, automatiska spellistor och dolda objekt</string>
+    <string name="peek_settings_translation">Översättning av låttexter</string>
+    <string name="peek_settings_translation_description">Översätter låttexter automatiskt med Google Översätt</string>
+    <string name="peek_settings_appearance_description">Tema, färger, typsnitt och täthet</string>
+    <string name="peek_settings_queue_description">Shuffle, liknande låtar, dubbletter och nedladdningar</string>
+    <string name="peek_settings_privacy_description">Lyssnings- och sökhistorik</string>
+    <string name="peek_translation_failed">Översättningen misslyckades, försök igen senare</string>
+    <string name="peek_about_developer_role">Utvecklare av PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Videor</string>
+    <string name="peek_video_filter_description">Vilka videor som visas i sökningar, spellistor och rekommendationer. Ljud/video-växeln i spelaren finns kvar</string>
+    <string name="peek_video_filter_all">Alla videor</string>
+    <string name="peek_video_filter_music">Bara musikvideor</string>
+    <string name="peek_video_filter_none">Inga videor</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Ingår i låttexten från %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Ditt PeekMusic 1.x-bibliotek är här</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Vi hittade ditt bibliotek från PeekMusic 1.x. Flytta dina spellistor, din historik, dina gillningar och biblioteksdata till den här versionen. Om migreringen misslyckas kan du återställa den ursprungliga databasen.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Ditt konto, dina spellistor, din historik, dina gillningar och biblioteksdata är klara i PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Dina spellistor, din historik, dina gillningar och biblioteksdata är klara i PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Öppna Inställningar i menyn uppe till höger för att anpassa PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Nytt</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Några snabba val, sedan ser PeekMusic ut och låter som du vill.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Språk och region</string>
+    <string name="peek_onboarding_language_description">Välj appens språk och var dina rekommendationer kommer ifrån.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Gör den till din</string>
+    <string name="peek_onboarding_look_description">Ljust, mörkt eller helsvart, med färger från din bakgrundsbild eller omslaget som spelas.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Spelare</string>
+    <string name="peek_onboarding_player_description">Välj spelarens design, bakgrund och hur minispelaren ser ut.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Låttexter och Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek visar raden som sjungs direkt i spelaren. Översättningar och latinsk skrift visas under.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas och videor</string>
+    <string name="peek_onboarding_artwork_description">Rörliga omslag, Canvas-loopar och musikvideor i den kvalitet du vill.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Ljud</string>
+    <string name="peek_onboarding_sound_description">Ljudkvalitet, jämn volym mellan låtar och mjuka övergångar.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Vad du ser</string>
+    <string name="peek_onboarding_content_description">Dölj det du aldrig vill se i sökningar, rekommendationer och radio.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Hög kvalitet</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, rörliga omslag, artistvideor och musikvideor i 1080p. Använder mer data. Var och en kan ställas in separat i Inställningar.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Av</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Hittades inte. Om du loggar in på Spotify hittas fler.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Inte tillgängligt för den här låten</string>
+    <string name="peek_friends_title">Vänner</string>
+    <string name="peek_friends_your_code">Din vänkod</string>
+    <string name="peek_friends_code_hint">Vänner lägger till dig med den här koden.</string>
+    <string name="peek_friends_connecting">Ansluter…</string>
+    <string name="peek_friends_copy_code">Kopiera kod</string>
+    <string name="peek_friends_add_label">Vänkod</string>
+    <string name="peek_friends_add">Lägg till</string>
+    <string name="peek_friends_requests">Vänförfrågningar</string>
+    <string name="peek_friends_accept">Acceptera</string>
+    <string name="peek_friends_decline">Avböj</string>
+    <string name="peek_friends_sent">Skickade förfrågningar</string>
+    <string name="peek_friends_withdraw">Dra tillbaka</string>
+    <string name="peek_friends_waiting">Väntar på att godkännas</string>
+    <string name="peek_friends_empty">Inga vänner än. Dela din kod eller lägg till en väns kod.</string>
+    <string name="peek_friends_online">Online</string>
+    <string name="peek_friends_offline">Offline</string>
+    <string name="peek_friends_in_party">På en fest</string>
+    <string name="peek_friends_join">Gå med</string>
+    <string name="peek_friends_remove">Ta bort vän</string>
+    <string name="peek_friends_remove_confirm">Ta bort %1$s från dina vänner?</string>
+    <string name="peek_friends_request_sent">Vänförfrågan skickad till %1$s</string>
+    <string name="peek_friends_added">Du och %1$s är nu vänner</string>
+    <string name="peek_friends_request_received">%1$s har skickat en vänförfrågan till dig</string>
+    <string name="peek_friends_error_unknown">Ingen har den här vänkoden</string>
+    <string name="peek_friends_error_own">Det är din egen vänkod</string>
+    <string name="peek_friends_error_limit">För många försök. Försök igen om en minut.</string>
+    <string name="peek_friends_error_offline">Vänner är inte anslutna just nu</string>
+    <string name="peek_friends_add_failed">Kunde inte lägga till vän: %1$s</string>
+    <string name="peek_friends_invite_title">Festinbjudan</string>
+    <string name="peek_friends_invite_text">%1$s bjuder in dig till sin fest.</string>
+    <string name="peek_friends_invite">Bjud in vänner</string>
+    <string name="peek_friends_invite_action">Bjud in</string>
+    <string name="peek_friends_invited">Inbjudan skickad till %1$s</string>
+    <string name="peek_friends_invite_none">Ingen av dina vänner är online just nu</string>
+    <string name="peek_friends_delete">Radera PeekParty-data</string>
+    <string name="peek_friends_delete_desc">Tar bort din vänkod, dina vänner och förfrågningar från servern</string>
+    <string name="peek_friends_delete_confirm">Din vänkod, dina vänner och väntande förfrågningar raderas från servern. Efteråt får du en ny kod.</string>
+    <string name="peek_friends_deleted">PeekParty-data har raderats</string>
+    <string name="peek_party_rooms">Rum</string>
+    <string name="peek_friends_invite_decline">Avböj</string>
+    <string name="peek_friends_invite_declined">%1$s tackade nej till din inbjudan</string>
+    <string name="peek_party_based_on">Baserat på Listen Together från Metrolist</string>
+    <string name="peek_friends_share_link">Dela länk</string>
+    <string name="peek_friends_link_title">Lägga till vän?</string>
+    <string name="peek_friends_link_text">Skicka en vänförfrågan till %1$s?</string>
+    <string name="peek_precache_upcoming">Förhandscachning</string>
+    <string name="peek_precache_upcoming_desc">Laddar ner nästa låtar i kön medan musiken spelas, så att uppspelningen fortsätter vid svag anslutning</string>
+    <string name="peek_precache_upcoming_off">Av</string>
+    <string name="peek_precache_upcoming_count">Nästa %1$d låtar</string>
+    <string name="peek_precache_upcoming_one">Nästa låt</string>
+    <string name="peek_precache_wifi_only">Förhandscacha bara via wifi</string>
+    <string name="peek_precache_wifi_only_desc">Använd inte mobildata för låtar som inte spelas än</string>
+    <string name="peek_listen_together_location_germany">Tyskland</string>
+    <string name="peek_translation_rate_limited">Google Översätt blockerar just nu förfrågningar från ditt nätverk. Försök igen senare eller använd en VPN.</string>
+    <string name="peek_download_cancel_title">Avbryta nedladdningen?</string>
+    <string name="peek_download_cancel_message">Låtar som redan har laddats ner finns kvar på enheten.</string>
+    <string name="peek_download_cancel_confirm">Stoppa nedladdning</string>
+    <string name="peek_download_cancel_keep">Fortsätt ladda ner</string>
+    <string name="peek_canvas_desktop_desc">Spela Spotify Canvas och YouTube-musikvideor utan ljud bakom spelaren eller i omslaget när de finns. Använder mer lagring och data.</string>
+    <string name="peek_canvas_placement">Canvas-placering</string>
+    <string name="peek_canvas_placement_page">Hela spelaren</string>
+    <string name="peek_canvas_placement_cover">Bara omslaget</string>
+    <string name="peek_lyrics_view_off">Av</string>
+    <string name="peek_youtube_canvas_desktop_hint">Kräver mer prestanda på datorn, särskilt över 480p. Om videon hackar, välj en lägre kvalitet.</string>
+    <string name="peek_animated_covers_desktop_desc">Visa rörliga albumomslag från Apple Music när de finns. Använder mer lagring och data.</string>
+    <string name="peek_listen_together_ios_user">iPhone-användare</string>
+    <string name="peek_youtube_canvas_ios_hint">På iPhone fungerar det bara när YouTube erbjuder en H.264-version av videon. Många videor saknar den, så det är ofta avstängt. Upp till 720p.</string>
+</resources>

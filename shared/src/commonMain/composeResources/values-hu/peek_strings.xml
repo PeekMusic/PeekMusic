@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Szinkronizálatlan dalszöveg érhető el</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Hang</string>
+    <string name="peek_settings_audio_description">Minőség, hang, áttűnés és átküldés</string>
+    <string name="peek_settings_audio_description_no_cast">Minőség, hang és áttűnés</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Megosztja a helyi naplófájlt, például egy hibajelentéshez</string>
+    <string name="peek_settings_player_description">Kinézet, háttér és minilejátszó</string>
+    <string name="peek_settings_home_library_description">Kezdőlap szakaszai, automatikus lejátszási listák és elrejtett elemek</string>
+    <string name="peek_settings_translation">Dalszövegfordítás</string>
+    <string name="peek_settings_translation_description">Automatikusan lefordítja a dalszövegeket a Google Fordítóval</string>
+    <string name="peek_settings_appearance_description">Téma, színek, betűtípusok és sűrűség</string>
+    <string name="peek_settings_queue_description">Keverés, hasonló dalok, ismétlődések és letöltések</string>
+    <string name="peek_settings_privacy_description">Hallgatási és keresési előzmények</string>
+    <string name="peek_translation_failed">A fordítás nem sikerült, próbáld újra később</string>
+    <string name="peek_about_developer_role">A PeekMusic fejlesztője</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Videók</string>
+    <string name="peek_video_filter_description">Mely videók jelenjenek meg a keresésben, a lejátszási listákon és az ajánlásokban. A lejátszó hang/videó kapcsolója megmarad</string>
+    <string name="peek_video_filter_all">Minden videó</string>
+    <string name="peek_video_filter_music">Csak zenei videók</string>
+    <string name="peek_video_filter_none">Nincs videó</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">A(z) %1$s dalszövegével együtt érkezik</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Itt van a PeekMusic 1.x könyvtárad</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Megtaláltuk a PeekMusic 1.x könyvtáradat. Vidd át a lejátszási listáidat, előzményeidet, kedvenceidet és a könyvtár adatait ebbe a verzióba. Ha az átköltöztetés nem sikerül, visszaállíthatod az eredeti adatbázist.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">A fiókod, lejátszási listáid, előzményeid, kedvenceid és a könyvtár adatai készen állnak a PeekMusic 2-ben.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">A lejátszási listáid, előzményeid, kedvenceid és a könyvtár adatai készen állnak a PeekMusic 2-ben.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">A PeekMusic testreszabásához nyisd meg a Beállításokat a jobb felső menüből.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Új</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Néhány gyors választás, és a PeekMusic úgy néz ki és úgy szól, ahogy szereted.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Nyelv és régió</string>
+    <string name="peek_onboarding_language_description">Válaszd ki az alkalmazás nyelvét, és hogy honnan jöjjenek az ajánlásaid.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Tedd a sajátoddá</string>
+    <string name="peek_onboarding_look_description">Világos, sötét vagy tiszta fekete, a háttérkép vagy a lejátszott borító színeivel.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Lejátszó</string>
+    <string name="peek_onboarding_player_description">Válaszd ki a lejátszó kinézetét, hátterét és a minilejátszó megjelenését.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Dalszövegek és Peek</string>
+    <string name="peek_onboarding_lyrics_description">A Peek közvetlenül a lejátszóban mutatja az éppen énekelt sort. A fordítások és a latin betűs átírás alatta jelennek meg.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas és videók</string>
+    <string name="peek_onboarding_artwork_description">Mozgó borítók, Canvas-hurkok és zenei videók a kívánt minőségben.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Hang</string>
+    <string name="peek_onboarding_sound_description">Hangminőség, egyenletes hangerő a dalok között és sima átmenetek.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Mit látsz</string>
+    <string name="peek_onboarding_content_description">Rejtsd el, amit sosem szeretnél látni a keresésben, az ajánlásokban és a rádióban.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Magas minőség</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, mozgó borítók, előadói videók és zenei videók 1080p-ben. Több adatot használ. Mindegyik külön is beállítható a Beállításokban.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Ki</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Nem található. Spotify-bejelentkezéssel több is megtalálható.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Ehhez a dalhoz nem érhető el</string>
+    <string name="peek_friends_title">Barátok</string>
+    <string name="peek_friends_your_code">A barátkódod</string>
+    <string name="peek_friends_code_hint">A barátaid ezzel a kóddal adhatnak hozzá.</string>
+    <string name="peek_friends_connecting">Csatlakozás…</string>
+    <string name="peek_friends_copy_code">Kód másolása</string>
+    <string name="peek_friends_add_label">Barátkód</string>
+    <string name="peek_friends_add">Hozzáadás</string>
+    <string name="peek_friends_requests">Barátkérések</string>
+    <string name="peek_friends_accept">Elfogadás</string>
+    <string name="peek_friends_decline">Elutasítás</string>
+    <string name="peek_friends_sent">Elküldött kérések</string>
+    <string name="peek_friends_withdraw">Visszavonás</string>
+    <string name="peek_friends_waiting">Elfogadásra vár</string>
+    <string name="peek_friends_empty">Még nincsenek barátaid. Oszd meg a kódodat, vagy add hozzá egy barátod kódját.</string>
+    <string name="peek_friends_online">Online</string>
+    <string name="peek_friends_offline">Offline</string>
+    <string name="peek_friends_in_party">Buliban</string>
+    <string name="peek_friends_join">Csatlakozás</string>
+    <string name="peek_friends_remove">Barát eltávolítása</string>
+    <string name="peek_friends_remove_confirm">Eltávolítod %1$s felhasználót a barátaid közül?</string>
+    <string name="peek_friends_request_sent">Barátkérés elküldve: %1$s</string>
+    <string name="peek_friends_added">Te és %1$s mostantól barátok vagytok</string>
+    <string name="peek_friends_request_received">Új barátkérés: %1$s</string>
+    <string name="peek_friends_error_unknown">Senkinek nincs ilyen barátkódja</string>
+    <string name="peek_friends_error_own">Ez a saját barátkódod</string>
+    <string name="peek_friends_error_limit">Túl sok próbálkozás. Próbáld újra egy perc múlva.</string>
+    <string name="peek_friends_error_offline">A Barátok funkció most nincs csatlakoztatva</string>
+    <string name="peek_friends_add_failed">Nem sikerült hozzáadni a barátot: %1$s</string>
+    <string name="peek_friends_invite_title">Meghívó buliba</string>
+    <string name="peek_friends_invite_text">%1$s meghívott a bulijába.</string>
+    <string name="peek_friends_invite">Barátok meghívása</string>
+    <string name="peek_friends_invite_action">Meghívás</string>
+    <string name="peek_friends_invited">Meghívó elküldve: %1$s</string>
+    <string name="peek_friends_invite_none">Egyik barátod sem online most</string>
+    <string name="peek_friends_delete">PeekParty-adatok törlése</string>
+    <string name="peek_friends_delete_desc">Eltávolítja a szerverről a barátkódodat, a barátaidat és a kéréseket</string>
+    <string name="peek_friends_delete_confirm">A barátkódod, a barátaid és a függő kérések törlődnek a szerverről. Utána új kódot kapsz.</string>
+    <string name="peek_friends_deleted">PeekParty-adatok törölve</string>
+    <string name="peek_party_rooms">Szobák</string>
+    <string name="peek_friends_invite_decline">Elutasítás</string>
+    <string name="peek_friends_invite_declined">%1$s elutasította a meghívódat</string>
+    <string name="peek_party_based_on">A Metrolist Listen Together funkcióján alapul</string>
+    <string name="peek_friends_share_link">Link megosztása</string>
+    <string name="peek_friends_link_title">Hozzáadod barátként?</string>
+    <string name="peek_friends_link_text">Barátkérést küldesz neki: %1$s?</string>
+    <string name="peek_precache_upcoming">Előre gyorsítótárazás</string>
+    <string name="peek_precache_upcoming_desc">Lejátszás közben letölti a sor következő dalait, így gyenge kapcsolatnál is folytatódik a lejátszás</string>
+    <string name="peek_precache_upcoming_off">Ki</string>
+    <string name="peek_precache_upcoming_count">Következő %1$d dal</string>
+    <string name="peek_precache_upcoming_one">Következő dal</string>
+    <string name="peek_precache_wifi_only">Előre gyorsítótárazás csak Wi-Fi-n</string>
+    <string name="peek_precache_wifi_only_desc">Ne használjon mobiladatot a még nem szóló dalokhoz</string>
+    <string name="peek_listen_together_location_germany">Németország</string>
+    <string name="peek_translation_rate_limited">A Google Fordító jelenleg blokkolja a hálózatodról érkező kéréseket. Próbáld újra később, vagy használj VPN-t.</string>
+    <string name="peek_download_cancel_title">Megszakítod a letöltést?</string>
+    <string name="peek_download_cancel_message">A már letöltött dalok az eszközödön maradnak.</string>
+    <string name="peek_download_cancel_confirm">Letöltés leállítása</string>
+    <string name="peek_download_cancel_keep">Letöltés folytatása</string>
+    <string name="peek_canvas_desktop_desc">Lejátssza a Spotify Canvast és a YouTube zenei videóit hang nélkül a lejátszó mögött vagy a borítóban, ha elérhetők. Több tárhelyet és adatot használ.</string>
+    <string name="peek_canvas_placement">Canvas helye</string>
+    <string name="peek_canvas_placement_page">Teljes lejátszó</string>
+    <string name="peek_canvas_placement_cover">Csak a borító</string>
+    <string name="peek_lyrics_view_off">Ki</string>
+    <string name="peek_youtube_canvas_desktop_hint">Számítógépen több teljesítményt igényel, főleg 480p felett. Ha a videó akad, válassz alacsonyabb minőséget.</string>
+    <string name="peek_animated_covers_desktop_desc">Mozgó albumborítókat mutat az Apple Musicból, ha elérhetők. Több tárhelyet és adatot használ.</string>
+    <string name="peek_listen_together_ios_user">iPhone-felhasználó</string>
+    <string name="peek_youtube_canvas_ios_hint">iPhone-on csak akkor működik, ha a YouTube kínál H.264-es verziót a videóból. Sok videónál ez hiányzik, ezért gyakran kikapcsolva marad. Legfeljebb 720p.</string>
+</resources>

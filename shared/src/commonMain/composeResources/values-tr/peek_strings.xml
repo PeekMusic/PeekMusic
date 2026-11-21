@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Senkronize olmayan şarkı sözü mevcut</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Ses</string>
+    <string name="peek_settings_audio_description">Kalite, ses, geçiş efekti ve yayınlama</string>
+    <string name="peek_settings_audio_description_no_cast">Kalite, ses ve geçiş efekti</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Yerel günlük dosyasını paylaşın, örneğin bir hata raporuyla</string>
+    <string name="peek_settings_player_description">Tasarım, arka plan ve mini oynatıcı</string>
+    <string name="peek_settings_home_library_description">Ana sayfa bölümleri, otomatik çalma listeleri ve gizli öğeler</string>
+    <string name="peek_settings_translation">Şarkı sözü çevirisi</string>
+    <string name="peek_settings_translation_description">Şarkı sözlerini Google Çeviri ile otomatik çevirir</string>
+    <string name="peek_settings_appearance_description">Tema, renkler, yazı tipleri ve yoğunluk</string>
+    <string name="peek_settings_queue_description">Karıştırma, benzer şarkılar, yinelenenler ve indirmeler</string>
+    <string name="peek_settings_privacy_description">Dinleme ve arama geçmişi</string>
+    <string name="peek_translation_failed">Çeviri başarısız oldu, daha sonra tekrar deneyin</string>
+    <string name="peek_about_developer_role">PeekMusic geliştiricisi</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Videolar</string>
+    <string name="peek_video_filter_description">Aramada, çalma listelerinde ve önerilerde hangi videoların görüneceği. Oynatıcıdaki ses/video geçişi kalır</string>
+    <string name="peek_video_filter_all">Tüm videolar</string>
+    <string name="peek_video_filter_music">Yalnızca müzik videoları</string>
+    <string name="peek_video_filter_none">Video yok</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">%1$s şarkı sözleriyle birlikte gelir</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">PeekMusic 1.x kitaplığınız burada</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">PeekMusic 1.x kitaplığınızı bulduk. Çalma listelerinizi, geçmişinizi, beğenilerinizi ve kitaplık verilerinizi bu sürüme taşıyın. Taşıma başarısız olursa orijinal veritabanını geri yükleyebilirsiniz.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Hesabınız, çalma listeleriniz, geçmişiniz, beğenileriniz ve kitaplık verileriniz PeekMusic 2'de hazır.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Çalma listeleriniz, geçmişiniz, beğenileriniz ve kitaplık verileriniz PeekMusic 2'de hazır.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">PeekMusic'i özelleştirmek için sağ üstteki menüden Ayarlar'ı açın.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Yeni</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Birkaç hızlı seçimle PeekMusic istediğiniz gibi görünür ve duyulur.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Dil ve bölge</string>
+    <string name="peek_onboarding_language_description">Uygulama dilini ve önerilerinizin nereden geleceğini seçin.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Kendinize göre ayarlayın</string>
+    <string name="peek_onboarding_look_description">Açık, koyu veya saf siyah; renkler duvar kâğıdınızdan ya da çalan kapaktan gelir.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Oynatıcı</string>
+    <string name="peek_onboarding_player_description">Oynatıcı tasarımını, arka planını ve mini oynatıcının görünümünü seçin.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Şarkı sözleri ve Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek, söylenen satırı doğrudan oynatıcıda gösterir. Çeviriler ve Latin alfabesiyle yazımı altında görünür.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas ve videolar</string>
+    <string name="peek_onboarding_artwork_description">Hareketli kapaklar, Canvas döngüleri ve müzik videoları, istediğiniz kalitede.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Ses</string>
+    <string name="peek_onboarding_sound_description">Ses kalitesi, şarkılar arasında eşit ses seviyesi ve yumuşak geçişler.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Ne görürsünüz</string>
+    <string name="peek_onboarding_content_description">Aramada, önerilerde ve radyoda hiç görmek istemediklerinizi gizleyin.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Yüksek kalite</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, hareketli kapaklar, sanatçı videoları ve müzik videoları 1080p. Daha fazla veri kullanır. Her biri Ayarlar'da ayrı ayrı ayarlanabilir.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Kapalı</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Bulunamadı. Spotify'a giriş yapınca daha fazlası bulunur.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Bu şarkı için kullanılamıyor</string>
+    <string name="peek_friends_title">Arkadaşlar</string>
+    <string name="peek_friends_your_code">Arkadaş kodunuz</string>
+    <string name="peek_friends_code_hint">Arkadaşlarınız sizi bu kodla ekler.</string>
+    <string name="peek_friends_connecting">Bağlanıyor…</string>
+    <string name="peek_friends_copy_code">Kodu kopyala</string>
+    <string name="peek_friends_add_label">Arkadaş kodu</string>
+    <string name="peek_friends_add">Ekle</string>
+    <string name="peek_friends_requests">Arkadaşlık istekleri</string>
+    <string name="peek_friends_accept">Kabul et</string>
+    <string name="peek_friends_decline">Reddet</string>
+    <string name="peek_friends_sent">Gönderilen istekler</string>
+    <string name="peek_friends_withdraw">Geri çek</string>
+    <string name="peek_friends_waiting">Kabul edilmesi bekleniyor</string>
+    <string name="peek_friends_empty">Henüz arkadaşınız yok. Kodunuzu paylaşın veya bir arkadaşınızın kodunu ekleyin.</string>
+    <string name="peek_friends_online">Çevrimiçi</string>
+    <string name="peek_friends_offline">Çevrimdışı</string>
+    <string name="peek_friends_in_party">Partide</string>
+    <string name="peek_friends_join">Katıl</string>
+    <string name="peek_friends_remove">Arkadaşı kaldır</string>
+    <string name="peek_friends_remove_confirm">%1$s arkadaşlarınızdan kaldırılsın mı?</string>
+    <string name="peek_friends_request_sent">Arkadaşlık isteği gönderildi: %1$s</string>
+    <string name="peek_friends_added">Artık %1$s ile arkadaşsınız</string>
+    <string name="peek_friends_request_received">%1$s size arkadaşlık isteği gönderdi</string>
+    <string name="peek_friends_error_unknown">Bu arkadaş koduna sahip kimse yok</string>
+    <string name="peek_friends_error_own">Bu sizin kendi arkadaş kodunuz</string>
+    <string name="peek_friends_error_limit">Çok fazla deneme. Bir dakika sonra tekrar deneyin.</string>
+    <string name="peek_friends_error_offline">Arkadaşlar şu anda bağlı değil</string>
+    <string name="peek_friends_add_failed">Arkadaş eklenemedi: %1$s</string>
+    <string name="peek_friends_invite_title">Parti daveti</string>
+    <string name="peek_friends_invite_text">%1$s sizi partisine davet ediyor.</string>
+    <string name="peek_friends_invite">Arkadaşları davet et</string>
+    <string name="peek_friends_invite_action">Davet et</string>
+    <string name="peek_friends_invited">Davet gönderildi: %1$s</string>
+    <string name="peek_friends_invite_none">Şu anda hiçbir arkadaşınız çevrimiçi değil</string>
+    <string name="peek_friends_delete">PeekParty verilerini sil</string>
+    <string name="peek_friends_delete_desc">Arkadaş kodunuzu, arkadaşlarınızı ve isteklerinizi sunucudan kaldırır</string>
+    <string name="peek_friends_delete_confirm">Arkadaş kodunuz, arkadaşlarınız ve bekleyen istekleriniz sunucudan silinir. Ardından yeni bir kod alırsınız.</string>
+    <string name="peek_friends_deleted">PeekParty verileri silindi</string>
+    <string name="peek_party_rooms">Odalar</string>
+    <string name="peek_friends_invite_decline">Reddet</string>
+    <string name="peek_friends_invite_declined">%1$s davetinizi reddetti</string>
+    <string name="peek_party_based_on">Metrolist'in Listen Together özelliğine dayanır</string>
+    <string name="peek_friends_share_link">Bağlantıyı paylaş</string>
+    <string name="peek_friends_link_title">Arkadaş eklensin mi?</string>
+    <string name="peek_friends_link_text">%1$s kişisine arkadaşlık isteği gönderilsin mi?</string>
+    <string name="peek_precache_upcoming">Önceden önbelleğe al</string>
+    <string name="peek_precache_upcoming_desc">Müzik çalarken sıradaki şarkıları indirir, böylece zayıf bağlantıda da çalma devam eder</string>
+    <string name="peek_precache_upcoming_off">Kapalı</string>
+    <string name="peek_precache_upcoming_count">Sonraki %1$d şarkı</string>
+    <string name="peek_precache_upcoming_one">Sonraki şarkı</string>
+    <string name="peek_precache_wifi_only">Yalnızca Wi-Fi'da önceden önbelleğe al</string>
+    <string name="peek_precache_wifi_only_desc">Henüz çalmayan şarkılar için mobil veri kullanma</string>
+    <string name="peek_listen_together_location_germany">Almanya</string>
+    <string name="peek_translation_rate_limited">Google Çeviri şu anda ağınızdan gelen istekleri engelliyor. Daha sonra tekrar deneyin veya VPN kullanın.</string>
+    <string name="peek_download_cancel_title">İndirme iptal edilsin mi?</string>
+    <string name="peek_download_cancel_message">Zaten indirilmiş şarkılar cihazınızda kalır.</string>
+    <string name="peek_download_cancel_confirm">İndirmeyi durdur</string>
+    <string name="peek_download_cancel_keep">İndirmeye devam et</string>
+    <string name="peek_canvas_desktop_desc">Varsa Spotify Canvas ve YouTube müzik videolarını sessiz olarak oynatıcının arkasında veya kapakta oynatır. Daha fazla depolama ve veri kullanır.</string>
+    <string name="peek_canvas_placement">Canvas konumu</string>
+    <string name="peek_canvas_placement_page">Tüm oynatıcı</string>
+    <string name="peek_canvas_placement_cover">Yalnızca kapak</string>
+    <string name="peek_lyrics_view_off">Kapalı</string>
+    <string name="peek_youtube_canvas_desktop_hint">Masaüstünde, özellikle 480p üzerinde daha fazla işlem gücü gerekir. Video takılırsa daha düşük bir kalite seçin.</string>
+    <string name="peek_animated_covers_desktop_desc">Varsa Apple Music'ten hareketli albüm kapaklarını gösterir. Daha fazla depolama ve veri kullanır.</string>
+    <string name="peek_listen_together_ios_user">iPhone kullanıcısı</string>
+    <string name="peek_youtube_canvas_ios_hint">iPhone'da yalnızca YouTube videonun H.264 sürümünü sunduğunda çalışır. Birçok videoda bu yoktur, bu yüzden genellikle kapalı kalır. 720p'ye kadar.</string>
+</resources>

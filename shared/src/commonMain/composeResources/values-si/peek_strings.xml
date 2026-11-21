@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <!-- Translators: Hint on the last onboarding page. -->
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <!-- Translators: Description on the first onboarding page. -->
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <!-- Translators: Onboarding page about audio. -->
+    <!-- Translators: Onboarding page about content filters. -->
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+</resources>
