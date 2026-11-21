@@ -62,7 +62,7 @@ jobs:
     name: Validate iOS
     if: inputs.run-verification
     runs-on: macos-latest # PeekMusic: GitHub-hosted, we have no Blacksmith runners
-    timeout-minutes: 45
+    timeout-minutes: 90 # PeekMusic: the simulator tests on GitHub's macOS runner ran past 45 min (run 44752241049)
     env:
       LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
       LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}

@@ -531,6 +531,10 @@ fun PlayerScreen(
         ?: remember { mutableStateOf(false) }
     val playbackResource by playerConnection?.currentPlaybackResource?.collectWhilePlayerActive(isPlayerContentVisible && isScreenVisible)
         ?: remember { mutableStateOf(null) }
+    val videoPlaybackResource by playerConnection?.videoPlaybackResource?.collectWhilePlayerActive(
+        isPlayerContentVisible && isScreenVisible,
+    )
+        ?: remember { mutableStateOf(null) }
 
     LaunchedEffect(isPlayerContentVisible, isScreenVisible, playbackResource?.videoId, currentSong?.id) {
         val mediaId = playerConnection?.currentPlaybackResource?.value?.videoId
@@ -579,6 +583,8 @@ fun PlayerScreen(
                 videoPlaybackEnabled = Settings.shared.musicVideoPlaybackEnabled,
                 songId = currentSong?.id,
                 musicVideoType = currentSong?.musicVideoType,
+                isLocalSong = currentSong?.isLocal == true,
+                isUploadedSong = currentSong?.isUploaded == true,
             )
 
     var showPlayerMenu by remember { mutableStateOf(false) }
@@ -735,7 +741,7 @@ fun PlayerScreen(
         shouldShowMusicVideoSurface(
             isVideoModeActive = isVideoModeActive,
             isVideoViewerVisible = isVideoViewerVisible,
-            hasVideo = playbackResource?.hasVideo == true,
+            hasVideo = videoPlaybackResource?.hasVideo == true,
             presentationAllowed = playerContentState.isVisible,
         )
     val showVideoSurface =
@@ -749,13 +755,23 @@ fun PlayerScreen(
             !uiState.isLyricsVisible
     val textBackgroundColor by animateColorAsState(
         targetValue =
-            if (isCanvasBackdropVisible) {
+            if (
+                isCanvasBackdropVisible ||
+                (
+                    usesFullscreenThumbnail && currentSong?.displayThumbnail != null && !uiState.isLyricsVisible &&
+                        !(
+                            isLandscape && !showVideoSurface && playerBackground == PlayerBackgroundStyle.LIQUID &&
+                                MaterialTheme.colorScheme.surface.luminance() >= 0.5f
+                        )
+                )
+            ) {
                 Color.White
             } else {
                 when (playerBackground) {
                     PlayerBackgroundStyle.BLURRED_ARTWORK,
-                    PlayerBackgroundStyle.LIQUID,
                     -> if (currentSong?.displayThumbnail != null) Color.White else MaterialTheme.colorScheme.onSurface
+
+                    PlayerBackgroundStyle.LIQUID -> if (MaterialTheme.colorScheme.surface.luminance() >= 0.5f) Color.Black else Color.White
 
                     PlayerBackgroundStyle.GRADIENT,
                     PlayerBackgroundStyle.ANIMATED_GRADIENT,
@@ -900,6 +916,19 @@ fun PlayerScreen(
                     initialAnchor = COLLAPSED_ANCHOR,
                     isDismissible = false,
                 )
+
+            fun openQueueSheet() {
+                if (!useLandscapeLayout && uiState.isLyricsExpanded) {
+                    viewModel.setLyricsVisible(false)
+                }
+                queueSheetState.expandSoft()
+            }
+
+            LaunchedEffect(useLandscapeLayout, queueSheetState.isSettledExpanded) {
+                if (!useLandscapeLayout && queueSheetState.isSettledExpanded && uiState.isLyricsExpanded) {
+                    viewModel.setLyricsVisible(false)
+                }
+            }
 
             LaunchedEffect(useLandscapeLayout, uiState.isLyricsExpanded) {
                 if (useLandscapeLayout && uiState.isLyricsExpanded) {
@@ -1105,6 +1134,7 @@ fun PlayerScreen(
                                         artworkWhiteAlpha = 0.12f,
                                         isLiquid = isLiquid,
                                         visible = uiState.isLyricsVisible,
+                                        foregroundColor = textBackgroundColor,
                                     )
                                 }
                             }
@@ -1281,7 +1311,7 @@ fun PlayerScreen(
                                     sleepTimerState = sleepTimerState,
                                     onShowSleepTimer = { showSleepTimerDialog = true },
                                     onShowLyricsMenu = { showLyricsMenu = true },
-                                    onOpenQueue = { queueSheetState.expandSoft() },
+                                    onOpenQueue = ::openQueueSheet,
                                     onShowPlayerMenu = { showPlayerMenu = true },
                                     onIsLyricsVisibleChange = { visible -> viewModel.setLyricsVisible(visible) },
                                     onShareSong = { shareDisplayedSong() },
@@ -1328,7 +1358,7 @@ fun PlayerScreen(
                                     sleepTimerState = sleepTimerState,
                                     onShowSleepTimer = { showSleepTimerDialog = true },
                                     onShowLyricsMenu = { showLyricsMenu = true },
-                                    onOpenQueue = { queueSheetState.expandSoft() },
+                                    onOpenQueue = ::openQueueSheet,
                                     onShowPlayerMenu = { showPlayerMenu = true },
                                     onIsLyricsVisibleChange = { visible -> viewModel.setLyricsVisible(visible) },
                                     onShareSong = { shareDisplayedSong() },
@@ -1794,7 +1824,7 @@ fun PlayerScreen(
                                                         currentSong?.displayThumbnail != null &&
                                                         !(
                                                             isVideoModeActive &&
-                                                                playbackResource?.hasVideo == true &&
+                                                                videoPlaybackResource?.hasVideo == true &&
                                                                 bottomSheetState.isCollapsed
                                                         )
                                                     ) {
@@ -2013,7 +2043,17 @@ fun PlayerScreen(
                                                             } else {
                                                                 MaterialTheme.typography.titleMedium
                                                             },
-                                                        color = textBackgroundColor.copy(alpha = 0.7f),
+                                                        color =
+                                                            textBackgroundColor.copy(
+                                                                alpha =
+                                                                    if (playerBackground == PlayerBackgroundStyle.LIQUID &&
+                                                                        MaterialTheme.colorScheme.surface.luminance() >= 0.5f
+                                                                    ) {
+                                                                        1f
+                                                                    } else {
+                                                                        0.7f
+                                                                    },
+                                                            ),
                                                         modifier =
                                                             Modifier
                                                                 .then(
@@ -2270,7 +2310,7 @@ fun PlayerScreen(
                                 }
 
                                 playerControlsTransition.AnimatedVisibility(
-                                    visible = { (expanded, minimalUi) -> !expanded && !minimalUi },
+                                    visible = { (_, minimalUi) -> !minimalUi },
                                     enter = canvasControlsEnter,
                                     exit = canvasControlsExit,
                                 ) {
@@ -2292,7 +2332,7 @@ fun PlayerScreen(
 
                     if (!useLandscapeLayout) {
                         playerControlsTransition.AnimatedVisibility(
-                            visible = { (expanded, minimalUi) -> !expanded && !minimalUi },
+                            visible = { (_, minimalUi) -> !minimalUi },
                             enter =
                                 fadeIn(canvasEffectsSpec) +
                                     slideInVertically(canvasSlideSpec) { it },
@@ -2351,7 +2391,7 @@ fun PlayerScreen(
                                             lyricsText = stringResource(Res.string.lyrics),
                                             onQueueClick = {
                                                 hapticManager.perform(HapticEvent.PRESS)
-                                                queueSheetState.expandSoft()
+                                                openQueueSheet()
                                             },
                                             onLyricsClick = {
                                                 hapticManager.toggle(!uiState.isLyricsVisible)
@@ -2369,7 +2409,7 @@ fun PlayerScreen(
                                             repeatMode = repeatMode,
                                             onToggleRepeat = viewModel::toggleRepeat,
                                             navigationBarBottomPadding = navigationBarBottomPadding,
-                                            onOpenQueue = { queueSheetState.expandSoft() },
+                                            onOpenQueue = ::openQueueSheet,
                                             onShowPlayerMenu = { showPlayerMenu = true },
                                             isLyricsVisible = uiState.isLyricsVisible,
                                             onIsLyricsVisibleChange = { visible -> viewModel.setLyricsVisible(visible) },

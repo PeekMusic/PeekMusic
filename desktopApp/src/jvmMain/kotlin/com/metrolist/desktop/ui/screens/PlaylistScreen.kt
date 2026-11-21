@@ -101,6 +101,7 @@ import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.canEdit
 import com.metrolist.shared.model.filterForPlaylistSearch
 import com.metrolist.shared.model.isReordering
+import com.metrolist.shared.model.playlistOccurrenceIdentity
 import com.metrolist.shared.model.playlistOccurrenceKey
 import com.metrolist.shared.model.sortedForPlaylist
 import com.metrolist.shared.peek.peekLogoPainter
@@ -132,6 +133,7 @@ import com.metrolist.shared.ui.selection.rememberSelectionState
 import com.metrolist.shared.utils.XdgUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.getString
@@ -401,6 +403,27 @@ fun PlaylistScreen(
             }
     }
     val navigator = LocalNavigator.current
+    val playbackScope = rememberCoroutineScope()
+    val latestPlaylistPlayback = remember(route) { mutableStateOf<Any?>(null) }
+
+    fun withCompletePlaylistPlayback(action: (List<SongItem>) -> Unit) {
+        if (!playbackScope.isActive || navigator.state.currentRoute != route) return
+        val request = Any()
+        latestPlaylistPlayback.value = request
+        val generation = PlayerState.explicitPlaybackGeneration
+        val navigationChange = navigator.state.containers.change
+        PlaylistAlbumState.withCompletePlaylist { all ->
+            if (
+                playbackScope.isActive &&
+                navigator.state.currentRoute == route &&
+                navigator.state.containers.change === navigationChange &&
+                latestPlaylistPlayback.value === request &&
+                PlayerState.explicitPlaybackGeneration == generation
+            ) {
+                action(all)
+            }
+        }
+    }
 
     Box(
         Modifier
@@ -459,7 +482,7 @@ fun PlaylistScreen(
             onEdit = null,
             text = playlistContentText(),
             onPlayAll = {
-                PlaylistAlbumState.withCompletePlaylist { all ->
+                withCompletePlaylistPlayback { all ->
                     val queue =
                         all
                             .sortedForPlaylist(
@@ -471,7 +494,7 @@ fun PlaylistScreen(
                 }
             },
             onShuffle = {
-                PlaylistAlbumState.withCompletePlaylist { all ->
+                withCompletePlaylistPlayback { all ->
                     PlayerState.shuffleQueue(
                         all
                             .sortedForPlaylist(
@@ -495,7 +518,7 @@ fun PlaylistScreen(
                 } else if (selection.active) {
                     selection.toggle(occurrenceKey(song))
                 } else {
-                    PlaylistAlbumState.withCompletePlaylist { all ->
+                    withCompletePlaylistPlayback { all ->
                         PlayerState.playTrack(
                             song,
                             if (reorderMode) all else all.sortedForPlaylist(sortMode, sortDirection, listeningTimes = listeningTimes),
@@ -532,6 +555,8 @@ fun PlaylistScreen(
             listState = listState,
             contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp),
             currentSongId = PlayerState.currentTrack?.id,
+            currentQueueItemId = PlayerState.currentTrack?.originalQueueItemId,
+            currentSongOccurrenceKey = PlayerState.currentTrack?.playlistOccurrenceIdentity(),
             isPlaying = PlayerState.isPlaying,
             suggestions = suggestions.takeIf { searchQuery.isBlank() && !(songs.isEmpty() && isEditable) }.orEmpty(),
             onArtistClick = ArtistState::fetchArtistData,

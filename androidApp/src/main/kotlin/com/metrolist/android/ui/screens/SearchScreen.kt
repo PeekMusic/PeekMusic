@@ -128,6 +128,7 @@ import com.metrolist.shared.ui.navigation.Screen
 import com.metrolist.shared.ui.screens.SearchScreen
 import com.metrolist.shared.ui.screens.searchScreenText
 import com.metrolist.shared.utils.ShareUrls
+import com.metrolist.shared.utils.parseYouTubeStartPositionMs
 import com.metrolist.shared.utils.parseYouTubeUrl
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
@@ -276,7 +277,7 @@ fun SearchScreen(
                             album = null,
                             duration = info?.durationSeconds,
                         )
-                    playerConnection?.playSong(song, "")
+                    playerConnection?.playSong(song, "", startPositionMs = parseYouTubeStartPositionMs(text))
                 }
                 searchViewModel.shared.resetSearch()
                 true

@@ -12,6 +12,7 @@ import com.metrolist.shared.peek.PeekLinks
 import com.metrolist.shared.ui.components.CollectionPreviews
 import com.metrolist.shared.ui.navigation.Screen
 import com.metrolist.shared.ui.settings.SettingsPageId
+import com.metrolist.shared.utils.parseYouTubePodcastId
 import io.ktor.http.URLProtocol
 import io.ktor.http.Url
 
@@ -175,9 +176,20 @@ private fun partyInvitation(code: String?): MobileDeepLink? =
         MobileDeepLink.Destination(MobileRoute.ListenTogether(it.uppercase()))
     }
 
+internal fun resolveMobilePodcastBrowseLink(value: String): MobileRoute.Podcast? {
+    val link = value.trim()
+    if (link.startsWith("metrolist://", ignoreCase = true)) {
+        // Explicit app routes keep their own destination/id; "open" just wraps a media link.
+        val path = link.substringAfter("://").trimStart('/').substringBefore('?')
+        if (!path.equals("open", ignoreCase = true)) return null
+    }
+    return parseYouTubePodcastId(link)?.let { MobileRoute.Podcast(it) }
+}
+
 internal fun resolveMobileDeepLink(link: String): MobileDeepLink? {
     val callback = PeekLinks.toUpstream(link)
     parseListenTogetherInvitation(callback)?.let { return MobileDeepLink.Destination(MobileRoute.ListenTogether(it)) }
+    resolveMobilePodcastBrowseLink(callback)?.let { return MobileDeepLink.Destination(it) }
     val uri = runCatching { Url(callback.replace("metrolist://", "https://app.metrolist/")) }.getOrNull()
     val path = uri?.encodedPath?.trim('/') ?: callback.removePrefix("metrolist://").substringBefore('?').trim('/')
     if (!callback.startsWith("metrolist://")) {

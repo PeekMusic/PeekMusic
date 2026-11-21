@@ -273,7 +273,7 @@ class AudioCacheManager(
     suspend fun isDownloaded(songId: String): Boolean =
         withContext(Dispatchers.IO) {
             val entry = database.dao().cachedAudio(songId) ?: return@withContext false
-            entry.kind == KIND_DOWNLOAD && audioAvailable(entry.filePath)
+            entry.kind == KIND_DOWNLOAD && downloadAvailable(entry.filePath)
         }
 
     suspend fun downloadedIds(songIds: Collection<String>): Set<String> =
@@ -283,7 +283,7 @@ class AudioCacheManager(
             candidates
                 .chunked(900)
                 .flatMap { database.dao().cachedAudioCandidates(it, KIND_DOWNLOAD) }
-                .filter { audioAvailable(it.filePath) }
+                .filter { downloadAvailable(it.filePath) }
                 .mapTo(mutableSetOf()) { it.songId }
         }
 
@@ -947,7 +947,9 @@ class AudioCacheManager(
         allowCacheDownload: Boolean = false,
     ) {
         val existing = database.dao().cachedAudio(song.id)
-        if (existing?.kind == kind && audioAvailable(existing.filePath)) {
+        if (existing?.kind == kind &&
+            (if (kind == KIND_DOWNLOAD) downloadAvailable(existing.filePath) else audioAvailable(existing.filePath))
+        ) {
             if (kind == KIND_DOWNLOAD) {
                 val url = existing.thumbnailUrl ?: song.thumbnail
                 if (url != existing.thumbnailUrl) database.dao().upsert(existing.copy(thumbnailUrl = url))
@@ -1627,6 +1629,8 @@ class AudioCacheManager(
                 read == buffer.size
             } == true
         }.getOrDefault(false)
+
+    private fun downloadAvailable(path: String): Boolean = audioAvailable(path) && (isContentUri(path) || File(path).canRead())
 
     // Keep unreadable files indexed so restored permissions or remounted storage can recover them.
     private fun audioMissing(path: String): Boolean {

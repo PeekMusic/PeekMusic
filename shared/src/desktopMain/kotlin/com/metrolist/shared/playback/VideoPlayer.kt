@@ -601,7 +601,7 @@ actual class VideoPlayer actual constructor(
             } catch (e: Exception) {
                 if (loadJobId == currentLoadJobId) {
                     PlaybackEventLog.error(PlaybackEventKind.PLAYER, "VideoPlayer", "Video preparation failed", e)
-                    Logger.w("VideoPlayer", "prepare failed type=${e::class.simpleName ?: "unknown"}")
+                    Logger.w("VideoPlayer", "prepare failed type=${e::class.simpleName ?: "unknown"}", e)
                 }
                 synchronized(lifecycleLock) {
                     if (loadJobId == currentLoadJobId) close()
@@ -648,7 +648,7 @@ actual class VideoPlayer actual constructor(
                                     }
                                 } catch (e: Exception) {
                                     PlaybackEventLog.error(PlaybackEventKind.PLAYER, "VideoPlayer", "Initial video seek failed", e)
-                                    Logger.w("VideoPlayer", "Initial seek failed type=${e::class.simpleName ?: "unknown"}")
+                                    Logger.w("VideoPlayer", "Initial seek failed type=${e::class.simpleName ?: "unknown"}", e)
                                 }
                             }
                             if (looping) resetLoopClock(startMs)
@@ -673,7 +673,7 @@ actual class VideoPlayer actual constructor(
                                     Logger.d("VideoPlayer", "User seek landed at ${landedMs}ms")
                                 } catch (e: Exception) {
                                     PlaybackEventLog.error(PlaybackEventKind.PLAYER, "VideoPlayer", "Video seek failed", e)
-                                    Logger.w("VideoPlayer", "Seek failed type=${e::class.simpleName ?: "unknown"}")
+                                    Logger.w("VideoPlayer", "Seek failed type=${e::class.simpleName ?: "unknown"}", e)
                                 }
                                 synchronized(lifecycleLock) {
                                     if (loadJobId == playbackLoadJobId) onSeekLanded?.invoke(landedMs)
@@ -695,7 +695,7 @@ actual class VideoPlayer actual constructor(
                                         initialVideoFrameRendered = false
                                     } catch (e: Exception) {
                                         PlaybackEventLog.error(PlaybackEventKind.PLAYER, "VideoPlayer", "Video loop restart failed", e)
-                                        Logger.w("VideoPlayer", "Loop restart failed type=${e::class.simpleName ?: "unknown"}")
+                                        Logger.w("VideoPlayer", "Loop restart failed type=${e::class.simpleName ?: "unknown"}", e)
                                     }
                                 }
                                 if (frame == null && isRunning && !isPaused) {
@@ -768,7 +768,7 @@ actual class VideoPlayer actual constructor(
                         Logger.d("VideoPlayer", "Decode loop interrupted")
                     } catch (e: Exception) {
                         PlaybackEventLog.error(PlaybackEventKind.PLAYER, "VideoPlayer", "Video decode loop failed", e)
-                        Logger.e("VideoPlayer", "Decode loop failed type=${e::class.simpleName ?: "unknown"}")
+                        Logger.e("VideoPlayer", "Decode loop failed type=${e::class.simpleName ?: "unknown"}", e)
                     } finally {
                         Logger.i("VideoPlayer", "decodeThread exiting (loadJobId matches=${loadJobId == playbackLoadJobId})")
                         synchronized(lifecycleLock) {

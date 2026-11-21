@@ -9,6 +9,7 @@ import com.metrolist.android.playback.PlayerConnection
 import com.metrolist.android.playback.roomNeedsPlaybackService
 import com.metrolist.shared.generated.resources.Res
 import com.metrolist.shared.generated.resources.unknown_artist
+import com.metrolist.shared.listentogether.ListenTogetherConnectionState
 import com.metrolist.shared.listentogether.ListenTogetherLogLevel
 import com.metrolist.shared.listentogether.ListenTogetherLogger
 import com.metrolist.shared.listentogether.ListenTogetherManager
@@ -66,6 +67,10 @@ object AndroidListenTogetherManager {
 
     private val _playbackRequired = MutableStateFlow(false)
     val playbackRequired: StateFlow<Boolean> = _playbackRequired.asStateFlow()
+    private val _foregroundRequired = MutableStateFlow(false)
+
+    // A room needs foreground ownership even when the local player is paused or idle.
+    val foregroundRequired: StateFlow<Boolean> = _foregroundRequired.asStateFlow()
 
     private var managerObserverJob: Job? = null
     private var notifications: ListenTogetherNotifications? = null
@@ -88,8 +93,14 @@ object AndroidListenTogetherManager {
                     manager.isInRoom,
                     manager.connectionState,
                     manager.roomRequestPending,
-                ) { role, inRoom, connection, pending ->
-                    (role == ListenTogetherRoomRole.GUEST && inRoom) to roomNeedsPlaybackService(inRoom, pending, connection)
+                    manager.persistedRoomSession,
+                ) { role, inRoom, connection, pending, persistedSession ->
+                    (role == ListenTogetherRoomRole.GUEST && inRoom) to
+                        roomNeedsPlaybackService(
+                            inRoom,
+                            pending || (persistedSession && connection != ListenTogetherConnectionState.ERROR),
+                            connection,
+                        )
                 }.collect { (locked, required) ->
                     // PeekMusic: a guest may have muted the in-app volume; there is no slider to undo that later.
                     if (_isGuestPlaybackLocked.value && !locked) {
@@ -98,6 +109,7 @@ object AndroidListenTogetherManager {
                     }
                     _isGuestPlaybackLocked.value = locked
                     _playbackRequired.value = required
+                    _foregroundRequired.value = required || manager.hasActiveOrPendingRoom
                 }
             }
     }

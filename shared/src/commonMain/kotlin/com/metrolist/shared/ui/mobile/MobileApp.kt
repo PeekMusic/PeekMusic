@@ -1198,6 +1198,10 @@ fun MobileApp(
                                     },
                                     onSearch = { query ->
                                         cancelVideoLookup()
+                                        resolveMobilePodcastBrowseLink(query)?.let { route ->
+                                            open(route)
+                                            return@SearchScreen
+                                        }
                                         when (val parsed = parseYouTubeUrl(query)) {
                                             is YouTubeUrlParser.ParsedUrl.Video -> {
                                                 playVideo(parsed.id)
@@ -1272,6 +1276,8 @@ fun MobileApp(
                                     database = database,
                                     viewModel = libraryViewModel,
                                     playbackController = playbackController,
+                                    guestPlaybackLocked = isListenTogetherGuest,
+                                    onSwipeFeedback = onSwipeFeedback,
                                     onItemClick = ::openItem,
                                     onItemLongClick = { menuItem = it to null },
                                     onAutoPlaylistClick = { type, title -> open(MobileRoute.SongCollection(type, title)) },
@@ -1757,6 +1763,7 @@ fun MobileApp(
                                         fallbackTitle = route.title,
                                         database = database,
                                         playbackController = playbackController,
+                                        onSaveError = onSwipeFeedback,
                                         onBack = ::back,
                                         onShare = { scope.launch { clipboard.setText(it) } },
                                         onSongMenu = { menuItem = it to null },
@@ -1815,6 +1822,7 @@ fun MobileApp(
                                     fallbackTitle = route.title,
                                     database = database,
                                     playbackController = playbackController,
+                                    onSaveError = onSwipeFeedback,
                                     onBack = ::back,
                                     onShare = { scope.launch { clipboard.setText(it) } },
                                     onSongMenu = { menuItem = it to null },
