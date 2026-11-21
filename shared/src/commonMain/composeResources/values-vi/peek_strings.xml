@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Có lời bài hát không đồng bộ</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Âm thanh</string>
+    <string name="peek_settings_audio_description">Chất lượng, âm thanh, chuyển tiếp mượt và truyền</string>
+    <string name="peek_settings_audio_description_no_cast">Chất lượng, âm thanh và chuyển tiếp mượt</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Chia sẻ tệp nhật ký cục bộ, ví dụ kèm báo cáo lỗi</string>
+    <string name="peek_settings_player_description">Thiết kế, nền và trình phát mini</string>
+    <string name="peek_settings_home_library_description">Mục trang chủ, danh sách phát tự động và mục đã ẩn</string>
+    <string name="peek_settings_translation">Dịch lời bài hát</string>
+    <string name="peek_settings_translation_description">Tự động dịch lời bài hát bằng Google Dịch</string>
+    <string name="peek_settings_appearance_description">Chủ đề, màu sắc, phông chữ và mật độ</string>
+    <string name="peek_settings_queue_description">Phát ngẫu nhiên, bài tương tự, bài trùng lặp và tải xuống</string>
+    <string name="peek_settings_privacy_description">Lịch sử nghe và tìm kiếm</string>
+    <string name="peek_translation_failed">Dịch thất bại, hãy thử lại sau</string>
+    <string name="peek_about_developer_role">Nhà phát triển PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Video</string>
+    <string name="peek_video_filter_description">Video nào hiển thị trong tìm kiếm, danh sách phát và đề xuất. Nút chuyển âm thanh/video trong trình phát vẫn giữ nguyên</string>
+    <string name="peek_video_filter_all">Tất cả video</string>
+    <string name="peek_video_filter_music">Chỉ video ca nhạc</string>
+    <string name="peek_video_filter_none">Không có video</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Đi kèm lời bài hát từ %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Thư viện PeekMusic 1.x của bạn đã ở đây</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Chúng tôi đã tìm thấy thư viện PeekMusic 1.x của bạn. Chuyển danh sách phát, lịch sử, lượt thích và dữ liệu thư viện sang phiên bản này. Nếu chuyển thất bại, bạn có thể khôi phục cơ sở dữ liệu gốc.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Tài khoản, danh sách phát, lịch sử, lượt thích và dữ liệu thư viện của bạn đã sẵn sàng trong PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Danh sách phát, lịch sử, lượt thích và dữ liệu thư viện của bạn đã sẵn sàng trong PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Mở Cài đặt từ menu ở góc trên bên phải để tùy chỉnh PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Mới</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Vài lựa chọn nhanh, và PeekMusic sẽ trông và nghe đúng như bạn thích.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Ngôn ngữ và khu vực</string>
+    <string name="peek_onboarding_language_description">Chọn ngôn ngữ ứng dụng và nơi đề xuất của bạn đến từ đâu.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Theo phong cách của bạn</string>
+    <string name="peek_onboarding_look_description">Sáng, tối hoặc đen tuyền, với màu từ hình nền hoặc ảnh bìa đang phát.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Trình phát</string>
+    <string name="peek_onboarding_player_description">Chọn thiết kế trình phát, nền và giao diện trình phát mini.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Lời bài hát và Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek hiển thị dòng đang được hát ngay trong trình phát. Bản dịch và chữ Latin hiện bên dưới.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas và video</string>
+    <string name="peek_onboarding_artwork_description">Ảnh bìa động, vòng lặp Canvas và video ca nhạc với chất lượng bạn muốn.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Âm thanh</string>
+    <string name="peek_onboarding_sound_description">Chất lượng âm thanh, âm lượng đều giữa các bài và chuyển tiếp mượt mà.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Những gì bạn thấy</string>
+    <string name="peek_onboarding_content_description">Ẩn những gì bạn không bao giờ muốn thấy trong tìm kiếm, đề xuất và radio.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Chất lượng cao</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, ảnh bìa động, video nghệ sĩ và video ca nhạc ở 1080p. Dùng nhiều dữ liệu hơn. Mỗi mục có thể chỉnh riêng trong Cài đặt.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Tắt</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Không tìm thấy. Đăng nhập Spotify để tìm được nhiều hơn.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Không có cho bài này</string>
+    <string name="peek_friends_title">Bạn bè</string>
+    <string name="peek_friends_your_code">Mã bạn bè của bạn</string>
+    <string name="peek_friends_code_hint">Bạn bè thêm bạn bằng mã này.</string>
+    <string name="peek_friends_connecting">Đang kết nối…</string>
+    <string name="peek_friends_copy_code">Sao chép mã</string>
+    <string name="peek_friends_add_label">Mã bạn bè</string>
+    <string name="peek_friends_add">Thêm</string>
+    <string name="peek_friends_requests">Lời mời kết bạn</string>
+    <string name="peek_friends_accept">Chấp nhận</string>
+    <string name="peek_friends_decline">Từ chối</string>
+    <string name="peek_friends_sent">Lời mời đã gửi</string>
+    <string name="peek_friends_withdraw">Rút lại</string>
+    <string name="peek_friends_waiting">Đang chờ xác nhận</string>
+    <string name="peek_friends_empty">Chưa có bạn bè. Chia sẻ mã của bạn hoặc thêm mã của bạn bè.</string>
+    <string name="peek_friends_online">Trực tuyến</string>
+    <string name="peek_friends_offline">Ngoại tuyến</string>
+    <string name="peek_friends_in_party">Đang trong buổi tiệc</string>
+    <string name="peek_friends_join">Tham gia</string>
+    <string name="peek_friends_remove">Xóa bạn</string>
+    <string name="peek_friends_remove_confirm">Xóa %1$s khỏi bạn bè?</string>
+    <string name="peek_friends_request_sent">Đã gửi lời mời kết bạn tới %1$s</string>
+    <string name="peek_friends_added">Bạn và %1$s giờ đã là bạn bè</string>
+    <string name="peek_friends_request_received">Lời mời kết bạn mới từ %1$s</string>
+    <string name="peek_friends_error_unknown">Không ai có mã bạn bè này</string>
+    <string name="peek_friends_error_own">Đây là mã bạn bè của chính bạn</string>
+    <string name="peek_friends_error_limit">Quá nhiều lần thử. Hãy thử lại sau một phút.</string>
+    <string name="peek_friends_error_offline">Dịch vụ bạn bè hiện chưa kết nối</string>
+    <string name="peek_friends_add_failed">Không thể thêm bạn: %1$s</string>
+    <string name="peek_friends_invite_title">Lời mời dự tiệc</string>
+    <string name="peek_friends_invite_text">%1$s mời bạn tham gia buổi tiệc.</string>
+    <string name="peek_friends_invite">Mời bạn bè</string>
+    <string name="peek_friends_invite_action">Mời</string>
+    <string name="peek_friends_invited">Đã gửi lời mời tới %1$s</string>
+    <string name="peek_friends_invite_none">Hiện không có bạn bè nào trực tuyến</string>
+    <string name="peek_friends_delete">Xóa dữ liệu PeekParty</string>
+    <string name="peek_friends_delete_desc">Xóa mã bạn bè, bạn bè và lời mời của bạn khỏi máy chủ</string>
+    <string name="peek_friends_delete_confirm">Mã bạn bè, bạn bè và lời mời đang chờ sẽ bị xóa khỏi máy chủ. Sau đó bạn sẽ nhận mã mới.</string>
+    <string name="peek_friends_deleted">Đã xóa dữ liệu PeekParty</string>
+    <string name="peek_party_rooms">Phòng</string>
+    <string name="peek_friends_invite_decline">Từ chối</string>
+    <string name="peek_friends_invite_declined">%1$s đã từ chối lời mời</string>
+    <string name="peek_party_based_on">Dựa trên Listen Together của Metrolist</string>
+    <string name="peek_friends_share_link">Chia sẻ liên kết</string>
+    <string name="peek_friends_link_title">Thêm bạn?</string>
+    <string name="peek_friends_link_text">Gửi lời mời kết bạn tới %1$s?</string>
+    <string name="peek_precache_upcoming">Lưu trước</string>
+    <string name="peek_precache_upcoming_desc">Tải các bài tiếp theo trong hàng đợi khi đang phát, để nhạc vẫn chạy khi mạng yếu</string>
+    <string name="peek_precache_upcoming_off">Tắt</string>
+    <string name="peek_precache_upcoming_count">%1$d bài tiếp theo</string>
+    <string name="peek_precache_upcoming_one">Bài tiếp theo</string>
+    <string name="peek_precache_wifi_only">Chỉ lưu trước qua Wi-Fi</string>
+    <string name="peek_precache_wifi_only_desc">Không dùng dữ liệu di động cho bài chưa phát</string>
+    <string name="peek_listen_together_location_germany">Đức</string>
+    <string name="peek_translation_rate_limited">Google Dịch đang chặn yêu cầu từ mạng của bạn. Hãy thử lại sau hoặc dùng VPN.</string>
+    <string name="peek_download_cancel_title">Hủy tải xuống?</string>
+    <string name="peek_download_cancel_message">Các bài đã tải vẫn còn trên thiết bị.</string>
+    <string name="peek_download_cancel_confirm">Dừng tải xuống</string>
+    <string name="peek_download_cancel_keep">Tiếp tục tải</string>
+    <string name="peek_canvas_desktop_desc">Phát Spotify Canvas và video ca nhạc YouTube không tiếng phía sau trình phát hoặc trên ảnh bìa khi có. Dùng nhiều bộ nhớ và dữ liệu hơn.</string>
+    <string name="peek_canvas_placement">Vị trí Canvas</string>
+    <string name="peek_canvas_placement_page">Toàn bộ trình phát</string>
+    <string name="peek_canvas_placement_cover">Chỉ ảnh bìa</string>
+    <string name="peek_lyrics_view_off">Tắt</string>
+    <string name="peek_youtube_canvas_desktop_hint">Trên máy tính cần hiệu năng cao hơn, nhất là trên 480p. Nếu video giật, hãy chọn chất lượng thấp hơn.</string>
+    <string name="peek_animated_covers_desktop_desc">Hiển thị ảnh bìa album động từ Apple Music khi có. Dùng nhiều bộ nhớ và dữ liệu hơn.</string>
+    <string name="peek_listen_together_ios_user">Người dùng iPhone</string>
+    <string name="peek_youtube_canvas_ios_hint">Trên iPhone, tính năng này chỉ hoạt động khi YouTube cung cấp bản H.264 của video. Nhiều video không có, nên thường không hiển thị. Tối đa 720p.</string>
+</resources>

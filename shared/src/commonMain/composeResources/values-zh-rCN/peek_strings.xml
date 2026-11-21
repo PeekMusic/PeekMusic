@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">有未同步的歌词</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">音频</string>
+    <string name="peek_settings_audio_description">音质、声音、交叉淡入淡出和投放</string>
+    <string name="peek_settings_audio_description_no_cast">音质、声音和交叉淡入淡出</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">分享本地日志文件，例如随错误报告一起提交</string>
+    <string name="peek_settings_player_description">设计、背景和迷你播放器</string>
+    <string name="peek_settings_home_library_description">首页板块、自动歌单和已隐藏项目</string>
+    <string name="peek_settings_translation">歌词翻译</string>
+    <string name="peek_settings_translation_description">使用 Google 翻译自动翻译歌词</string>
+    <string name="peek_settings_appearance_description">主题、颜色、字体和密度</string>
+    <string name="peek_settings_queue_description">随机播放、相似歌曲、重复项和下载</string>
+    <string name="peek_settings_privacy_description">收听记录和搜索记录</string>
+    <string name="peek_translation_failed">翻译失败，请稍后重试</string>
+    <string name="peek_about_developer_role">PeekMusic 开发者</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">视频</string>
+    <string name="peek_video_filter_description">在搜索、歌单和推荐中显示哪些视频。播放器中的音频/视频切换保持不变</string>
+    <string name="peek_video_filter_all">所有视频</string>
+    <string name="peek_video_filter_music">仅音乐视频</string>
+    <string name="peek_video_filter_none">不显示视频</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">随 %1$s 的歌词提供</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">已找到你的 PeekMusic 1.x 音乐库</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">我们找到了你在 PeekMusic 1.x 中的音乐库。将歌单、记录、喜欢的内容和音乐库数据迁移到此版本。如果迁移失败，你可以恢复原始数据库。</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">你的账号、歌单、记录、喜欢的内容和音乐库数据已在 PeekMusic 2 中准备就绪。</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">你的歌单、记录、喜欢的内容和音乐库数据已在 PeekMusic 2 中准备就绪。</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">从右上角菜单打开设置，即可自定义 PeekMusic。</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">新</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">只需几个简单选择，PeekMusic 的外观和声音就能符合你的喜好。</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">语言和地区</string>
+    <string name="peek_onboarding_language_description">选择应用语言以及推荐内容的来源地区。</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">打造专属风格</string>
+    <string name="peek_onboarding_look_description">浅色、深色或纯黑，颜色取自壁纸或正在播放的封面。</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">播放器</string>
+    <string name="peek_onboarding_player_description">选择播放器设计、背景以及迷你播放器的样式。</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">歌词和 Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek 会直接在播放器中显示正在演唱的歌词行。翻译和拉丁字母转写显示在下方。</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas 和视频</string>
+    <string name="peek_onboarding_artwork_description">动态封面、Canvas 循环和音乐视频，画质随你选。</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">声音</string>
+    <string name="peek_onboarding_sound_description">音质、歌曲间音量均衡和平滑过渡。</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">显示内容</string>
+    <string name="peek_onboarding_content_description">隐藏你在搜索、推荐和电台中永远不想看到的内容。</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">高画质</string>
+    <string name="peek_onboarding_high_quality_description">以 1080p 显示 Canvas、动态封面、艺人视频和音乐视频。会消耗更多流量。每项都可以在设置中单独调整。</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">关闭</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">未找到。登录 Spotify 后可以找到更多。</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">此歌曲不可用</string>
+    <string name="peek_friends_title">好友</string>
+    <string name="peek_friends_your_code">你的好友码</string>
+    <string name="peek_friends_code_hint">好友可以用这个码添加你。</string>
+    <string name="peek_friends_connecting">正在连接…</string>
+    <string name="peek_friends_copy_code">复制好友码</string>
+    <string name="peek_friends_add_label">好友码</string>
+    <string name="peek_friends_add">添加</string>
+    <string name="peek_friends_requests">好友请求</string>
+    <string name="peek_friends_accept">接受</string>
+    <string name="peek_friends_decline">拒绝</string>
+    <string name="peek_friends_sent">已发送的请求</string>
+    <string name="peek_friends_withdraw">撤回</string>
+    <string name="peek_friends_waiting">等待对方接受</string>
+    <string name="peek_friends_empty">还没有好友。分享你的好友码，或添加好友的好友码。</string>
+    <string name="peek_friends_online">在线</string>
+    <string name="peek_friends_offline">离线</string>
+    <string name="peek_friends_in_party">派对中</string>
+    <string name="peek_friends_join">加入</string>
+    <string name="peek_friends_remove">删除好友</string>
+    <string name="peek_friends_remove_confirm">要将 %1$s 从好友中删除吗？</string>
+    <string name="peek_friends_request_sent">已向 %1$s 发送好友请求</string>
+    <string name="peek_friends_added">你和 %1$s 已成为好友</string>
+    <string name="peek_friends_request_received">%1$s 向你发送了好友请求</string>
+    <string name="peek_friends_error_unknown">没有人使用这个好友码</string>
+    <string name="peek_friends_error_own">这是你自己的好友码</string>
+    <string name="peek_friends_error_limit">尝试次数过多。请一分钟后再试。</string>
+    <string name="peek_friends_error_offline">好友功能当前未连接</string>
+    <string name="peek_friends_add_failed">无法添加好友：%1$s</string>
+    <string name="peek_friends_invite_title">派对邀请</string>
+    <string name="peek_friends_invite_text">%1$s 邀请你加入派对。</string>
+    <string name="peek_friends_invite">邀请好友</string>
+    <string name="peek_friends_invite_action">邀请</string>
+    <string name="peek_friends_invited">已向 %1$s 发送邀请</string>
+    <string name="peek_friends_invite_none">目前没有在线的好友</string>
+    <string name="peek_friends_delete">删除 PeekParty 数据</string>
+    <string name="peek_friends_delete_desc">从服务器删除你的好友码、好友和请求</string>
+    <string name="peek_friends_delete_confirm">你的好友码、好友和待处理的请求将从服务器删除。之后你会获得一个新的好友码。</string>
+    <string name="peek_friends_deleted">已删除 PeekParty 数据</string>
+    <string name="peek_party_rooms">房间</string>
+    <string name="peek_friends_invite_decline">拒绝</string>
+    <string name="peek_friends_invite_declined">%1$s 拒绝了你的邀请</string>
+    <string name="peek_party_based_on">基于 Metrolist 的 Listen Together</string>
+    <string name="peek_friends_share_link">分享链接</string>
+    <string name="peek_friends_link_title">添加好友？</string>
+    <string name="peek_friends_link_text">要向 %1$s 发送好友请求吗？</string>
+    <string name="peek_precache_upcoming">预缓存</string>
+    <string name="peek_precache_upcoming_desc">播放时下载队列中的后续歌曲，即使网络较差也能持续播放</string>
+    <string name="peek_precache_upcoming_off">关闭</string>
+    <string name="peek_precache_upcoming_count">接下来 %1$d 首</string>
+    <string name="peek_precache_upcoming_one">下一首</string>
+    <string name="peek_precache_wifi_only">仅在 Wi-Fi 下预缓存</string>
+    <string name="peek_precache_wifi_only_desc">不为尚未播放的歌曲使用移动数据</string>
+    <string name="peek_listen_together_location_germany">德国</string>
+    <string name="peek_translation_rate_limited">Google 翻译目前正在拦截来自你网络的请求。请稍后重试或使用 VPN。</string>
+    <string name="peek_download_cancel_title">取消下载？</string>
+    <string name="peek_download_cancel_message">已下载的歌曲会保留在设备上。</string>
+    <string name="peek_download_cancel_confirm">停止下载</string>
+    <string name="peek_download_cancel_keep">继续下载</string>
+    <string name="peek_canvas_desktop_desc">如有可用，在播放器背后或封面中静音播放 Spotify Canvas 和 YouTube 音乐视频。会占用更多存储空间和流量。</string>
+    <string name="peek_canvas_placement">Canvas 位置</string>
+    <string name="peek_canvas_placement_page">整个播放器</string>
+    <string name="peek_canvas_placement_cover">仅封面</string>
+    <string name="peek_lyrics_view_off">关闭</string>
+    <string name="peek_youtube_canvas_desktop_hint">在电脑上需要更多性能，尤其是在 480p 以上。如果视频卡顿，请选择较低画质。</string>
+    <string name="peek_animated_covers_desktop_desc">如有可用，显示 Apple Music 的动态专辑封面。会占用更多存储空间和流量。</string>
+    <string name="peek_listen_together_ios_user">iPhone 用户</string>
+    <string name="peek_youtube_canvas_ios_hint">在 iPhone 上，只有当 YouTube 提供 H.264 版本的视频时才可用。很多视频没有这个版本，所以常常保持关闭。最高 720p。</string>
+</resources>

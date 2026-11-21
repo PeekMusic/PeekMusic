@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Dostupan je nesinhronizovani tekst</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Zvuk</string>
+    <string name="peek_settings_audio_description">Kvalitet, zvuk, pretapanje i prebacivanje</string>
+    <string name="peek_settings_audio_description_no_cast">Kvalitet, zvuk i pretapanje</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Podeli lokalnu datoteku evidencije, na primer uz prijavu greške</string>
+    <string name="peek_settings_player_description">Dizajn, pozadina i mini plejer</string>
+    <string name="peek_settings_home_library_description">Odeljci početne stranice, automatske plejliste i skrivene stavke</string>
+    <string name="peek_settings_translation">Prevod tekstova</string>
+    <string name="peek_settings_translation_description">Automatski prevodi tekstove pomoću Google Prevodioca</string>
+    <string name="peek_settings_appearance_description">Tema, boje, fontovi i gustina</string>
+    <string name="peek_settings_queue_description">Nasumična reprodukcija, slične pesme, duplikati i preuzimanja</string>
+    <string name="peek_settings_privacy_description">Istorija slušanja i pretrage</string>
+    <string name="peek_translation_failed">Prevod nije uspeo, pokušaj ponovo kasnije</string>
+    <string name="peek_about_developer_role">Programer aplikacije PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Video snimci</string>
+    <string name="peek_video_filter_description">Koji se video snimci prikazuju u pretrazi, plejlistama i preporukama. Prekidač audio/video u plejeru ostaje</string>
+    <string name="peek_video_filter_all">Svi video snimci</string>
+    <string name="peek_video_filter_music">Samo muzički spotovi</string>
+    <string name="peek_video_filter_none">Bez video snimaka</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Dolazi uz tekst od %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Tvoja biblioteka iz PeekMusic 1.x je ovde</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Pronašli smo tvoju biblioteku iz PeekMusic 1.x. Prenesi plejliste, istoriju, sviđanja i podatke biblioteke u ovu verziju. Ako prenos ne uspe, možeš da vratiš originalnu bazu podataka.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Tvoj nalog, plejliste, istorija, sviđanja i podaci biblioteke su spremni u PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Tvoje plejliste, istorija, sviđanja i podaci biblioteke su spremni u PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Otvori Podešavanja iz menija gore desno da prilagodiš PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Novo</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Nekoliko brzih izbora i PeekMusic izgleda i zvuči onako kako voliš.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Jezik i region</string>
+    <string name="peek_onboarding_language_description">Izaberi jezik aplikacije i odakle dolaze tvoje preporuke.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Prilagodi po svom</string>
+    <string name="peek_onboarding_look_description">Svetlo, tamno ili potpuno crno, sa bojama sa pozadine ili omota koji svira.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Plejer</string>
+    <string name="peek_onboarding_player_description">Izaberi dizajn plejera, pozadinu i izgled mini plejera.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Tekstovi i Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek prikazuje stih koji se peva direktno u plejeru. Prevodi i latinični zapis prikazuju se ispod.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas i video snimci</string>
+    <string name="peek_onboarding_artwork_description">Animirani omoti, Canvas petlje i muzički spotovi u kvalitetu koji želiš.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Zvuk</string>
+    <string name="peek_onboarding_sound_description">Kvalitet zvuka, ujednačena jačina između pesama i glatki prelazi.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Šta vidiš</string>
+    <string name="peek_onboarding_content_description">Sakrij ono što nikad ne želiš da vidiš u pretrazi, preporukama i radiju.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Visok kvalitet</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, animirani omoti, video snimci izvođača i muzički spotovi u 1080p. Troši više podataka. Svako može posebno da se podesi u Podešavanjima.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Isključeno</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Nije pronađeno. Prijavom na Spotify pronalazi se više.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Nije dostupno za ovu pesmu</string>
+    <string name="peek_friends_title">Prijatelji</string>
+    <string name="peek_friends_your_code">Tvoj kod prijatelja</string>
+    <string name="peek_friends_code_hint">Prijatelji te dodaju pomoću ovog koda.</string>
+    <string name="peek_friends_connecting">Povezivanje…</string>
+    <string name="peek_friends_copy_code">Kopiraj kod</string>
+    <string name="peek_friends_add_label">Kod prijatelja</string>
+    <string name="peek_friends_add">Dodaj</string>
+    <string name="peek_friends_requests">Zahtevi za prijateljstvo</string>
+    <string name="peek_friends_accept">Prihvati</string>
+    <string name="peek_friends_decline">Odbij</string>
+    <string name="peek_friends_sent">Poslati zahtevi</string>
+    <string name="peek_friends_withdraw">Povuci</string>
+    <string name="peek_friends_waiting">Čeka prihvatanje</string>
+    <string name="peek_friends_empty">Još nemaš prijatelja. Podeli svoj kod ili dodaj kod prijatelja.</string>
+    <string name="peek_friends_online">Na mreži</string>
+    <string name="peek_friends_offline">Van mreže</string>
+    <string name="peek_friends_in_party">Na žurci</string>
+    <string name="peek_friends_join">Pridruži se</string>
+    <string name="peek_friends_remove">Ukloni prijatelja</string>
+    <string name="peek_friends_remove_confirm">Ukloniti %1$s iz prijatelja?</string>
+    <string name="peek_friends_request_sent">Zahtev za prijateljstvo poslat: %1$s</string>
+    <string name="peek_friends_added">Ti i %1$s ste sada prijatelji</string>
+    <string name="peek_friends_request_received">Novi zahtev za prijateljstvo: %1$s</string>
+    <string name="peek_friends_error_unknown">Niko nema ovaj kod prijatelja</string>
+    <string name="peek_friends_error_own">To je tvoj sopstveni kod prijatelja</string>
+    <string name="peek_friends_error_limit">Previše pokušaja. Pokušaj ponovo za minut.</string>
+    <string name="peek_friends_error_offline">Prijatelji trenutno nisu povezani</string>
+    <string name="peek_friends_add_failed">Nije moguće dodati prijatelja: %1$s</string>
+    <string name="peek_friends_invite_title">Pozivnica na žurku</string>
+    <string name="peek_friends_invite_text">%1$s te poziva na žurku.</string>
+    <string name="peek_friends_invite">Pozovi prijatelje</string>
+    <string name="peek_friends_invite_action">Pozovi</string>
+    <string name="peek_friends_invited">Pozivnica poslata: %1$s</string>
+    <string name="peek_friends_invite_none">Niko od tvojih prijatelja trenutno nije na mreži</string>
+    <string name="peek_friends_delete">Izbriši PeekParty podatke</string>
+    <string name="peek_friends_delete_desc">Uklanja sa servera tvoj kod prijatelja, prijatelje i zahteve</string>
+    <string name="peek_friends_delete_confirm">Tvoj kod prijatelja, prijatelji i zahtevi na čekanju brišu se sa servera. Posle toga dobijaš novi kod.</string>
+    <string name="peek_friends_deleted">PeekParty podaci su izbrisani</string>
+    <string name="peek_party_rooms">Sobe</string>
+    <string name="peek_friends_invite_decline">Odbij</string>
+    <string name="peek_friends_invite_declined">Pozivnica odbijena: %1$s</string>
+    <string name="peek_party_based_on">Zasnovano na funkciji Listen Together iz aplikacije Metrolist</string>
+    <string name="peek_friends_share_link">Podeli link</string>
+    <string name="peek_friends_link_title">Dodati prijatelja?</string>
+    <string name="peek_friends_link_text">Poslati zahtev za prijateljstvo: %1$s?</string>
+    <string name="peek_precache_upcoming">Keširanje unapred</string>
+    <string name="peek_precache_upcoming_desc">Preuzima sledeće pesme u redu tokom reprodukcije da bi muzika nastavila da svira i uz slabu vezu</string>
+    <string name="peek_precache_upcoming_off">Isključeno</string>
+    <string name="peek_precache_upcoming_count">Sledeće pesme: %1$d</string>
+    <string name="peek_precache_upcoming_one">Sledeća pesma</string>
+    <string name="peek_precache_wifi_only">Keširaj unapred samo na Wi-Fi mreži</string>
+    <string name="peek_precache_wifi_only_desc">Ne koristi mobilne podatke za pesme koje još ne sviraju</string>
+    <string name="peek_listen_together_location_germany">Nemačka</string>
+    <string name="peek_translation_rate_limited">Google Prevodilac trenutno blokira zahteve sa tvoje mreže. Pokušaj kasnije ili koristi VPN.</string>
+    <string name="peek_download_cancel_title">Otkazati preuzimanje?</string>
+    <string name="peek_download_cancel_message">Već preuzete pesme ostaju na uređaju.</string>
+    <string name="peek_download_cancel_confirm">Zaustavi preuzimanje</string>
+    <string name="peek_download_cancel_keep">Nastavi preuzimanje</string>
+    <string name="peek_canvas_desktop_desc">Reprodukuje Spotify Canvas i YouTube muzičke spotove bez zvuka iza plejera ili u omotu kad su dostupni. Troši više prostora i podataka.</string>
+    <string name="peek_canvas_placement">Položaj Canvas-a</string>
+    <string name="peek_canvas_placement_page">Ceo plejer</string>
+    <string name="peek_canvas_placement_cover">Samo omot</string>
+    <string name="peek_lyrics_view_off">Isključeno</string>
+    <string name="peek_youtube_canvas_desktop_hint">Na računaru traži više snage, posebno iznad 480p. Ako video zastajkuje, izaberi niži kvalitet.</string>
+    <string name="peek_animated_covers_desktop_desc">Prikazuje animirane omote albuma iz Apple Music-a kad su dostupni. Troši više prostora i podataka.</string>
+    <string name="peek_listen_together_ios_user">Korisnik iPhone-a</string>
+    <string name="peek_youtube_canvas_ios_hint">Na iPhone-u radi samo kad YouTube nudi H.264 verziju videa. Mnogi video snimci je nemaju pa često ostaje isključeno. Do 720p.</string>
+</resources>

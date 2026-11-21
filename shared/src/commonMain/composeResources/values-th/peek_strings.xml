@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">มีเนื้อเพลงแบบไม่ซิงค์</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">เสียง</string>
+    <string name="peek_settings_audio_description">คุณภาพ เสียง ครอสเฟด และแคสต์</string>
+    <string name="peek_settings_audio_description_no_cast">คุณภาพ เสียง และครอสเฟด</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">แชร์ไฟล์บันทึกในเครื่อง เช่น พร้อมรายงานบั๊ก</string>
+    <string name="peek_settings_player_description">ดีไซน์ พื้นหลัง และมินิเพลเยอร์</string>
+    <string name="peek_settings_home_library_description">ส่วนหน้าแรก เพลย์ลิสต์อัตโนมัติ และรายการที่ซ่อน</string>
+    <string name="peek_settings_translation">แปลเนื้อเพลง</string>
+    <string name="peek_settings_translation_description">แปลเนื้อเพลงอัตโนมัติด้วย Google แปลภาษา</string>
+    <string name="peek_settings_appearance_description">ธีม สี ฟอนต์ และความหนาแน่น</string>
+    <string name="peek_settings_queue_description">สุ่มเพลง เพลงที่คล้ายกัน รายการซ้ำ และการดาวน์โหลด</string>
+    <string name="peek_settings_privacy_description">ประวัติการฟังและการค้นหา</string>
+    <string name="peek_translation_failed">แปลไม่สำเร็จ ลองอีกครั้งภายหลัง</string>
+    <string name="peek_about_developer_role">ผู้พัฒนา PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">วิดีโอ</string>
+    <string name="peek_video_filter_description">วิดีโอใดที่แสดงในการค้นหา เพลย์ลิสต์ และคำแนะนำ สวิตช์เสียง/วิดีโอในเครื่องเล่นยังคงอยู่</string>
+    <string name="peek_video_filter_all">วิดีโอทั้งหมด</string>
+    <string name="peek_video_filter_music">เฉพาะมิวสิกวิดีโอ</string>
+    <string name="peek_video_filter_none">ไม่มีวิดีโอ</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">มาพร้อมเนื้อเพลงจาก %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">คลังเพลง PeekMusic 1.x ของคุณอยู่ที่นี่</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">เราพบคลังเพลง PeekMusic 1.x ของคุณ ย้ายเพลย์ลิสต์ ประวัติ การกดถูกใจ และข้อมูลคลังเพลงมายังเวอร์ชันนี้ หากการย้ายล้มเหลว คุณสามารถกู้คืนฐานข้อมูลเดิมได้</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">บัญชี เพลย์ลิสต์ ประวัติ การกดถูกใจ และข้อมูลคลังเพลงของคุณพร้อมใน PeekMusic 2 แล้ว</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">เพลย์ลิสต์ ประวัติ การกดถูกใจ และข้อมูลคลังเพลงของคุณพร้อมใน PeekMusic 2 แล้ว</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">เปิดการตั้งค่าจากเมนูมุมขวาบนเพื่อปรับแต่ง PeekMusic</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">ใหม่</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">เลือกไม่กี่อย่าง แล้ว PeekMusic จะดูและฟังได้ตามที่คุณชอบ</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">ภาษาและภูมิภาค</string>
+    <string name="peek_onboarding_language_description">เลือกภาษาของแอปและแหล่งที่มาของคำแนะนำ</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">ปรับให้เป็นของคุณ</string>
+    <string name="peek_onboarding_look_description">สว่าง มืด หรือดำสนิท พร้อมสีจากวอลเปเปอร์หรือปกที่กำลังเล่น</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">เครื่องเล่น</string>
+    <string name="peek_onboarding_player_description">เลือกดีไซน์เครื่องเล่น พื้นหลัง และหน้าตามินิเพลเยอร์</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">เนื้อเพลงและ Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek แสดงบรรทัดที่กำลังร้องในเครื่องเล่นโดยตรง คำแปลและอักษรโรมันจะอยู่ด้านล่าง</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas และวิดีโอ</string>
+    <string name="peek_onboarding_artwork_description">ปกเคลื่อนไหว ลูป Canvas และมิวสิกวิดีโอในคุณภาพที่คุณต้องการ</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">เสียง</string>
+    <string name="peek_onboarding_sound_description">คุณภาพเสียง ระดับเสียงเท่ากันระหว่างเพลง และการเปลี่ยนเพลงที่ลื่นไหล</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">สิ่งที่คุณเห็น</string>
+    <string name="peek_onboarding_content_description">ซ่อนสิ่งที่คุณไม่อยากเห็นในการค้นหา คำแนะนำ และวิทยุ</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">คุณภาพสูง</string>
+    <string name="peek_onboarding_high_quality_description">Canvas ปกเคลื่อนไหว วิดีโอศิลปิน และมิวสิกวิดีโอที่ 1080p ใช้ข้อมูลมากขึ้น ปรับแต่ละอย่างแยกกันได้ในการตั้งค่า</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">ปิด</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">ไม่พบ ลงชื่อเข้าใช้ Spotify เพื่อค้นหาได้มากขึ้น</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">ไม่มีสำหรับเพลงนี้</string>
+    <string name="peek_friends_title">เพื่อน</string>
+    <string name="peek_friends_your_code">รหัสเพื่อนของคุณ</string>
+    <string name="peek_friends_code_hint">เพื่อนจะเพิ่มคุณด้วยรหัสนี้</string>
+    <string name="peek_friends_connecting">กำลังเชื่อมต่อ…</string>
+    <string name="peek_friends_copy_code">คัดลอกรหัส</string>
+    <string name="peek_friends_add_label">รหัสเพื่อน</string>
+    <string name="peek_friends_add">เพิ่ม</string>
+    <string name="peek_friends_requests">คำขอเป็นเพื่อน</string>
+    <string name="peek_friends_accept">ยอมรับ</string>
+    <string name="peek_friends_decline">ปฏิเสธ</string>
+    <string name="peek_friends_sent">คำขอที่ส่งแล้ว</string>
+    <string name="peek_friends_withdraw">ถอนคำขอ</string>
+    <string name="peek_friends_waiting">รอการยืนยัน</string>
+    <string name="peek_friends_empty">ยังไม่มีเพื่อน แชร์รหัสของคุณหรือเพิ่มรหัสของเพื่อน</string>
+    <string name="peek_friends_online">ออนไลน์</string>
+    <string name="peek_friends_offline">ออฟไลน์</string>
+    <string name="peek_friends_in_party">อยู่ในปาร์ตี้</string>
+    <string name="peek_friends_join">เข้าร่วม</string>
+    <string name="peek_friends_remove">ลบเพื่อน</string>
+    <string name="peek_friends_remove_confirm">ลบ %1$s ออกจากเพื่อนไหม</string>
+    <string name="peek_friends_request_sent">ส่งคำขอเป็นเพื่อนถึง %1$s แล้ว</string>
+    <string name="peek_friends_added">คุณกับ %1$s เป็นเพื่อนกันแล้ว</string>
+    <string name="peek_friends_request_received">คำขอเป็นเพื่อนใหม่จาก %1$s</string>
+    <string name="peek_friends_error_unknown">ไม่มีใครมีรหัสเพื่อนนี้</string>
+    <string name="peek_friends_error_own">นี่คือรหัสเพื่อนของคุณเอง</string>
+    <string name="peek_friends_error_limit">ลองหลายครั้งเกินไป ลองอีกครั้งในอีกหนึ่งนาที</string>
+    <string name="peek_friends_error_offline">ระบบเพื่อนยังไม่ได้เชื่อมต่อในขณะนี้</string>
+    <string name="peek_friends_add_failed">เพิ่มเพื่อนไม่ได้: %1$s</string>
+    <string name="peek_friends_invite_title">คำเชิญเข้าปาร์ตี้</string>
+    <string name="peek_friends_invite_text">%1$s ชวนคุณเข้าปาร์ตี้</string>
+    <string name="peek_friends_invite">ชวนเพื่อน</string>
+    <string name="peek_friends_invite_action">ชวน</string>
+    <string name="peek_friends_invited">ส่งคำเชิญถึง %1$s แล้ว</string>
+    <string name="peek_friends_invite_none">ตอนนี้ไม่มีเพื่อนคนไหนออนไลน์</string>
+    <string name="peek_friends_delete">ลบข้อมูล PeekParty</string>
+    <string name="peek_friends_delete_desc">ลบรหัสเพื่อน เพื่อน และคำขอของคุณออกจากเซิร์ฟเวอร์</string>
+    <string name="peek_friends_delete_confirm">รหัสเพื่อน เพื่อน และคำขอที่รออยู่จะถูกลบออกจากเซิร์ฟเวอร์ หลังจากนั้นคุณจะได้รับรหัสใหม่</string>
+    <string name="peek_friends_deleted">ลบข้อมูล PeekParty แล้ว</string>
+    <string name="peek_party_rooms">ห้อง</string>
+    <string name="peek_friends_invite_decline">ปฏิเสธ</string>
+    <string name="peek_friends_invite_declined">%1$s ปฏิเสธคำเชิญ</string>
+    <string name="peek_party_based_on">พัฒนาจาก Listen Together ของ Metrolist</string>
+    <string name="peek_friends_share_link">แชร์ลิงก์</string>
+    <string name="peek_friends_link_title">เพิ่มเพื่อนไหม</string>
+    <string name="peek_friends_link_text">ส่งคำขอเป็นเพื่อนถึง %1$s ไหม</string>
+    <string name="peek_precache_upcoming">แคชล่วงหน้า</string>
+    <string name="peek_precache_upcoming_desc">ดาวน์โหลดเพลงถัดไปในคิวระหว่างเล่น เพื่อให้เพลงเล่นต่อได้แม้สัญญาณอ่อน</string>
+    <string name="peek_precache_upcoming_off">ปิด</string>
+    <string name="peek_precache_upcoming_count">%1$d เพลงถัดไป</string>
+    <string name="peek_precache_upcoming_one">เพลงถัดไป</string>
+    <string name="peek_precache_wifi_only">แคชล่วงหน้าเฉพาะ Wi-Fi</string>
+    <string name="peek_precache_wifi_only_desc">ไม่ใช้อินเทอร์เน็ตมือถือกับเพลงที่ยังไม่ได้เล่น</string>
+    <string name="peek_listen_together_location_germany">เยอรมนี</string>
+    <string name="peek_translation_rate_limited">Google แปลภาษากำลังบล็อกคำขอจากเครือข่ายของคุณ ลองอีกครั้งภายหลังหรือใช้ VPN</string>
+    <string name="peek_download_cancel_title">ยกเลิกการดาวน์โหลดไหม</string>
+    <string name="peek_download_cancel_message">เพลงที่ดาวน์โหลดแล้วจะยังอยู่ในอุปกรณ์</string>
+    <string name="peek_download_cancel_confirm">หยุดดาวน์โหลด</string>
+    <string name="peek_download_cancel_keep">ดาวน์โหลดต่อ</string>
+    <string name="peek_canvas_desktop_desc">เล่น Spotify Canvas และมิวสิกวิดีโอ YouTube แบบไม่มีเสียงหลังเครื่องเล่นหรือบนปกเมื่อมี ใช้พื้นที่และข้อมูลมากขึ้น</string>
+    <string name="peek_canvas_placement">ตำแหน่ง Canvas</string>
+    <string name="peek_canvas_placement_page">ทั้งเครื่องเล่น</string>
+    <string name="peek_canvas_placement_cover">เฉพาะปก</string>
+    <string name="peek_lyrics_view_off">ปิด</string>
+    <string name="peek_youtube_canvas_desktop_hint">บนคอมพิวเตอร์ต้องใช้ประสิทธิภาพมากขึ้น โดยเฉพาะเกิน 480p ถ้าวิดีโอกระตุก ให้เลือกคุณภาพต่ำลง</string>
+    <string name="peek_animated_covers_desktop_desc">แสดงปกอัลบั้มเคลื่อนไหวจาก Apple Music เมื่อมี ใช้พื้นที่และข้อมูลมากขึ้น</string>
+    <string name="peek_listen_together_ios_user">ผู้ใช้ iPhone</string>
+    <string name="peek_youtube_canvas_ios_hint">บน iPhone จะใช้ได้เฉพาะเมื่อ YouTube มีวิดีโอเวอร์ชัน H.264 วิดีโอจำนวนมากไม่มี จึงมักไม่แสดง สูงสุด 720p</string>
+</resources>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">غیر ہم آہنگ بول دستیاب ہیں</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">آڈیو</string>
+    <string name="peek_settings_audio_description">کوالٹی، آواز، کراس فیڈ اور کاسٹ</string>
+    <string name="peek_settings_audio_description_no_cast">کوالٹی، آواز اور کراس فیڈ</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">مقامی لاگ فائل شیئر کریں، مثلاً بگ رپورٹ کے ساتھ</string>
+    <string name="peek_settings_player_description">ڈیزائن، بیک گراؤنڈ اور منی پلیئر</string>
+    <string name="peek_settings_home_library_description">ہوم سیکشن، خودکار پلے لسٹس اور چھپائے گئے آئٹمز</string>
+    <string name="peek_settings_translation">بولوں کا ترجمہ</string>
+    <string name="peek_settings_translation_description">Google Translate سے گانوں کے بول خودبخود ترجمہ کریں</string>
+    <string name="peek_settings_appearance_description">تھیم، رنگ، فونٹس اور کثافت</string>
+    <string name="peek_settings_queue_description">شفل، ملتے جلتے گانے، ڈپلیکیٹ اور ڈاؤن لوڈز</string>
+    <string name="peek_settings_privacy_description">سننے اور تلاش کی ہسٹری</string>
+    <string name="peek_translation_failed">ترجمہ نہیں ہو سکا، بعد میں دوبارہ کوشش کریں</string>
+    <string name="peek_about_developer_role">PeekMusic ڈویلپر</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">ویڈیوز</string>
+    <string name="peek_video_filter_description">تلاش، پلے لسٹس اور تجاویز میں کون سی ویڈیوز دکھائی جائیں۔ پلیئر میں آڈیو/ویڈیو سوئچ برقرار رہتا ہے</string>
+    <string name="peek_video_filter_all">تمام ویڈیوز</string>
+    <string name="peek_video_filter_music">صرف میوزک ویڈیوز</string>
+    <string name="peek_video_filter_none">کوئی ویڈیو نہیں</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">%1$s کے بولوں کے ساتھ شامل</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">آپ کی PeekMusic 1.x لائبریری یہاں ہے</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">ہمیں آپ کی PeekMusic 1.x لائبریری ملی ہے۔ پلے لسٹس، ہسٹری، لائکس اور لائبریری کا ڈیٹا اس ورژن میں لائیں۔ اگر منتقلی ناکام ہو جائے تو آپ اصل ڈیٹا بیس بحال کر سکتے ہیں۔</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">آپ کا اکاؤنٹ، پلے لسٹس، ہسٹری، لائکس اور لائبریری کا ڈیٹا PeekMusic 2 میں تیار ہے۔</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">آپ کی پلے لسٹس، ہسٹری، لائکس اور لائبریری کا ڈیٹا PeekMusic 2 میں تیار ہے۔</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">PeekMusic کو اپنی مرضی کے مطابق بنانے کے لیے اوپر کے مینو سے سیٹنگز کھولیں۔</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">نیا</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">چند فوری انتخاب، اور PeekMusic ویسا ہی دکھے اور سنائی دے گا جیسا آپ کو پسند ہے۔</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">زبان اور علاقہ</string>
+    <string name="peek_onboarding_language_description">ایپ کی زبان اور یہ چنیں کہ آپ کی تجاویز کہاں سے آئیں۔</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">اسے اپنا بنائیں</string>
+    <string name="peek_onboarding_look_description">لائٹ، ڈارک یا مکمل سیاہ، وال پیپر یا چلنے والے کور کے رنگوں کے ساتھ۔</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">پلیئر</string>
+    <string name="peek_onboarding_player_description">پلیئر کا ڈیزائن، بیک گراؤنڈ اور منی پلیئر کی شکل چنیں۔</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">بول اور Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek گائی جا رہی لائن سیدھے پلیئر میں دکھاتا ہے۔ ترجمے اور لاطینی رسم الخط اس کے نیچے آتے ہیں۔</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas اور ویڈیوز</string>
+    <string name="peek_onboarding_artwork_description">اینیمیٹڈ کورز، Canvas لوپس اور میوزک ویڈیوز آپ کی پسند کی کوالٹی میں۔</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">آواز</string>
+    <string name="peek_onboarding_sound_description">آڈیو کوالٹی، گانوں کے درمیان یکساں آواز اور ہموار تبدیلی۔</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">آپ کیا دیکھتے ہیں</string>
+    <string name="peek_onboarding_content_description">جو آپ تلاش، تجاویز اور ریڈیو میں کبھی نہیں دیکھنا چاہتے، اسے چھپائیں۔</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">ہائی کوالٹی</string>
+    <string name="peek_onboarding_high_quality_description">Canvas، اینیمیٹڈ کورز، آرٹسٹ ویڈیوز اور میوزک ویڈیوز 1080p میں۔ زیادہ ڈیٹا استعمال ہوتا ہے۔ ہر ایک کو سیٹنگز میں الگ سے بدلا جا سکتا ہے۔</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">بند</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">نہیں ملا۔ Spotify میں سائن ان کرنے پر زیادہ ملتا ہے۔</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">اس گانے کے لیے دستیاب نہیں</string>
+    <string name="peek_friends_title">دوست</string>
+    <string name="peek_friends_your_code">آپ کا فرینڈ کوڈ</string>
+    <string name="peek_friends_code_hint">دوست اس کوڈ سے آپ کو شامل کرتے ہیں۔</string>
+    <string name="peek_friends_connecting">کنیکٹ ہو رہا ہے…</string>
+    <string name="peek_friends_copy_code">کوڈ کاپی کریں</string>
+    <string name="peek_friends_add_label">فرینڈ کوڈ</string>
+    <string name="peek_friends_add">شامل کریں</string>
+    <string name="peek_friends_requests">فرینڈ ریکویسٹس</string>
+    <string name="peek_friends_accept">قبول کریں</string>
+    <string name="peek_friends_decline">مسترد کریں</string>
+    <string name="peek_friends_sent">بھیجی گئی ریکویسٹس</string>
+    <string name="peek_friends_withdraw">واپس لیں</string>
+    <string name="peek_friends_waiting">تصدیق کا انتظار</string>
+    <string name="peek_friends_empty">ابھی کوئی دوست نہیں۔ اپنا کوڈ شیئر کریں یا کسی دوست کا کوڈ شامل کریں۔</string>
+    <string name="peek_friends_online">آن لائن</string>
+    <string name="peek_friends_offline">آف لائن</string>
+    <string name="peek_friends_in_party">پارٹی میں</string>
+    <string name="peek_friends_join">شامل ہوں</string>
+    <string name="peek_friends_remove">دوست ہٹائیں</string>
+    <string name="peek_friends_remove_confirm">%1$s کو دوستوں سے ہٹائیں؟</string>
+    <string name="peek_friends_request_sent">%1$s کو فرینڈ ریکویسٹ بھیج دی گئی</string>
+    <string name="peek_friends_added">آپ اور %1$s اب دوست ہیں</string>
+    <string name="peek_friends_request_received">%1$s کی طرف سے نئی فرینڈ ریکویسٹ</string>
+    <string name="peek_friends_error_unknown">یہ فرینڈ کوڈ کسی کے پاس نہیں</string>
+    <string name="peek_friends_error_own">یہ آپ کا اپنا فرینڈ کوڈ ہے</string>
+    <string name="peek_friends_error_limit">بہت زیادہ کوششیں۔ ایک منٹ بعد دوبارہ کوشش کریں۔</string>
+    <string name="peek_friends_error_offline">دوستوں کی سروس ابھی کنیکٹ نہیں ہے</string>
+    <string name="peek_friends_add_failed">دوست شامل نہیں ہو سکا: %1$s</string>
+    <string name="peek_friends_invite_title">پارٹی کی دعوت</string>
+    <string name="peek_friends_invite_text">%1$s آپ کو اپنی پارٹی میں بلا رہے ہیں۔</string>
+    <string name="peek_friends_invite">دوستوں کو بلائیں</string>
+    <string name="peek_friends_invite_action">بلائیں</string>
+    <string name="peek_friends_invited">%1$s کو دعوت بھیج دی گئی</string>
+    <string name="peek_friends_invite_none">ابھی آپ کا کوئی دوست آن لائن نہیں</string>
+    <string name="peek_friends_delete">PeekParty ڈیٹا حذف کریں</string>
+    <string name="peek_friends_delete_desc">سرور سے آپ کا فرینڈ کوڈ، دوست اور ریکویسٹس ہٹاتا ہے</string>
+    <string name="peek_friends_delete_confirm">آپ کا فرینڈ کوڈ، دوست اور زیر التوا ریکویسٹس سرور سے حذف ہو جائیں گی۔ اس کے بعد آپ کو نیا کوڈ ملے گا۔</string>
+    <string name="peek_friends_deleted">PeekParty ڈیٹا حذف ہو گیا</string>
+    <string name="peek_party_rooms">رومز</string>
+    <string name="peek_friends_invite_decline">مسترد کریں</string>
+    <string name="peek_friends_invite_declined">%1$s نے دعوت مسترد کر دی</string>
+    <string name="peek_party_based_on">Metrolist کے Listen Together پر مبنی</string>
+    <string name="peek_friends_share_link">لنک شیئر کریں</string>
+    <string name="peek_friends_link_title">دوست شامل کریں؟</string>
+    <string name="peek_friends_link_text">%1$s کو فرینڈ ریکویسٹ بھیجیں؟</string>
+    <string name="peek_precache_upcoming">پیشگی کیش</string>
+    <string name="peek_precache_upcoming_desc">چلتے وقت قطار کے اگلے گانے ڈاؤن لوڈ کرتا ہے، تاکہ کمزور کنکشن پر بھی موسیقی چلتی رہے</string>
+    <string name="peek_precache_upcoming_off">بند</string>
+    <string name="peek_precache_upcoming_count">اگلے گانے: %1$d</string>
+    <string name="peek_precache_upcoming_one">اگلا گانا</string>
+    <string name="peek_precache_wifi_only">صرف Wi-Fi پر پیشگی کیش</string>
+    <string name="peek_precache_wifi_only_desc">جو گانے ابھی نہیں چل رہے ان کے لیے موبائل ڈیٹا استعمال نہ کریں</string>
+    <string name="peek_listen_together_location_germany">جرمنی</string>
+    <string name="peek_translation_rate_limited">Google Translate ابھی آپ کے نیٹ ورک کی ریکویسٹس بلاک کر رہا ہے۔ بعد میں کوشش کریں یا VPN استعمال کریں۔</string>
+    <string name="peek_download_cancel_title">ڈاؤن لوڈ منسوخ کریں؟</string>
+    <string name="peek_download_cancel_message">جو گانے ڈاؤن لوڈ ہو چکے ہیں وہ آپ کے ڈیوائس پر رہیں گے۔</string>
+    <string name="peek_download_cancel_confirm">ڈاؤن لوڈ روکیں</string>
+    <string name="peek_download_cancel_keep">ڈاؤن لوڈ جاری رکھیں</string>
+    <string name="peek_canvas_desktop_desc">دستیاب ہونے پر Spotify Canvas اور YouTube میوزک ویڈیوز بغیر آواز کے پلیئر کے پیچھے یا کور پر چلاتا ہے۔ زیادہ اسٹوریج اور ڈیٹا استعمال ہوتا ہے۔</string>
+    <string name="peek_canvas_placement">Canvas کی جگہ</string>
+    <string name="peek_canvas_placement_page">پورا پلیئر</string>
+    <string name="peek_canvas_placement_cover">صرف کور</string>
+    <string name="peek_lyrics_view_off">بند</string>
+    <string name="peek_youtube_canvas_desktop_hint">کمپیوٹر پر زیادہ پرفارمنس چاہیے، خاص طور پر 480p سے اوپر۔ اگر ویڈیو اٹکے تو کم کوالٹی چنیں۔</string>
+    <string name="peek_animated_covers_desktop_desc">دستیاب ہونے پر Apple Music سے اینیمیٹڈ البم کورز دکھاتا ہے۔ زیادہ اسٹوریج اور ڈیٹا استعمال ہوتا ہے۔</string>
+    <string name="peek_listen_together_ios_user">iPhone صارف</string>
+    <string name="peek_youtube_canvas_ios_hint">iPhone پر یہ صرف تب کام کرتا ہے جب YouTube ویڈیو کا H.264 ورژن دیتا ہے۔ کئی ویڈیوز میں یہ نہیں ہوتا، اس لیے یہ اکثر نظر نہیں آتا۔ 720p تک۔</string>
+</resources>

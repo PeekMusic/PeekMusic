@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Διατίθενται μη συγχρονισμένοι στίχοι</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Ήχος</string>
+    <string name="peek_settings_audio_description">Ποιότητα, ήχος, crossfade και μετάδοση</string>
+    <string name="peek_settings_audio_description_no_cast">Ποιότητα, ήχος και crossfade</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Κοινοποίηση του τοπικού αρχείου καταγραφής, π.χ. μαζί με αναφορά σφάλματος</string>
+    <string name="peek_settings_player_description">Σχέδιο, φόντο και μίνι πρόγραμμα αναπαραγωγής</string>
+    <string name="peek_settings_home_library_description">Ενότητες αρχικής, αυτόματες λίστες αναπαραγωγής και κρυφά στοιχεία</string>
+    <string name="peek_settings_translation">Μετάφραση στίχων</string>
+    <string name="peek_settings_translation_description">Μεταφράζει αυτόματα τους στίχους με τη Μετάφραση Google</string>
+    <string name="peek_settings_appearance_description">Θέμα, χρώματα, γραμματοσειρές και πυκνότητα</string>
+    <string name="peek_settings_queue_description">Τυχαία σειρά, παρόμοια τραγούδια, διπλότυπα και λήψεις</string>
+    <string name="peek_settings_privacy_description">Ιστορικό ακρόασης και αναζήτησης</string>
+    <string name="peek_translation_failed">Η μετάφραση απέτυχε, δοκιμάστε ξανά αργότερα</string>
+    <string name="peek_about_developer_role">Προγραμματιστής του PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Βίντεο</string>
+    <string name="peek_video_filter_description">Ποια βίντεο εμφανίζονται στην αναζήτηση, στις λίστες και στις προτάσεις. Ο διακόπτης ήχου/βίντεο στο πρόγραμμα αναπαραγωγής παραμένει</string>
+    <string name="peek_video_filter_all">Όλα τα βίντεο</string>
+    <string name="peek_video_filter_music">Μόνο μουσικά βίντεο</string>
+    <string name="peek_video_filter_none">Κανένα βίντεο</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Περιλαμβάνεται στους στίχους από %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Η βιβλιοθήκη σας από το PeekMusic 1.x είναι εδώ</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Βρήκαμε τη βιβλιοθήκη σας από το PeekMusic 1.x. Μεταφέρετε τις λίστες αναπαραγωγής, το ιστορικό, τα «μου αρέσει» και τα δεδομένα της βιβλιοθήκης σε αυτή την έκδοση. Αν η μεταφορά αποτύχει, μπορείτε να επαναφέρετε την αρχική βάση δεδομένων.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Ο λογαριασμός, οι λίστες, το ιστορικό, τα «μου αρέσει» και τα δεδομένα της βιβλιοθήκης σας είναι έτοιμα στο PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Οι λίστες, το ιστορικό, τα «μου αρέσει» και τα δεδομένα της βιβλιοθήκης σας είναι έτοιμα στο PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Ανοίξτε τις Ρυθμίσεις από το μενού πάνω δεξιά για να προσαρμόσετε το PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Νέο</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Λίγες γρήγορες επιλογές και το PeekMusic δείχνει και ακούγεται όπως σας αρέσει.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Γλώσσα και περιοχή</string>
+    <string name="peek_onboarding_language_description">Επιλέξτε τη γλώσσα της εφαρμογής και από πού προέρχονται οι προτάσεις σας.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Στο δικό σας στιλ</string>
+    <string name="peek_onboarding_look_description">Ανοιχτό, σκούρο ή καθαρό μαύρο, με χρώματα από την ταπετσαρία ή το εξώφυλλο που παίζει.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Πρόγραμμα αναπαραγωγής</string>
+    <string name="peek_onboarding_player_description">Επιλέξτε σχέδιο, φόντο και εμφάνιση του μίνι προγράμματος αναπαραγωγής.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Στίχοι και Peek</string>
+    <string name="peek_onboarding_lyrics_description">Το Peek δείχνει τη γραμμή που τραγουδιέται απευθείας στο πρόγραμμα αναπαραγωγής. Οι μεταφράσεις και η μεταγραφή με λατινικούς χαρακτήρες εμφανίζονται από κάτω.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas και βίντεο</string>
+    <string name="peek_onboarding_artwork_description">Κινούμενα εξώφυλλα, βρόχοι Canvas και μουσικά βίντεο, στην ποιότητα που θέλετε.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Ήχος</string>
+    <string name="peek_onboarding_sound_description">Ποιότητα ήχου, ομοιόμορφη ένταση μεταξύ τραγουδιών και ομαλές μεταβάσεις.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Τι βλέπετε</string>
+    <string name="peek_onboarding_content_description">Κρύψτε ό,τι δεν θέλετε ποτέ να βλέπετε στην αναζήτηση, στις προτάσεις και στο ραδιόφωνο.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Υψηλή ποιότητα</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, κινούμενα εξώφυλλα, βίντεο καλλιτεχνών και μουσικά βίντεο σε 1080p. Χρησιμοποιεί περισσότερα δεδομένα. Το καθένα ρυθμίζεται ξεχωριστά στις Ρυθμίσεις.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Ανενεργό</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Δεν βρέθηκε. Με σύνδεση στο Spotify βρίσκονται περισσότερα.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Μη διαθέσιμο για αυτό το τραγούδι</string>
+    <string name="peek_friends_title">Φίλοι</string>
+    <string name="peek_friends_your_code">Ο κωδικός φίλου σας</string>
+    <string name="peek_friends_code_hint">Οι φίλοι σας σάς προσθέτουν με αυτόν τον κωδικό.</string>
+    <string name="peek_friends_connecting">Σύνδεση…</string>
+    <string name="peek_friends_copy_code">Αντιγραφή κωδικού</string>
+    <string name="peek_friends_add_label">Κωδικός φίλου</string>
+    <string name="peek_friends_add">Προσθήκη</string>
+    <string name="peek_friends_requests">Αιτήματα φιλίας</string>
+    <string name="peek_friends_accept">Αποδοχή</string>
+    <string name="peek_friends_decline">Απόρριψη</string>
+    <string name="peek_friends_sent">Απεσταλμένα αιτήματα</string>
+    <string name="peek_friends_withdraw">Ανάκληση</string>
+    <string name="peek_friends_waiting">Αναμονή αποδοχής</string>
+    <string name="peek_friends_empty">Δεν έχετε ακόμα φίλους. Μοιραστείτε τον κωδικό σας ή προσθέστε τον κωδικό ενός φίλου.</string>
+    <string name="peek_friends_online">Σε σύνδεση</string>
+    <string name="peek_friends_offline">Εκτός σύνδεσης</string>
+    <string name="peek_friends_in_party">Σε πάρτι</string>
+    <string name="peek_friends_join">Συμμετοχή</string>
+    <string name="peek_friends_remove">Αφαίρεση φίλου</string>
+    <string name="peek_friends_remove_confirm">Αφαίρεση του χρήστη %1$s από τους φίλους σας;</string>
+    <string name="peek_friends_request_sent">Το αίτημα φιλίας στάλθηκε: %1$s</string>
+    <string name="peek_friends_added">Εσείς και ο χρήστης %1$s είστε πλέον φίλοι</string>
+    <string name="peek_friends_request_received">Νέο αίτημα φιλίας: %1$s</string>
+    <string name="peek_friends_error_unknown">Κανείς δεν έχει αυτόν τον κωδικό φίλου</string>
+    <string name="peek_friends_error_own">Αυτός είναι ο δικός σας κωδικός φίλου</string>
+    <string name="peek_friends_error_limit">Πάρα πολλές προσπάθειες. Δοκιμάστε ξανά σε ένα λεπτό.</string>
+    <string name="peek_friends_error_offline">Οι Φίλοι δεν είναι συνδεδεμένοι αυτή τη στιγμή</string>
+    <string name="peek_friends_add_failed">Δεν ήταν δυνατή η προσθήκη φίλου: %1$s</string>
+    <string name="peek_friends_invite_title">Πρόσκληση σε πάρτι</string>
+    <string name="peek_friends_invite_text">Ο χρήστης %1$s σάς προσκαλεί σε πάρτι.</string>
+    <string name="peek_friends_invite">Πρόσκληση φίλων</string>
+    <string name="peek_friends_invite_action">Πρόσκληση</string>
+    <string name="peek_friends_invited">Η πρόσκληση στάλθηκε: %1$s</string>
+    <string name="peek_friends_invite_none">Κανένας φίλος σας δεν είναι σε σύνδεση αυτή τη στιγμή</string>
+    <string name="peek_friends_delete">Διαγραφή δεδομένων PeekParty</string>
+    <string name="peek_friends_delete_desc">Αφαιρεί από τον διακομιστή τον κωδικό φίλου, τους φίλους και τα αιτήματά σας</string>
+    <string name="peek_friends_delete_confirm">Ο κωδικός φίλου, οι φίλοι και τα εκκρεμή αιτήματά σας θα διαγραφούν από τον διακομιστή. Στη συνέχεια θα λάβετε νέο κωδικό.</string>
+    <string name="peek_friends_deleted">Τα δεδομένα PeekParty διαγράφηκαν</string>
+    <string name="peek_party_rooms">Δωμάτια</string>
+    <string name="peek_friends_invite_decline">Απόρριψη</string>
+    <string name="peek_friends_invite_declined">Η πρόσκληση απορρίφθηκε: %1$s</string>
+    <string name="peek_party_based_on">Βασισμένο στο Listen Together του Metrolist</string>
+    <string name="peek_friends_share_link">Κοινοποίηση συνδέσμου</string>
+    <string name="peek_friends_link_title">Προσθήκη φίλου;</string>
+    <string name="peek_friends_link_text">Αποστολή αιτήματος φιλίας στον χρήστη %1$s;</string>
+    <string name="peek_precache_upcoming">Προσωρινή αποθήκευση εκ των προτέρων</string>
+    <string name="peek_precache_upcoming_desc">Κατεβάζει τα επόμενα τραγούδια της ουράς κατά την αναπαραγωγή, ώστε η μουσική να συνεχίζει με αδύναμη σύνδεση</string>
+    <string name="peek_precache_upcoming_off">Ανενεργό</string>
+    <string name="peek_precache_upcoming_count">Επόμενα %1$d τραγούδια</string>
+    <string name="peek_precache_upcoming_one">Επόμενο τραγούδι</string>
+    <string name="peek_precache_wifi_only">Εκ των προτέρων μόνο μέσω Wi-Fi</string>
+    <string name="peek_precache_wifi_only_desc">Χωρίς δεδομένα κινητής για τραγούδια που δεν παίζουν ακόμα</string>
+    <string name="peek_listen_together_location_germany">Γερμανία</string>
+    <string name="peek_translation_rate_limited">Η Μετάφραση Google αποκλείει αυτή τη στιγμή αιτήματα από το δίκτυό σας. Δοκιμάστε αργότερα ή χρησιμοποιήστε VPN.</string>
+    <string name="peek_download_cancel_title">Ακύρωση λήψης;</string>
+    <string name="peek_download_cancel_message">Τα τραγούδια που έχουν ήδη ληφθεί παραμένουν στη συσκευή σας.</string>
+    <string name="peek_download_cancel_confirm">Διακοπή λήψης</string>
+    <string name="peek_download_cancel_keep">Συνέχιση λήψης</string>
+    <string name="peek_canvas_desktop_desc">Αναπαράγει Spotify Canvas και μουσικά βίντεο YouTube χωρίς ήχο πίσω από το πρόγραμμα αναπαραγωγής ή στο εξώφυλλο όταν υπάρχουν. Χρησιμοποιεί περισσότερο χώρο και δεδομένα.</string>
+    <string name="peek_canvas_placement">Θέση του Canvas</string>
+    <string name="peek_canvas_placement_page">Όλο το πρόγραμμα αναπαραγωγής</string>
+    <string name="peek_canvas_placement_cover">Μόνο το εξώφυλλο</string>
+    <string name="peek_lyrics_view_off">Ανενεργό</string>
+    <string name="peek_youtube_canvas_desktop_hint">Στον υπολογιστή χρειάζεται περισσότερη ισχύ, ειδικά πάνω από 480p. Αν το βίντεο κολλάει, επιλέξτε χαμηλότερη ποιότητα.</string>
+    <string name="peek_animated_covers_desktop_desc">Εμφανίζει κινούμενα εξώφυλλα άλμπουμ από το Apple Music όταν υπάρχουν. Χρησιμοποιεί περισσότερο χώρο και δεδομένα.</string>
+    <string name="peek_listen_together_ios_user">Χρήστης iPhone</string>
+    <string name="peek_youtube_canvas_ios_hint">Στο iPhone λειτουργεί μόνο όταν το YouTube προσφέρει έκδοση H.264 του βίντεο. Πολλά βίντεο δεν την έχουν, οπότε συχνά παραμένει απενεργοποιημένο. Έως 720p.</string>
+</resources>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Niet-gesynchroniseerde songtekst beschikbaar</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Audio</string>
+    <string name="peek_settings_audio_description">Kwaliteit, geluid, crossfade en casten</string>
+    <string name="peek_settings_audio_description_no_cast">Kwaliteit, geluid en crossfade</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Deel het lokale logbestand, bijvoorbeeld bij een bugmelding</string>
+    <string name="peek_settings_player_description">Ontwerp, achtergrond en minispeler</string>
+    <string name="peek_settings_home_library_description">Startpaginasecties, automatische playlists en verborgen items</string>
+    <string name="peek_settings_translation">Vertaling van songteksten</string>
+    <string name="peek_settings_translation_description">Vertaalt songteksten automatisch met Google Translate</string>
+    <string name="peek_settings_appearance_description">Thema, kleuren, lettertypen en dichtheid</string>
+    <string name="peek_settings_queue_description">Shuffle, vergelijkbare nummers, dubbele nummers en downloads</string>
+    <string name="peek_settings_privacy_description">Luister- en zoekgeschiedenis</string>
+    <string name="peek_translation_failed">Vertalen mislukt, probeer het later opnieuw</string>
+    <string name="peek_about_developer_role">Ontwikkelaar van PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Video's</string>
+    <string name="peek_video_filter_description">Welke video's in zoekresultaten, playlists en aanbevelingen verschijnen. De audio/video-schakelaar in de speler blijft beschikbaar</string>
+    <string name="peek_video_filter_all">Alle video's</string>
+    <string name="peek_video_filter_music">Alleen muziekvideo's</string>
+    <string name="peek_video_filter_none">Geen video's</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Meegeleverd met de songtekst van %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Je PeekMusic 1.x-bibliotheek is er</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">We hebben je bibliotheek van PeekMusic 1.x gevonden. Zet je playlists, geschiedenis, likes en bibliotheekgegevens over naar deze versie. Als de migratie mislukt, kun je de oorspronkelijke database herstellen.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Je account, playlists, geschiedenis, likes en bibliotheekgegevens staan klaar in PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Je playlists, geschiedenis, likes en bibliotheekgegevens staan klaar in PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Open Instellingen via het menu rechtsboven om PeekMusic aan te passen.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Nieuw</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Een paar snelle keuzes en PeekMusic ziet eruit en klinkt zoals jij wilt.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Taal en regio</string>
+    <string name="peek_onboarding_language_description">Kies de taal van de app en waar je aanbevelingen vandaan komen.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Maak het jouw app</string>
+    <string name="peek_onboarding_look_description">Licht, donker of puur zwart, met kleuren van je achtergrond of van de hoes die nu speelt.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Speler</string>
+    <string name="peek_onboarding_player_description">Kies een spelerontwerp, de achtergrond en hoe de minispeler eruitziet.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Songteksten en Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek toont de regel die gezongen wordt direct in de speler. Vertalingen en Latijns schrift verschijnen eronder.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas en video's</string>
+    <string name="peek_onboarding_artwork_description">Bewegende hoezen, Canvas-loops en muziekvideo's, in de kwaliteit die je wilt.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Geluid</string>
+    <string name="peek_onboarding_sound_description">Audiokwaliteit, gelijk volume tussen nummers en vloeiende overgangen.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Wat je ziet</string>
+    <string name="peek_onboarding_content_description">Verberg wat je nooit wilt zien in zoekresultaten, aanbevelingen en radio.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Hoge kwaliteit</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, bewegende hoezen, artiestvideo's en muziekvideo's in 1080p. Gebruikt meer data. Elk onderdeel kun je apart instellen in Instellingen.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Uit</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Niet gevonden. Inloggen bij Spotify vindt er meer.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Niet beschikbaar voor dit nummer</string>
+    <string name="peek_friends_title">Vrienden</string>
+    <string name="peek_friends_your_code">Je vriendencode</string>
+    <string name="peek_friends_code_hint">Vrienden voegen je toe met deze code.</string>
+    <string name="peek_friends_connecting">Verbinden…</string>
+    <string name="peek_friends_copy_code">Code kopiëren</string>
+    <string name="peek_friends_add_label">Vriendencode</string>
+    <string name="peek_friends_add">Toevoegen</string>
+    <string name="peek_friends_requests">Vriendschapsverzoeken</string>
+    <string name="peek_friends_accept">Accepteren</string>
+    <string name="peek_friends_decline">Weigeren</string>
+    <string name="peek_friends_sent">Verzonden verzoeken</string>
+    <string name="peek_friends_withdraw">Intrekken</string>
+    <string name="peek_friends_waiting">Wacht op acceptatie</string>
+    <string name="peek_friends_empty">Nog geen vrienden. Deel je code of voeg die van een vriend toe.</string>
+    <string name="peek_friends_online">Online</string>
+    <string name="peek_friends_offline">Offline</string>
+    <string name="peek_friends_in_party">In een party</string>
+    <string name="peek_friends_join">Meedoen</string>
+    <string name="peek_friends_remove">Vriend verwijderen</string>
+    <string name="peek_friends_remove_confirm">%1$s uit je vrienden verwijderen?</string>
+    <string name="peek_friends_request_sent">Vriendschapsverzoek verzonden naar %1$s</string>
+    <string name="peek_friends_added">Jij en %1$s zijn nu vrienden</string>
+    <string name="peek_friends_request_received">%1$s heeft je een vriendschapsverzoek gestuurd</string>
+    <string name="peek_friends_error_unknown">Niemand heeft deze vriendencode</string>
+    <string name="peek_friends_error_own">Dat is je eigen vriendencode</string>
+    <string name="peek_friends_error_limit">Te veel pogingen. Probeer het over een minuut opnieuw.</string>
+    <string name="peek_friends_error_offline">Vrienden is nu niet verbonden</string>
+    <string name="peek_friends_add_failed">Kan vriend niet toevoegen: %1$s</string>
+    <string name="peek_friends_invite_title">Uitnodiging voor party</string>
+    <string name="peek_friends_invite_text">%1$s nodigt je uit voor een party.</string>
+    <string name="peek_friends_invite">Vrienden uitnodigen</string>
+    <string name="peek_friends_invite_action">Uitnodigen</string>
+    <string name="peek_friends_invited">Uitnodiging verzonden naar %1$s</string>
+    <string name="peek_friends_invite_none">Geen van je vrienden is nu online</string>
+    <string name="peek_friends_delete">PeekParty-gegevens verwijderen</string>
+    <string name="peek_friends_delete_desc">Verwijdert je vriendencode, vrienden en verzoeken van de server</string>
+    <string name="peek_friends_delete_confirm">Je vriendencode, vrienden en openstaande verzoeken worden van de server verwijderd. Daarna krijg je een nieuwe code.</string>
+    <string name="peek_friends_deleted">PeekParty-gegevens verwijderd</string>
+    <string name="peek_party_rooms">Kamers</string>
+    <string name="peek_friends_invite_decline">Weigeren</string>
+    <string name="peek_friends_invite_declined">%1$s heeft je uitnodiging geweigerd</string>
+    <string name="peek_party_based_on">Gebaseerd op Listen Together van Metrolist</string>
+    <string name="peek_friends_share_link">Link delen</string>
+    <string name="peek_friends_link_title">Vriend toevoegen?</string>
+    <string name="peek_friends_link_text">Vriendschapsverzoek sturen naar %1$s?</string>
+    <string name="peek_precache_upcoming">Vooraf cachen</string>
+    <string name="peek_precache_upcoming_desc">Download de volgende nummers in de wachtrij terwijl muziek speelt, zodat het afspelen doorgaat bij een zwakke verbinding</string>
+    <string name="peek_precache_upcoming_off">Uit</string>
+    <string name="peek_precache_upcoming_count">Volgende %1$d nummers</string>
+    <string name="peek_precache_upcoming_one">Volgend nummer</string>
+    <string name="peek_precache_wifi_only">Alleen via wifi vooraf cachen</string>
+    <string name="peek_precache_wifi_only_desc">Geen mobiele data gebruiken voor nummers die nog niet spelen</string>
+    <string name="peek_listen_together_location_germany">Duitsland</string>
+    <string name="peek_translation_rate_limited">Google Translate blokkeert op dit moment verzoeken vanaf je netwerk. Probeer het later opnieuw of gebruik een vpn.</string>
+    <string name="peek_download_cancel_title">Download annuleren?</string>
+    <string name="peek_download_cancel_message">Nummers die al gedownload zijn, blijven op je apparaat.</string>
+    <string name="peek_download_cancel_confirm">Download stoppen</string>
+    <string name="peek_download_cancel_keep">Doorgaan met downloaden</string>
+    <string name="peek_canvas_desktop_desc">Speel Spotify Canvas en YouTube-muziekvideo's zonder geluid af achter de speler of in de hoes wanneer beschikbaar. Gebruikt meer opslag en data.</string>
+    <string name="peek_canvas_placement">Plaats van Canvas</string>
+    <string name="peek_canvas_placement_page">Hele speler</string>
+    <string name="peek_canvas_placement_cover">Alleen hoes</string>
+    <string name="peek_lyrics_view_off">Uit</string>
+    <string name="peek_youtube_canvas_desktop_hint">Vraagt op desktop meer rekenkracht, vooral boven 480p. Hapert de video, kies dan een lagere kwaliteit.</string>
+    <string name="peek_animated_covers_desktop_desc">Toon bewegende albumhoezen van Apple Music wanneer beschikbaar. Gebruikt meer opslag en data.</string>
+    <string name="peek_listen_together_ios_user">iPhone-gebruiker</string>
+    <string name="peek_youtube_canvas_ios_hint">Op iPhone werkt dit alleen als YouTube een H.264-versie van de video aanbiedt. Veel video's hebben die niet, dus het blijft vaak uit. Tot 720p.</string>
+</resources>

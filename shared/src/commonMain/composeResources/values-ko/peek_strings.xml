@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">동기화되지 않은 가사가 있어요</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">오디오</string>
+    <string name="peek_settings_audio_description">음질, 사운드, 크로스페이드, 전송</string>
+    <string name="peek_settings_audio_description_no_cast">음질, 사운드, 크로스페이드</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">로컬 로그 파일을 공유해요. 예를 들어 버그 신고와 함께요</string>
+    <string name="peek_settings_player_description">디자인, 배경, 미니 플레이어</string>
+    <string name="peek_settings_home_library_description">홈 섹션, 자동 재생목록, 숨긴 항목</string>
+    <string name="peek_settings_translation">가사 번역</string>
+    <string name="peek_settings_translation_description">Google 번역으로 가사를 자동 번역해요</string>
+    <string name="peek_settings_appearance_description">테마, 색상, 글꼴, 밀도</string>
+    <string name="peek_settings_queue_description">셔플, 비슷한 곡, 중복 곡, 다운로드</string>
+    <string name="peek_settings_privacy_description">감상 기록 및 검색 기록</string>
+    <string name="peek_translation_failed">번역하지 못했어요. 잠시 후 다시 시도해 주세요</string>
+    <string name="peek_about_developer_role">PeekMusic 개발자</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">동영상</string>
+    <string name="peek_video_filter_description">검색, 재생목록, 추천에 표시할 동영상. 플레이어의 오디오/동영상 전환은 그대로 유지돼요</string>
+    <string name="peek_video_filter_all">모든 동영상</string>
+    <string name="peek_video_filter_music">뮤직비디오만</string>
+    <string name="peek_video_filter_none">동영상 없음</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">%1$s의 가사에 포함됨</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">PeekMusic 1.x 보관함을 찾았어요</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">PeekMusic 1.x 보관함을 찾았어요. 재생목록, 기록, 좋아요, 보관함 데이터를 이 버전으로 옮기세요. 이전에 실패하면 원래 데이터베이스를 복구할 수 있어요.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">계정, 재생목록, 기록, 좋아요, 보관함 데이터가 PeekMusic 2에 준비됐어요.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">재생목록, 기록, 좋아요, 보관함 데이터가 PeekMusic 2에 준비됐어요.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">오른쪽 위 메뉴에서 설정을 열어 PeekMusic을 원하는 대로 바꿔 보세요.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">새 기능</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">몇 가지만 고르면 PeekMusic이 원하는 모습과 소리로 바뀌어요.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">언어 및 지역</string>
+    <string name="peek_onboarding_language_description">앱 언어와 추천을 받을 지역을 선택하세요.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">나만의 스타일</string>
+    <string name="peek_onboarding_look_description">라이트, 다크, 완전한 블랙. 색상은 배경화면이나 재생 중인 앨범 커버에서 가져와요.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">플레이어</string>
+    <string name="peek_onboarding_player_description">플레이어 디자인, 배경, 미니 플레이어 모양을 골라 보세요.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">가사와 Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek은 지금 부르는 가사 줄을 플레이어에 바로 보여 줘요. 번역과 로마자 표기는 그 아래에 나와요.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas와 동영상</string>
+    <string name="peek_onboarding_artwork_description">움직이는 커버, Canvas 루프, 뮤직비디오를 원하는 화질로.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">사운드</string>
+    <string name="peek_onboarding_sound_description">음질, 곡 간 일정한 볼륨, 부드러운 전환.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">표시할 콘텐츠</string>
+    <string name="peek_onboarding_content_description">검색, 추천, 라디오에서 절대 보고 싶지 않은 것을 숨기세요.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">고화질</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, 움직이는 커버, 아티스트 영상, 뮤직비디오를 1080p로 보여 줘요. 데이터를 더 많이 사용해요. 각각 설정에서 따로 조정할 수 있어요.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">꺼짐</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">찾지 못했어요. Spotify에 로그인하면 더 많이 찾을 수 있어요.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">이 곡에서는 사용할 수 없어요</string>
+    <string name="peek_friends_title">친구</string>
+    <string name="peek_friends_your_code">내 친구 코드</string>
+    <string name="peek_friends_code_hint">친구가 이 코드로 나를 추가할 수 있어요.</string>
+    <string name="peek_friends_connecting">연결 중…</string>
+    <string name="peek_friends_copy_code">코드 복사</string>
+    <string name="peek_friends_add_label">친구 코드</string>
+    <string name="peek_friends_add">추가</string>
+    <string name="peek_friends_requests">친구 요청</string>
+    <string name="peek_friends_accept">수락</string>
+    <string name="peek_friends_decline">거절</string>
+    <string name="peek_friends_sent">보낸 요청</string>
+    <string name="peek_friends_withdraw">취소</string>
+    <string name="peek_friends_waiting">수락 대기 중</string>
+    <string name="peek_friends_empty">아직 친구가 없어요. 내 코드를 공유하거나 친구의 코드를 추가하세요.</string>
+    <string name="peek_friends_online">온라인</string>
+    <string name="peek_friends_offline">오프라인</string>
+    <string name="peek_friends_in_party">파티 중</string>
+    <string name="peek_friends_join">참여</string>
+    <string name="peek_friends_remove">친구 삭제</string>
+    <string name="peek_friends_remove_confirm">%1$s 님을 친구에서 삭제할까요?</string>
+    <string name="peek_friends_request_sent">%1$s 님에게 친구 요청을 보냈어요</string>
+    <string name="peek_friends_added">이제 %1$s 님과 친구예요</string>
+    <string name="peek_friends_request_received">%1$s 님이 친구 요청을 보냈어요</string>
+    <string name="peek_friends_error_unknown">이 친구 코드를 가진 사용자가 없어요</string>
+    <string name="peek_friends_error_own">내 친구 코드예요</string>
+    <string name="peek_friends_error_limit">시도 횟수가 너무 많아요. 1분 후에 다시 시도해 주세요.</string>
+    <string name="peek_friends_error_offline">지금은 친구 기능에 연결되어 있지 않아요</string>
+    <string name="peek_friends_add_failed">친구를 추가하지 못했어요: %1$s</string>
+    <string name="peek_friends_invite_title">파티 초대</string>
+    <string name="peek_friends_invite_text">%1$s 님이 파티에 초대했어요.</string>
+    <string name="peek_friends_invite">친구 초대</string>
+    <string name="peek_friends_invite_action">초대</string>
+    <string name="peek_friends_invited">%1$s 님에게 초대를 보냈어요</string>
+    <string name="peek_friends_invite_none">지금 온라인인 친구가 없어요</string>
+    <string name="peek_friends_delete">PeekParty 데이터 삭제</string>
+    <string name="peek_friends_delete_desc">서버에서 친구 코드, 친구, 요청을 삭제해요</string>
+    <string name="peek_friends_delete_confirm">친구 코드, 친구, 대기 중인 요청이 서버에서 삭제돼요. 이후 새 코드가 발급돼요.</string>
+    <string name="peek_friends_deleted">PeekParty 데이터를 삭제했어요</string>
+    <string name="peek_party_rooms">방</string>
+    <string name="peek_friends_invite_decline">거절</string>
+    <string name="peek_friends_invite_declined">%1$s 님이 초대를 거절했어요</string>
+    <string name="peek_party_based_on">Metrolist의 Listen Together를 기반으로 해요</string>
+    <string name="peek_friends_share_link">링크 공유</string>
+    <string name="peek_friends_link_title">친구로 추가할까요?</string>
+    <string name="peek_friends_link_text">%1$s 님에게 친구 요청을 보낼까요?</string>
+    <string name="peek_precache_upcoming">미리 캐시</string>
+    <string name="peek_precache_upcoming_desc">음악이 재생되는 동안 대기열의 다음 곡을 내려받아 연결이 약해도 재생이 끊기지 않게 해요</string>
+    <string name="peek_precache_upcoming_off">꺼짐</string>
+    <string name="peek_precache_upcoming_count">다음 %1$d곡</string>
+    <string name="peek_precache_upcoming_one">다음 곡</string>
+    <string name="peek_precache_wifi_only">Wi-Fi에서만 미리 캐시</string>
+    <string name="peek_precache_wifi_only_desc">아직 재생되지 않은 곡에는 모바일 데이터를 쓰지 않아요</string>
+    <string name="peek_listen_together_location_germany">독일</string>
+    <string name="peek_translation_rate_limited">지금 Google 번역이 내 네트워크의 요청을 차단하고 있어요. 나중에 다시 시도하거나 VPN을 사용해 주세요.</string>
+    <string name="peek_download_cancel_title">다운로드를 취소할까요?</string>
+    <string name="peek_download_cancel_message">이미 다운로드한 곡은 기기에 남아 있어요.</string>
+    <string name="peek_download_cancel_confirm">다운로드 중지</string>
+    <string name="peek_download_cancel_keep">계속 다운로드</string>
+    <string name="peek_canvas_desktop_desc">가능한 경우 Spotify Canvas와 YouTube 뮤직비디오를 소리 없이 플레이어 뒤나 커버 안에서 재생해요. 저장 공간과 데이터를 더 많이 사용해요.</string>
+    <string name="peek_canvas_placement">Canvas 위치</string>
+    <string name="peek_canvas_placement_page">플레이어 전체</string>
+    <string name="peek_canvas_placement_cover">커버만</string>
+    <string name="peek_lyrics_view_off">꺼짐</string>
+    <string name="peek_youtube_canvas_desktop_hint">데스크톱에서는 특히 480p 이상에서 처리 성능이 더 필요해요. 영상이 끊기면 화질을 낮춰 주세요.</string>
+    <string name="peek_animated_covers_desktop_desc">가능한 경우 Apple Music의 움직이는 앨범 커버를 보여 줘요. 저장 공간과 데이터를 더 많이 사용해요.</string>
+    <string name="peek_listen_together_ios_user">iPhone 사용자</string>
+    <string name="peek_youtube_canvas_ios_hint">iPhone에서는 YouTube가 영상의 H.264 버전을 제공할 때만 작동해요. 많은 영상에 이 버전이 없어서 꺼진 상태로 남는 경우가 많아요. 최대 720p.</string>
+</resources>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Saadaval on sünkroonimata laulusõnad</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Heli</string>
+    <string name="peek_settings_audio_description">Kvaliteet, heli, sujuv üleminek ja ülekanne</string>
+    <string name="peek_settings_audio_description_no_cast">Kvaliteet, heli ja sujuv üleminek</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Jaga kohalikku logifaili, näiteks veateate juures</string>
+    <string name="peek_settings_player_description">Kujundus, taust ja minimängija</string>
+    <string name="peek_settings_home_library_description">Avalehe jaotised, automaatsed esitusloendid ja peidetud üksused</string>
+    <string name="peek_settings_translation">Laulusõnade tõlge</string>
+    <string name="peek_settings_translation_description">Tõlgib laulusõnad automaatselt Google'i tõlkega</string>
+    <string name="peek_settings_appearance_description">Teema, värvid, fondid ja tihedus</string>
+    <string name="peek_settings_queue_description">Juhuesitus, sarnased lood, duplikaadid ja allalaadimised</string>
+    <string name="peek_settings_privacy_description">Kuulamis- ja otsinguajalugu</string>
+    <string name="peek_translation_failed">Tõlkimine ebaõnnestus, proovi hiljem uuesti</string>
+    <string name="peek_about_developer_role">PeekMusicu arendaja</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Videod</string>
+    <string name="peek_video_filter_description">Millised videod kuvatakse otsingus, esitusloendites ja soovitustes. Mängija heli/video lüliti jääb alles</string>
+    <string name="peek_video_filter_all">Kõik videod</string>
+    <string name="peek_video_filter_music">Ainult muusikavideod</string>
+    <string name="peek_video_filter_none">Videoid pole</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Kaasas laulusõnadega allikast %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Sinu PeekMusic 1.x kogu on siin</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Leidsime sinu PeekMusic 1.x kogu. Too esitusloendid, ajalugu, meeldimised ja kogu andmed sellesse versiooni. Kui üleviimine ebaõnnestub, saad algse andmebaasi taastada.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Sinu konto, esitusloendid, ajalugu, meeldimised ja kogu andmed on PeekMusic 2-s valmis.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Sinu esitusloendid, ajalugu, meeldimised ja kogu andmed on PeekMusic 2-s valmis.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">PeekMusicu kohandamiseks ava paremal üleval menüüst Seaded.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Uus</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Paar kiiret valikut ja PeekMusic näeb välja ning kõlab nii, nagu sulle meeldib.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Keel ja piirkond</string>
+    <string name="peek_onboarding_language_description">Vali rakenduse keel ja koht, kust su soovitused tulevad.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Tee see enda omaks</string>
+    <string name="peek_onboarding_look_description">Hele, tume või puhas must, värvid taustapildilt või mängivalt kaanepildilt.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Mängija</string>
+    <string name="peek_onboarding_player_description">Vali mängija kujundus, taust ja minimängija välimus.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Laulusõnad ja Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek näitab parasjagu lauldavat rida otse mängijas. Tõlked ja ladina tähtedega kirjapilt on selle all.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas ja videod</string>
+    <string name="peek_onboarding_artwork_description">Liikuvad kaanepildid, Canvase tsüklid ja muusikavideod soovitud kvaliteediga.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Heli</string>
+    <string name="peek_onboarding_sound_description">Helikvaliteet, ühtlane helitugevus lugude vahel ja sujuvad üleminekud.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Mida näed</string>
+    <string name="peek_onboarding_content_description">Peida see, mida sa kunagi näha ei taha otsingus, soovitustes ja raadios.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Kõrge kvaliteet</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, liikuvad kaanepildid, artistivideod ja muusikavideod 1080p-s. Kasutab rohkem andmesidet. Igaüht saab seadetes eraldi muuta.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Väljas</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Ei leitud. Spotifysse sisse logides leiab rohkem.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Selle loo jaoks pole saadaval</string>
+    <string name="peek_friends_title">Sõbrad</string>
+    <string name="peek_friends_your_code">Sinu sõbrakood</string>
+    <string name="peek_friends_code_hint">Sõbrad lisavad sind selle koodiga.</string>
+    <string name="peek_friends_connecting">Ühendamine…</string>
+    <string name="peek_friends_copy_code">Kopeeri kood</string>
+    <string name="peek_friends_add_label">Sõbrakood</string>
+    <string name="peek_friends_add">Lisa</string>
+    <string name="peek_friends_requests">Sõbrakutsed</string>
+    <string name="peek_friends_accept">Nõustu</string>
+    <string name="peek_friends_decline">Keeldu</string>
+    <string name="peek_friends_sent">Saadetud kutsed</string>
+    <string name="peek_friends_withdraw">Võta tagasi</string>
+    <string name="peek_friends_waiting">Ootab kinnitamist</string>
+    <string name="peek_friends_empty">Sõpru veel pole. Jaga oma koodi või lisa sõbra kood.</string>
+    <string name="peek_friends_online">Võrgus</string>
+    <string name="peek_friends_offline">Võrgust väljas</string>
+    <string name="peek_friends_in_party">Peol</string>
+    <string name="peek_friends_join">Liitu</string>
+    <string name="peek_friends_remove">Eemalda sõber</string>
+    <string name="peek_friends_remove_confirm">Kas eemaldada %1$s sõprade hulgast?</string>
+    <string name="peek_friends_request_sent">Sõbrakutse saadetud: %1$s</string>
+    <string name="peek_friends_added">Sina ja %1$s olete nüüd sõbrad</string>
+    <string name="peek_friends_request_received">Uus sõbrakutse: %1$s</string>
+    <string name="peek_friends_error_unknown">Kellelgi pole seda sõbrakoodi</string>
+    <string name="peek_friends_error_own">See on sinu enda sõbrakood</string>
+    <string name="peek_friends_error_limit">Liiga palju katseid. Proovi minuti pärast uuesti.</string>
+    <string name="peek_friends_error_offline">Sõbrad pole praegu ühendatud</string>
+    <string name="peek_friends_add_failed">Sõpra ei saanud lisada: %1$s</string>
+    <string name="peek_friends_invite_title">Kutse peole</string>
+    <string name="peek_friends_invite_text">%1$s kutsub sind peole.</string>
+    <string name="peek_friends_invite">Kutsu sõpru</string>
+    <string name="peek_friends_invite_action">Kutsu</string>
+    <string name="peek_friends_invited">Kutse saadetud: %1$s</string>
+    <string name="peek_friends_invite_none">Ükski sõber pole praegu võrgus</string>
+    <string name="peek_friends_delete">Kustuta PeekParty andmed</string>
+    <string name="peek_friends_delete_desc">Eemaldab serverist sinu sõbrakoodi, sõbrad ja kutsed</string>
+    <string name="peek_friends_delete_confirm">Sinu sõbrakood, sõbrad ja ootel kutsed kustutatakse serverist. Seejärel saad uue koodi.</string>
+    <string name="peek_friends_deleted">PeekParty andmed kustutati</string>
+    <string name="peek_party_rooms">Ruumid</string>
+    <string name="peek_friends_invite_decline">Keeldu</string>
+    <string name="peek_friends_invite_declined">Kutsest keeldus: %1$s</string>
+    <string name="peek_party_based_on">Põhineb Metrolisti funktsioonil Listen Together</string>
+    <string name="peek_friends_share_link">Jaga linki</string>
+    <string name="peek_friends_link_title">Kas lisada sõber?</string>
+    <string name="peek_friends_link_text">Kas saata sõbrakutse: %1$s?</string>
+    <string name="peek_precache_upcoming">Eelvahemälu</string>
+    <string name="peek_precache_upcoming_desc">Laadib esituse ajal alla järjekorra järgmised lood, et muusika jätkuks ka nõrga ühenduse korral</string>
+    <string name="peek_precache_upcoming_off">Väljas</string>
+    <string name="peek_precache_upcoming_count">Järgmised lood: %1$d</string>
+    <string name="peek_precache_upcoming_one">Järgmine lugu</string>
+    <string name="peek_precache_wifi_only">Eelvahemälu ainult Wi-Fi kaudu</string>
+    <string name="peek_precache_wifi_only_desc">Ära kasuta mobiilset andmesidet lugude jaoks, mis veel ei mängi</string>
+    <string name="peek_listen_together_location_germany">Saksamaa</string>
+    <string name="peek_translation_rate_limited">Google'i tõlge blokeerib praegu sinu võrgu päringuid. Proovi hiljem uuesti või kasuta VPN-i.</string>
+    <string name="peek_download_cancel_title">Kas tühistada allalaadimine?</string>
+    <string name="peek_download_cancel_message">Juba alla laaditud lood jäävad seadmesse.</string>
+    <string name="peek_download_cancel_confirm">Peata allalaadimine</string>
+    <string name="peek_download_cancel_keep">Jätka allalaadimist</string>
+    <string name="peek_canvas_desktop_desc">Esitab Spotify Canvase ja YouTube'i muusikavideod hääletult mängija taga või kaanepildil, kui need on saadaval. Kasutab rohkem salvestusruumi ja andmesidet.</string>
+    <string name="peek_canvas_placement">Canvase asukoht</string>
+    <string name="peek_canvas_placement_page">Kogu mängija</string>
+    <string name="peek_canvas_placement_cover">Ainult kaanepilt</string>
+    <string name="peek_lyrics_view_off">Väljas</string>
+    <string name="peek_youtube_canvas_desktop_hint">Arvutis nõuab rohkem jõudlust, eriti üle 480p. Kui video hakib, vali madalam kvaliteet.</string>
+    <string name="peek_animated_covers_desktop_desc">Näitab Apple Musicu liikuvaid albumikaasi, kui need on saadaval. Kasutab rohkem salvestusruumi ja andmesidet.</string>
+    <string name="peek_listen_together_ios_user">iPhone'i kasutaja</string>
+    <string name="peek_youtube_canvas_ios_hint">iPhone'is töötab see ainult siis, kui YouTube pakub videost H.264 versiooni. Paljudel videotel seda pole, seega jääb see sageli välja. Kuni 720p.</string>
+</resources>

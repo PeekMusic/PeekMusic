@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">K dispozícii je nesynchronizovaný text</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Zvuk</string>
+    <string name="peek_settings_audio_description">Kvalita, zvuk, prelínanie a prenos</string>
+    <string name="peek_settings_audio_description_no_cast">Kvalita, zvuk a prelínanie</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Zdieľať miestny súbor denníka, napríklad s hlásením chyby</string>
+    <string name="peek_settings_player_description">Vzhľad, pozadie a miniprehrávač</string>
+    <string name="peek_settings_home_library_description">Sekcie domovskej stránky, automatické playlisty a skryté položky</string>
+    <string name="peek_settings_translation">Preklad textov</string>
+    <string name="peek_settings_translation_description">Automaticky prekladá texty pomocou Prekladača Google</string>
+    <string name="peek_settings_appearance_description">Motív, farby, písma a hustota</string>
+    <string name="peek_settings_queue_description">Náhodné prehrávanie, podobné skladby, duplikáty a sťahovanie</string>
+    <string name="peek_settings_privacy_description">História počúvania a vyhľadávania</string>
+    <string name="peek_translation_failed">Preklad zlyhal, skúste to neskôr</string>
+    <string name="peek_about_developer_role">Vývojár PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Videá</string>
+    <string name="peek_video_filter_description">Ktoré videá sa zobrazujú vo vyhľadávaní, playlistoch a odporúčaniach. Prepínač audio/video v prehrávači zostáva</string>
+    <string name="peek_video_filter_all">Všetky videá</string>
+    <string name="peek_video_filter_music">Iba hudobné videá</string>
+    <string name="peek_video_filter_none">Žiadne videá</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Súčasťou textu od %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Vaša knižnica z PeekMusic 1.x je tu</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Našli sme vašu knižnicu z PeekMusic 1.x. Presuňte playlisty, históriu, obľúbené a údaje knižnice do tejto verzie. Ak migrácia zlyhá, môžete obnoviť pôvodnú databázu.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Váš účet, playlisty, história, obľúbené a údaje knižnice sú pripravené v PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Vaše playlisty, história, obľúbené a údaje knižnice sú pripravené v PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Ak chcete PeekMusic prispôsobiť, otvorte Nastavenia v ponuke vpravo hore.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Nové</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Pár rýchlych volieb a PeekMusic bude vyzerať a znieť tak, ako chcete.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Jazyk a oblasť</string>
+    <string name="peek_onboarding_language_description">Vyberte jazyk aplikácie a odkiaľ pochádzajú vaše odporúčania.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Podľa vás</string>
+    <string name="peek_onboarding_look_description">Svetlý, tmavý alebo čisto čierny, s farbami z tapety alebo práve hraného obalu.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Prehrávač</string>
+    <string name="peek_onboarding_player_description">Vyberte vzhľad prehrávača, jeho pozadie a podobu miniprehrávača.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Texty a Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek zobrazuje práve spievaný riadok priamo v prehrávači. Preklady a latinský prepis sa zobrazujú pod ním.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas a videá</string>
+    <string name="peek_onboarding_artwork_description">Pohyblivé obaly, slučky Canvas a hudobné videá v kvalite, akú chcete.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Zvuk</string>
+    <string name="peek_onboarding_sound_description">Kvalita zvuku, vyrovnaná hlasitosť medzi skladbami a plynulé prechody.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Čo uvidíte</string>
+    <string name="peek_onboarding_content_description">Skryte to, čo nikdy nechcete vidieť vo vyhľadávaní, odporúčaniach a rádiu.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Vysoká kvalita</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, pohyblivé obaly, videá interpretov a hudobné videá v 1080p. Spotrebuje viac dát. Každé sa dá nastaviť samostatne v Nastaveniach.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Vyp.</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Nenašlo sa. Po prihlásení do Spotify sa nájde viac.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Pre túto skladbu nie je k dispozícii</string>
+    <string name="peek_friends_title">Priatelia</string>
+    <string name="peek_friends_your_code">Váš kód priateľa</string>
+    <string name="peek_friends_code_hint">Priatelia si vás pridajú pomocou tohto kódu.</string>
+    <string name="peek_friends_connecting">Pripája sa…</string>
+    <string name="peek_friends_copy_code">Kopírovať kód</string>
+    <string name="peek_friends_add_label">Kód priateľa</string>
+    <string name="peek_friends_add">Pridať</string>
+    <string name="peek_friends_requests">Žiadosti o priateľstvo</string>
+    <string name="peek_friends_accept">Prijať</string>
+    <string name="peek_friends_decline">Odmietnuť</string>
+    <string name="peek_friends_sent">Odoslané žiadosti</string>
+    <string name="peek_friends_withdraw">Stiahnuť</string>
+    <string name="peek_friends_waiting">Čaká na prijatie</string>
+    <string name="peek_friends_empty">Zatiaľ žiadni priatelia. Zdieľajte svoj kód alebo pridajte kód priateľa.</string>
+    <string name="peek_friends_online">Online</string>
+    <string name="peek_friends_offline">Offline</string>
+    <string name="peek_friends_in_party">Na párty</string>
+    <string name="peek_friends_join">Pripojiť sa</string>
+    <string name="peek_friends_remove">Odstrániť priateľa</string>
+    <string name="peek_friends_remove_confirm">Odstrániť %1$s z priateľov?</string>
+    <string name="peek_friends_request_sent">Žiadosť o priateľstvo odoslaná: %1$s</string>
+    <string name="peek_friends_added">Vy a %1$s ste teraz priatelia</string>
+    <string name="peek_friends_request_received">Nová žiadosť o priateľstvo: %1$s</string>
+    <string name="peek_friends_error_unknown">Tento kód priateľa nikto nemá</string>
+    <string name="peek_friends_error_own">To je váš vlastný kód priateľa</string>
+    <string name="peek_friends_error_limit">Príliš veľa pokusov. Skúste to o minútu.</string>
+    <string name="peek_friends_error_offline">Priatelia teraz nie sú pripojení</string>
+    <string name="peek_friends_add_failed">Priateľa sa nepodarilo pridať: %1$s</string>
+    <string name="peek_friends_invite_title">Pozvánka na párty</string>
+    <string name="peek_friends_invite_text">%1$s vás pozýva na párty.</string>
+    <string name="peek_friends_invite">Pozvať priateľov</string>
+    <string name="peek_friends_invite_action">Pozvať</string>
+    <string name="peek_friends_invited">Pozvánka odoslaná: %1$s</string>
+    <string name="peek_friends_invite_none">Žiadny z vašich priateľov teraz nie je online</string>
+    <string name="peek_friends_delete">Odstrániť údaje PeekParty</string>
+    <string name="peek_friends_delete_desc">Odstráni zo servera váš kód priateľa, priateľov a žiadosti</string>
+    <string name="peek_friends_delete_confirm">Váš kód priateľa, priatelia a čakajúce žiadosti sa odstránia zo servera. Potom dostanete nový kód.</string>
+    <string name="peek_friends_deleted">Údaje PeekParty boli odstránené</string>
+    <string name="peek_party_rooms">Miestnosti</string>
+    <string name="peek_friends_invite_decline">Odmietnuť</string>
+    <string name="peek_friends_invite_declined">Pozvánka odmietnutá: %1$s</string>
+    <string name="peek_party_based_on">Založené na Listen Together z Metrolist</string>
+    <string name="peek_friends_share_link">Zdieľať odkaz</string>
+    <string name="peek_friends_link_title">Pridať priateľa?</string>
+    <string name="peek_friends_link_text">Poslať žiadosť o priateľstvo: %1$s?</string>
+    <string name="peek_precache_upcoming">Predbežné ukladanie</string>
+    <string name="peek_precache_upcoming_desc">Sťahuje ďalšie skladby vo fronte počas prehrávania, aby hudba hrala aj pri slabom pripojení</string>
+    <string name="peek_precache_upcoming_off">Vyp.</string>
+    <string name="peek_precache_upcoming_count">Ďalšie skladby: %1$d</string>
+    <string name="peek_precache_upcoming_one">Ďalšia skladba</string>
+    <string name="peek_precache_wifi_only">Predbežne ukladať iba cez Wi-Fi</string>
+    <string name="peek_precache_wifi_only_desc">Nepoužívať mobilné dáta pre skladby, ktoré ešte nehrajú</string>
+    <string name="peek_listen_together_location_germany">Nemecko</string>
+    <string name="peek_translation_rate_limited">Prekladač Google teraz blokuje požiadavky z vašej siete. Skúste to neskôr alebo použite VPN.</string>
+    <string name="peek_download_cancel_title">Zrušiť sťahovanie?</string>
+    <string name="peek_download_cancel_message">Už stiahnuté skladby zostanú v zariadení.</string>
+    <string name="peek_download_cancel_confirm">Zastaviť sťahovanie</string>
+    <string name="peek_download_cancel_keep">Pokračovať v sťahovaní</string>
+    <string name="peek_canvas_desktop_desc">Prehráva Spotify Canvas a hudobné videá z YouTube bez zvuku za prehrávačom alebo v obale, ak sú k dispozícii. Spotrebuje viac úložiska a dát.</string>
+    <string name="peek_canvas_placement">Umiestnenie Canvas</string>
+    <string name="peek_canvas_placement_page">Celý prehrávač</string>
+    <string name="peek_canvas_placement_cover">Iba obal</string>
+    <string name="peek_lyrics_view_off">Vyp.</string>
+    <string name="peek_youtube_canvas_desktop_hint">Na počítači vyžaduje viac výkonu, hlavne nad 480p. Ak sa video seká, zvoľte nižšiu kvalitu.</string>
+    <string name="peek_animated_covers_desktop_desc">Zobrazuje pohyblivé obaly albumov z Apple Music, ak sú k dispozícii. Spotrebuje viac úložiska a dát.</string>
+    <string name="peek_listen_together_ios_user">Používateľ iPhonu</string>
+    <string name="peek_youtube_canvas_ios_hint">Na iPhone to funguje iba vtedy, keď YouTube ponúka verziu videa v H.264. Mnoho videí ju nemá, takže to často zostane vypnuté. Do 720p.</string>
+</resources>

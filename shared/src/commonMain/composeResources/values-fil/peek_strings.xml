@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">May lyrics na hindi naka-sync</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Audio</string>
+    <string name="peek_settings_audio_description">Kalidad, tunog, crossfade at cast</string>
+    <string name="peek_settings_audio_description_no_cast">Kalidad, tunog at crossfade</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">I-share ang lokal na log file, halimbawa kasama ng bug report</string>
+    <string name="peek_settings_player_description">Disenyo, background at mini player</string>
+    <string name="peek_settings_home_library_description">Mga seksyon ng home, awtomatikong playlist at mga nakatagong item</string>
+    <string name="peek_settings_translation">Pagsasalin ng lyrics</string>
+    <string name="peek_settings_translation_description">Awtomatikong isalin ang lyrics gamit ang Google Translate</string>
+    <string name="peek_settings_appearance_description">Tema, kulay, font at density</string>
+    <string name="peek_settings_queue_description">Shuffle, mga katulad na kanta, duplicate at download</string>
+    <string name="peek_settings_privacy_description">History ng pakikinig at paghahanap</string>
+    <string name="peek_translation_failed">Hindi naisalin, subukan ulit mamaya</string>
+    <string name="peek_about_developer_role">Developer ng PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Mga video</string>
+    <string name="peek_video_filter_description">Aling mga video ang lalabas sa paghahanap, playlist at rekomendasyon. Nananatili ang audio/video switch sa player</string>
+    <string name="peek_video_filter_all">Lahat ng video</string>
+    <string name="peek_video_filter_music">Music video lang</string>
+    <string name="peek_video_filter_none">Walang video</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Kasama sa lyrics mula sa %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Narito na ang iyong PeekMusic 1.x library</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Nahanap namin ang iyong PeekMusic 1.x library. Ilipat ang mga playlist, history, like at data ng library sa bersyong ito. Kung pumalya ang paglipat, maibabalik mo ang orihinal na database.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Handa na sa PeekMusic 2 ang iyong account, mga playlist, history, like at data ng library.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Handa na sa PeekMusic 2 ang iyong mga playlist, history, like at data ng library.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Buksan ang Settings mula sa menu sa kanang itaas para i-customize ang PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Bago</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Ilang mabilis na pagpili, at magmumukha at tutunog ang PeekMusic ayon sa gusto mo.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Wika at rehiyon</string>
+    <string name="peek_onboarding_language_description">Piliin ang wika ng app at kung saan manggagaling ang iyong mga rekomendasyon.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Gawin itong sa iyo</string>
+    <string name="peek_onboarding_look_description">Light, dark o purong itim, na may kulay mula sa wallpaper o sa cover na tumutugtog.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Player</string>
+    <string name="peek_onboarding_player_description">Piliin ang disenyo ng player, background at itsura ng mini player.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Lyrics at Peek</string>
+    <string name="peek_onboarding_lyrics_description">Ipinapakita ng Peek ang linyang kinakanta mismo sa player. Lumalabas sa ilalim nito ang mga salin at Latin na pagbaybay.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas at mga video</string>
+    <string name="peek_onboarding_artwork_description">Animated na cover, Canvas loop at music video sa kalidad na gusto mo.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Tunog</string>
+    <string name="peek_onboarding_sound_description">Kalidad ng audio, pantay na lakas ng tunog sa pagitan ng mga kanta at maayos na transition.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Ang nakikita mo</string>
+    <string name="peek_onboarding_content_description">Itago ang ayaw mong makita kailanman sa paghahanap, rekomendasyon at radyo.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Mataas na kalidad</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, animated na cover, video ng artist at music video sa 1080p. Mas maraming data ang gamit. Bawat isa ay maaaring ayusin nang hiwalay sa Settings.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Naka-off</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Walang nahanap. Mas marami ang mahahanap kapag naka-sign in sa Spotify.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Hindi available para sa kantang ito</string>
+    <string name="peek_friends_title">Mga kaibigan</string>
+    <string name="peek_friends_your_code">Ang iyong friend code</string>
+    <string name="peek_friends_code_hint">Idinadagdag ka ng mga kaibigan gamit ang code na ito.</string>
+    <string name="peek_friends_connecting">Kumokonekta…</string>
+    <string name="peek_friends_copy_code">Kopyahin ang code</string>
+    <string name="peek_friends_add_label">Friend code</string>
+    <string name="peek_friends_add">Idagdag</string>
+    <string name="peek_friends_requests">Mga friend request</string>
+    <string name="peek_friends_accept">Tanggapin</string>
+    <string name="peek_friends_decline">Tanggihan</string>
+    <string name="peek_friends_sent">Mga naipadalang request</string>
+    <string name="peek_friends_withdraw">Bawiin</string>
+    <string name="peek_friends_waiting">Naghihintay ng kumpirmasyon</string>
+    <string name="peek_friends_empty">Wala pang kaibigan. I-share ang iyong code o magdagdag ng code ng kaibigan.</string>
+    <string name="peek_friends_online">Online</string>
+    <string name="peek_friends_offline">Offline</string>
+    <string name="peek_friends_in_party">Nasa party</string>
+    <string name="peek_friends_join">Sumali</string>
+    <string name="peek_friends_remove">Alisin ang kaibigan</string>
+    <string name="peek_friends_remove_confirm">Alisin si %1$s sa mga kaibigan?</string>
+    <string name="peek_friends_request_sent">Naipadala ang friend request kay %1$s</string>
+    <string name="peek_friends_added">Magkaibigan na kayo ni %1$s</string>
+    <string name="peek_friends_request_received">Bagong friend request mula kay %1$s</string>
+    <string name="peek_friends_error_unknown">Walang may ganitong friend code</string>
+    <string name="peek_friends_error_own">Ito ang sarili mong friend code</string>
+    <string name="peek_friends_error_limit">Masyadong maraming subok. Subukan ulit pagkalipas ng isang minuto.</string>
+    <string name="peek_friends_error_offline">Hindi nakakonekta ang Friends ngayon</string>
+    <string name="peek_friends_add_failed">Hindi maidagdag ang kaibigan: %1$s</string>
+    <string name="peek_friends_invite_title">Imbitasyon sa party</string>
+    <string name="peek_friends_invite_text">Iniimbitahan ka ni %1$s sa kanyang party.</string>
+    <string name="peek_friends_invite">Mag-imbita ng kaibigan</string>
+    <string name="peek_friends_invite_action">Imbitahan</string>
+    <string name="peek_friends_invited">Naipadala ang imbitasyon kay %1$s</string>
+    <string name="peek_friends_invite_none">Walang kaibigan mong online ngayon</string>
+    <string name="peek_friends_delete">Burahin ang data ng PeekParty</string>
+    <string name="peek_friends_delete_desc">Inaalis sa server ang iyong friend code, mga kaibigan at request</string>
+    <string name="peek_friends_delete_confirm">Buburahin sa server ang iyong friend code, mga kaibigan at nakabinbing request. Pagkatapos ay makakakuha ka ng bagong code.</string>
+    <string name="peek_friends_deleted">Nabura ang data ng PeekParty</string>
+    <string name="peek_party_rooms">Mga room</string>
+    <string name="peek_friends_invite_decline">Tanggihan</string>
+    <string name="peek_friends_invite_declined">Tinanggihan ni %1$s ang imbitasyon</string>
+    <string name="peek_party_based_on">Batay sa Listen Together ng Metrolist</string>
+    <string name="peek_friends_share_link">I-share ang link</string>
+    <string name="peek_friends_link_title">Magdagdag ng kaibigan?</string>
+    <string name="peek_friends_link_text">Magpadala ng friend request kay %1$s?</string>
+    <string name="peek_precache_upcoming">Mag-cache nang maaga</string>
+    <string name="peek_precache_upcoming_desc">Dina-download ang mga susunod na kanta sa queue habang tumutugtog, para tuloy ang musika kahit mahina ang koneksyon</string>
+    <string name="peek_precache_upcoming_off">Naka-off</string>
+    <string name="peek_precache_upcoming_count">Susunod na %1$d kanta</string>
+    <string name="peek_precache_upcoming_one">Susunod na kanta</string>
+    <string name="peek_precache_wifi_only">Mag-cache nang maaga sa Wi-Fi lang</string>
+    <string name="peek_precache_wifi_only_desc">Huwag gumamit ng mobile data para sa mga kantang hindi pa tumutugtog</string>
+    <string name="peek_listen_together_location_germany">Germany</string>
+    <string name="peek_translation_rate_limited">Bina-block ng Google Translate ang mga request mula sa iyong network ngayon. Subukan ulit mamaya o gumamit ng VPN.</string>
+    <string name="peek_download_cancel_title">Kanselahin ang download?</string>
+    <string name="peek_download_cancel_message">Mananatili sa iyong device ang mga kantang na-download na.</string>
+    <string name="peek_download_cancel_confirm">Itigil ang download</string>
+    <string name="peek_download_cancel_keep">Ituloy ang download</string>
+    <string name="peek_canvas_desktop_desc">Pinapatugtog nang walang tunog ang Spotify Canvas at YouTube music video sa likod ng player o sa cover kapag mayroon. Mas maraming storage at data ang gamit.</string>
+    <string name="peek_canvas_placement">Lugar ng Canvas</string>
+    <string name="peek_canvas_placement_page">Buong player</string>
+    <string name="peek_canvas_placement_cover">Cover lang</string>
+    <string name="peek_lyrics_view_off">Naka-off</string>
+    <string name="peek_youtube_canvas_desktop_hint">Mas maraming performance ang kailangan sa computer, lalo na lampas 480p. Kung nauutal ang video, pumili ng mas mababang kalidad.</string>
+    <string name="peek_animated_covers_desktop_desc">Nagpapakita ng animated na album cover mula sa Apple Music kapag mayroon. Mas maraming storage at data ang gamit.</string>
+    <string name="peek_listen_together_ios_user">iPhone user</string>
+    <string name="peek_youtube_canvas_ios_hint">Sa iPhone, gumagana lang ito kapag may H.264 na bersyon ng video ang YouTube. Maraming video ang wala nito, kaya madalas itong hindi lumalabas. Hanggang 720p.</string>
+</resources>

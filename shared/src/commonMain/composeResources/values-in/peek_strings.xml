@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Lirik tanpa sinkronisasi tersedia</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Audio</string>
+    <string name="peek_settings_audio_description">Kualitas, suara, crossfade, dan cast</string>
+    <string name="peek_settings_audio_description_no_cast">Kualitas, suara, dan crossfade</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Bagikan file log lokal, misalnya bersama laporan bug</string>
+    <string name="peek_settings_player_description">Desain, latar belakang, dan pemutar mini</string>
+    <string name="peek_settings_home_library_description">Bagian beranda, playlist otomatis, dan item tersembunyi</string>
+    <string name="peek_settings_translation">Terjemahan lirik</string>
+    <string name="peek_settings_translation_description">Terjemahkan lirik otomatis dengan Google Terjemahan</string>
+    <string name="peek_settings_appearance_description">Tema, warna, font, dan kepadatan</string>
+    <string name="peek_settings_queue_description">Acak, lagu serupa, duplikat, dan unduhan</string>
+    <string name="peek_settings_privacy_description">Riwayat dengar dan pencarian</string>
+    <string name="peek_translation_failed">Terjemahan gagal, coba lagi nanti</string>
+    <string name="peek_about_developer_role">Developer PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Video</string>
+    <string name="peek_video_filter_description">Video mana yang muncul di pencarian, playlist, dan rekomendasi. Tombol audio/video di pemutar tetap ada</string>
+    <string name="peek_video_filter_all">Semua video</string>
+    <string name="peek_video_filter_music">Hanya video musik</string>
+    <string name="peek_video_filter_none">Tanpa video</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Disertakan dengan lirik dari %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Koleksi PeekMusic 1.x kamu ada di sini</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Kami menemukan koleksi PeekMusic 1.x kamu. Pindahkan playlist, riwayat, suka, dan data koleksi ke versi ini. Jika migrasi gagal, kamu bisa memulihkan database asli.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Akun, playlist, riwayat, suka, dan data koleksi kamu sudah siap di PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Playlist, riwayat, suka, dan data koleksi kamu sudah siap di PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Buka Setelan dari menu di kanan atas untuk menyesuaikan PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Baru</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Beberapa pilihan cepat, dan PeekMusic akan terlihat dan terdengar sesuai seleramu.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Bahasa dan wilayah</string>
+    <string name="peek_onboarding_language_description">Pilih bahasa aplikasi dan asal rekomendasimu.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Buat sesuai gayamu</string>
+    <string name="peek_onboarding_look_description">Terang, gelap, atau hitam pekat, dengan warna dari wallpaper atau sampul yang sedang diputar.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Pemutar</string>
+    <string name="peek_onboarding_player_description">Pilih desain pemutar, latar belakang, dan tampilan pemutar mini.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Lirik dan Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek menampilkan baris yang sedang dinyanyikan langsung di pemutar. Terjemahan dan huruf Latin muncul di bawahnya.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas dan video</string>
+    <string name="peek_onboarding_artwork_description">Sampul animasi, loop Canvas, dan video musik dalam kualitas yang kamu mau.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Suara</string>
+    <string name="peek_onboarding_sound_description">Kualitas audio, volume rata antar lagu, dan transisi halus.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Yang kamu lihat</string>
+    <string name="peek_onboarding_content_description">Sembunyikan yang tidak pernah ingin kamu lihat di pencarian, rekomendasi, dan radio.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Kualitas tinggi</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, sampul animasi, video artis, dan video musik dalam 1080p. Memakai lebih banyak data. Masing-masing bisa diatur terpisah di Setelan.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Mati</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Tidak ditemukan. Masuk ke Spotify untuk menemukan lebih banyak.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Tidak tersedia untuk lagu ini</string>
+    <string name="peek_friends_title">Teman</string>
+    <string name="peek_friends_your_code">Kode temanmu</string>
+    <string name="peek_friends_code_hint">Teman menambahkanmu dengan kode ini.</string>
+    <string name="peek_friends_connecting">Menghubungkan…</string>
+    <string name="peek_friends_copy_code">Salin kode</string>
+    <string name="peek_friends_add_label">Kode teman</string>
+    <string name="peek_friends_add">Tambah</string>
+    <string name="peek_friends_requests">Permintaan pertemanan</string>
+    <string name="peek_friends_accept">Terima</string>
+    <string name="peek_friends_decline">Tolak</string>
+    <string name="peek_friends_sent">Permintaan terkirim</string>
+    <string name="peek_friends_withdraw">Tarik</string>
+    <string name="peek_friends_waiting">Menunggu konfirmasi</string>
+    <string name="peek_friends_empty">Belum ada teman. Bagikan kodemu atau tambahkan kode teman.</string>
+    <string name="peek_friends_online">Online</string>
+    <string name="peek_friends_offline">Offline</string>
+    <string name="peek_friends_in_party">Di pesta</string>
+    <string name="peek_friends_join">Gabung</string>
+    <string name="peek_friends_remove">Hapus teman</string>
+    <string name="peek_friends_remove_confirm">Hapus %1$s dari teman?</string>
+    <string name="peek_friends_request_sent">Permintaan pertemanan dikirim ke %1$s</string>
+    <string name="peek_friends_added">Kamu dan %1$s sekarang berteman</string>
+    <string name="peek_friends_request_received">Permintaan pertemanan baru dari %1$s</string>
+    <string name="peek_friends_error_unknown">Tidak ada yang punya kode teman ini</string>
+    <string name="peek_friends_error_own">Ini kode temanmu sendiri</string>
+    <string name="peek_friends_error_limit">Terlalu banyak percobaan. Coba lagi dalam satu menit.</string>
+    <string name="peek_friends_error_offline">Layanan teman sedang tidak terhubung</string>
+    <string name="peek_friends_add_failed">Tidak bisa menambahkan teman: %1$s</string>
+    <string name="peek_friends_invite_title">Undangan pesta</string>
+    <string name="peek_friends_invite_text">%1$s mengundangmu ke pestanya.</string>
+    <string name="peek_friends_invite">Undang teman</string>
+    <string name="peek_friends_invite_action">Undang</string>
+    <string name="peek_friends_invited">Undangan dikirim ke %1$s</string>
+    <string name="peek_friends_invite_none">Tidak ada temanmu yang sedang online</string>
+    <string name="peek_friends_delete">Hapus data PeekParty</string>
+    <string name="peek_friends_delete_desc">Menghapus kode teman, teman, dan permintaanmu dari server</string>
+    <string name="peek_friends_delete_confirm">Kode teman, teman, dan permintaan yang tertunda akan dihapus dari server. Setelah itu kamu akan mendapat kode baru.</string>
+    <string name="peek_friends_deleted">Data PeekParty dihapus</string>
+    <string name="peek_party_rooms">Ruang</string>
+    <string name="peek_friends_invite_decline">Tolak</string>
+    <string name="peek_friends_invite_declined">%1$s menolak undangan</string>
+    <string name="peek_party_based_on">Berdasarkan Listen Together dari Metrolist</string>
+    <string name="peek_friends_share_link">Bagikan tautan</string>
+    <string name="peek_friends_link_title">Tambah teman?</string>
+    <string name="peek_friends_link_text">Kirim permintaan pertemanan ke %1$s?</string>
+    <string name="peek_precache_upcoming">Cache lebih dulu</string>
+    <string name="peek_precache_upcoming_desc">Mengunduh lagu berikutnya di antrean saat memutar, agar musik tetap jalan dengan koneksi lemah</string>
+    <string name="peek_precache_upcoming_off">Mati</string>
+    <string name="peek_precache_upcoming_count">%1$d lagu berikutnya</string>
+    <string name="peek_precache_upcoming_one">Lagu berikutnya</string>
+    <string name="peek_precache_wifi_only">Cache lebih dulu hanya lewat Wi-Fi</string>
+    <string name="peek_precache_wifi_only_desc">Jangan pakai data seluler untuk lagu yang belum diputar</string>
+    <string name="peek_listen_together_location_germany">Jerman</string>
+    <string name="peek_translation_rate_limited">Google Terjemahan sedang memblokir permintaan dari jaringanmu. Coba lagi nanti atau gunakan VPN.</string>
+    <string name="peek_download_cancel_title">Batalkan unduhan?</string>
+    <string name="peek_download_cancel_message">Lagu yang sudah diunduh tetap ada di perangkatmu.</string>
+    <string name="peek_download_cancel_confirm">Hentikan unduhan</string>
+    <string name="peek_download_cancel_keep">Lanjutkan unduhan</string>
+    <string name="peek_canvas_desktop_desc">Memutar Spotify Canvas dan video musik YouTube tanpa suara di belakang pemutar atau di sampul jika tersedia. Memakai lebih banyak penyimpanan dan data.</string>
+    <string name="peek_canvas_placement">Posisi Canvas</string>
+    <string name="peek_canvas_placement_page">Seluruh pemutar</string>
+    <string name="peek_canvas_placement_cover">Hanya sampul</string>
+    <string name="peek_lyrics_view_off">Mati</string>
+    <string name="peek_youtube_canvas_desktop_hint">Di komputer butuh performa lebih, terutama di atas 480p. Kalau video tersendat, pilih kualitas lebih rendah.</string>
+    <string name="peek_animated_covers_desktop_desc">Menampilkan sampul album animasi dari Apple Music jika tersedia. Memakai lebih banyak penyimpanan dan data.</string>
+    <string name="peek_listen_together_ios_user">Pengguna iPhone</string>
+    <string name="peek_youtube_canvas_ios_hint">Di iPhone ini hanya berfungsi jika YouTube menyediakan versi H.264 dari video. Banyak video tidak punya, jadi sering tidak muncul. Hingga 720p.</string>
+</resources>

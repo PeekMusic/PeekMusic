@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PeekMusic strings, kept apart from upstream catalogs so Metrolist merges stay clean. Translated on Crowdin. -->
+<resources>
+    <!-- Translators: Shown in the player's lyrics Peek when the song only has lyrics without timestamps. -->
+    <string name="peek_plain_lyrics_hint">Versuri nesincronizate disponibile</string>
+    <!-- Translators: Settings page with audio quality, sound, crossfade and cast. -->
+    <string name="peek_settings_audio">Audio</string>
+    <string name="peek_settings_audio_description">Calitate, sunet, crossfade și transmitere</string>
+    <string name="peek_settings_audio_description_no_cast">Calitate, sunet și crossfade</string>
+    <!-- Translators: Supporting text beneath Export logs in the privacy settings: shares the local diagnostic log file. -->
+    <string name="peek_export_logs_description">Distribuie fișierul jurnal local, de exemplu cu un raport de eroare</string>
+    <string name="peek_settings_player_description">Design, fundal și miniplayer</string>
+    <string name="peek_settings_home_library_description">Secțiunile paginii principale, playlisturi automate și elemente ascunse</string>
+    <string name="peek_settings_translation">Traducerea versurilor</string>
+    <string name="peek_settings_translation_description">Traduce automat versurile cu Google Traducere</string>
+    <string name="peek_settings_appearance_description">Temă, culori, fonturi și densitate</string>
+    <string name="peek_settings_queue_description">Redare aleatorie, melodii similare, duplicate și descărcări</string>
+    <string name="peek_settings_privacy_description">Istoricul ascultărilor și al căutărilor</string>
+    <string name="peek_translation_failed">Traducerea a eșuat, încearcă din nou mai târziu</string>
+    <string name="peek_about_developer_role">Dezvoltatorul PeekMusic</string>
+    <!-- Translators: Content setting that decides which videos appear in search and playlists. -->
+    <string name="peek_video_filter">Videoclipuri</string>
+    <string name="peek_video_filter_description">Ce videoclipuri apar în căutare, playlisturi și recomandări. Comutatorul audio/video din player rămâne</string>
+    <string name="peek_video_filter_all">Toate videoclipurile</string>
+    <string name="peek_video_filter_music">Doar videoclipuri muzicale</string>
+    <string name="peek_video_filter_none">Fără videoclipuri</string>
+    <!-- Translators: Under the lyrics translation switch; %1$s is the lyrics provider, e.g. BetterLyrics. -->
+    <string name="peek_translation_source_builtin">Inclusă în versurile de la %1$s</string>
+    <!-- Translators: Onboarding title when PeekMusic finds the library of an older PeekMusic 1.x install. -->
+    <string name="peek_onboarding_migration_title">Biblioteca ta din PeekMusic 1.x e aici</string>
+    <!-- Translators: Onboarding text that offers to move the PeekMusic 1.x library into this version. -->
+    <string name="peek_onboarding_migration_description">Am găsit biblioteca ta din PeekMusic 1.x. Mută playlisturile, istoricul, aprecierile și datele bibliotecii în această versiune. Dacă migrarea eșuează, poți recupera baza de date originală.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library and account were moved over. -->
+    <string name="peek_onboarding_migration_complete_description">Contul, playlisturile, istoricul, aprecierile și datele bibliotecii tale sunt gata în PeekMusic 2.</string>
+    <!-- Translators: Onboarding text after the PeekMusic 1.x library was moved over, without a signed-in account. -->
+    <string name="peek_onboarding_library_migrated_description">Playlisturile, istoricul, aprecierile și datele bibliotecii tale sunt gata în PeekMusic 2.</string>
+    <!-- Translators: Hint on the last onboarding page. -->
+    <string name="peek_onboarding_settings_hint">Deschide Setările din meniul din dreapta sus pentru a personaliza PeekMusic.</string>
+    <!-- Translators: Badge on onboarding settings that PeekMusic 1.x did not have. -->
+    <string name="peek_onboarding_new">Nou</string>
+    <!-- Translators: Description on the first onboarding page. -->
+    <string name="peek_onboarding_welcome_description">Câteva alegeri rapide și PeekMusic arată și sună așa cum îți place.</string>
+    <!-- Translators: Onboarding page with app language, content language and region. -->
+    <string name="peek_onboarding_language_title">Limbă și regiune</string>
+    <string name="peek_onboarding_language_description">Alege limba aplicației și de unde vin recomandările tale.</string>
+    <!-- Translators: Onboarding page about theme and colors. -->
+    <string name="peek_onboarding_look_title">Fă-l al tău</string>
+    <string name="peek_onboarding_look_description">Luminos, întunecat sau negru pur, cu culori din imaginea de fundal sau din coperta care rulează.</string>
+    <!-- Translators: Onboarding page about the player and mini player design. -->
+    <string name="peek_onboarding_player_title">Player</string>
+    <string name="peek_onboarding_player_description">Alege designul playerului, fundalul și aspectul miniplayerului.</string>
+    <!-- Translators: Onboarding page about lyrics. Peek is the name of the lyrics line in the player; do not translate it. -->
+    <string name="peek_onboarding_lyrics_title">Versuri și Peek</string>
+    <string name="peek_onboarding_lyrics_description">Peek arată versul cântat direct în player. Traducerile și transcrierea în alfabet latin apar dedesubt.</string>
+    <!-- Translators: Onboarding page about canvas, animated covers and music videos. -->
+    <string name="peek_onboarding_artwork_title">Canvas și videoclipuri</string>
+    <string name="peek_onboarding_artwork_description">Coperte animate, bucle Canvas și videoclipuri muzicale, la calitatea dorită.</string>
+    <!-- Translators: Onboarding page about audio. -->
+    <string name="peek_onboarding_sound_title">Sunet</string>
+    <string name="peek_onboarding_sound_description">Calitate audio, volum uniform între melodii și tranziții line.</string>
+    <!-- Translators: Onboarding page about content filters. -->
+    <string name="peek_onboarding_content_title">Ce vezi</string>
+    <string name="peek_onboarding_content_description">Ascunde ce nu vrei să vezi niciodată în căutare, recomandări și radio.</string>
+    <!-- Translators: Onboarding switch that sets canvas, animated cover, artist video and music video quality to 1080p at once. -->
+    <string name="peek_onboarding_high_quality">Calitate înaltă</string>
+    <string name="peek_onboarding_high_quality_description">Canvas, coperte animate, videoclipuri ale artiștilor și videoclipuri muzicale în 1080p. Folosește mai multe date. Fiecare poate fi setat separat în Setări.</string>
+    <!-- Translators: Status on a canvas preview tile in onboarding when its switch is off. -->
+    <string name="peek_onboarding_preview_off">Dezactivat</string>
+    <!-- Translators: Status on the Spotify canvas preview tile when nothing was found without a Spotify sign-in. -->
+    <string name="peek_onboarding_preview_sign_in">Nu s-a găsit. Conectarea la Spotify găsește mai multe.</string>
+    <!-- Translators: Status on a canvas preview tile when the example song has no moving artwork from that source. -->
+    <string name="peek_onboarding_preview_unavailable">Indisponibil pentru această melodie</string>
+    <string name="peek_friends_title">Prieteni</string>
+    <string name="peek_friends_your_code">Codul tău de prieten</string>
+    <string name="peek_friends_code_hint">Prietenii te adaugă cu acest cod.</string>
+    <string name="peek_friends_connecting">Se conectează…</string>
+    <string name="peek_friends_copy_code">Copiază codul</string>
+    <string name="peek_friends_add_label">Cod de prieten</string>
+    <string name="peek_friends_add">Adaugă</string>
+    <string name="peek_friends_requests">Cereri de prietenie</string>
+    <string name="peek_friends_accept">Acceptă</string>
+    <string name="peek_friends_decline">Refuză</string>
+    <string name="peek_friends_sent">Cereri trimise</string>
+    <string name="peek_friends_withdraw">Retrage</string>
+    <string name="peek_friends_waiting">Se așteaptă acceptarea</string>
+    <string name="peek_friends_empty">Încă nu ai prieteni. Distribuie codul tău sau adaugă codul unui prieten.</string>
+    <string name="peek_friends_online">Online</string>
+    <string name="peek_friends_offline">Offline</string>
+    <string name="peek_friends_in_party">La o petrecere</string>
+    <string name="peek_friends_join">Alătură-te</string>
+    <string name="peek_friends_remove">Elimină prietenul</string>
+    <string name="peek_friends_remove_confirm">Elimini pe %1$s din prieteni?</string>
+    <string name="peek_friends_request_sent">Cerere de prietenie trimisă către %1$s</string>
+    <string name="peek_friends_added">Tu și %1$s sunteți acum prieteni</string>
+    <string name="peek_friends_request_received">%1$s ți-a trimis o cerere de prietenie</string>
+    <string name="peek_friends_error_unknown">Nimeni nu are acest cod de prieten</string>
+    <string name="peek_friends_error_own">Acesta e propriul tău cod de prieten</string>
+    <string name="peek_friends_error_limit">Prea multe încercări. Încearcă din nou peste un minut.</string>
+    <string name="peek_friends_error_offline">Prietenii nu sunt conectați acum</string>
+    <string name="peek_friends_add_failed">Nu s-a putut adăuga prietenul: %1$s</string>
+    <string name="peek_friends_invite_title">Invitație la petrecere</string>
+    <string name="peek_friends_invite_text">%1$s te invită la petrecere.</string>
+    <string name="peek_friends_invite">Invită prieteni</string>
+    <string name="peek_friends_invite_action">Invită</string>
+    <string name="peek_friends_invited">Invitație trimisă către %1$s</string>
+    <string name="peek_friends_invite_none">Niciunul dintre prietenii tăi nu e online acum</string>
+    <string name="peek_friends_delete">Șterge datele PeekParty</string>
+    <string name="peek_friends_delete_desc">Elimină de pe server codul tău de prieten, prietenii și cererile</string>
+    <string name="peek_friends_delete_confirm">Codul tău de prieten, prietenii și cererile în așteptare sunt șterse de pe server. Apoi primești un cod nou.</string>
+    <string name="peek_friends_deleted">Datele PeekParty au fost șterse</string>
+    <string name="peek_party_rooms">Camere</string>
+    <string name="peek_friends_invite_decline">Refuză</string>
+    <string name="peek_friends_invite_declined">%1$s ți-a refuzat invitația</string>
+    <string name="peek_party_based_on">Bazat pe Listen Together din Metrolist</string>
+    <string name="peek_friends_share_link">Distribuie linkul</string>
+    <string name="peek_friends_link_title">Adaugi prieten?</string>
+    <string name="peek_friends_link_text">Trimiți o cerere de prietenie către %1$s?</string>
+    <string name="peek_precache_upcoming">Memorare în avans</string>
+    <string name="peek_precache_upcoming_desc">Descarcă următoarele melodii din coadă în timpul redării, ca muzica să continue și cu o conexiune slabă</string>
+    <string name="peek_precache_upcoming_off">Dezactivat</string>
+    <string name="peek_precache_upcoming_count">Următoarele melodii: %1$d</string>
+    <string name="peek_precache_upcoming_one">Melodia următoare</string>
+    <string name="peek_precache_wifi_only">Memorare în avans doar prin Wi-Fi</string>
+    <string name="peek_precache_wifi_only_desc">Nu folosi date mobile pentru melodiile care nu rulează încă</string>
+    <string name="peek_listen_together_location_germany">Germania</string>
+    <string name="peek_translation_rate_limited">Google Traducere blochează acum cererile din rețeaua ta. Încearcă mai târziu sau folosește un VPN.</string>
+    <string name="peek_download_cancel_title">Anulezi descărcarea?</string>
+    <string name="peek_download_cancel_message">Melodiile deja descărcate rămân pe dispozitiv.</string>
+    <string name="peek_download_cancel_confirm">Oprește descărcarea</string>
+    <string name="peek_download_cancel_keep">Continuă descărcarea</string>
+    <string name="peek_canvas_desktop_desc">Redă Spotify Canvas și videoclipuri muzicale YouTube, fără sunet, în spatele playerului sau în copertă când sunt disponibile. Folosește mai mult spațiu și mai multe date.</string>
+    <string name="peek_canvas_placement">Poziția Canvas</string>
+    <string name="peek_canvas_placement_page">Tot playerul</string>
+    <string name="peek_canvas_placement_cover">Doar coperta</string>
+    <string name="peek_lyrics_view_off">Dezactivat</string>
+    <string name="peek_youtube_canvas_desktop_hint">Pe desktop are nevoie de mai multă putere, mai ales peste 480p. Dacă videoclipul se blochează, alege o calitate mai mică.</string>
+    <string name="peek_animated_covers_desktop_desc">Afișează coperte animate din Apple Music când sunt disponibile. Folosește mai mult spațiu și mai multe date.</string>
+    <string name="peek_listen_together_ios_user">Utilizator iPhone</string>
+    <string name="peek_youtube_canvas_ios_hint">Pe iPhone funcționează doar dacă YouTube oferă o versiune H.264 a videoclipului. Multe videoclipuri nu o au, așa că adesea rămâne dezactivat. Până la 720p.</string>
+</resources>
